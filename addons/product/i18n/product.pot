@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-15 12:51+0000\n"
 "PO-Revision-Date: 2022-12-15 12:51+0000\n"
+=======
+"Project-Id-Version: Odoo Server saas~16.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-17 08:01+0000\n"
+"PO-Revision-Date: 2023-01-17 08:01+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -182,7 +189,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:product.res_config_settings_view_form
 msgid ""
 "<strong>Save</strong> this page and come back\n"
-"                                    here to set up the feature."
+"                                here to set up the feature."
 msgstr ""
 
 #. module: product
@@ -250,11 +257,11 @@ msgstr ""
 
 #. module: product
 #: model:ir.model.fields,field_description:product.field_product_pricelist__active
-#: model:ir.model.fields,field_description:product.field_product_pricelist_item__active
 #: model:ir.model.fields,field_description:product.field_product_product__active
 #: model:ir.model.fields,field_description:product.field_product_template__active
 #: model:ir.model.fields,field_description:product.field_product_template_attribute_line__active
 #: model:ir.model.fields,field_description:product.field_product_template_attribute_value__ptav_active
+#: model_terms:ir.ui.view,arch_db:product.product_pricelist_item_view_search
 #: model_terms:ir.ui.view,arch_db:product.product_supplierinfo_search_view
 #: model_terms:ir.ui.view,arch_db:product.product_template_attribute_value_view_search
 msgid "Active"
@@ -365,7 +372,6 @@ msgid "Apply On"
 msgstr ""
 
 #. module: product
-#: model_terms:ir.ui.view,arch_db:product.product_pricelist_item_view_search
 #: model_terms:ir.ui.view,arch_db:product.product_pricelist_view
 #: model_terms:ir.ui.view,arch_db:product.product_pricelist_view_search
 #: model_terms:ir.ui.view,arch_db:product.product_supplierinfo_search_view
@@ -954,6 +960,7 @@ msgid "Display Type"
 msgstr ""
 
 #. module: product
+<<<<<<< HEAD
 #: model_terms:ir.ui.view,arch_db:product.res_config_settings_view_form
 msgid "Documentation"
 msgstr ""
@@ -979,6 +986,8 @@ msgid "Duration"
 msgstr ""
 
 #. module: product
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields.selection,name:product.selection__product_label_layout__print_format__dymo
 msgid "Dymo"
 msgstr ""
@@ -1224,9 +1233,7 @@ msgstr ""
 
 #. module: product
 #: model:ir.model.fields,help:product.field_product_product__message_has_error
-#: model:ir.model.fields,help:product.field_product_product__message_has_sms_error
 #: model:ir.model.fields,help:product.field_product_template__message_has_error
-#: model:ir.model.fields,help:product.field_product_template__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr ""
 
@@ -1238,7 +1245,6 @@ msgstr ""
 
 #. module: product
 #: model:ir.model.fields,help:product.field_product_pricelist__active
-#: model:ir.model.fields,help:product.field_product_pricelist_item__active
 msgid ""
 "If unchecked, it will allow you to hide the pricelist without removing it."
 msgstr ""
@@ -1299,16 +1305,6 @@ msgstr ""
 #: code:addons/product/models/product_supplierinfo.py:0
 #, python-format
 msgid "Import Template for Vendor Pricelists"
-msgstr ""
-
-#. module: product
-#: model:ir.model.fields,help:product.field_product_product__standard_price
-#: model:ir.model.fields,help:product.field_product_template__standard_price
-msgid ""
-"In Standard Price & AVCO: value of the product (automatically computed in AVCO).\n"
-"        In FIFO: value of the next unit that will leave the stock (automatically computed).\n"
-"        Used to value the product when the purchase cost is not known (e.g. inventory adjustment).\n"
-"        Used to compute margins on sale orders."
 msgstr ""
 
 #. module: product
@@ -1381,6 +1377,7 @@ msgid "Kilograms"
 msgstr ""
 
 #. module: product
+<<<<<<< HEAD
 #: model:product.template,name:product.product_product_6_product_template
 msgid "Large Cabinet"
 msgstr ""
@@ -1415,6 +1412,8 @@ msgid "Last Modified on"
 msgstr ""
 
 #. module: product
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:product.field_product_attribute__write_uid
 #: model:ir.model.fields,field_description:product.field_product_attribute_custom_value__write_uid
 #: model:ir.model.fields,field_description:product.field_product_attribute_value__write_uid
@@ -1442,7 +1441,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:product.field_product_packaging__write_date
 #: model:ir.model.fields,field_description:product.field_product_pricelist__write_date
 #: model:ir.model.fields,field_description:product.field_product_pricelist_item__write_date
-#: model:ir.model.fields,field_description:product.field_product_product__write_date
 #: model:ir.model.fields,field_description:product.field_product_supplierinfo__write_date
 #: model:ir.model.fields,field_description:product.field_product_tag__write_date
 #: model:ir.model.fields,field_description:product.field_product_template__write_date
@@ -1678,6 +1676,7 @@ msgid "Number of price rules"
 msgstr ""
 
 #. module: product
+<<<<<<< HEAD
 #: model:product.template,name:product.product_delivery_01_product_template
 msgid "Office Chair"
 msgstr ""
@@ -1698,6 +1697,8 @@ msgid "Office Lamp"
 msgstr ""
 
 #. module: product
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/product/models/product_attribute.py:0
 #, python-format
@@ -2315,12 +2316,6 @@ msgid "Rule Tip"
 msgstr ""
 
 #. module: product
-#: model:ir.model.fields,field_description:product.field_product_product__message_has_sms_error
-#: model:ir.model.fields,field_description:product.field_product_template__message_has_sms_error
-msgid "SMS Delivery error"
-msgstr ""
-
-#. module: product
 #: model_terms:ir.ui.view,arch_db:product.product_template_form_view
 msgid "Sales"
 msgstr ""
@@ -2556,6 +2551,7 @@ msgid "The first in the sequence is the default one."
 msgstr ""
 
 #. module: product
+<<<<<<< HEAD
 #: model_terms:product.template,website_description:product.product_product_4_product_template
 msgid ""
 "The minimum height is 65 cm, and for standing work the maximum height "
@@ -2563,6 +2559,8 @@ msgid ""
 msgstr ""
 
 #. module: product
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/product/models/product_pricelist_item.py:0
 #, python-format
@@ -2802,6 +2800,15 @@ msgid "Value Price Extra"
 msgstr ""
 
 #. module: product
+#: model:ir.model.fields,help:product.field_product_product__standard_price
+#: model:ir.model.fields,help:product.field_product_template__standard_price
+msgid ""
+"Value of the product (automatically computed in AVCO).\n"
+"        Used to value the product when the purchase cost is not known (e.g. inventory adjustment).\n"
+"        Used to compute margins on sale orders."
+msgstr ""
+
+#. module: product
 #: model:ir.model.fields,field_description:product.field_product_attribute__value_ids
 #: model:ir.model.fields,field_description:product.field_product_template_attribute_line__value_ids
 #: model_terms:ir.ui.view,arch_db:product.product_attribute_view_form
@@ -2968,6 +2975,7 @@ msgid "Warnings"
 msgstr ""
 
 #. module: product
+<<<<<<< HEAD
 #: model_terms:product.template,website_description:product.product_product_4_product_template
 msgid ""
 "We pay special attention to detail, which is why our desks are of a superior"
@@ -2987,6 +2995,8 @@ msgid "Website communication history"
 msgstr ""
 
 #. module: product
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:product.field_product_product__weight
 #: model:ir.model.fields,field_description:product.field_product_template__weight
 #: model_terms:ir.ui.view,arch_db:product.res_config_settings_view_form
@@ -3005,8 +3015,13 @@ msgid "Weight unit of measure label"
 msgstr ""
 
 #. module: product
+<<<<<<< HEAD
 #: model:product.attribute.value,name:product.product_attribute_value_3
 msgid "White"
+=======
+#: model:ir.model.fields,field_description:product.field_product_product__write_date
+msgid "Write Date"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: product
@@ -3141,6 +3156,7 @@ msgstr ""
 
 #. module: product
 #. odoo-python
+<<<<<<< HEAD
 #: code:addons/product/models/product_pricelist_item.py:0
 #, python-format
 msgid ""
@@ -3150,6 +3166,8 @@ msgstr ""
 
 #. module: product
 #. odoo-python
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/product/models/product_attribute.py:0
 #, python-format
 msgid ""

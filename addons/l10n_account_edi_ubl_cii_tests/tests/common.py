@@ -4,18 +4,24 @@ import base64
 from freezegun import freeze_time
 from collections import Counter
 
-from odoo.addons.account_edi.tests.common import AccountEdiTestCommon
+from odoo.addons.account.tests.common import AccountTestInvoicingCommon
 from odoo import fields
+<<<<<<< HEAD
 from odoo.modules.module import get_resource_path
 from odoo.tests import tagged
+=======
+from odoo.tools import misc
+from odoo.modules.module import get_resource_path, get_module_resource
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 from lxml import etree
 
 
-class TestUBLCommon(AccountEdiTestCommon):
+class TestUBLCommon(AccountTestInvoicingCommon):
 
     @classmethod
-    def setUpClass(cls, chart_template_ref=None, edi_format_ref=None):
-        super().setUpClass(chart_template_ref=chart_template_ref, edi_format_ref=edi_format_ref)
+    def setUpClass(cls, chart_template_ref=None):
+        super().setUpClass(chart_template_ref=chart_template_ref)
 
         # Required for `product_uom_id` to be visible in the form views
         cls.env.user.groups_id += cls.env.ref('uom.group_uom')
@@ -29,6 +35,19 @@ class TestUBLCommon(AccountEdiTestCommon):
         # remove this tax, otherwise, at import, this tax with children taxes can be selected and the total is wrong
         cls.tax_armageddon.children_tax_ids.unlink()
         cls.tax_armageddon.unlink()
+
+        cls.move_template = cls.env['mail.template'].create({
+            'auto_delete': True,
+            'body_html': '<p>TemplateBody for <t t-out="object.name"></t><t t-out="object.invoice_user_id.signature or \'\'"></t></p>',
+            'description': 'Sent to customers with their invoices in attachment',
+            'email_from': "{{ (object.invoice_user_id.email_formatted or user.email_formatted) }}",
+            'model_id': cls.env['ir.model']._get_id('account.move'),
+            'name': "Invoice: Test Sending",
+            'partner_to': "{{ object.partner_id.id }}",
+            'subject': "{{ object.company_id.name }} Invoice (Ref {{ object.name or 'n/a' }})",
+            'report_template_ids': [(4, cls.env.ref('account.account_invoices').id)],
+            'lang': "{{ object.partner_id.lang }}",
+        })
 
     @classmethod
     def setup_company_data(cls, company_name, chart_template=None, **kwargs):
@@ -75,9 +94,14 @@ class TestUBLCommon(AccountEdiTestCommon):
         invoice.
         """
         # /!\ use the same journal as the invoice's one to import the attachment !
+<<<<<<< HEAD
         new_invoice = self.edi_format\
             .with_context(default_move_type=invoice.move_type)\
             ._create_document_from_attachment(attachment)
+=======
+        invoice.journal_id.create_document_from_attachment(attachment.ids)
+        new_invoice = self.env['account.move'].search([], order='id desc', limit=1)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         self.assertTrue(new_invoice)
         self.assert_same_invoice(invoice, new_invoice)
@@ -93,17 +117,26 @@ class TestUBLCommon(AccountEdiTestCommon):
             currency_id = self.env.ref('base.EUR').id
 
         # Create empty account.move, then update a file
-        if move_type == 'in_invoice':
-            invoice = self._create_empty_vendor_bill()
-        else:
-            invoice = self.env['account.move'].create({
-                'move_type': move_type,
-                'journal_id': self.company_data['default_journal_purchase'].id,
-            })
+        journal = self.company_data['default_journal_purchase'] if move_type in self.env['account.move'].get_purchase_types()\
+            else self.company_data['default_journal_sale']
+
+        invoice = self.env['account.move'].create({
+            'move_type': move_type,
+            'journal_id': journal.id,
+        })
+
         invoice_count = len(self.env['account.move'].search([]))
 
         # Import the file to fill the empty invoice
-        self.update_invoice_from_file('l10n_account_edi_ubl_cii_tests', subfolder, filename, invoice)
+        file_path = get_module_resource('l10n_account_edi_ubl_cii_tests', subfolder, filename)
+        with misc.file_open(file_path, 'rb') as file:
+            attachment = self.env['ir.attachment'].create({
+                'name': filename,
+                'datas': base64.encodebytes(file.read()),
+                'res_id': invoice.id,
+                'res_model': 'account.move',
+            })
+            invoice.message_post(attachment_ids=[attachment.id])
 
         # Checks
         self.assertEqual(len(self.env['account.move'].search([])), invoice_count)
@@ -136,6 +169,7 @@ class TestUBLCommon(AccountEdiTestCommon):
         """
         Create and post an account.move.
         """
+
         # Setup the seller.
         self.env.company.write({
             'partner_id': seller.id,
@@ -166,18 +200,21 @@ class TestUBLCommon(AccountEdiTestCommon):
                 for i, invoice_line_kwargs in enumerate(invoice_kwargs.get('invoice_line_ids', []))
             ],
         })
-        # this is needed for formats not enabled by default on the journal
-        account_move.journal_id.edi_format_ids += self.edi_format
+
         account_move.action_post()
+        self.action_send_and_print(account_move)
         return account_move
 
-    def _assert_invoice_attachment(self, invoice, xpaths, expected_file):
+    def action_send_and_print(self, invoice):
+        composer = self.env['account.move.send'].create({'mail_template_id': self.move_template.id, 'move_ids': invoice.ids})
+        composer.action_send_and_print()
+
+    def _assert_invoice_attachment(self, attachment, xpaths, expected_file):
         """
         Get attachment from a posted account.move, and asserts it's the same as the expected xml file.
         """
-        attachment = invoice._get_edi_attachment(self.edi_format)
         self.assertTrue(attachment)
-        xml_filename = attachment.name
+
         xml_content = base64.b64decode(attachment.with_context(bin_size=False).datas)
         xml_etree = self.get_xml_tree_from_string(xml_content)
 
@@ -196,6 +233,7 @@ class TestUBLCommon(AccountEdiTestCommon):
 
         return attachment
 
+<<<<<<< HEAD
     def _test_import_partner(self, edi_code, filename):
         """
         Given an invoice where partner_1 is the vendor and partner_2 is the customer with an EDI attachment.
@@ -245,3 +283,25 @@ class TestUBLCommon(AccountEdiTestCommon):
             lambda doc: doc.edi_format_id.code == edi_code).attachment_id
         self.assertEqual(edi_attachment.name, filename)
         self.assertIn(b"<?xml version='1.0' encoding='UTF-8'?>", edi_attachment.raw)
+=======
+    def _test_import_partner(self, attachment, seller, buyer):
+        """
+        Given a buyer and seller in an EDI attachment.
+        * Uploading the attachment as an invoice should create an invoice with the partner = buyer.
+        * Uploading the attachment as a vendor bill should create a bill with the partner = seller.
+        """
+        # Import attachment as an invoice
+        new_invoice = self.company_data['default_journal_sale']._create_document_from_attachment(attachment.ids)
+        self.assertEqual(buyer, new_invoice.partner_id)
+
+        # Import attachment as a vendor bill
+        new_invoice = self.company_data['default_journal_purchase']._create_document_from_attachment(attachment.ids)
+        self.assertEqual(seller, new_invoice.partner_id)
+
+    def _test_encoding_in_attachment(self, attachment, filename):
+        """
+        Generate an invoice, assert that the tag '<?xml version='1.0' encoding='UTF-8'?>' is present in the attachment
+        """
+        self.assertTrue(filename in attachment.name)
+        self.assertIn(b"<?xml version='1.0' encoding='UTF-8'?>", attachment.raw)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

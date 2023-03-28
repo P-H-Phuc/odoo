@@ -23,6 +23,8 @@ class TestWebsiteSaleImage(odoo.tests.HttpCase):
         color_blue = '#4169E1'
         name_blue = 'Royal Blue'
 
+        self.env['product.pricelist'].sudo().search([]).action_archive()
+
         # create the color attribute
         product_attribute = self.env['product.attribute'].create({
             'name': 'Beautiful Color',
@@ -210,6 +212,7 @@ class TestWebsiteSaleImage(odoo.tests.HttpCase):
             [('key', '=', 'website_sale.product_picture_magnify_click')]
         ).write({'active': True})
 
+<<<<<<< HEAD
         # Ensure that only one pricelist is available during the test, with the company currency.
         # This ensures that tours with triggers on the amounts will run properly.
         # To this purpose, we will ensure that only the public_pricelist is available for the default_website.
@@ -220,6 +223,11 @@ class TestWebsiteSaleImage(odoo.tests.HttpCase):
             ('website_id', 'in', [False, default_website.id])]
         ).website_id = self.env.ref('website.website2')
         public_pricelist.currency_id = self.env.company.currency_id
+=======
+        # Ensure that no pricelist is available during the test.
+        # This ensures that tours with triggers on the amounts will run properly.
+        self.env['product.pricelist'].search([]).action_archive()
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         self.start_tour("/", 'shop_zoom', login="admin")
 

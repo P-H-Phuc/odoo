@@ -9,9 +9,6 @@
     'summary': 'Centralize employee information',
     'website': 'https://www.odoo.com/app/employees',
     'images': [
-        'images/hr_department.jpeg',
-        'images/hr_employee.jpeg',
-        'images/hr_job_position.jpeg',
         'static/src/img/default_image.png',
     ],
     'depends': [
@@ -40,6 +37,7 @@
         'views/mail_channel_views.xml',
         'views/res_users.xml',
         'views/res_partner_views.xml',
+        'views/hr_templates.xml',
         'data/hr_data.xml',
     ],
     'demo': [
@@ -49,10 +47,8 @@
     'application': True,
     'post_init_hook': '_install_hr_localization',
     'assets': {
-        'mail.assets_messaging': [
-            'hr/static/src/models/*.js',
-        ],
         'web.assets_backend': [
+<<<<<<< HEAD
             'hr/static/src/views/**/*.js',
             'hr/static/src/components/**/*',
             'hr/static/src/user_menu/*.js',
@@ -71,6 +67,16 @@
         'web.assets_tests': [
             'hr/static/tests/tours/hr_employee_flow.js',
             'hr/static/tests/tours/user_modify_own_profile_tour.js',
+=======
+            'hr/static/src/**/*',
+        ],
+        'web.qunit_suite_tests': [
+            'hr/static/tests/**/*',
+            ('remove', 'hr/static/tests/tours/**/*'),
+        ],
+        'web.assets_tests': [
+            'hr/static/tests/tours/**/*',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         ],
     },
     'license': 'LGPL-3',

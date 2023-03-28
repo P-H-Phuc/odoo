@@ -14,7 +14,7 @@ class MailChannel(models.Model):
     """
 
     _name = 'mail.channel'
-    _inherit = ['mail.channel', 'rating.mixin']
+    _inherit = ['rating.mixin', 'mail.channel']
 
     anonymous_name = fields.Char('Anonymous Name')
     channel_type = fields.Selection(selection_add=[('livechat', 'Livechat Conversation')], ondelete={'livechat': 'cascade'})
@@ -102,9 +102,11 @@ class MailChannel(models.Model):
     def _message_update_content_after_hook(self, message):
         self.ensure_one()
         if self.channel_type == 'livechat':
-            self.env['bus.bus']._sendone(self.uuid, 'mail.message/insert', {
-                'id': message.id,
-                'body': message.body,
+            self.env['bus.bus']._sendone(self.uuid, 'mail.record/insert', {
+                'Message': {
+                    'id': message.id,
+                    'body': message.body,
+                }
             })
         return super()._message_update_content_after_hook(message=message)
 

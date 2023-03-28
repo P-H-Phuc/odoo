@@ -49,7 +49,9 @@ class LinkPreview(models.Model):
             target = guest
         else:
             target = self.env.user.partner_id
-        self.env['bus.bus']._sendmany([(target, 'mail.link.preview/insert', link_previews._link_preview_format())])
+        self.env['bus.bus']._sendone(target, 'mail.record/insert', {
+            'LinkPreview': link_previews._link_preview_format()
+        })
 
     @api.model
     def _create_link_preview(self, url, message_id, request_session):
@@ -71,7 +73,10 @@ class LinkPreview(models.Model):
                 target = guest
             else:
                 target = self.env.user.partner_id
-            notifications.append((target, 'mail.link.preview/delete', {'id': link_preview.id}))
+            notifications.append((target, 'mail.link.preview/delete', {
+                'id': link_preview.id,
+                'message_id': link_preview.message_id.id,
+            }))
         self.env['bus.bus']._sendmany(notifications)
         self.unlink()
 

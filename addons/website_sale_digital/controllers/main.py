@@ -1,24 +1,15 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-import base64
-import io
-import os
-import mimetypes
-
-from odoo import http
-from odoo.http import request
+from odoo.http import request, route
 from odoo.addons.sale.controllers.portal import CustomerPortal
 
 
 class WebsiteSaleDigital(CustomerPortal):
     orders_page = '/my/orders'
 
-    @http.route([
-        '/my/orders/<int:order_id>',
-    ], type='http', auth='public', website=True)
+    @route()
     def portal_order_page(self, order_id=None, **post):
-        response = super(WebsiteSaleDigital, self).portal_order_page(order_id=order_id, **post)
+        response = super().portal_order_page(order_id=order_id, **post)
         if not 'sale_order' in response.qcontext:
             return response
         order = response.qcontext['sale_order']
@@ -52,25 +43,17 @@ class WebsiteSaleDigital(CustomerPortal):
         })
         return response
 
-    @http.route([
-        '/my/download',
-    ], type='http', auth='public')
+    @route(['/my/download'], type='http', auth='public')
     def download_attachment(self, attachment_id):
         # Check if this is a valid attachment id
-        attachment = request.env['ir.attachment'].sudo().search_read(
-            [('id', '=', int(attachment_id))],
-            ["name", "datas", "mimetype", "res_model", "res_id", "type", "url"]
-        )
-
-        if attachment:
-            attachment = attachment[0]
-        else:
+        attachment = request.env['ir.attachment'].sudo().browse(int(attachment_id)).exists()
+        if not attachment:
             return request.redirect(self.orders_page)
 
         # Check if the user has bought the associated product
         res_model = attachment['res_model']
         res_id = attachment['res_id']
-        purchased_products = request.env['account.move.line'].get_digital_purchases()
+        purchased_products = request.env['account.move.line']._get_digital_purchases()
 
         if res_model == 'product.product':
             if res_id not in purchased_products:
@@ -85,19 +68,4 @@ class WebsiteSaleDigital(CustomerPortal):
         else:
             return request.redirect(self.orders_page)
 
-        # The client has bought the product, otherwise it would have been blocked by now
-        if attachment["type"] == "url":
-            if attachment["url"]:
-                return request.redirect(attachment["url"])
-            else:
-                return request.not_found()
-        elif attachment["datas"]:
-            data = io.BytesIO(base64.standard_b64decode(attachment["datas"]))
-            # we follow what is done in ir_http's binary_content for the extension management
-            extension = os.path.splitext(attachment["name"] or '')[1]
-            extension = extension if extension else mimetypes.guess_extension(attachment["mimetype"] or '')
-            filename = attachment['name']
-            filename = filename if os.path.splitext(filename)[1] else filename + extension
-            return http.send_file(data, filename=filename, as_attachment=True)
-        else:
-            return request.not_found()
+        return request.env['ir.binary']._get_stream_from(attachment).get_response(as_attachment=True)

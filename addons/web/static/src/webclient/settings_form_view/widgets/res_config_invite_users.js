@@ -6,8 +6,17 @@ import { unique } from "@web/core/utils/arrays";
 import { useService } from "@web/core/utils/hooks";
 
 import { Component, useState, onWillStart } from "@odoo/owl";
+<<<<<<< HEAD
+=======
+import { standardWidgetProps } from "@web/views/widgets/standard_widget_props";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 class ResConfigInviteUsers extends Component {
+    static template = "res_config_invite_users";
+    static props = {
+        ...standardWidgetProps,
+    };
+
     setup() {
         this.orm = useService("orm");
         this.invite = useService("user_invite");
@@ -30,7 +39,8 @@ class ResConfigInviteUsers extends Component {
      * @returns {boolean} true if the given email address is valid
      */
     validateEmail(email) {
-        const re = /^([a-z0-9][-a-z0-9_+.]*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,63}(?:\.[a-z]{2})?)$/i;
+        const re =
+            /^([a-z0-9][-a-z0-9_+.]*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,63}(?:\.[a-z]{2})?)$/i;
         return re.test(email);
     }
 
@@ -123,6 +133,8 @@ class ResConfigInviteUsers extends Component {
     }
 }
 
-ResConfigInviteUsers.template = "res_config_invite_users";
+export const resConfigInviteUsers = {
+    component: ResConfigInviteUsers,
+};
 
-registry.category("view_widgets").add("res_config_invite_users", ResConfigInviteUsers);
+registry.category("view_widgets").add("res_config_invite_users", resConfigInviteUsers);

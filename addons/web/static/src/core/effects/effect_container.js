@@ -1,6 +1,10 @@
 /** @odoo-module **/
 
+<<<<<<< HEAD
 import { Component, xml, onWillDestroy } from "@odoo/owl";
+=======
+import { EventBus, Component, xml, onWillDestroy } from "@odoo/owl";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 export class EffectContainer extends Component {
     setup() {
@@ -18,6 +22,9 @@ export class EffectContainer extends Component {
         this.render();
     }
 }
+EffectContainer.props = {
+    bus: EventBus,
+};
 
 EffectContainer.template = xml`
   <div class="o_effects_manager">

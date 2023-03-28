@@ -41,7 +41,7 @@ from contextlib import contextmanager, ExitStack
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
 from itertools import zip_longest as izip_longest
-from unittest.mock import patch
+from unittest.mock import patch, _patch
 from xmlrpc import client as xmlrpclib
 
 import requests
@@ -182,18 +182,18 @@ class RecordCapturer:
         self._domain = domain
 
     def __enter__(self):
-        self._before = self._model.search(self._domain)
+        self._before = self._model.search(self._domain, order='id')
         self._after = None
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         if exc_type is None:
-            self._after = self._model.search(self._domain) - self._before
+            self._after = self._model.search(self._domain, order='id') - self._before
 
     @property
     def records(self):
         if self._after is None:
-            return self._model.search(self._domain) - self._before
+            return self._model.search(self._domain, order='id') - self._before
         return self._after
 
 
@@ -270,6 +270,18 @@ class BaseCase(case.TestCase, metaclass=MetaCase):
             if not failure:
                 break
 
+<<<<<<< HEAD
+=======
+    @classmethod
+    def setUpClass(cls):
+        def check_remaining_patchers():
+            for patcher in _patch._active_patches:
+                _logger.warning("A patcher was remaining active at the end of %s, disabling it...", cls.__name__)
+                patcher.stop()
+        cls.addClassCleanup(check_remaining_patchers)
+        super().setUpClass()
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def cursor(self):
         return self.registry.cursor()
 
@@ -726,16 +738,6 @@ class TransactionCase(BaseCase):
         self.patch(self.registry['res.partner'], '_get_gravatar_image', lambda *a: False)
 
 
-class SavepointCase(TransactionCase):
-    @classmethod
-    def __init_subclass__(cls):
-        super().__init_subclass__()
-        warnings.warn(
-            "Deprecated class SavepointCase has been merged into TransactionCase",
-            DeprecationWarning, stacklevel=2,
-        )
-
-
 class SingleTransactionCase(BaseCase):
     """ TestCase in which all test methods are run in the same transaction,
     the transaction is started with the first test method and rolled back at
@@ -1029,12 +1031,14 @@ class ChromeBrowser:
         delay = 0.1
         tries = 0
         failure_info = None
+        message = None
         while timeout > 0:
             try:
                 os.kill(self.chrome_pid, 0)
             except ProcessLookupError:
                 message = 'Chrome crashed at startup'
                 break
+            res = None
             try:
                 r = requests.get(url, timeout=3)
                 if r.ok:
@@ -1186,7 +1190,11 @@ class ChromeBrowser:
                 self._websocket_send('DOM.getDocument', params={'depth': 0}, with_future=True),
                 lambda d: self._websocket_send("DOM.querySelector", params={
                     'nodeId': d['root']['nodeId'],
+<<<<<<< HEAD
                     'selector': '.o_legacy_form_view.o_form_editable, .o_form_dirty',
+=======
+                    'selector': '.o_form_dirty',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 }, with_future=True)
             )
             @qs.add_done_callback
@@ -1748,9 +1756,13 @@ class HttpCase(TransactionCase):
         """Wrapper for `browser_js` to start the given `tour_name` with the
         optional delay between steps `step_delay`. Other arguments from
         `browser_js` can be passed as keyword arguments."""
-        step_delay = ', %s' % step_delay if step_delay else ''
-        code = kwargs.pop('code', "odoo.startTour('%s'%s)" % (tour_name, step_delay))
-        ready = kwargs.pop('ready', "odoo.__DEBUG__.services['web_tour.tour'].tours['%s'].ready" % tour_name)
+        options = {
+            'stepDelay': step_delay if step_delay else 0,
+            'keepWatchBrowser': kwargs.get('watch', False),
+            'startUrl': url_path,
+        }
+        code = kwargs.pop('code', "odoo.startTour('%s', %s)" % (tour_name, json.dumps(options)))
+        ready = kwargs.pop('ready', "odoo.isTourReady('%s')" % tour_name)
         return self.browser_js(url_path=url_path, code=code, ready=ready, **kwargs)
 
     def profile(self, **kwargs):
@@ -1762,17 +1774,6 @@ class HttpCase(TransactionCase):
         def route_profiler(request):
             return sup.profile(description=request.httprequest.full_path)
         return profiler.Nested(_profiler, patch('odoo.http.Request._get_profiler_context_manager', route_profiler))
-
-
-# kept for backward compatibility
-class HttpSavepointCase(HttpCase):
-    @classmethod
-    def __init_subclass__(cls):
-        super().__init_subclass__()
-        warnings.warn(
-            "Deprecated class HttpSavepointCase has been merged into HttpCase",
-            DeprecationWarning, stacklevel=2,
-        )
 
 
 def no_retry(arg):
@@ -2174,6 +2175,10 @@ class Form(object):
         '>': operator.gt,
         'in': lambda a, b: (a in b) if isinstance(b, (tuple, list)) else (b in a),
         'not in': lambda a, b: (a not in b) if isinstance(b, (tuple, list)) else (b not in a),
+        'like': lambda a, b: a and b and isinstance(a, str) and isinstance(b, str) and a in b,
+        'ilike': lambda a, b: a and b and isinstance(a, str) and isinstance(b, str) and a.lower() in b.lower(),
+        'not like': lambda a, b: a and b and isinstance(a, str) and isinstance(b, str) and a not in b,
+        'not ilike': lambda a, b: a and b and isinstance(a, str) and isinstance(b, str) and a.lower() not in b.lower(),
     }
     def _get_context(self, field):
         c = self._view['contexts'].get(field)

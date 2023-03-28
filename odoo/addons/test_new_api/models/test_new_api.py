@@ -29,7 +29,7 @@ class Category(models.Model):
                                    'category', 'discussion')
 
     _sql_constraints = [
-        ('positive_color', 'CHECK(color >= 0)', 'The color code must be positive !')
+        ('positive_color', 'CHECK(color >= 0)', 'The color code must be positive!')
     ]
 
     @api.depends('name', 'parent.display_name')     # this definition is recursive
@@ -69,13 +69,13 @@ class Category(models.Model):
             # assign name of last category, and reassign display_name (to normalize it)
             cat.name = names[-1].strip()
 
-    def _read(self, fields):
+    def _fetch_query(self, query, fields):
         # DLE P45: `test_31_prefetch`,
         # with self.assertRaises(AccessError):
         #     cat1.name
         if self.search_count([('id', 'in', self._ids), ('name', '=', 'NOACCESS')]):
             raise AccessError('Sorry')
-        return super(Category, self)._read(fields)
+        return super()._fetch_query(query, fields)
 
 
 class Discussion(models.Model):
@@ -133,7 +133,7 @@ class Message(models.Model):
     _description = 'Test New API Message'
 
     discussion = fields.Many2one('test_new_api.discussion', ondelete='cascade')
-    body = fields.Text()
+    body = fields.Text(index='trigram')
     author = fields.Many2one('res.users', default=lambda self: self.env.user)
     name = fields.Char(string='Title', compute='_compute_name', store=True)
     display_name = fields.Char(string='Abstract', compute='_compute_display_name')
@@ -531,6 +531,7 @@ class Order(models.Model):
     _name = _description = 'test_new_api.order'
 
     line_ids = fields.One2many('test_new_api.order.line', 'order_id')
+    line_short_field_name = fields.Integer(index=True)
 
 
 class OrderLine(models.Model):
@@ -539,6 +540,9 @@ class OrderLine(models.Model):
     order_id = fields.Many2one('test_new_api.order', required=True, ondelete='cascade')
     product = fields.Char()
     reward = fields.Boolean()
+    short_field_name = fields.Integer(index=True)
+    very_very_very_very_very_long_field_name_1 = fields.Integer(index=True)
+    very_very_very_very_very_long_field_name_2 = fields.Integer(index=True)
 
     def unlink(self):
         # also delete associated reward lines

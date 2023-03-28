@@ -53,6 +53,7 @@ class PosSession(models.Model):
     login_number = fields.Integer(string='Login Sequence Number', help='A sequence number that is incremented each time a user resumes the pos session', default=0)
 
     opening_notes = fields.Text(string="Opening Notes")
+    closing_notes = fields.Text(string="Closing Notes")
     cash_control = fields.Boolean(compute='_compute_cash_all', string='Has Cash Control', compute_sudo=True)
     cash_journal_id = fields.Many2one('account.journal', compute='_compute_cash_all', string='Cash Journal', store=True)
 
@@ -95,7 +96,7 @@ class PosSession(models.Model):
     update_stock_at_closing = fields.Boolean('Stock should be updated at closing')
     bank_payment_ids = fields.One2many('account.payment', 'pos_session_id', 'Bank Payments', help='Account payments representing aggregated and bank split payments.')
 
-    _sql_constraints = [('uniq_name', 'unique(name)', "The name of this POS Session must be unique !")]
+    _sql_constraints = [('uniq_name', 'unique(name)', "The name of this POS Session must be unique!")]
 
     @api.depends('currency_id', 'company_id.currency_id')
     def _compute_is_in_company_currency(self):
@@ -302,8 +303,8 @@ class PosSession(models.Model):
                 else:
                     raise e
 
+            balance = sum(self.move_id.line_ids.mapped('balance'))
             try:
-                balance = sum(self.move_id.line_ids.mapped('balance'))
                 with self.move_id._check_balanced({'records': self.move_id.sudo()}):
                     pass
             except UserError:
@@ -421,7 +422,7 @@ class PosSession(models.Model):
         if self.state == 'closed':
             raise UserError(_('This session is already closed.'))
         # Prevent the session to be opened again.
-        self.write({'state': 'closing_control', 'stop_at': fields.Datetime.now()})
+        self.write({'state': 'closing_control', 'stop_at': fields.Datetime.now(), 'closing_notes': notes})
         self._post_cash_details_message('Closing', self.cash_register_difference, notes)
 
     def post_closing_cash_details(self, counted_cash):
@@ -495,7 +496,16 @@ class PosSession(models.Model):
         if any(order.state == 'draft' for order in self.order_ids):
             return {'successful': False, 'message': _("You cannot close the POS when orders are still in draft"), 'redirect': False}
         if self.state == 'closed':
-            return {'successful': False, 'message': _("This session is already closed."), 'redirect': True}
+            return {
+                'successful': False,
+                'type': 'alert',
+                'title': 'Session already closed',
+                'message': _("The session has been already closed by another User. "
+                            "All sales completed in the meantime have been saved in a "
+                            "Rescue Session, which can be reviewed anytime and posted "
+                            "to Accounting from Point of Sale's dashboard."),
+                'redirect': True
+            }
         if bank_payment_method_diffs:
             no_loss_account = self.env['account.journal']
             no_profit_account = self.env['account.journal']
@@ -579,7 +589,7 @@ class PosSession(models.Model):
             session_destination_id = picking_type.default_location_dest_id.id
 
         for order in self.order_ids:
-            if order.company_id.anglo_saxon_accounting and order.is_invoiced or order.to_ship:
+            if order.company_id.anglo_saxon_accounting and order.is_invoiced or order.shipping_date:
                 continue
             destination_id = order.partner_id.property_stock_customer.id or session_destination_id
             if destination_id in lines_grouped_by_dest_location:
@@ -1577,21 +1587,29 @@ class PosSession(models.Model):
         return loaded_data
 
     def _get_attributes_by_ptal_id(self):
-        product_attributes = self.env['product.attribute'].search([('create_variant', '=', 'no_variant')])
-        product_attributes_by_id = {product_attribute.id: product_attribute for product_attribute in product_attributes}
-        domain = [('attribute_id', 'in', product_attributes.mapped('id'))]
-        product_template_attribute_values = self.env['product.template.attribute.value'].search(domain)
-        key = lambda ptav: (ptav.attribute_line_id.id, ptav.attribute_id.id)
+        # performance trick: prefetch fields with search_fetch() and fetch()
+        product_attributes = self.env['product.attribute'].search_fetch(
+            [('create_variant', '=', 'no_variant')],
+            ['name', 'display_type'],
+        )
+        product_template_attribute_values = self.env['product.template.attribute.value'].search_fetch(
+            [('attribute_id', 'in', product_attributes.ids)],
+            ['attribute_id', 'attribute_line_id', 'product_attribute_value_id', 'price_extra'],
+        )
+        product_template_attribute_values.product_attribute_value_id.fetch(['name', 'is_custom', 'html_color'])
+
+        key1 = lambda ptav: (ptav.attribute_line_id.id, ptav.attribute_id.id)
+        key2 = lambda ptav: (ptav.attribute_line_id.id, ptav.attribute_id)
         res = {}
-        for key, group in groupby(sorted(product_template_attribute_values, key=key), key=key):
-            attribute_line_id, attribute_id = key
+        for key, group in groupby(sorted(product_template_attribute_values, key=key1), key=key2):
+            attribute_line_id, attribute = key
             values = [{**ptav.product_attribute_value_id.read(['name', 'is_custom', 'html_color'])[0],
                        'price_extra': ptav.price_extra} for ptav in list(group)]
             res[attribute_line_id] = {
                 'id': attribute_line_id,
-                'name': product_attributes_by_id[attribute_id].name,
-                'display_type': product_attributes_by_id[attribute_id].display_type,
-                'values': values
+                'name': attribute.name,
+                'display_type': attribute.display_type,
+                'values': values,
             }
 
         return res
@@ -1656,6 +1674,7 @@ class PosSession(models.Model):
                 'fields': [
                     'currency_id', 'email', 'website', 'company_registry', 'vat', 'name', 'phone', 'partner_id',
                     'country_id', 'state_id', 'tax_calculation_rounding_method', 'nomenclature_id', 'point_of_sale_use_ticket_qr_code',
+                    'point_of_sale_ticket_unique_code',
                 ],
             }
         }
@@ -1708,18 +1727,30 @@ class PosSession(models.Model):
             'search_params': {
                 'domain': [('company_id', '=', self.company_id.id)],
                 'fields': [
-                    'name', 'real_amount', 'price_include', 'include_base_amount', 'is_base_affected',
-                    'amount_type', 'children_tax_ids'
+                    'name', 'price_include', 'include_base_amount', 'is_base_affected',
+                    'amount_type', 'children_tax_ids', 'amount', 'id'
                 ],
             },
         }
 
     def _get_pos_ui_account_tax(self, params):
         taxes = self.env['account.tax'].search_read(**params['search_params'])
-        # TODO: rename amount to real_amount in front end
+
+        # Add the 'sum_repartition_factor' as needed in the compute_all
+        # Note that the factor = factor_percent/100
+        groups = self.env['account.tax.repartition.line'].read_group(
+            domain=[
+                ('tax_id', 'in', tuple([t['id'] for t in taxes])),
+                ('document_type', '=', 'invoice'),
+                ('repartition_type', '=', 'tax'),
+            ],
+            fields=["factor_percent:sum"],
+            groupby=["tax_id"],
+        )
+        tax_id_to_factor_sum = {g['tax_id'][0]: g['factor_percent']/100 for g in groups}
         for tax in taxes:
-            tax['amount'] = tax['real_amount']
-            del tax['real_amount']
+            tax['sum_repartition_factor'] = tax_id_to_factor_sum[tax['id']]
+
         return taxes
 
     def _loader_params_pos_session(self):
@@ -1832,12 +1863,7 @@ class PosSession(models.Model):
         for pricelist in pricelists:
             pricelist['items'] = []
 
-        pricelist_by_id = {pricelist['id']: pricelist for pricelist in pricelists}
-        pricelist_item_domain = [('pricelist_id', 'in', [p['id'] for p in pricelists])]
-        for item in self.env['product.pricelist.item'].search_read(pricelist_item_domain, self._product_pricelist_item_fields()):
-            pricelist_by_id[item['pricelist_id'][0]]['items'].append(item)
-
-        return pricelists
+        return self._prepare_product_pricelists(pricelists)
 
     def _loader_params_product_category(self):
         return {'search_params': {'domain': [], 'fields': ['name', 'parent_id']}}
@@ -1943,7 +1969,7 @@ class PosSession(models.Model):
         return {
             'search_params': {
                 'domain': ['|', ('active', '=', False), ('active', '=', True)],
-                'fields': ['name', 'is_cash_count', 'use_payment_terminal', 'split_transactions', 'type'],
+                'fields': ['name', 'is_cash_count', 'use_payment_terminal', 'split_transactions', 'type', 'image'],
                 'order': 'is_cash_count desc, id',
             },
         }
@@ -1988,6 +2014,106 @@ class PosSession(models.Model):
         partners = self.env['res.partner'].search_read(**params['search_params'])
         return partners
 
+    def get_total_discount(self):
+        amount = 0
+        for line in self.env['pos.order.line'].search([('order_id', 'in', self.order_ids.ids), ('discount', '>', 0)]):
+            normal_price = line.qty * line.price_unit
+            normal_price = normal_price + (normal_price / 100 * line.tax_ids.amount)
+            amount += normal_price - line.price_subtotal_incl
+
+        return amount
+
+    def _get_invoice_total_list(self):
+        invoice_list = []
+        for order in self.order_ids.filtered(lambda o: o.is_invoiced):
+            invoice = {
+                'total': order.account_move.amount_total,
+                'name': order.account_move.highest_name,
+                'order_ref': order.pos_reference,
+            }
+            invoice_list.append(invoice)
+
+        return invoice_list
+
+    def _get_total_invoice(self):
+        amount = 0
+        for order in self.order_ids.filtered(lambda o: o.is_invoiced):
+            amount += order.amount_paid
+
+        return amount
+
+    def get_total_sold_refund_per_category(self, group_by_user_id=None):
+        total_sold_per_user_per_category = {}
+        total_refund_per_user_per_category = {}
+
+        for order in self.order_ids:
+            if group_by_user_id:
+                user_id = order.user_id.id
+            else:
+                # use a user_id of 0 to keep the logic between with user group and without user group the same
+                user_id = 0
+
+            if user_id not in total_sold_per_user_per_category:
+                total_sold_per_user_per_category[user_id] = {}
+                total_refund_per_user_per_category[user_id] = {}
+
+            total_sold_per_category = total_sold_per_user_per_category[user_id]
+            total_refund_per_category = total_refund_per_user_per_category[user_id]
+
+            for line in order.lines:
+                key = line.product_id.pos_categ_id.name or "None"
+                if line.qty >= 0:
+                    if key in total_sold_per_category:
+                        total_sold_per_category[key] += line.price_subtotal_incl
+                    else:
+                        total_sold_per_category[key] = line.price_subtotal_incl
+                else:
+                    if key in total_refund_per_category:
+                        total_refund_per_category[key] += line.price_subtotal_incl
+                    else:
+                        total_refund_per_category[key] = line.price_subtotal_incl
+
+        if group_by_user_id or not total_sold_per_user_per_category:
+            return list(total_sold_per_user_per_category.items()), list(total_refund_per_user_per_category.items())
+        else:
+            return list(total_sold_per_user_per_category[0].items()), list(total_refund_per_user_per_category[0].items())
+
+    def get_pos_ui_product_pricelists_by_ids(self, pricelist_ids):
+        params = self._loader_params_product_pricelist()
+        params['search_params']['domain'] = [('id', 'in', pricelist_ids)]
+        pricelists = self.env['product.pricelist'].search_read(**params['search_params'])
+        for pricelist in pricelists:
+            if not self.config_id.use_pricelist:
+                self.config_id.use_pricelist = True
+            pricelist_id = self.env['product.pricelist'].browse(pricelist['id'])
+            self.config_id.available_pricelist_ids += pricelist_id
+            pricelist['items'] = []
+
+        return self._prepare_product_pricelists(pricelists)
+
+    def _prepare_product_pricelists(self, pricelists):
+        pricelist_by_id = {pricelist['id']: pricelist for pricelist in pricelists}
+        pricelist_item_domain = [('pricelist_id', 'in', [p['id'] for p in pricelists])]
+        for item in self.env['product.pricelist.item'].search_read(pricelist_item_domain, self._product_pricelist_item_fields()):
+            pricelist_by_id[item['pricelist_id'][0]]['items'].append(item)
+
+        return pricelists
+
+    def get_pos_ui_account_fiscal_positions_by_ids(self, fp_ids):
+        params = self._loader_params_account_fiscal_position()
+        params['search_params']['domain'] = [('id', 'in', fp_ids)]
+        fps = self.env['account.fiscal.position'].search_read(**params['search_params'])
+        fiscal_position_tax_ids = sum([fpos['tax_ids'] for fpos in fps], [])
+        fiscal_position_tax = self.env['account.fiscal.position.tax'].search_read([('id', 'in', fiscal_position_tax_ids)])
+        fiscal_position_by_id = {fpt['id']: fpt for fpt in fiscal_position_tax}
+        for fiscal_position in fps:
+            if not self.config_id.tax_regime_selection:
+                self.config_id.tax_regime_selection = True
+            fiscal_position_id = self.env['account.fiscal.position'].browse(fiscal_position['id'])
+            self.config_id.fiscal_position_ids += fiscal_position_id
+            fiscal_position['fiscal_position_taxes_by_id'] = {tax_id: fiscal_position_by_id[tax_id] for tax_id in fiscal_position['tax_ids']}
+
+        return fps
 
 class ProcurementGroup(models.Model):
     _inherit = 'procurement.group'

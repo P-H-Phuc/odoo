@@ -31,12 +31,21 @@ cellMenuRegistry.add("pivot_see_records", {
     name: _lt("See records"),
     sequence: 175,
     action: async (env) => {
+<<<<<<< HEAD
         const cell = env.model.getters.getActiveCell();
         await SEE_RECORDS_PIVOT(cell, env);
     },
     isVisible: (env) => {
         const cell = env.model.getters.getActiveCell();
         return SEE_RECORDS_PIVOT_VISIBLE(cell);
+=======
+        const position = env.model.getters.getActivePosition();
+        await SEE_RECORDS_PIVOT(position, env);
+    },
+    isVisible: (env) => {
+        const position = env.model.getters.getActivePosition();
+        return SEE_RECORDS_PIVOT_VISIBLE(position, env);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
 });
 

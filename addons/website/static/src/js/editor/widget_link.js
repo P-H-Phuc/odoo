@@ -79,6 +79,7 @@ weWidgets.LinkTools.include({
         this._onURLInput();
     },
     /**
+<<<<<<< HEAD
      * @todo this should not be an event handler anymore in master
      * @private
      * @param {Event} ev
@@ -93,6 +94,8 @@ weWidgets.LinkTools.include({
         $urlInput.val(urlInputValue + anchorValue);
     },
     /**
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
      * @override
      */
     _onURLInput: function () {
@@ -105,7 +108,17 @@ weWidgets.LinkTools.include({
      */
     _onPickSelectOption(ev) {
         if (ev.currentTarget.closest('[name="link_anchor"]')) {
+<<<<<<< HEAD
             this._onAnchorChange(ev);
+=======
+            const anchorValue = $(ev.currentTarget).data('value');
+            const $urlInput = this.$('[name="url"]');
+            let urlInputValue = $urlInput.val();
+            if (urlInputValue.indexOf('#') > -1) {
+                urlInputValue = urlInputValue.substr(0, urlInputValue.indexOf('#'));
+            }
+            $urlInput.val(urlInputValue + anchorValue);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
         this._super(...arguments);
     },

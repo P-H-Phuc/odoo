@@ -114,7 +114,7 @@
                         <span t-esc="env.pos.format_currency_no_symbol(tax.amount)" class="pos-receipt-right-align"/>
                     </div>
                 </t>
-                <div>
+                <div id="post_receipt_taxes_container">
                     Total Taxes
                     <span t-esc="env.pos.format_currency(receipt.total_tax)" class="pos-receipt-right-align"/>
                 </div>
@@ -128,6 +128,16 @@
                     Scan me to request an invoice for your purchase.
                 </div>
                 <img id="posqrcode" t-att-src="receipt.pos_qr_code" class="pos-receipt-logo"/>
+            </div>
+
+            <div t-if="receipt.ticket_code">
+                <br /><br />
+                <div class="pos-receipt-order-data">
+                    You can go to <t t-out="receipt.base_url"/>/pos/ticket and use the code below to request an invoice online
+                </div>
+                <div class="pos-receipt-order-data">
+                    Unique Code: <t t-out="receipt.ticket_code"/>
+                </div>
             </div>
 
             <!-- Footer -->
@@ -152,6 +162,19 @@
                     </t>
                 </t>
             </div>
+
+            <br/>
+            <t t-if="shippingDate">
+                <div class="pos-receipt-order-data">
+                    Expected delivery:
+                    <t t-if="shippingDate.localestring">
+                        <div><t t-esc="shippingDate.localestring" /></div>
+                    </t>
+                    <t t-else="">
+                        <div><t t-esc="shippingDate.validationDate" /></div>
+                    </t>
+                </div>
+            </t>
 
             <br/>
             <div class="pos-receipt-order-data">

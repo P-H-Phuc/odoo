@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+from markupsafe import Markup
+
 from odoo import api, models, fields, _, SUPERUSER_ID
 from odoo.exceptions import AccessError
 from odoo.tools.misc import clean_context
@@ -140,7 +142,7 @@ class User(models.Model):
     employee_type = fields.Selection(related='employee_id.employee_type', readonly=False, related_sudo=False)
     employee_resource_calendar_id = fields.Many2one(related='employee_id.resource_calendar_id', string="Employee's Working Hours", readonly=True)
 
-    create_employee = fields.Boolean(store=False, default=True, copy=False, string="Technical field, whether to create an employee")
+    create_employee = fields.Boolean(store=False, default=False, copy=False, string="Technical field, whether to create an employee")
     create_employee_id = fields.Many2one('hr.employee', store=False, copy=False, string="Technical field, bind user to this employee on create")
 
     can_edit = fields.Boolean(compute='_compute_can_edit')
@@ -222,6 +224,10 @@ class User(models.Model):
         """
         return ['name', 'email', 'image_1920', 'tz']
 
+    def _get_personal_info_partner_ids_to_notify(self, employee):
+        # To override in appropriate module
+        return ('', [])
+
     def write(self, vals):
         """
         Synchronize user and its related employee
@@ -229,7 +235,7 @@ class User(models.Model):
         their own data (otherwise sudo is applied for self data).
         """
         hr_fields = {
-            field
+            field_name: field
             for field_name, field in self._fields.items()
             if field.related_field and field.related_field.model_name == 'hr.employee' and field_name in vals
         }
@@ -238,6 +244,25 @@ class User(models.Model):
             # Raise meaningful error message
             raise AccessError(_("You are only allowed to update your preferences. Please contact a HR officer to update other information."))
 
+        employee_domain = [('user_id', 'in', self.ids), ('company_id', '=', self.env.company.id)]
+        if hr_fields:
+            employees = self.env['hr.employee'].sudo().search(employee_domain)
+            get_field = self.env['ir.model.fields']._get
+            field_names = Markup().join([
+                 Markup("<li>%s</li>") % get_field("res.users", fname).field_description for fname in hr_fields
+            ])
+            for employee in employees:
+                reason_message, partner_ids = self._get_personal_info_partner_ids_to_notify(employee)
+                if partner_ids:
+                    employee.message_notify(
+                        body=Markup("<p>%s</p><p>%s</p><ul>%s</ul><p><em>%s</em></p>") % (
+                            _('Personal information update.'),
+                            _("The following fields were modified by %s", employee.name),
+                            field_names,
+                            reason_message,
+                        ),
+                        partner_ids=partner_ids,
+                    )
         result = super(User, self).write(vals)
 
         employee_values = {}
@@ -248,14 +273,18 @@ class User(models.Model):
             if 'email' in employee_values:
                 employee_values['work_email'] = employee_values.pop('email')
             if 'image_1920' in vals:
-                without_image = self.env['hr.employee'].sudo().search([('user_id', 'in', self.ids), ('image_1920', '=', False)])
-                with_image = self.env['hr.employee'].sudo().search([('user_id', 'in', self.ids), ('image_1920', '!=', False)])
+                without_image = self.env['hr.employee'].sudo().search(employee_domain + [('image_1920', '=', False)])
+                with_image = self.env['hr.employee'].sudo().search(employee_domain + [('image_1920', '!=', False)])
                 without_image.write(employee_values)
                 if not can_edit_self:
                     employee_values.pop('image_1920')
                 with_image.write(employee_values)
             else:
+<<<<<<< HEAD
                 employees = self.env['hr.employee'].sudo().search([('user_id', 'in', self.ids)])
+=======
+                employees = self.env['hr.employee'].sudo().search(employee_domain)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 if employees:
                     employees.write(employee_values)
         return result
@@ -286,3 +315,22 @@ class User(models.Model):
             company_id=self.env.company.id,
             **self.env['hr.employee']._sync_user(self)
         ))
+
+    def action_open_employees(self):
+        self.ensure_one()
+        employees = self.employee_ids
+        if len(employees) > 1:
+            return {
+                'name': _('Related Employees'),
+                'type': 'ir.actions.act_window',
+                'res_model': 'hr.employee',
+                'view_mode': 'kanban,tree,form',
+                'domain': [('id', 'in', employees.ids)],
+            }
+        return {
+            'name': _('Employee'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'hr.employee',
+            'res_id': employees.id,
+            'view_mode': 'form',
+        }

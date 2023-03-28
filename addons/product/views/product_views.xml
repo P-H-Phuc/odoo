@@ -70,7 +70,11 @@
                                 </group>
                                 <group name="group_standard_price">
                                     <label for="list_price"/>
+<<<<<<< HEAD
                                     <div name="pricing">
+=======
+                                    <div name="pricing" class="o_row">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                       <field name="list_price" class="oe_inline" widget='monetary'
                                         options="{'currency_field': 'currency_id', 'field_digits': True}"/>
                                     </div>
@@ -182,7 +186,6 @@
 
     <record id="product_template_action_all" model="ir.actions.act_window">
         <field name="name">Products</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">product.template</field>
         <field name="view_mode">kanban,tree,form</field>
         <field name="context">{}</field>
@@ -211,7 +214,6 @@
 
         <record id="product_normal_action" model="ir.actions.act_window">
             <field name="name">Product Variants</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">product.product</field>
             <field name="view_mode">tree,form,kanban,activity</field>
             <field name="search_view_id" ref="product_search_form_view"/>
@@ -302,7 +304,6 @@
 
         <record id="product_variant_action" model="ir.actions.act_window">
             <field name="name">Product Variants</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">product.product</field>
             <field name="context">{'search_default_product_tmpl_id': [active_id], 'default_product_tmpl_id': active_id, 'create': False}</field>
             <field name="search_view_id" ref="product_search_form_view"/>
@@ -457,7 +458,6 @@
 
         <record id="product_normal_action_sell" model="ir.actions.act_window">
             <field name="name">Product Variants</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">product.product</field>
             <field name="view_mode">kanban,tree,form,activity</field>
             <field name="context">{"search_default_filter_to_sell":1}</field>
@@ -476,7 +476,7 @@
         </record>
 
     <record id="action_product_price_list_report" model="ir.actions.server">
-        <field name="name">Generate Pricelist</field>
+        <field name="name">Generate Pricelist Report</field>
         <field name="groups_id" eval="[(4, ref('group_product_pricelist'))]"/>
         <field name="model_id" ref="product.model_product_product"/>
         <field name="binding_model_id" ref="product.model_product_product"/>
@@ -487,7 +487,7 @@ ctx.update({'default_pricelist': env['product.pricelist'].search([], limit=1).id
 action = {
     'name': 'Pricelist Report',
     'type': 'ir.actions.client',
-    'tag': 'generate_pricelist',
+    'tag': 'generate_pricelist_report',
     'context': ctx,
 }
         </field>

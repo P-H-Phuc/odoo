@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
-import { SelectionField } from "@web/views/fields/selection/selection_field";
+import { SelectionField, selectionField } from "@web/views/fields/selection/selection_field";
 
 /**
  * The purpose of this field is to be able to define some values which should not be
@@ -16,11 +16,11 @@ export class FilterableSelectionField extends SelectionField {
         let options = super.options;
         if (this.props.whitelisted_values) {
             options = options.filter((option) => {
-                return option[0] === this.props.value || this.props.whitelisted_values.includes(option[0])
+                return option[0] === this.props.record.data[this.props.name] || this.props.whitelisted_values.includes(option[0])
             });
         } else if (this.props.blacklisted_values) {
             options = options.filter((option) => {
-                return option[0] === this.props.value || !this.props.blacklisted_values.includes(option[0]);
+                return option[0] === this.props.record.data[this.props.name] || !this.props.blacklisted_values.includes(option[0]);
             });
         }
         return options;
@@ -33,12 +33,15 @@ FilterableSelectionField.props = {
     blacklisted_values: { type: Array, optional: true },
 };
 
-FilterableSelectionField.extractProps = ({ attrs }) => {
-    return {
-        ...SelectionField.extractProps({ attrs }),
-        whitelisted_values: attrs.options.whitelisted_values,
-        blacklisted_values: attrs.options.blacklisted_values,
-    };
+export const filterableSelectionField = {
+    ...selectionField,
+    component: FilterableSelectionField,
+    extractProps({ options }) {
+        const props = selectionField.extractProps(...arguments);
+        props.whitelisted_values = options.whitelisted_values;
+        props.blacklisted_values = options.blacklisted_values;
+        return props;
+    },
 };
 
-registry.category("fields").add("filterable_selection", FilterableSelectionField);
+registry.category("fields").add("filterable_selection", filterableSelectionField);

@@ -60,7 +60,11 @@ odoo.define('web.FilterMenu', function (require) {
         class: { String, optional: true },
     };
     FilterMenu.template = "web.legacy.FilterMenu";
+<<<<<<< HEAD
     FilterMenu.components = { CustomFilterItem, Dropdown, DropdownItem: SearchDropdownItem };
+=======
+    FilterMenu.components = { CustomFilterItem, Dropdown, SearchDropdownItem };
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     return FilterMenu;
 });

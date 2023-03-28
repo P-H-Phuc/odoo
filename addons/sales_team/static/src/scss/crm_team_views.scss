@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 .o_kanban_renderer.o_crm_team_kanban {
     --KanbanRecord-width: 400px;
 }
 
 .o_kanban_renderer.o_crm_team_member_kanban {
+=======
+.o_crm_team_kanban .o_kanban_renderer {
+    --KanbanRecord-width: 400px;
+}
+
+.o_crm_team_member_kanban .o_kanban_renderer {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     --KanbanRecord-width: 350px;
 
     .o_kanban_group:not(.o_column_folded) {

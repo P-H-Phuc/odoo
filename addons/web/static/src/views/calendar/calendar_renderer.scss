@@ -123,7 +123,11 @@
         .fc-timeGridDay-view,
         .fc-timeGridWeek-view {
             .fc-axis {
+<<<<<<< HEAD
                 padding-left: $o-horizontal-padding;
+=======
+                padding-right: $o-horizontal-padding;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
 
             .fc-widget-header.fc-today {
@@ -193,7 +197,11 @@
                 // Prevent events with similar color to visually overlap each other
                 box-shadow: 0 0 0 1px white;
 
+<<<<<<< HEAD
                 &.fc-event:not(.fc-h-event) {
+=======
+                &.fc-event:not(.fc-h-event):not(.o_event_oneliner) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     border-width: 3px 0 0;
 
                     &.fc-not-start {
@@ -204,6 +212,19 @@
                         }
                     }
                 }
+<<<<<<< HEAD
+=======
+
+                &.o_event_oneliner {
+                    padding-top: 0;
+                    padding-bottom: 0;
+                    .fc-content {
+                        margin-top: 0;
+                        font-size: 11px !important;
+                        line-height: 0.9;
+                    }
+                }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
 
             // Reset position to keep the "nowIndicator" line visible
@@ -230,10 +251,13 @@
 
         // ====== Week only
         .fc-timeGridWeek-view {
+<<<<<<< HEAD
             .fc-now-indicator {
                 left: $o-horizontal-padding;
             }
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             // Expand tiny events on hover/select
             .fc-event:not(.fc-h-event).o_cw_custom_highlight {
                 transition: margin 0.1s 0.3s, left 0.1s 0.3s, right 0.1s 0.3s;
@@ -245,7 +269,12 @@
 
         // ====== Month only
         .fc-dayGridMonth-view {
+<<<<<<< HEAD
             padding-left: $o-horizontal-padding;
+=======
+            margin-right: $o-horizontal-padding;
+            border-right: 1px solid $border-color;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
             .fc-event {
                 border-radius: 25px;
@@ -360,7 +389,11 @@
         .fc-dayGridYear-view {
             border: none;
             height: 100%;
+<<<<<<< HEAD
             padding-left: $o-horizontal-padding;
+=======
+            padding-right: $o-horizontal-padding;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             box-sizing: border-box;
             display: flex;
             flex-wrap: wrap;
@@ -434,7 +467,12 @@
                     }
 
                     .fc-dayGridMonth-view {
+<<<<<<< HEAD
                         padding-left: unset;
+=======
+                        margin-right: none;
+                        border-right: none;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
                         .fc-has-event {
                             background-color: #b4dff5;

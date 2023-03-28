@@ -1,31 +1,25 @@
-odoo.define('pos_restaurant.TransferOrderButton', function(require) {
-    'use strict';
+/** @odoo-module */
 
-    const PosComponent = require('point_of_sale.PosComponent');
-    const ProductScreen = require('point_of_sale.ProductScreen');
-    const { useListener } = require("@web/core/utils/hooks");
-    const Registries = require('point_of_sale.Registries');
+import { usePos } from "@point_of_sale/app/pos_hook";
+import { ProductScreen } from "@point_of_sale/js/Screens/ProductScreen/ProductScreen";
+import { Component } from "@odoo/owl";
 
-    class TransferOrderButton extends PosComponent {
-        setup() {
-            super.setup();
-            useListener('click', this.onClick);
-        }
-        async onClick() {
-            this.env.pos.setCurrentOrderToTransfer();
-            this.showScreen('FloorScreen');
-        }
+export class TransferOrderButton extends Component {
+    static template = "TransferOrderButton";
+
+    setup() {
+        super.setup();
+        this.pos = usePos();
     }
-    TransferOrderButton.template = 'TransferOrderButton';
+    async click() {
+        this.env.pos.setCurrentOrderToTransfer();
+        this.pos.showScreen("FloorScreen");
+    }
+}
 
-    ProductScreen.addControlButton({
-        component: TransferOrderButton,
-        condition: function() {
-            return this.env.pos.config.iface_floorplan;
-        },
-    });
-
-    Registries.Component.add(TransferOrderButton);
-
-    return TransferOrderButton;
+ProductScreen.addControlButton({
+    component: TransferOrderButton,
+    condition: function () {
+        return this.env.pos.config.iface_floorplan;
+    },
 });

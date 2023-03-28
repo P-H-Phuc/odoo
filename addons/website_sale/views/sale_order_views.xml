@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="sale.view_sales_order_filter"/>
         <field name="mode">primary</field>
         <field name="arch" type="xml">
-            <xpath expr="//filter[@name='my_sale_orders_filter']" position="before">
+            <filter name="my_sale_orders_filter" position="before">
                 <filter string="Confirmed" name="order_confirmed" domain="[('state', 'in', ('sale', 'done'))]"/>
                 <filter string="Unpaid" name="order_unpaid" domain="[('state', '=', 'sent')]"/>
                 <filter string="Abandoned" name="order_abandoned" domain="[('is_abandoned_cart', '=', True)]"/>
@@ -19,7 +19,7 @@
                 <filter string="Last Week" invisible="1" name="week" domain="[('date_order','&gt;', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
                 <filter string="Last Month" invisible="1" name="month" domain="[('date_order','&gt;', (context_today() - datetime.timedelta(days=30)).strftime('%Y-%m-%d'))]"/>
                 <filter string="Last Year" invisible="1"  name="year" domain="[('date_order','&gt;', (context_today() - datetime.timedelta(days=365)).strftime('%Y-%m-%d'))]"/>
-            </xpath>
+            </filter>
         </field>
     </record>
 
@@ -30,13 +30,13 @@
         <field name="mode">primary</field>
         <field name="priority">32</field>
         <field name="arch" type="xml">
-            <xpath expr="//filter[@name='my_sale_orders_filter']" position="attributes">
+            <filter name="my_sale_orders_filter" position="attributes">
                 <attribute name="invisible">1</attribute>
-            </xpath>
-            <xpath expr="//filter[@name='my_sale_orders_filter']" position="before">
+            </filter>
+            <filter name="my_sale_orders_filter" position="before">
                 <filter string="Order Date" name="order_date" date="date_order"/>
                 <separator/>
-            </xpath>
+            </filter>
         </field>
     </record>
 
@@ -45,20 +45,24 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='team_id']" position="after">
+            <field name="team_id" position="after">
                 <field name="is_abandoned_cart" invisible="1"/>
                 <field name="cart_recovery_email_sent" invisible="1"/>
-            </xpath>
+            </field>
             <xpath expr="//button[@name='action_quotation_send' and @states='draft']" position="attributes">
                 <!-- The '| and the '&amp' opertors are necessary because draft state of the parent concatenate the domain -->
                 <attribute name="attrs">{'invisible': ['|','&amp;',('is_abandoned_cart', '=', True), ('cart_recovery_email_sent', '=', False)]}</attribute>
             </xpath>
-            <xpath expr="//button[@name='action_quotation_send']" position="after">
+            <button name="action_quotation_send" position="after">
                 <button name="action_recovery_email_send" data-hotkey="l"
                     string="Send a Recovery Email"
                     type="object"
                     class="btn-primary"
                     attrs="{'invisible': ['|', ('is_abandoned_cart', '=', False), ('cart_recovery_email_sent', '=', True)]}"/>
+            </button>
+            <xpath expr="//button[@name='action_quotation_send' and @states='sent,sale']" position="after">
+                <button name="action_quotation_send" string="Send by Email" type="object"
+                    attrs="{'invisible': ['|', '|', ('is_abandoned_cart', '=', False), ('cart_recovery_email_sent', '=', True), ('state', '!=', 'draft')]}"/>
             </xpath>
         </field>
     </record>
@@ -134,7 +138,6 @@
     <!-- Server action to send multiple recovery email-->
     <record id="ir_actions_server_sale_cart_recovery_email" model="ir.actions.server">
         <field name="name">Send a Cart Recovery Email</field>
-        <field name="type">ir.actions.server</field>
         <field name="model_id" ref="model_sale_order"/>
         <field name="state">code</field>
         <field name="code">
@@ -182,6 +185,7 @@
         </field>
     </record>
 
+<<<<<<< HEAD
     <!-- Main website sale menu items -->
     <menuitem id="menu_ecommerce" name="eCommerce"
         parent="website.menu_website_configuration" sequence="20"
@@ -254,6 +258,8 @@
         groups="base.group_no_one"
         parent="menu_ecommerce_settings"/>
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     <record id="sale_order_view_form" model="ir.ui.view">
         <field name="name">sale.order.form</field>
         <field name="model">sale.order</field>
@@ -273,25 +279,14 @@
         </field>
     </record>
 
-    <record id="view_quotation_tree" model="ir.ui.view">
+    <record id="sale_order_tree" model="ir.ui.view">
         <field name="name">sale.order.tree.inherit.website.sale</field>
         <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.view_quotation_tree"/>
+        <field name="inherit_id" ref="sale.sale_order_tree"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='user_id']" position="before">
-                <field name="website_id" optional="hide"/>
-            </xpath>
-        </field>
-    </record>
-
-    <record id="view_order_tree" model="ir.ui.view">
-        <field name="name">sale.order.tree.inherit.website.sale</field>
-        <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.view_order_tree"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='partner_id']" position="before">
-                <field name="website_id" optional="show"/>
-            </xpath>
+            <field name="user_id" position="before">
+                <field name="website_id" groups="website.group_multi_website" optional="show"/>
+            </field>
         </field>
     </record>
 </odoo>

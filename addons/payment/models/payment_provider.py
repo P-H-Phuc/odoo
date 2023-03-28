@@ -47,8 +47,8 @@ class PaymentProvider(models.Model):
         related='company_id.currency_id',
         help="The main currency of the company, used to display monetary fields.",
     )
-    payment_icon_ids = fields.Many2many(
-        string="Supported Payment Icons", comodel_name='payment.icon')
+    payment_method_ids = fields.Many2many(
+        string="Supported Payment Methods", comodel_name='payment.method')
     allow_tokenization = fields.Boolean(
         string="Allow Saving Payment Methods",
         help="This controls whether customers can save their payment methods as payment tokens.\n"
@@ -102,6 +102,19 @@ class PaymentProvider(models.Model):
         column1='payment_id',
         column2='country_id',
     )
+    available_currency_ids = fields.Many2many(
+        string="Currencies",
+        help="The currencies available with this payment provider. Leave empty not to restrict "
+             "any.",
+        comodel_name='res.currency',
+        relation='payment_currency_rel',
+        column1="payment_provider_id",
+        column2="currency_id",
+        compute='_compute_available_currency_ids',
+        store=True,
+        readonly=False,
+        context={'active_test': False},
+    )
     maximum_amount = fields.Monetary(
         string="Maximum Amount",
         help="The maximum payment amount that this payment provider is available for. Leave blank "
@@ -111,10 +124,14 @@ class PaymentProvider(models.Model):
 
     # Fees fields
     fees_active = fields.Boolean(string="Add Extra Fees")
-    fees_dom_fixed = fields.Float(string="Fixed domestic fees")
-    fees_dom_var = fields.Float(string="Variable domestic fees (in percents)")
-    fees_int_fixed = fields.Float(string="Fixed international fees")
-    fees_int_var = fields.Float(string="Variable international fees (in percents)")
+    fees_dom_fixed = fields.Monetary(
+        string="Fixed domestic fees", currency_field='main_currency_id'
+    )
+    fees_dom_var = fields.Float(string="Variable domestic fees")
+    fees_int_fixed = fields.Monetary(
+        string="Fixed international fees", currency_field='main_currency_id'
+    )
+    fees_int_var = fields.Float(string="Variable international fees")
 
     # Message fields
     display_as = fields.Char(
@@ -146,8 +163,10 @@ class PaymentProvider(models.Model):
     support_tokenization = fields.Boolean(
         string="Tokenization Supported", compute='_compute_feature_support_fields'
     )
-    support_manual_capture = fields.Boolean(
-        string="Manual Capture Supported", compute='_compute_feature_support_fields'
+    support_manual_capture = fields.Selection(
+        string="Manual Capture Supported",
+        selection=[('full_only', "Full Only"), ('partial', "Partial")],
+        compute='_compute_feature_support_fields',
     )
     support_express_checkout = fields.Boolean(
         string="Express Checkout Supported", compute='_compute_feature_support_fields'
@@ -177,7 +196,7 @@ class PaymentProvider(models.Model):
     show_credentials_page = fields.Boolean(compute='_compute_view_configuration_fields')
     show_allow_tokenization = fields.Boolean(compute='_compute_view_configuration_fields')
     show_allow_express_checkout = fields.Boolean(compute='_compute_view_configuration_fields')
-    show_payment_icon_ids = fields.Boolean(compute='_compute_view_configuration_fields')
+    show_payment_method_ids = fields.Boolean(compute='_compute_view_configuration_fields')
     show_pre_msg = fields.Boolean(compute='_compute_view_configuration_fields')
     show_pending_msg = fields.Boolean(compute='_compute_view_configuration_fields')
     show_auth_msg = fields.Boolean(compute='_compute_view_configuration_fields')
@@ -185,6 +204,22 @@ class PaymentProvider(models.Model):
     show_cancel_msg = fields.Boolean(compute='_compute_view_configuration_fields')
 
     #=== COMPUTE METHODS ===#
+
+    @api.depends('code')
+    def _compute_available_currency_ids(self):
+        """ Compute the available currencies based on their support by the providers.
+
+        If the provider does not filter out any currency, the field is left empty for UX reasons.
+
+        :return: None
+        """
+        all_currencies = self.env['res.currency'].with_context(active_test=False).search([])
+        for provider in self:
+            supported_currencies = provider._get_supported_currencies()
+            if supported_currencies < all_currencies:  # Some currencies have been filtered out.
+                provider.available_currency_ids = supported_currencies
+            else:
+                provider.available_currency_ids = None
 
     @api.depends('state', 'module_state')
     def _compute_color(self):
@@ -213,7 +248,11 @@ class PaymentProvider(models.Model):
         - `show_credentials_page`: Whether the "Credentials" notebook page should be shown.
         - `show_allow_tokenization`: Whether the `allow_tokenization` field should be shown.
         - `show_allow_express_checkout`: Whether the `allow_express_checkout` field should be shown.
+<<<<<<< HEAD
         - `show_payment_icon_ids`: Whether the `payment_icon_ids` field should be shown.
+=======
+        - `show_payment_method_ids`: Whether the `payment_method_ids` field should be shown.
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         - `show_pre_msg`: Whether the `pre_msg` field should be shown.
         - `show_pending_msg`: Whether the `pending_msg` field should be shown.
         - `show_auth_msg`: Whether the `auth_msg` field should be shown.
@@ -230,7 +269,7 @@ class PaymentProvider(models.Model):
             'show_credentials_page': True,
             'show_allow_tokenization': True,
             'show_allow_express_checkout': True,
-            'show_payment_icon_ids': True,
+            'show_payment_method_ids': True,
             'show_pre_msg': True,
             'show_pending_msg': True,
             'show_auth_msg': True,
@@ -238,6 +277,7 @@ class PaymentProvider(models.Model):
             'show_cancel_msg': True,
         })
 
+    @api.depends('code')
     def _compute_feature_support_fields(self):
         """ Compute the feature support fields based on the provider.
 
@@ -315,7 +355,7 @@ class PaymentProvider(models.Model):
         :return None
         """
         for provider in self:
-            if any(not 0 <= fee < 100 for fee in (provider.fees_dom_var, provider.fees_int_var)):
+            if any(not 0 <= fee < 1 for fee in (provider.fees_dom_var, provider.fees_int_var)):
                 raise ValidationError(_("Variable fees must always be positive and below 100%."))
 
     #=== CRUD METHODS ===#
@@ -411,8 +451,13 @@ class PaymentProvider(models.Model):
         """ Select and return the providers matching the criteria.
 
         The criteria are that providers must not be disabled, be in the company that is provided,
+<<<<<<< HEAD
         and support the country of the partner if it exists. The criteria can be further refined
         by providing the keyword arguments.
+=======
+        support the country of the partner if it exists, and be compatible with the currency if
+        provided. The criteria can be further refined by providing the keyword arguments.
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         :param int company_id: The company to which providers must belong, as a `res.company` id.
         :param int partner_id: The partner making the payment, as a `res.partner` id.
@@ -458,6 +503,19 @@ class PaymentProvider(models.Model):
                 ]
             ])
 
+<<<<<<< HEAD
+=======
+        # Handle the available currencies (only if supported currencies list is not empty).
+        if currency:
+            domain = expression.AND([
+                domain, [
+                    '|',
+                    ('available_currency_ids', '=', False),
+                    ('available_currency_ids', 'in', [currency.id]),
+                ]
+            ])
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         # Handle tokenization support requirements.
         if force_tokenization or self._is_tokenization_required(**kwargs):
             domain = expression.AND([domain, [('allow_tokenization', '=', True)]])
@@ -468,6 +526,21 @@ class PaymentProvider(models.Model):
 
         compatible_providers = self.env['payment.provider'].search(domain)
         return compatible_providers
+
+    def _get_supported_currencies(self):
+        """ Return the supported currencies for the payment provider.
+
+        By default, all currencies are considered supported, including the inactive ones. For a
+        provider to filter out specific currencies, it must override this method and return the
+        subset of supported currencies.
+
+        Note: `self.ensure_one()`
+
+        :return: The supported currencies.
+        :rtype: res.currency
+        """
+        self.ensure_one()
+        return self.env['res.currency'].with_context(active_test=False).search([])
 
     def _is_tokenization_required(self, **kwargs):
         """ Return whether tokenizing the transaction is required given its context.
@@ -499,9 +572,15 @@ class PaymentProvider(models.Model):
 
         The computation is based on the fields `fees_dom_fixed`, `fees_dom_var`, `fees_int_fixed`
         and `fees_int_var`, and is performed with the formula
+<<<<<<< HEAD
         :code:`fees = (amount * variable / 100.0 + fixed) / (1 - variable / 100.0)` where the values
         of `fixed` and `variable` are taken from either the domestic (`dom`) or international
         (`int`) fields, depending on whether the country matches the company's country.
+=======
+        :code:`fees = (amount * variable + fixed) / (1 - variable)` where the values of `fixed` and
+        `variable` are taken from either the domestic (`dom`) or international (`int`) fields,
+        depending on whether the country matches the company's country.
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         For a provider to base the computation on different variables, or to use a different
         formula, it must override this method and return the resulting fees.
@@ -522,7 +601,10 @@ class PaymentProvider(models.Model):
             else:
                 fixed = self.fees_int_fixed
                 variable = self.fees_int_var
-            fees = (amount * variable / 100.0 + fixed) / (1 - variable / 100.0)
+            fixed_converted = self.main_currency_id._convert(
+                fixed, currency, self.company_id, fields.Date.context_today(self)
+            )
+            fees = (amount * variable + fixed_converted) / (1 - variable)
         return fees
 
     def _get_validation_amount(self):

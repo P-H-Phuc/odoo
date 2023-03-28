@@ -10,9 +10,12 @@ import { SelectCreateDialog } from "@web/views/view_dialogs/select_create_dialog
 import { getColor } from "../colors";
 import { Component, useState } from "@odoo/owl";
 
+<<<<<<< HEAD
 class CalendarFilterTooltip extends Component {}
 CalendarFilterTooltip.template = "web.CalendarFilterPanel.tooltip";
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 let nextId = 1;
 
 export class CalendarFilterPanel extends Component {
@@ -24,7 +27,10 @@ export class CalendarFilterPanel extends Component {
         this.addDialog = useOwnedDialogs();
         this.orm = useService("orm");
         this.popover = usePopover();
+<<<<<<< HEAD
         this.removePopover = null;
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 
     getFilterColor(filter) {
@@ -159,6 +165,7 @@ export class CalendarFilterPanel extends Component {
         return this.state.collapsed[section.fieldName] || false;
     }
 
+<<<<<<< HEAD
     closeTooltip() {
         if (this.removePopover) {
             this.removePopover();
@@ -166,6 +173,8 @@ export class CalendarFilterPanel extends Component {
         }
     }
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     onFilterInputChange(section, filter, ev) {
         this.props.model.updateFilters(section.fieldName, {
             [filter.value]: ev.target.checked,
@@ -182,6 +191,7 @@ export class CalendarFilterPanel extends Component {
         this.props.model.updateFilters(section.fieldName, filters);
     }
 
+<<<<<<< HEAD
     onFilterMouseEnter(section, filter, ev) {
         this.closeTooltip();
         if (!section.hasAvatar || !filter.hasAvatar) {
@@ -204,6 +214,8 @@ export class CalendarFilterPanel extends Component {
         this.closeTooltip();
     }
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     onFilterRemoveBtnClick(section, filter) {
         this.props.model.unlinkFilter(section.fieldName, filter.recordId);
     }

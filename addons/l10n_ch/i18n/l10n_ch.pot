@@ -33,6 +33,7 @@ msgid "'QR-bill-%s' % object.name"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_ch.5_vat_other_movements_910
 #: model:account.tax.template,name:l10n_ch.vat_other_movements_910
 msgid "0% - Donations, dividends, compensation"
@@ -155,6 +156,8 @@ msgid "2.50%"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_200
 msgid ""
 "200 Total amount of agreed or collected consideration incl. from supplies opted for taxation, transfer of supplies acc. "
@@ -175,39 +178,68 @@ msgstr ""
 
 #. module: l10n_ch
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_225
+<<<<<<< HEAD
 msgid "225 Transfer of supplies according to the notification procedure (art. 38, please submit Form 764)"
 msgstr ""
 
 #. module: l10n_ch
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_230
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid ""
 "230 Supplies provided on Swiss territory exempt from the tax without credit (art. 21) and where the option for their "
 "taxation according to art. 22 has not been exercised"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
+=======
+#: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_230
+msgid ""
+"230 Supplies provided on Swiss territory exempt from the tax without credit "
+"(art. 21) and where the option for their taxation according to art. 22 has "
+"not been exercised"
+msgstr ""
+
+#. module: l10n_ch
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_235
 msgid "235 Reduction of consideration (discounts, rebates etc.)"
 msgstr ""
 
 #. module: l10n_ch
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_280
+<<<<<<< HEAD
 msgid "280 Miscellaneous (e.g. land value, purchase prices in case of margin taxation)"
 msgstr ""
 
 #. module: l10n_ch
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_289
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid ""
 "289 Consideration reported in Ref. 200 from supplies exempt from the tax without credit (art. 21) where the option for "
 "their taxation according to art. 22 has been exercised"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
+=======
+#: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_289
+msgid ""
+"289 Consideration reported in Ref. 200 from supplies exempt from the tax "
+"without credit (art. 21) where the option for their taxation according to "
+"art. 22 has been exercised"
+msgstr ""
+
+#. module: l10n_ch
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_299
 msgid "299 Taxable turnover (Ref. 200 minus Ref. 289)"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.tax,description:l10n_ch.5_vat_37_incl model:account.tax.template,description:l10n_ch.vat_37_incl
 msgid "3.7% Incl."
 msgstr ""
@@ -270,6 +302,8 @@ msgid "3.70%"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_302a
 msgid "302a Taxable turnover at 7.7% (TS)"
 msgstr ""
@@ -341,17 +375,31 @@ msgstr ""
 
 #. module: l10n_ch
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_415
+<<<<<<< HEAD
 msgid "415 Correction of the input tax deduction: mixed use (art. 30), own use (art. 31)"
 msgstr ""
 
 #. module: l10n_ch
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_420
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid ""
 "420 Reduction of the input tax deduction: Flow of funds, which are not deemed to be consideration, such as subsidies, "
 "tourist charges (art. 33 para. 2)"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
+=======
+#: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_420
+msgid ""
+"420 Reduction of the input tax deduction: Flow of funds, which are not "
+"deemed to be consideration, such as subsidies, tourist charges (art. 33 "
+"para. 2)"
+msgstr ""
+
+#. module: l10n_ch
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_479
 msgid "479 Input VAT"
 msgstr ""
@@ -367,6 +415,7 @@ msgid "510 Credit in favour of the taxable person"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.tax,description:l10n_ch.5_vat_77_incl model:account.tax.template,description:l10n_ch.vat_77_incl
 msgid "7.7% Incl."
 msgstr ""
@@ -452,6 +501,8 @@ msgid "7.70%"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_900
 msgid ""
 "900 Subsidies, tourist funds collected by tourist offices, contributions from cantonal water, sewage or waste funds "
@@ -460,7 +511,13 @@ msgstr ""
 
 #. module: l10n_ch
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_910
+<<<<<<< HEAD
 msgid "910 Donations, dividends, payments of damages etc. (art. 18 para. 2 lit. d to l)"
+=======
+msgid ""
+"910 Donations, dividends, payments of damages etc. (art. 18 para. 2 lit. d "
+"to l)"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: l10n_ch
@@ -539,6 +596,7 @@ msgid "Account Chart Template"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_2000 model:account.account.template,name:l10n_ch.ch_coa_2000
 msgid "Accounts payable from goods and services (Creditors)"
 msgstr ""
@@ -688,6 +746,17 @@ msgstr ""
 #. module: l10n_ch
 #: model:account.account,name:l10n_ch.5_ch_coa_1220 model:account.account.template,name:l10n_ch.ch_coa_1220
 msgid "Auxiliary material"
+=======
+#. odoo-python
+#: code:addons/l10n_ch/wizard/qr_invoice_wizard.py:0
+#, python-format
+msgid "All selected invoices must belong to the same Switzerland company"
+msgstr ""
+
+#. module: l10n_ch
+#: model:account.report.column,name:l10n_ch.tax_report_balance
+msgid "Balance"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: l10n_ch
@@ -701,21 +770,27 @@ msgid "Bank Accounts"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_2100 model:account.account.template,name:l10n_ch.ch_coa_2100
 msgid "Bank Overdraft (Bank)"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model,name:l10n_ch.model_account_bank_statement_line
 msgid "Bank Statement Line"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_2400 model:account.account.template,name:l10n_ch.ch_coa_2400
 msgid "Bank debts"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model,name:l10n_ch.model_account_setup_bank_manual_config
 msgid "Bank setup manual config"
 msgstr ""
@@ -750,6 +825,7 @@ msgid "CHF ISR Subscription Number"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_3901 model:account.account.template,name:l10n_ch.ch_coa_3901
 msgid "Change in inventories of finished goods"
 msgstr ""
@@ -802,6 +878,20 @@ msgstr ""
 #. module: l10n_ch
 #: model:account.account,name:l10n_ch.5_ch_coa_4903 model:account.account.template,name:l10n_ch.ch_coa_4903
 msgid "Commissions on purchases"
+=======
+#: model_terms:ir.ui.view,arch_db:l10n_ch.l10n_ch_qr_invoice_wizard_form
+msgid "Check invalid invoices"
+msgstr ""
+
+#. module: l10n_ch
+#: model:ir.model.fields,field_description:l10n_ch.field_l10n_ch_qr_invoice_wizard__classic_inv_text
+msgid "Classic Inv Text"
+msgstr ""
+
+#. module: l10n_ch
+#: model:account.cash.rounding,name:l10n_ch.cash_rounding_5_centime
+msgid "Coinage 0.05"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: l10n_ch
@@ -820,6 +910,7 @@ msgid "Config Settings"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_1250 model:account.account.template,name:l10n_ch.ch_coa_1250
 msgid "Consignments Goods "
 msgstr ""
@@ -867,6 +958,15 @@ msgstr ""
 #. module: l10n_ch
 #: model:account.account,name:l10n_ch.5_ch_coa_4000 model:account.account.template,name:l10n_ch.ch_coa_4000
 msgid "Cost of raw materials (Manufacturing)"
+=======
+#: model:ir.model.fields,field_description:l10n_ch.field_l10n_ch_qr_invoice_wizard__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: l10n_ch
+#: model:ir.model.fields,field_description:l10n_ch.field_l10n_ch_qr_invoice_wizard__create_date
+msgid "Created on"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: l10n_ch
@@ -887,6 +987,7 @@ msgid "Currency Name"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_ch.5_vat_100_import model:account.tax.template,name:l10n_ch.vat_100_import
 msgid "Customs VAT on goods and services"
 msgstr ""
@@ -987,6 +1088,17 @@ msgstr ""
 #. module: l10n_ch
 #: model:account.account,name:l10n_ch.5_ch_coa_1218 model:account.account.template,name:l10n_ch.ch_coa_1218
 msgid "Downpayment on raw material"
+=======
+#: model:ir.model.fields,help:l10n_ch.field_account_bank_statement_line__l10n_ch_is_qr_valid
+#: model:ir.model.fields,help:l10n_ch.field_account_move__l10n_ch_is_qr_valid
+#: model:ir.model.fields,help:l10n_ch.field_account_payment__l10n_ch_is_qr_valid
+msgid "Determines whether an invoice can be printed as a QR or not"
+msgstr ""
+
+#. module: l10n_ch
+#: model:ir.model.fields,field_description:l10n_ch.field_l10n_ch_qr_invoice_wizard__display_name
+msgid "Display Name"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: l10n_ch
@@ -996,6 +1108,7 @@ msgid "EUR ISR Subscription Number"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_4500 model:account.account.template,name:l10n_ch.ch_coa_4500
 msgid "Electricity"
 msgstr ""
@@ -1084,6 +1197,10 @@ msgstr ""
 #. module: l10n_ch
 #: model:account.account,name:l10n_ch.5_ch_coa_1770 model:account.account.template,name:l10n_ch.ch_coa_1770
 msgid "Goodwill"
+=======
+#: model:ir.model,name:l10n_ch.model_l10n_ch_qr_invoice_wizard
+msgid "Handles problems occurring while creating multiple QR-invoices at once"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: l10n_ch
@@ -1156,6 +1273,7 @@ msgid ""
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_6570 model:account.account.template,name:l10n_ch.ch_coa_6570
 msgid "IT leasing"
 msgstr ""
@@ -1192,6 +1310,17 @@ msgstr ""
 #: model:account.account,name:l10n_ch.5_ch_coa_4008 model:account.account,name:l10n_ch.5_ch_coa_4080
 #: model:account.account.template,name:l10n_ch.ch_coa_4008 model:account.account.template,name:l10n_ch.ch_coa_4080
 msgid "Inventory changes"
+=======
+#. odoo-python
+#: code:addons/l10n_ch/wizard/qr_invoice_wizard.py:0
+#, python-format
+msgid "Invalid Invoices"
+msgstr ""
+
+#. module: l10n_ch
+#: model:ir.model.fields,field_description:l10n_ch.field_l10n_ch_qr_invoice_wizard__isr_inv_text
+msgid "Isr Inv Text"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: l10n_ch
@@ -1281,6 +1410,7 @@ msgstr ""
 #. module: l10n_ch
 #: model:ir.model.fields,field_description:l10n_ch.field_l10n_ch_qr_invoice_wizard____last_update
 msgid "Last Modified on"
+<<<<<<< HEAD
 msgstr ""
 
 #. module: l10n_ch
@@ -1420,16 +1550,63 @@ msgid "Non-paid-in share capital"
 msgstr ""
 
 #. module: l10n_ch
+=======
+msgstr ""
+
+#. module: l10n_ch
+#: model:ir.model.fields,field_description:l10n_ch.field_l10n_ch_qr_invoice_wizard__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: l10n_ch
+#: model:ir.model.fields,field_description:l10n_ch.field_l10n_ch_qr_invoice_wizard__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: l10n_ch
+#: model:ir.model.fields,field_description:l10n_ch.field_l10n_ch_qr_invoice_wizard__nb_classic_inv
+msgid "Nb Classic Inv"
+msgstr ""
+
+#. module: l10n_ch
+#: model:ir.model.fields,field_description:l10n_ch.field_l10n_ch_qr_invoice_wizard__nb_isr_inv
+msgid "Nb Isr Inv"
+msgstr ""
+
+#. module: l10n_ch
+#: model:ir.model.fields,field_description:l10n_ch.field_l10n_ch_qr_invoice_wizard__nb_qr_inv
+msgid "Nb Qr Inv"
+msgstr ""
+
+#. module: l10n_ch
+#. odoo-python
+#: code:addons/l10n_ch/wizard/qr_invoice_wizard.py:0
+#, python-format
+msgid "No invoice could be printed in the %s format."
+msgstr ""
+
+#. module: l10n_ch
+#. odoo-python
+#: code:addons/l10n_ch/wizard/qr_invoice_wizard.py:0
+#, python-format
+msgid "No invoice was found to be printed."
+msgstr ""
+
+#. module: l10n_ch
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_ch.account_tax_report_line_chtax_autres_mouv
 msgid "OTHER CASH FLOWS (art. 18 para. 2)"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_1520 model:account.account.template,name:l10n_ch.ch_coa_1520
 msgid "Office Equipment (including Information & Communication Technology)"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model_terms:ir.ui.view,arch_db:l10n_ch.res_config_settings_view_form
 msgid "Offset to move the scan line in mm"
 msgstr ""
@@ -1456,6 +1633,7 @@ msgid "Optical reading line, as it will be printed on ISR"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_2140 model:account.account.template,name:l10n_ch.ch_coa_2140
 msgid "Other interest-bearing short terms liabilities"
 msgstr ""
@@ -1526,6 +1704,8 @@ msgid "Plan comptable 2015 (Suisse)"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model_terms:ir.ui.view,arch_db:l10n_ch.isr_invoice_form
 msgid ""
 "Please fill in a correct ISR reference in the payment reference.  The banks will refuse your payment file otherwise."
@@ -1539,11 +1719,14 @@ msgid "Postal"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_2030 model:account.account.template,name:l10n_ch.ch_coa_2030
 msgid "Prepayments received"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_ch.field_res_company__l10n_ch_isr_preprinted_account
 #: model:ir.model.fields,field_description:l10n_ch.field_res_config_settings__l10n_ch_isr_preprinted_account
 msgid "Preprinted account"
@@ -1583,6 +1766,7 @@ msgid ""
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_1270 model:account.account.template,name:l10n_ch.ch_coa_1270
 msgid "Products in process / Unfinished products"
 msgstr ""
@@ -1603,6 +1787,8 @@ msgid "Purchase Loans"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,help:l10n_ch.field_account_setup_bank_manual_config__l10n_ch_qr_iban
 #: model:ir.model.fields,help:l10n_ch.field_res_partner_bank__l10n_ch_qr_iban
 msgid ""
@@ -1648,6 +1834,7 @@ msgstr ""
 #. module: l10n_ch
 #: model:ir.actions.act_window,name:l10n_ch.l10n_ch_qr_invoice_wizard
 msgid "Qr Batch error Wizard"
+<<<<<<< HEAD
 msgstr ""
 
 #. module: l10n_ch
@@ -1684,6 +1871,13 @@ msgstr ""
 #. module: l10n_ch
 #: model:account.account,name:l10n_ch.5_ch_coa_6000 model:account.account.template,name:l10n_ch.ch_coa_6000
 msgid "Rent"
+=======
+msgstr ""
+
+#. module: l10n_ch
+#: model:ir.model.fields,field_description:l10n_ch.field_l10n_ch_qr_invoice_wizard__qr_inv_text
+msgid "Qr Inv Text"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: l10n_ch
@@ -1692,6 +1886,7 @@ msgid "Report Action"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_7500 model:account.account.template,name:l10n_ch.ch_coa_7500
 msgid "Revenues from operational real estate"
 msgstr ""
@@ -1717,6 +1912,8 @@ msgid "Sales of products (Manufacturing)"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_ch.field_res_company__l10n_ch_isr_scan_line_left
 msgid "Scan line horizontal offset (mm)"
 msgstr ""
@@ -1727,6 +1924,7 @@ msgid "Scan line vertical offset (mm)"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_1060 model:account.account.template,name:l10n_ch.ch_coa_1060
 msgid "Securities (with stock exchange price)"
 msgstr ""
@@ -1757,16 +1955,21 @@ msgid "Social insurances owed"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/l10n_ch/models/account_invoice.py:0
 #, python-format
 msgid "Some invoices could not be printed in the QR format"
+<<<<<<< HEAD
 msgstr ""
 
 #. module: l10n_ch
 #: model:account.fiscal.position,name:l10n_ch.5_fiscal_position_template_1
 #: model:account.fiscal.position.template,name:l10n_ch.fiscal_position_template_1
 msgid "Suisse national"
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: l10n_ch
@@ -1793,6 +1996,7 @@ msgid "Switzerland"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.tax.group,name:l10n_ch.tax_group_tva_0
 msgid "TVA 0%"
 msgstr ""
@@ -1818,6 +2022,8 @@ msgid "TVA 7.7%"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report,name:l10n_ch.tax_report
 msgid "Tax Report"
 msgstr ""
@@ -1833,11 +2039,14 @@ msgid "Taxable turnover"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_5900 model:account.account.template,name:l10n_ch.ch_coa_5900
 msgid "Temporary staff expenditures"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/l10n_ch/models/res_bank.py:0
 #, python-format
@@ -1930,11 +2139,14 @@ msgid ""
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_3803 model:account.account.template,name:l10n_ch.ch_coa_3803
 msgid "Third-party commissions"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,help:l10n_ch.field_account_setup_bank_manual_config__l10n_ch_postal
 #: model:ir.model.fields,help:l10n_ch.field_res_partner_bank__l10n_ch_postal
 msgid ""
@@ -1949,6 +2161,7 @@ msgid ""
 "                    - check the account is a valid QR-IBAN<br/>\n"
 "                    - or check your company and the partners are located in Switzerland.<br/>\n"
 "                    Press Check Invalid Invoices to see a list of the invoices that were printed without an ISR or a QR."
+<<<<<<< HEAD
 msgstr ""
 
 #. module: l10n_ch
@@ -1974,6 +2187,8 @@ msgstr ""
 #. module: l10n_ch
 #: model:account.account,name:l10n_ch.5_ch_coa_2980 model:account.account.template,name:l10n_ch.ch_coa_2980
 msgid "Treasury stock, shares, participation rights (negative item) "
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: l10n_ch
@@ -1984,6 +2199,7 @@ msgid "Used to show a warning banner when the vendor bill needs a correct ISR pa
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_2201 model:account.account.template,name:l10n_ch.ch_coa_2201
 msgid "VAT payable"
 msgstr ""
@@ -2009,11 +2225,14 @@ msgid "Vehicules leasing and renting"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_ch.field_res_config_settings__l10n_ch_isr_scan_line_top
 msgid "Vertical offset"
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_2960 model:account.account.template,name:l10n_ch.ch_coa_2960
 msgid "Voluntary retained earnings"
 msgstr ""
@@ -2034,6 +2253,8 @@ msgid "Water"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/l10n_ch/models/res_bank.py:0
 #, python-format
@@ -2041,6 +2262,7 @@ msgid "When using a QR-IBAN as the destination account of a QR-code, the payment
 msgstr ""
 
 #. module: l10n_ch
+<<<<<<< HEAD
 #: model:account.account,name:l10n_ch.5_ch_coa_2206 model:account.account.template,name:l10n_ch.ch_coa_2206
 msgid "Withholding Tax (WT) owed"
 msgstr ""
@@ -2066,6 +2288,8 @@ msgid "Work in progess"
 msgstr ""
 
 #. module: l10n_ch
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,help:l10n_ch.field_account_journal__invoice_reference_model
 msgid "You can choose different models for each type of reference. The default one is the Odoo reference."
 msgstr ""

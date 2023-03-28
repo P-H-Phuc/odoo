@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
-import tour from 'web_tour.tour';
+import { registry } from "@web/core/registry";
+import { stepUtils } from "@web_tour/tour_service/tour_utils";
 
 let EXPECTED = [
     "Matrix", "PAV11", "PAV12 + $ 50.00",
@@ -17,10 +18,10 @@ for (let no of ['PAV41', 'PAV42']) {
     }
 }
 
-tour.register('sale_matrix_tour', {
+registry.category("web_tour.tours").add('sale_matrix_tour', {
     url: '/web',
     test: true,
-}, [tour.stepUtils.showAppsMenuItem(), {
+    steps: [stepUtils.showAppsMenuItem(), {
     trigger: '.o_app[data-menu-xmlid="sale.sale_menu_root"]',
 }, {
     trigger: '.o_list_button_add',
@@ -39,13 +40,13 @@ tour.register('sale_matrix_tour', {
 }, {
     trigger: 'ul.ui-autocomplete a:contains("Matrix")',
 }, {
-    trigger: '.o_product_variant_matrix',
+    trigger: '.o_matrix_input_table',
     run: function () {
         // fill the whole matrix with 1's
         $('.o_matrix_input').val(1);
     }
 }, {
-    trigger: 'span:contains("Confirm")',
+    trigger: 'button:contains("Confirm")',
 }, {
     trigger: '.o_sale_order',
     // wait for qty to be 1 => check the total to be sure all qties are set to 1
@@ -56,7 +57,7 @@ tour.register('sale_matrix_tour', {
 }, {
     trigger: '[name=product_template_id] button.fa-pencil',  // edit the matrix
 }, {
-    trigger: '.o_product_variant_matrix',
+    trigger: '.o_matrix_input_table',
     run: function () {
         // whitespace normalization: removes newlines around text from markup
         // content, then collapse & convert internal whitespace to regular
@@ -74,7 +75,7 @@ tour.register('sale_matrix_tour', {
         $('.o_matrix_input').val(3);
     }
 }, {
-    trigger: 'span:contains("Confirm")',  // apply the matrix
+    trigger: 'button:contains("Confirm")',  // apply the matrix
 }, {
     trigger: '.o_sale_order',
     // wait for qty to be 3 => check the total to be sure all qties are set to 3
@@ -85,13 +86,13 @@ tour.register('sale_matrix_tour', {
 }, {
     trigger: '[name=product_template_id] button.fa-pencil',  // edit the matrix
 }, {
-    trigger: '.o_product_variant_matrix',
+    trigger: '.o_matrix_input_table',
     run: function () {
         // reset all qties to 1
         $('.o_matrix_input').val(1);
     }
 }, {
-    trigger: 'span:contains("Confirm")',  // apply the matrix
+    trigger: 'button:contains("Confirm")',  // apply the matrix
 }, {
     trigger: '.o_sale_order',
     // wait for qty to be 1 => check the total to be sure all qties are set to 1
@@ -106,13 +107,13 @@ tour.register('sale_matrix_tour', {
 }, {
     trigger: '[name=product_template_id] button.fa-pencil',  // edit the matrix
 }, {
-    trigger: '.o_product_variant_matrix',
+    trigger: '.o_matrix_input_table',
     run: function () {
         // update some of the matrix values.
         $('.o_matrix_input').slice(8, 16).val(4);
     } // set the qty to 4 for half of the matrix products.
 }, {
-    trigger: 'span:contains("Confirm")',  // apply the matrix
+    trigger: 'button:contains("Confirm")',  // apply the matrix
 }, {
     trigger: '.o_form_button_save',
     extra_trigger: '.o_field_cell.o_data_cell.o_list_number:contains("4.00")',
@@ -134,6 +135,12 @@ tour.register('sale_matrix_tour', {
         $("input[value='4']").slice(0, 4).val(8.2);
     }
 }, {
+<<<<<<< HEAD
     trigger: 'span:contains("Confirm")',  // apply the matrix
 }, ...tour.stepUtils.saveForm({ extra_trigger: '.o_field_cell.o_data_cell.o_list_number:contains("8.20")' }),
 ]);
+=======
+    trigger: 'button:contains("Confirm")',  // apply the matrix
+}, ...stepUtils.saveForm('.o_field_cell.o_data_cell.o_list_number:contains("8.20")'),
+]});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

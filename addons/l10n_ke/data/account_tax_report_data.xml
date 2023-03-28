@@ -10,10 +10,18 @@
             <record id="tax_report_base_column" model="account.report.column">
                 <field name="name">Base</field>
                 <field name="expression_label">base</field>
+<<<<<<< HEAD
+=======
+                <field name="figure_type">monetary_without_symbol</field>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             </record>
             <record id="tax_report_tax_column" model="account.report.column">
                 <field name="name">VAT</field>
                 <field name="expression_label">tax</field>
+<<<<<<< HEAD
+=======
+                <field name="figure_type">monetary_without_symbol</field>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             </record>
         </field>
         <field name="line_ids">

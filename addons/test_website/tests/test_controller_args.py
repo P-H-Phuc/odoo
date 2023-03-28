@@ -1,6 +1,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 import odoo.tests
 from odoo.tools import mute_logger
+from unittest.mock import patch
 
 
 @odoo.tests.common.tagged('post_install', '-at_install')
@@ -32,9 +33,16 @@ class TestWebsiteControllerArgs(odoo.tests.HttpCase):
         self.assertEqual(req.status_code, 200)
         self.assertEqual(req.json(), {'a': 'valueA', 'kw': {'b': 'valueB'}})
 
+<<<<<<< HEAD
         req = self.url_open('/test_website/country/whatever-999999')
         self.assertEqual(req.status_code, 404,
                          "Model converter record does not exist, return a 404.")
+=======
+        with patch.object(self.registry['ir.http'], '_get_error_html', lambda e, code, v: (code, '')):
+            req = self.url_open('/test_website/country/whatever-999999')
+            self.assertEqual(req.status_code, 404,
+                             "Model converter record does not exist, return a 404.")
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 
 @odoo.tests.common.tagged('post_install', '-at_install')
@@ -44,3 +52,11 @@ class TestWebsiteControllers(odoo.tests.TransactionCase):
         website = self.env['website'].browse(1)
         locs = website.with_user(website.user_id)._enumerate_pages(query_string='test_website_sitemap')
         self.assertEqual(len(list(locs)), 1, "The same URL should only be shown once")
+<<<<<<< HEAD
+=======
+
+    def test_02_search_controller(self):
+        website = self.env['website'].browse(1)
+        res = website._enumerate_pages(query_string="/test_website/country/elgium")
+        self.assertIn('/test_website/country/belgium', next(res).get('loc'))
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

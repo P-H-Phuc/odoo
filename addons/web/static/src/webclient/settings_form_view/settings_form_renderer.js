@@ -4,8 +4,9 @@ import { registry } from "@web/core/registry";
 import { FormRenderer } from "@web/views/form/form_renderer";
 import { FormLabelHighlightText } from "./highlight_text/form_label_highlight_text";
 import { HighlightText } from "./highlight_text/highlight_text";
-import { Setting } from "./settings/setting";
-import { SettingsContainer } from "./settings/settings_container";
+import { SearchableSetting } from "./settings/searchable_setting";
+import { SettingHeader } from "./settings/setting_header";
+import { SettingsBlock } from "./settings/settings_block";
 import { SettingsApp } from "./settings/settings_app";
 import { SettingsPage } from "./settings/settings_page";
 
@@ -52,10 +53,16 @@ export class SettingsFormRenderer extends FormRenderer {
 }
 SettingsFormRenderer.components = {
     ...FormRenderer.components,
-    Setting,
-    SettingsContainer,
+    SearchableSetting,
+    SettingHeader,
+    SettingsBlock,
     SettingsPage,
     SettingsApp,
     HighlightText,
     FormLabel: FormLabelHighlightText,
+};
+SettingsFormRenderer.props = {
+    ...FormRenderer.props,
+    initialApp: String,
+    slots: Object,
 };

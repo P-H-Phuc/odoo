@@ -18,6 +18,8 @@ class Stargate(models.Model):
     has_galaxy_crystal = fields.Boolean(store=True, compute='_compute_has_galaxy_crystal', readonly=False)
     glyph_attach = fields.Image(attachment=True)
     glyph_inline = fields.Image(attachment=False)
+    galaxy_picture = fields.Image(related='galaxy_id.picture', attachment=True, store=False)
+
 
     _sql_constraints = [
         ('address_length', 'CHECK(LENGTH(address) = 6)', "Local addresses have 6 glyphs"),
@@ -57,6 +59,10 @@ class Galaxy(models.Model):
     _description = 'Galaxy'
 
     name = fields.Char(required=True, help='The galaxy common name.')
+<<<<<<< HEAD
+=======
+    picture = fields.Image(attachment=True, groups="base.group_user")
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     @api.model
     def render(self, galaxy_id):

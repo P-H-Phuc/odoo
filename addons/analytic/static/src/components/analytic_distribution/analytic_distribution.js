@@ -47,6 +47,8 @@ export class AnalyticDistribution extends Component {
         this.focusSelector = false;
         this.activeGroup = false;
 
+        this.currentValue = this.props.record.data[this.props.name];
+
         onWillStart(this.willStart);
         onWillUpdateProps(this.willUpdate);
         onPatched(this.patched);
@@ -87,7 +89,13 @@ export class AnalyticDistribution extends Component {
         // and thus different applicabilities apply
         // or a model applies that contains unavailable plans
         // This should only execute when these fields have changed, therefore we use the `_field` props.
+<<<<<<< HEAD
         const valueChanged = JSON.stringify(this.props.value) !== JSON.stringify(nextProps.value);
+=======
+        const valueChanged =
+            JSON.stringify(this.currentValue) !==
+            JSON.stringify(nextProps.record.data[nextProps.name]);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         const currentAccount = this.props.account_field && this.props.record.data[this.props.account_field] || false;
         const currentProduct = this.props.product_field && this.props.record.data[this.props.product_field] || false;
         const accountChanged = !shallowEqual(this.lastAccount, currentAccount);
@@ -100,6 +108,7 @@ export class AnalyticDistribution extends Component {
             this.lastProduct = productChanged && currentProduct || this.lastProduct;
             await this.formatData(nextProps);
         }
+        this.currentValue = nextProps.record.data[nextProps.name];
     }
 
     patched() {
@@ -107,7 +116,11 @@ export class AnalyticDistribution extends Component {
     }
 
     async formatData(nextProps) {
+<<<<<<< HEAD
         const data = nextProps.value;
+=======
+        const data = nextProps.record.data[nextProps.name];
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         const analytic_account_ids = Object.keys(data).map((id) => parseInt(id));
         const records = analytic_account_ids.length ? await this.fetchAnalyticAccounts([["id", "in", analytic_account_ids]]) : [];
         if (records.length < data.length) {
@@ -150,7 +163,7 @@ export class AnalyticDistribution extends Component {
         if (this.props.force_applicability) {
             args['applicability'] = this.props.force_applicability;
         }
-        const existing_account_ids = Object.keys(nextProps.value).map((i) => parseInt(i));
+        const existing_account_ids = Object.keys(nextProps.record.data[nextProps.name]).map((i) => parseInt(i));
         if (existing_account_ids.length) {
             args['existing_account_ids'] = existing_account_ids;
         }
@@ -415,7 +428,11 @@ export class AnalyticDistribution extends Component {
     async save() {
         const currentDistribution = this.listForJson;
         const dataToSave = currentDistribution;
+<<<<<<< HEAD
         await this.props.update(dataToSave);
+=======
+        await this.props.record.update({ [this.props.name]: dataToSave });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 
     onSaveNew() {
@@ -563,7 +580,7 @@ export class AnalyticDistribution extends Component {
     parse(value) {
         try {
             return typeof value === 'string' || value instanceof String ? oParseFloat(value.replace('%', '')) : value;
-        } catch (_error) {
+        } catch {
             return 0;
         }
     }
@@ -573,15 +590,21 @@ export class AnalyticDistribution extends Component {
     }
 }
 AnalyticDistribution.template = "analytic.AnalyticDistribution";
+<<<<<<< HEAD
 AnalyticDistribution.supportedTypes = ["char", "text"];
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 AnalyticDistribution.components = {
     AnalyticAutoComplete,
     TagsList,
 }
 
+<<<<<<< HEAD
 AnalyticDistribution.fieldDependencies = {
     analytic_precision: { type: 'integer' },
 }
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 AnalyticDistribution.props = {
     ...standardFieldProps,
     business_domain: { type: String, optional: true },
@@ -591,15 +614,23 @@ AnalyticDistribution.props = {
     force_applicability: { type: String, optional: true },
     allow_save: { type: Boolean },
 }
-AnalyticDistribution.extractProps = ({ field, attrs }) => {
-    return {
-        business_domain: attrs.options.business_domain,
-        account_field: attrs.options.account_field,
-        product_field: attrs.options.product_field,
+
+export const analyticDistribution = {
+    component: AnalyticDistribution,
+    supportedTypes: ["char", "text"],
+    fieldDependencies: [{ name:"analytic_precision", type: "integer" }],
+    extractProps: ({ attrs, options }) => ({
+        business_domain: options.business_domain,
+        account_field: options.account_field,
+        product_field: options.product_field,
         business_domain_compute: attrs.business_domain_compute,
-        force_applicability: attrs.options.force_applicability,
-        allow_save: !Boolean(attrs.options.disable_save),
-    };
+        force_applicability: options.force_applicability,
+        allow_save: !options.disable_save,
+    }),
 };
 
+<<<<<<< HEAD
 registry.category("fields").add("analytic_distribution", AnalyticDistribution);
+=======
+registry.category("fields").add("analytic_distribution", analyticDistribution);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

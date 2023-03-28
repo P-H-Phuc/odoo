@@ -42,8 +42,11 @@ There are 2 main Payment Methods additions:
 """,
     'author': 'ADHOC SA',
     'license': 'LGPL-3',
+<<<<<<< HEAD
     'images': [
     ],
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     'depends': [
         'account_check_printing',
         'base_vat',
@@ -57,6 +60,9 @@ There are 2 main Payment Methods additions:
         'wizards/account_payment_register_views.xml',
     ],
     'installable': True,
+<<<<<<< HEAD
     'auto_install': False,
     'application': False,
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 }

@@ -14,7 +14,10 @@
 
         'data/payment_provider_data.xml',
     ],
+<<<<<<< HEAD
     'application': False,
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     'post_init_hook': 'post_init_hook',
     'uninstall_hook': 'uninstall_hook',
     'license': 'LGPL-3',

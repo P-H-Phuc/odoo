@@ -15,7 +15,7 @@ class TestWebsiteEventBoothSale(HttpCase, TestWebsiteEventSaleCommon):
 
     def setUp(self):
         super().setUp()
-        self.env['ir.config_parameter'].sudo().set_param('account.show_line_subtotals_tax_selection', 'tax_included')
+        self.env["res.company"].sudo().search([]).show_line_subtotals_tax_selection = 'tax_included'
         self.tax = self.env['account.tax'].sudo().create({
             'name': 'Tax 10',
             'amount': 10,
@@ -62,6 +62,7 @@ class TestWebsiteEventBoothSale(HttpCase, TestWebsiteEventSaleCommon):
         })
 
     def test_tour(self):
+        self.env['product.pricelist'].sudo().search([]).action_archive()
         self.start_tour('/event', 'website_event_booth_tour', login='portal')
 
     def test_booth_pricelists_different_currencies(self):

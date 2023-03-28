@@ -185,7 +185,11 @@ export class Many2XAutocomplete extends Component {
                 return update(values);
             },
             onCreateEdit: ({ context }) => this.openMany2X({ context }),
+<<<<<<< HEAD
             onUnselect: isToMany ? false : () => update(),
+=======
+            onUnselect: isToMany ? undefined : () => update(),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         });
     }
 
@@ -226,6 +230,12 @@ export class Many2XAutocomplete extends Component {
         this.props.update([record], params);
     }
 
+    mapRecordToOption(result) {
+        return {
+            value: result[0],
+            label: result[1].split("\n")[0],
+        };
+    }
     async loadOptionsSource(request) {
         if (this.lastProm) {
             this.lastProm.abort(false);
@@ -239,10 +249,14 @@ export class Many2XAutocomplete extends Component {
         });
         const records = await this.lastProm;
 
+<<<<<<< HEAD
         const options = records.map((result) => ({
             value: result[0],
             label: result[1].split("\n")[0],
         }));
+=======
+        const options = records.map((result) => this.mapRecordToOption(result));
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         if (this.props.quickCreate && request.length) {
             options.push({
@@ -252,21 +266,29 @@ export class Many2XAutocomplete extends Component {
                     try {
                         await this.props.quickCreate(request, params);
                     } catch (e) {
+<<<<<<< HEAD
                         if (
                             e &&
                             e.name === "RPC_ERROR" &&
                             e.exceptionName === "odoo.exceptions.ValidationError"
                         ) {
+=======
+                        if (e && e.name === "RPC_ERROR") {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                             const context = this.getCreationContext(request);
                             return this.openMany2X({ context });
                         }
                         // Compatibility with legacy code
+<<<<<<< HEAD
                         if (
                             e &&
                             e.message &&
                             e.message.name === "RPC_ERROR" &&
                             e.message.exceptionName === "odoo.exceptions.ValidationError"
                         ) {
+=======
+                        if (e && e.message && e.message.name === "RPC_ERROR") {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                             // The event.preventDefault() is necessary because we still use the legacy
                             e.event.preventDefault();
                             const context = this.getCreationContext(request);
@@ -362,6 +384,26 @@ export class Many2XAutocomplete extends Component {
 }
 Many2XAutocomplete.template = "web.Many2XAutocomplete";
 Many2XAutocomplete.components = { AutoComplete };
+Many2XAutocomplete.props = {
+    value: { type: String, optional: true },
+    activeActions: Object,
+    context: { type: Object, optional: true },
+    nameCreateField: { type: String, optional: true },
+    setInputFloats: { type: Function, optional: true },
+    update: Function,
+    resModel: String,
+    getDomain: Function,
+    searchLimit: { type: Number, optional: true },
+    quickCreate: { type: [Function, { value: null }], optional: true },
+    noSearchMore: { type: Boolean, optional: true },
+    searchMoreLimit: { type: Number, optional: true },
+    fieldString: String,
+    id: { type: String, optional: true },
+    placeholder: { type: String, optional: true },
+    autoSelect: { type: Boolean, optional: true },
+    isToMany: { type: Boolean, optional: true },
+    autocomplete_container: { type: Function, optional: true },
+};
 Many2XAutocomplete.defaultProps = {
     searchLimit: 7,
     searchMoreLimit: 320,
@@ -369,7 +411,23 @@ Many2XAutocomplete.defaultProps = {
     value: "",
     setInputFloats: () => {},
     quickCreate: null,
+    context: {},
 };
+
+export class AvatarMany2XAutocomplete extends Many2XAutocomplete {
+    mapRecordToOption(result) {
+        return {
+            ...super.mapRecordToOption(result),
+            resModel: this.props.resModel,
+        };
+    }
+    get optionsSource() {
+        return {
+            ...super.optionsSource,
+            optionTemplate: "web.AvatarMany2XAutocomplete",
+        };
+    }
+}
 
 export function useOpenMany2XRecord({
     resModel,
@@ -448,7 +506,7 @@ export class X2ManyFieldDialog extends Component {
         this.title = this.props.title;
         useSubEnv({ config: this.props.config });
 
-        useBus(this.record.model, "update", () => this.render(true));
+        useBus(this.record.model.bus, "update", () => this.render(true));
 
         this.modalRef = useChildRef();
 

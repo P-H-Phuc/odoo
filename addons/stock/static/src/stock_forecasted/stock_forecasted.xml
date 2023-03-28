@@ -3,11 +3,19 @@
     <div t-name="stock.Forecasted" class="o_action" owl="1">
         <ControlPanel display="{ 'top-right' : false }">
             <t t-set-slot="control-panel-bottom-left-buttons">
+<<<<<<< HEAD
                 <ForecastedButtons action="props.action" resModel="resModel" reloadReport.bind="reloadReport"/>
             </t>
             <t t-set-slot="control-panel-bottom-right">
                 <div class="btn-group o_search_options position-static" role="search">
                     <ForecastedWarehouseFilter action="props.action" warehouses="warehouses" setWarehouseInContext.bind="updateWarehouse"/>
+=======
+                <ForecastedButtons action="props.action" reloadReport.bind="reloadReport" resModel="resModel"/>
+            </t>
+            <t t-set-slot="control-panel-bottom-right">
+                <div class="btn-group o_search_options position-static" role="search">
+                    <ForecastedWarehouseFilter action="props.action" setWarehouseInContext.bind="updateWarehouse"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 </div>
             </t>
         </ControlPanel>

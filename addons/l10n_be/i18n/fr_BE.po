@@ -17,6 +17,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_be.1_attn_VAT-IN-V83-00
 #: model:account.tax,name:l10n_be.2_attn_VAT-IN-V83-00
 #: model:account.tax.template,name:l10n_be.attn_VAT-IN-V83-00
@@ -146,6 +147,9 @@ msgstr ""
 
 #. module: l10n_be
 #: model:account.report.line,tag_name:l10n_be.tax_report_line_00
+=======
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_00
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "00"
 msgstr ""
 
@@ -185,6 +189,7 @@ msgid "03 - Opérations avec TVA à 21%"
 msgstr ""
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_be.1_attn_VAT-OUT-12-L
 #: model:account.tax,name:l10n_be.2_attn_VAT-OUT-12-L
 #: model:account.tax.template,name:l10n_be.attn_VAT-OUT-12-L
@@ -409,6 +414,9 @@ msgstr ""
 
 #. module: l10n_be
 #: model:account.report.line,tag_name:l10n_be.tax_report_line_44
+=======
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_44
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "44"
 msgstr ""
 
@@ -508,6 +516,7 @@ msgid "49 - Notes de crédit aux opérations du point II"
 msgstr ""
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_be.1_attn_VAT-IN-V82-CAR-EXC
 #: model:account.tax,name:l10n_be.2_attn_VAT-IN-V82-CAR-EXC
 #: model:account.tax.template,name:l10n_be.attn_VAT-IN-V82-CAR-EXC
@@ -516,6 +525,9 @@ msgstr ""
 
 #. module: l10n_be
 #: model:account.report.line,tag_name:l10n_be.tax_report_line_54
+=======
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_54
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "54"
 msgstr ""
 
@@ -565,6 +577,7 @@ msgid "59 - TVA déductible"
 msgstr ""
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_be.1_attn_VAT-IN-V83-06
 #: model:account.tax,name:l10n_be.2_attn_VAT-IN-V83-06
 #: model:account.tax.template,name:l10n_be.attn_VAT-IN-V83-06
@@ -667,6 +680,9 @@ msgstr ""
 
 #. module: l10n_be
 #: model:account.report.line,tag_name:l10n_be.tax_report_line_61
+=======
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_61
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "61"
 msgstr ""
 
@@ -801,1163 +817,9 @@ msgid "Account Chart Template"
 msgstr ""
 
 #. module: l10n_be
-#: model:account.account,name:l10n_be.1_a052
-#: model:account.account,name:l10n_be.2_a052
-#: model:account.account.template,name:l10n_be.a052
-msgid "Accounts receivable for assignment commitments"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a010
-#: model:account.account,name:l10n_be.2_a010
-#: model:account.account.template,name:l10n_be.a010
-msgid "Accounts receivable for commitments on bills in circulation"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a066
-#: model:account.account,name:l10n_be.2_a066
-#: model:account.account.template,name:l10n_be.a066
-msgid "Accounts receivable for currencies sold forward"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a062
-#: model:account.account,name:l10n_be.2_a062
-#: model:account.account.template,name:l10n_be.a062
-msgid "Accounts receivable for goods sold forward"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a012
-#: model:account.account,name:l10n_be.2_a012
-#: model:account.account.template,name:l10n_be.a012
-msgid "Accounts receivable for other personal guarantees"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a492
-#: model:account.account,name:l10n_be.2_a492
-#: model:account.account.template,name:l10n_be.a492
-msgid "Accrued charges"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a491
-#: model:account.account,name:l10n_be.2_a491
-#: model:account.account.template,name:l10n_be.a491
-msgid "Accrued income"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_605
-#: model:account.group,name:l10n_be.2_be_group_605
-#: model:account.group.template,name:l10n_be.be_group_605
-msgid "Achats d'immeubles destinés à la vente"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_601
-#: model:account.group,name:l10n_be.2_be_group_601
-#: model:account.group.template,name:l10n_be.be_group_601
-msgid "Achats de fournitures"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_604
-#: model:account.group,name:l10n_be.2_be_group_604
-#: model:account.group.template,name:l10n_be.be_group_604
-msgid "Achats de marchandises"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_600
-#: model:account.group,name:l10n_be.2_be_group_600
-#: model:account.group.template,name:l10n_be.be_group_600
-msgid "Achats de matières premières"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_602
-#: model:account.group,name:l10n_be.2_be_group_602
-#: model:account.group.template,name:l10n_be.be_group_602
-msgid "Achats de services, travaux et études"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_19
-#: model:account.group,name:l10n_be.2_be_group_19
-#: model:account.group.template,name:l10n_be.be_group_19
-msgid "Acompte aux associés sur le partage de l'actif net (-)"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_176
-#: model:account.group,name:l10n_be.1_be_group_46
-#: model:account.group,name:l10n_be.2_be_group_176
-#: model:account.group,name:l10n_be.2_be_group_46
-#: model:account.group.template,name:l10n_be.be_group_176
-#: model:account.group.template,name:l10n_be.be_group_46
-msgid "Acomptes reçus sur commandes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_213
-#: model:account.group,name:l10n_be.1_be_group_360
-#: model:account.group,name:l10n_be.1_be_group_406
-#: model:account.group,name:l10n_be.2_be_group_213
-#: model:account.group,name:l10n_be.2_be_group_360
-#: model:account.group,name:l10n_be.2_be_group_406
-#: model:account.group.template,name:l10n_be.be_group_213
-#: model:account.group.template,name:l10n_be.be_group_360
-#: model:account.group.template,name:l10n_be.be_group_406
-msgid "Acomptes versés"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_36
-#: model:account.group,name:l10n_be.2_be_group_36
-#: model:account.group.template,name:l10n_be.be_group_36
-msgid "Acomptes versés sur achats pour stocks"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a050
-#: model:account.account,name:l10n_be.2_a050
-#: model:account.account.template,name:l10n_be.a050
-msgid "Acquisition commitments"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_5100
-#: model:account.group,name:l10n_be.1_be_group_5110
-#: model:account.group,name:l10n_be.1_be_group_5190
-#: model:account.group,name:l10n_be.2_be_group_5100
-#: model:account.group,name:l10n_be.2_be_group_5110
-#: model:account.group,name:l10n_be.2_be_group_5190
-#: model:account.group.template,name:l10n_be.be_group_5100
-#: model:account.group.template,name:l10n_be.be_group_5110
-#: model:account.group.template,name:l10n_be.be_group_5190
-msgid "Actions et parts"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_50
-#: model:account.group,name:l10n_be.2_be_group_50
-#: model:account.group.template,name:l10n_be.be_group_50
-msgid "Actions propres"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_51
-#: model:account.group,name:l10n_be.2_be_group_51
-#: model:account.group.template,name:l10n_be.be_group_51
-msgid "Actions, parts et placements de trésorerie autres que placements à revenu fixe"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a021
-#: model:account.account,name:l10n_be.2_a021
-#: model:account.account.template,name:l10n_be.a021
-msgid "Actual guarantees established for own account"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7711
-#: model:account.account,name:l10n_be.2_a7711
-#: model:account.account.template,name:l10n_be.a7711
-msgid "Adjustment of Belgian income taxes - Estimated taxes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7712
-#: model:account.account,name:l10n_be.2_a7712
-#: model:account.account.template,name:l10n_be.a7712
-msgid "Adjustment of Belgian income taxes - Tax provisions written back"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7710
-#: model:account.account,name:l10n_be.2_a7710
-#: model:account.account.template,name:l10n_be.a7710
-msgid "Adjustment of Belgian income taxes - Taxes due or paid"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a773
-#: model:account.account,name:l10n_be.2_a773
-#: model:account.account.template,name:l10n_be.a773
-msgid "Adjustment of foreign income taxes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a77
-#: model:account.account,name:l10n_be.2_a77
-#: model:account.account.template,name:l10n_be.a77
-msgid "Adjustment of income taxes and write-back of tax provisions"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_695
-#: model:account.group,name:l10n_be.2_be_group_695
-#: model:account.group.template,name:l10n_be.be_group_695
-msgid "Administrateurs ou gérants"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a360
-#: model:account.account,name:l10n_be.2_a360
-#: model:account.account.template,name:l10n_be.a360
-msgid "Advance payments on purchases for stocks - Acquisition value"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a369
-#: model:account.account,name:l10n_be.2_a369
-#: model:account.account.template,name:l10n_be.a369
-msgid "Advance payments on purchases for stocks - amounts written down"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a426
-#: model:account.account,name:l10n_be.2_a426
-#: model:account.account.template,name:l10n_be.a426
-msgid "Advance payments received on contract in progress payable after more than one year falling due within one year"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a19
-#: model:account.account,name:l10n_be.2_a19
-#: model:account.account.template,name:l10n_be.a19
-msgid "Advance to associates on the sharing out of the assets"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a461
-#: model:account.account,name:l10n_be.2_a461
-#: model:account.account.template,name:l10n_be.a461
-msgid "Advances received"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a176
-#: model:account.account,name:l10n_be.2_a176
-#: model:account.account.template,name:l10n_be.a176
-msgid "Advances received on contracts in progress (more than one year)"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a460
-#: model:account.account,name:l10n_be.2_a460
-#: model:account.account.template,name:l10n_be.a460
-msgid "Advances to be received within one year"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_691
-#: model:account.group,name:l10n_be.2_be_group_691
-#: model:account.group.template,name:l10n_be.be_group_691
-msgid "Affectations au capital et à la prime d'émission"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_69
-#: model:account.group,name:l10n_be.1_be_group_79
-#: model:account.group,name:l10n_be.2_be_group_69
-#: model:account.group,name:l10n_be.2_be_group_79
-#: model:account.group.template,name:l10n_be.be_group_69
-#: model:account.group.template,name:l10n_be.be_group_79
-msgid "Affectations et prélèvements"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_660
-#: model:account.group,name:l10n_be.2_be_group_660
-#: model:account.group.template,name:l10n_be.be_group_660
-msgid "Amortissements et réductions de valeur non récurrents (dotations)"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_63
-#: model:account.group,name:l10n_be.2_be_group_63
-#: model:account.group.template,name:l10n_be.be_group_63
-msgid "Amortissements, réductions de valeur et provisions pour risques et charges"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a653
-#: model:account.account,name:l10n_be.2_a653
-#: model:account.account.template,name:l10n_be.a653
-msgid "Amount of the discount borne by the enterprise, as a result of negotiating amounts receivable"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a428
-#: model:account.account,name:l10n_be.2_a428
-#: model:account.account.template,name:l10n_be.a428
-msgid "Amounts payable after more than one year falling due within one year - Guarantees received in cash"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a4232
-#: model:account.account,name:l10n_be.2_a4232
-#: model:account.account.template,name:l10n_be.a4232
-msgid "Amounts payable after more than one year falling due within one year to credit institutions - Bank acceptances"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a4230
-#: model:account.account,name:l10n_be.2_a4230
-#: model:account.account.template,name:l10n_be.a4230
-msgid "Amounts payable after more than one year falling due within one year to credit institutions - Current account payable"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a4231
-#: model:account.account,name:l10n_be.2_a4231
-#: model:account.account.template,name:l10n_be.a4231
-msgid "Amounts payable after more than one year falling due within one year to credit institutions - Promissory notes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a4250
-#: model:account.account,name:l10n_be.2_a4250
-#: model:account.account.template,name:l10n_be.a4250
-msgid "Amounts payable after more than one year falling due within one year to suppliers"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a1732
-#: model:account.account,name:l10n_be.2_a1732
-#: model:account.account.template,name:l10n_be.a1732
-msgid "Amounts payable to credit institutions with a remaining term of more than one year - Bank acceptances"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a1730
-#: model:account.account,name:l10n_be.2_a1730
-#: model:account.account.template,name:l10n_be.a1730
-msgid "Amounts payable to credit institutions with a remaining term of more than one year - Current account payable"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a1731
-#: model:account.account,name:l10n_be.2_a1731
-#: model:account.account.template,name:l10n_be.a1731
-msgid "Amounts payable to credit institutions with a remaining term of more than one year - Promissory notes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a178
-#: model:account.account,name:l10n_be.2_a178
-#: model:account.account.template,name:l10n_be.a178
-msgid "Amounts payable with a remaining term of more than one year - Guarantees received in cash"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a432
-#: model:account.account,name:l10n_be.2_a432
-#: model:account.account.template,name:l10n_be.a432
-msgid "Amounts payable within one year to credit institutions - Bank acceptances"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a433
-#: model:account.account,name:l10n_be.2_a433
-#: model:account.account.template,name:l10n_be.a433
-msgid "Amounts payable within one year to credit institutions - Current account payable"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a430
-#: model:account.account,name:l10n_be.2_a430
-#: model:account.account.template,name:l10n_be.a430
-msgid "Amounts payable within one year to credit institutions - Fixed term loans"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a431
-#: model:account.account,name:l10n_be.2_a431
-#: model:account.account.template,name:l10n_be.a431
-msgid "Amounts payable within one year to credit institutions - Promissory notes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a2819
-#: model:account.account,name:l10n_be.2_a2819
-#: model:account.account.template,name:l10n_be.a2819
-msgid "Amounts receivable from affiliated enterprises - Amounts written down"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a2811
-#: model:account.account,name:l10n_be.2_a2811
-#: model:account.account.template,name:l10n_be.a2811
-msgid "Amounts receivable from affiliated enterprises - Bills receivable"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a2810
-#: model:account.account,name:l10n_be.2_a2810
-#: model:account.account.template,name:l10n_be.a2810
-msgid "Amounts receivable from affiliated enterprises - Current account"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a2812
-#: model:account.account,name:l10n_be.2_a2812
-#: model:account.account.template,name:l10n_be.a2812
-msgid "Amounts receivable from affiliated enterprises - Fixed income securities"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a2839
-#: model:account.account,name:l10n_be.2_a2839
-#: model:account.account.template,name:l10n_be.a2839
-msgid "Amounts receivable from other enterprises linked by participating interests - Amounts written down"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a2831
-#: model:account.account,name:l10n_be.2_a2831
-#: model:account.account.template,name:l10n_be.a2831
-msgid "Amounts receivable from other enterprises linked by participating interests - Bills receivable"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a2830
-#: model:account.account,name:l10n_be.2_a2830
-#: model:account.account.template,name:l10n_be.a2830
-msgid "Amounts receivable from other enterprises linked by participating interests - Current account"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a2837
-#: model:account.account,name:l10n_be.2_a2837
-#: model:account.account.template,name:l10n_be.a2837
-msgid "Amounts receivable from other enterprises linked by participating interests - Doubtful amounts"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a2832
-#: model:account.account,name:l10n_be.2_a2832
-#: model:account.account.template,name:l10n_be.a2832
-msgid "Amounts receivable from other enterprises linked by participating interests - Fixed income securities"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6320
-#: model:account.account,name:l10n_be.2_a6320
-#: model:account.account.template,name:l10n_be.a6320
-msgid "Amounts written off contracts in progress - Appropriations"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6321
-#: model:account.account,name:l10n_be.2_a6321
-#: model:account.account.template,name:l10n_be.a6321
-msgid "Amounts written off contracts in progress - Write-backs"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6510
-#: model:account.account,name:l10n_be.2_a6510
-#: model:account.account.template,name:l10n_be.a6510
-msgid "Amounts written off current assets except stocks, contracts in progress and trade debtors - Appropriations"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6511
-#: model:account.account,name:l10n_be.2_a6511
-#: model:account.account.template,name:l10n_be.a6511
-msgid "Amounts written off current assets except stocks, contracts in progress and trade debtors - Write-backs"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a661
-#: model:account.account,name:l10n_be.2_a661
-#: model:account.account.template,name:l10n_be.a661
-msgid "Amounts written off financial fixed assets"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6308
-#: model:account.account,name:l10n_be.2_a6308
-#: model:account.account.template,name:l10n_be.a6308
-msgid "Amounts written off intangible fixed assets"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6310
-#: model:account.account,name:l10n_be.2_a6310
-#: model:account.account.template,name:l10n_be.a6310
-msgid "Amounts written off stocks - Appropriations"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6311
-#: model:account.account,name:l10n_be.2_a6311
-#: model:account.account.template,name:l10n_be.a6311
-msgid "Amounts written off stocks - Write-backs"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6309
-#: model:account.account,name:l10n_be.2_a6309
-#: model:account.account.template,name:l10n_be.a6309
-msgid "Amounts written off tangible fixed assets"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6330
-#: model:account.account,name:l10n_be.2_a6330
-#: model:account.account.template,name:l10n_be.a6330
-msgid "Amounts written off trade debtors (more than one year) - Appropriations"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6331
-#: model:account.account,name:l10n_be.2_a6331
-#: model:account.account.template,name:l10n_be.a6331
-msgid "Amounts written off trade debtors (more than one year) - Write-backs"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6340
-#: model:account.account,name:l10n_be.2_a6340
-#: model:account.account.template,name:l10n_be.a6340
-msgid "Amounts written off trade debtors (within one year) - Appropriations"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6341
-#: model:account.account,name:l10n_be.2_a6341
-#: model:account.account.template,name:l10n_be.a6341
-msgid "Amounts written off trade debtors (within one year) - Write-backs"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a691
-#: model:account.account,name:l10n_be.2_a691
-#: model:account.account.template,name:l10n_be.a691
-msgid "Appropriations to capital and share premium account"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6920
-#: model:account.account,name:l10n_be.2_a6920
-#: model:account.account.template,name:l10n_be.a6920
-msgid "Appropriations to legal reserve"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6921
-#: model:account.account,name:l10n_be.2_a6921
-#: model:account.account.template,name:l10n_be.a6921
-msgid "Appropriations to other reserves"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_31
-#: model:account.group,name:l10n_be.2_be_group_31
-#: model:account.group.template,name:l10n_be.be_group_31
-msgid "Approvisionnements - Fournitures"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_30
-#: model:account.group,name:l10n_be.2_be_group_30
-#: model:account.group.template,name:l10n_be.be_group_30
-msgid "Approvisionnements - Matières premières"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_60
-#: model:account.group,name:l10n_be.2_be_group_60
-#: model:account.group.template,name:l10n_be.be_group_60
-msgid "Approvisionnements et marchandises"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_284
-#: model:account.group,name:l10n_be.2_be_group_284
-#: model:account.group.template,name:l10n_be.be_group_284
-msgid "Autres actions et parts"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_473
-#: model:account.group,name:l10n_be.2_be_group_473
-#: model:account.group.template,name:l10n_be.be_group_473
-msgid "Autres allocataires"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_697
-#: model:account.group,name:l10n_be.2_be_group_697
-#: model:account.group.template,name:l10n_be.be_group_697
-msgid "Autres applications"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_64
-#: model:account.group,name:l10n_be.2_be_group_64
-#: model:account.group.template,name:l10n_be.be_group_64
-msgid "Autres charges d'exploitation"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_664
-#: model:account.group,name:l10n_be.2_be_group_664
-#: model:account.group.template,name:l10n_be.be_group_664
-msgid "Autres charges d'exploitation non récurrentes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_668
-#: model:account.group,name:l10n_be.2_be_group_668
-#: model:account.group.template,name:l10n_be.be_group_668
-msgid "Autres charges financières non récurrentes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_285
-#: model:account.group,name:l10n_be.1_be_group_291
-#: model:account.group,name:l10n_be.1_be_group_41
-#: model:account.group,name:l10n_be.2_be_group_285
-#: model:account.group,name:l10n_be.2_be_group_291
-#: model:account.group,name:l10n_be.2_be_group_41
-#: model:account.group.template,name:l10n_be.be_group_285
-#: model:account.group.template,name:l10n_be.be_group_291
-#: model:account.group.template,name:l10n_be.be_group_41
-msgid "Autres créances"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_489
-#: model:account.group,name:l10n_be.2_be_group_489
-#: model:account.group.template,name:l10n_be.be_group_489
-msgid "Autres dettes diverses"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_459
-#: model:account.group,name:l10n_be.2_be_group_459
-#: model:account.group.template,name:l10n_be.be_group_459
-msgid "Autres dettes sociales"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_223
-#: model:account.group,name:l10n_be.2_be_group_223
-#: model:account.group.template,name:l10n_be.be_group_223
-msgid "Autres droits réels sur des immeubles"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_174
-#: model:account.group,name:l10n_be.1_be_group_439
-#: model:account.group,name:l10n_be.2_be_group_174
-#: model:account.group,name:l10n_be.2_be_group_439
-#: model:account.group.template,name:l10n_be.be_group_174
-#: model:account.group.template,name:l10n_be.be_group_439
-msgid "Autres emprunts"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_202
-#: model:account.group,name:l10n_be.2_be_group_202
-#: model:account.group.template,name:l10n_be.be_group_202
-msgid "Autres frais d'établissement"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_623
-#: model:account.group,name:l10n_be.2_be_group_623
-#: model:account.group.template,name:l10n_be.be_group_623
-msgid "Autres frais de personnel"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_26
-#: model:account.group,name:l10n_be.2_be_group_26
-#: model:account.group.template,name:l10n_be.be_group_26
-msgid "Autres immobilisations corporelles"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_74
-#: model:account.group,name:l10n_be.2_be_group_74
-#: model:account.group.template,name:l10n_be.be_group_74
-msgid "Autres produits d'exploitation"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_764
-#: model:account.group,name:l10n_be.2_be_group_764
-#: model:account.group.template,name:l10n_be.be_group_764
-msgid "Autres produits d'exploitation non récurrents"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_769
-#: model:account.group,name:l10n_be.2_be_group_769
-#: model:account.group.template,name:l10n_be.be_group_769
-msgid "Autres produits financiers non récurrents"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a133
-#: model:account.account,name:l10n_be.2_a133
-#: model:account.account.template,name:l10n_be.a133
-msgid "Available reserves"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.chart.template,name:l10n_be.l10nbe_chart_template
-msgid "Belgian PCMN"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6703
-#: model:account.account,name:l10n_be.2_a6703
-#: model:account.account.template,name:l10n_be.a6703
-msgid "Belgian and foreign income taxes - Income taxes - Other income taxes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6701
-#: model:account.account,name:l10n_be.2_a6701
-#: model:account.account.template,name:l10n_be.a6701
-msgid "Belgian and foreign income taxes - Income taxes - Withholding taxes on immovables"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6702
-#: model:account.account,name:l10n_be.2_a6702
-#: model:account.account.template,name:l10n_be.a6702
-msgid "Belgian and foreign income taxes - Income taxes - Withholding taxes on investment income"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6711
-#: model:account.account,name:l10n_be.2_a6711
-#: model:account.account.template,name:l10n_be.a6711
-msgid "Belgian income taxes on the result of prior periods - Additional charges for estimated income taxes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6710
-#: model:account.account,name:l10n_be.2_a6710
-#: model:account.account.template,name:l10n_be.a6710
-msgid "Belgian income taxes on the result of prior periods - Additional charges for income taxes due or paid"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6712
-#: model:account.account,name:l10n_be.2_a6712
-#: model:account.account.template,name:l10n_be.a6712
-msgid "Belgian income taxes on the result of prior periods - Additional charges for income taxes provided for"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6700
-#: model:account.account,name:l10n_be.2_a6700
-#: model:account.account.template,name:l10n_be.a6700
-msgid "Belgian income taxes on the result of the current period - Income taxes paid and withholding taxes due or paid"
-msgstr ""
-
-#. module: l10n_be
 #: model:ir.model.fields.selection,name:l10n_be.selection__account_journal__invoice_reference_model__be
 #: model:ir.ui.menu,name:l10n_be.account_reports_be_statements_menu
 msgid "Belgium"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_07
-#: model:account.group,name:l10n_be.2_be_group_07
-#: model:account.group.template,name:l10n_be.be_group_07
-msgid "Biens et valeurs de tiers détenus par l'entreprise"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_072
-#: model:account.group,name:l10n_be.2_be_group_072
-#: model:account.group.template,name:l10n_be.be_group_072
-msgid "Biens et valeurs de tiers reçus en dépôt, en consignation ou à façon"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_04
-#: model:account.group,name:l10n_be.1_be_group_041
-#: model:account.group,name:l10n_be.2_be_group_04
-#: model:account.group,name:l10n_be.2_be_group_041
-#: model:account.group.template,name:l10n_be.be_group_04
-#: model:account.group.template,name:l10n_be.be_group_041
-msgid "Biens et valeurs détenus par des tiers en leur nom mais aux risques et profits de l'entreprise"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_074
-#: model:account.group,name:l10n_be.2_be_group_074
-#: model:account.group.template,name:l10n_be.be_group_074
-msgid "Biens et valeurs détenus pour compte ou aux risques et profits de tiers"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a1751
-#: model:account.account,name:l10n_be.2_a1751
-#: model:account.account.template,name:l10n_be.a1751
-msgid "Bills of exchange payable after more than one year"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a4251
-#: model:account.account,name:l10n_be.2_a4251
-#: model:account.account.template,name:l10n_be.a4251
-msgid "Bills of exchange payable after more than one year falling due within one year"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a441
-#: model:account.account,name:l10n_be.2_a441
-#: model:account.account.template,name:l10n_be.a441
-msgid "Bills of exchange payable within one year"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a2211
-#: model:account.account,name:l10n_be.2_a2211
-#: model:account.account.template,name:l10n_be.a2211
-msgid "Building owned by the association or the foundation in full property"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a221
-#: model:account.account,name:l10n_be.2_a221
-#: model:account.account.template,name:l10n_be.a221
-msgid "Buildings"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a2221
-#: model:account.account,name:l10n_be.2_a2221
-#: model:account.account.template,name:l10n_be.a2221
-msgid "Built-up lands owned by the association or the foundation in full property"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_371
-#: model:account.group,name:l10n_be.2_be_group_371
-#: model:account.group.template,name:l10n_be.be_group_371
-msgid "Bénéfice pris en compte"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_790
-#: model:account.group,name:l10n_be.2_be_group_790
-#: model:account.group.template,name:l10n_be.be_group_790
-msgid "Bénéfice reporté de l'exercice précédent"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_14
-#: model:account.group,name:l10n_be.2_be_group_14
-#: model:account.group.template,name:l10n_be.be_group_14
-msgid "Bénéfice reporté ou Perte reportée (–)"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_693
-#: model:account.group,name:l10n_be.2_be_group_693
-#: model:account.group.template,name:l10n_be.be_group_693
-msgid "Bénéfice à reporter"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_57
-#: model:account.group,name:l10n_be.2_be_group_57
-#: model:account.group.template,name:l10n_be.be_group_57
-msgid "Caisses"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_570
-#: model:account.group,name:l10n_be.2_be_group_570
-#: model:account.group.template,name:l10n_be.be_group_570
-msgid "Caisses-espèces"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_578
-#: model:account.group,name:l10n_be.2_be_group_578
-#: model:account.group.template,name:l10n_be.be_group_578
-msgid "Caisses-timbres"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a410
-#: model:account.account,name:l10n_be.2_a410
-#: model:account.account.template,name:l10n_be.a410
-msgid "Called up capital, unpaid"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_10
-#: model:account.group,name:l10n_be.2_be_group_10
-#: model:account.group.template,name:l10n_be.be_group_10
-msgid "Capital"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_410
-#: model:account.group,name:l10n_be.2_be_group_410
-#: model:account.group.template,name:l10n_be.be_group_410
-msgid "Capital appelé, non versé"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7631
-#: model:account.account,name:l10n_be.2_a7631
-#: model:account.account.template,name:l10n_be.a7631
-msgid "Capital gains on disposal of financial fixed assets"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7630
-#: model:account.account,name:l10n_be.2_a7630
-#: model:account.account.template,name:l10n_be.a7630
-msgid "Capital gains on disposal of intangible and tangible fixed asset"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6631
-#: model:account.account,name:l10n_be.2_a6631
-#: model:account.account.template,name:l10n_be.a6631
-msgid "Capital losses on disposal of financial fixed assets"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6630
-#: model:account.account,name:l10n_be.2_a6630
-#: model:account.account.template,name:l10n_be.a6630
-msgid "Capital losses on disposal of intangible and tangible fixed assets"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_101
-#: model:account.group,name:l10n_be.2_be_group_101
-#: model:account.group.template,name:l10n_be.be_group_101
-msgid "Capital non appelé (–)"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_100
-#: model:account.group,name:l10n_be.2_be_group_100
-#: model:account.group.template,name:l10n_be.be_group_100
-msgid "Capital souscrit"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6503
-#: model:account.account,name:l10n_be.2_a6503
-#: model:account.account.template,name:l10n_be.a6503
-msgid "Capitalized Interests"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a54
-#: model:account.account,name:l10n_be.2_a54
-#: model:account.account.template,name:l10n_be.a54
-msgid "Cash at bank - Amounts overdue and in the process of collection"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a55
-#: model:account.account,name:l10n_be.2_a55
-#: model:account.account.template,name:l10n_be.a55
-msgid "Cash at bank - Credit institutions"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a560
-#: model:account.account,name:l10n_be.2_a560
-#: model:account.account.template,name:l10n_be.a560
-msgid "Cash at bank - Giro account - Bank account"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a561
-#: model:account.account,name:l10n_be.2_a561
-#: model:account.account.template,name:l10n_be.a561
-msgid "Cash at bank - Giro account - Cheques issued"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a58
-#: model:account.account,name:l10n_be.2_a58
-#: model:account.account.template,name:l10n_be.a58
-msgid "Cash at bank and in hand - Internal transfers of funds"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a57
-#: model:account.account,name:l10n_be.2_a57
-#: model:account.account.template,name:l10n_be.a57
-msgid "Cash in hand"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a578
-#: model:account.account,name:l10n_be.2_a578
-#: model:account.account.template,name:l10n_be.a578
-msgid "Cash in hand - Stamps"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_178
-#: model:account.group,name:l10n_be.1_be_group_488
-#: model:account.group,name:l10n_be.2_be_group_178
-#: model:account.group,name:l10n_be.2_be_group_488
-#: model:account.group.template,name:l10n_be.be_group_178
-#: model:account.group.template,name:l10n_be.be_group_488
-msgid "Cautionnements reçus en numéraire"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_288
-#: model:account.group,name:l10n_be.1_be_group_418
-#: model:account.group,name:l10n_be.2_be_group_288
-#: model:account.group,name:l10n_be.2_be_group_418
-#: model:account.group.template,name:l10n_be.be_group_288
-#: model:account.group.template,name:l10n_be.be_group_418
-msgid "Cautionnements versés en numéraire"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_6
-#: model:account.group,name:l10n_be.2_be_group_6
-#: model:account.group.template,name:l10n_be.be_group_6
-msgid "Charges"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_653
-#: model:account.group,name:l10n_be.2_be_group_653
-#: model:account.group.template,name:l10n_be.be_group_653
-msgid "Charges d'escompte de créances"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_643
-#: model:account.group,name:l10n_be.2_be_group_643
-#: model:account.group.template,name:l10n_be.be_group_643
-msgid "Charges d'exploitation diverses"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_66
-#: model:account.group,name:l10n_be.2_be_group_66
-#: model:account.group.template,name:l10n_be.be_group_66
-msgid "Charges d'exploitation ou financières non récurrentes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_649
-#: model:account.group,name:l10n_be.2_be_group_649
-#: model:account.group.template,name:l10n_be.be_group_649
-msgid "Charges d'exploitation portées à l'actif au titre de frais de restructuration (–)"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_650
-#: model:account.group,name:l10n_be.2_be_group_650
-#: model:account.group.template,name:l10n_be.be_group_650
-msgid "Charges des dettes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_65
-#: model:account.group,name:l10n_be.2_be_group_65
-#: model:account.group.template,name:l10n_be.be_group_65
-msgid "Charges financières"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_657
-#: model:account.group,name:l10n_be.2_be_group_657
-#: model:account.group.template,name:l10n_be.be_group_657
-msgid "Charges financières diverses"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_659
-#: model:account.group,name:l10n_be.2_be_group_659
-#: model:account.group.template,name:l10n_be.be_group_659
-msgid "Charges financières portées à l'actif au titre de frais de restructuration"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_640
-#: model:account.group,name:l10n_be.2_be_group_640
-#: model:account.group.template,name:l10n_be.be_group_640
-msgid "Charges fiscales d'exploitation"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_669
-#: model:account.group,name:l10n_be.2_be_group_669
-#: model:account.group.template,name:l10n_be.be_group_669
-msgid "Charges portées à l'actif au titre de frais de restructuration (-)"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_492
-#: model:account.group,name:l10n_be.2_be_group_492
-#: model:account.group.template,name:l10n_be.be_group_492
-msgid "Charges à imputer"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_490
-#: model:account.group,name:l10n_be.2_be_group_490
-#: model:account.group.template,name:l10n_be.be_group_490
-msgid "Charges à reporter"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_70
-#: model:account.group,name:l10n_be.2_be_group_70
-#: model:account.group.template,name:l10n_be.be_group_70
-msgid "Chiffre d'affaires"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_561
-#: model:account.group,name:l10n_be.2_be_group_561
-#: model:account.group.template,name:l10n_be.be_group_561
-msgid "Chèques émis (–)"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_400
-#: model:account.group,name:l10n_be.2_be_group_400
-#: model:account.group.template,name:l10n_be.be_group_400
-msgid "Clients"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_37
-#: model:account.group,name:l10n_be.2_be_group_37
-#: model:account.group.template,name:l10n_be.be_group_37
-msgid "Commandes en cours d'exécution"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_073
-#: model:account.group,name:l10n_be.2_be_group_073
-#: model:account.group.template,name:l10n_be.be_group_073
-msgid "Commettants et déposants de biens et de valeurs"
 msgstr ""
 
 #. module: l10n_be
@@ -1971,6 +833,7 @@ msgid "Companies"
 msgstr ""
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a020
 #: model:account.account,name:l10n_be.2_a020
 #: model:account.account.template,name:l10n_be.a020
@@ -3312,6 +2175,9 @@ msgstr ""
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_title_operations_sortie
+=======
+#: model:account.tax.report.line,name:l10n_be.tax_report_title_operations_sortie
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "II A la sortie"
 msgstr ""
 
@@ -3326,254 +2192,6 @@ msgid "IV Dues"
 msgstr ""
 
 #. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_35
-#: model:account.group,name:l10n_be.2_be_group_35
-#: model:account.group.template,name:l10n_be.be_group_35
-msgid "Immeubles destinés à la vente"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_21
-#: model:account.group,name:l10n_be.2_be_group_21
-#: model:account.group.template,name:l10n_be.be_group_21
-msgid "Immobilisation incorporelles"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_27
-#: model:account.group,name:l10n_be.2_be_group_27
-#: model:account.group.template,name:l10n_be.be_group_27
-msgid "Immobilisations corporelles en cours et acomptes versés"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_25
-#: model:account.group,name:l10n_be.2_be_group_25
-#: model:account.group.template,name:l10n_be.be_group_25
-msgid "Immobilisations détenues en location-financement et droits similaires"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_28
-#: model:account.group,name:l10n_be.2_be_group_28
-#: model:account.group.template,name:l10n_be.be_group_28
-msgid "Immobilisations financières"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a350
-#: model:account.account,name:l10n_be.2_a350
-#: model:account.account.template,name:l10n_be.a350
-msgid "Immovable property intended for sale - Acquisition value"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a359
-#: model:account.account,name:l10n_be.2_a359
-#: model:account.account.template,name:l10n_be.a359
-msgid "Immovable property intended for sale - amounts written down"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_771
-#: model:account.group,name:l10n_be.2_be_group_771
-#: model:account.group.template,name:l10n_be.be_group_771
-msgid "Impôts belges sur le résultat"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_671
-#: model:account.group,name:l10n_be.2_be_group_671
-#: model:account.group.template,name:l10n_be.be_group_671
-msgid "Impôts belges sur le résultat d'exercices antérieurs"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_670
-#: model:account.group,name:l10n_be.2_be_group_670
-#: model:account.group.template,name:l10n_be.be_group_670
-msgid "Impôts belges sur le résultat de l'exercice"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_168
-#: model:account.group,name:l10n_be.2_be_group_168
-#: model:account.group.template,name:l10n_be.be_group_168
-msgid "Impôts différés"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_412
-#: model:account.group,name:l10n_be.2_be_group_412
-#: model:account.group.template,name:l10n_be.be_group_412
-msgid "Impôts et précomptes à récupérer"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_452
-#: model:account.group,name:l10n_be.2_be_group_452
-#: model:account.group.template,name:l10n_be.be_group_452
-msgid "Impôts et taxes à payer"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_67
-#: model:account.group,name:l10n_be.2_be_group_67
-#: model:account.group.template,name:l10n_be.be_group_67
-msgid "Impôts sur le résultat"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_773
-#: model:account.group,name:l10n_be.2_be_group_773
-#: model:account.group.template,name:l10n_be.be_group_773
-msgid "Impôts étrangers sur le résultat"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_673
-#: model:account.group,name:l10n_be.2_be_group_673
-#: model:account.group.template,name:l10n_be.be_group_673
-msgid "Impôts étrangers sur le résultat d'exercices antérieurs"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_672
-#: model:account.group,name:l10n_be.2_be_group_672
-#: model:account.group.template,name:l10n_be.be_group_672
-msgid "Impôts étrangers sur le résultat de l'exercice"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a751
-#: model:account.account,name:l10n_be.2_a751
-#: model:account.account.template,name:l10n_be.a751
-msgid "Income from current assets"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a750
-#: model:account.account,name:l10n_be.2_a750
-#: model:account.account.template,name:l10n_be.a750
-msgid "Income from financial fixed assets"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7170
-#: model:account.account,name:l10n_be.2_a7170
-#: model:account.account.template,name:l10n_be.a7170
-msgid "Increase (decrease) in contracts in progress - Acquisition value"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7171
-#: model:account.account,name:l10n_be.2_a7171
-#: model:account.account.template,name:l10n_be.a7171
-msgid "Increase (decrease) in contracts in progress - Profit recognized"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a713
-#: model:account.account,name:l10n_be.2_a713
-#: model:account.account.template,name:l10n_be.a713
-msgid "Increase (decrease) in stocks of finished goods"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a71
-#: model:account.account,name:l10n_be.2_a71
-#: model:account.account.template,name:l10n_be.a71
-msgid "Increase (decrease) in stocks of finished goods and work and contracts in progress"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a715
-#: model:account.account,name:l10n_be.2_a715
-#: model:account.account.template,name:l10n_be.a715
-msgid "Increase (decrease) in stocks of immovable property constructed for resale"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a712
-#: model:account.account,name:l10n_be.2_a712
-#: model:account.account.template,name:l10n_be.a712
-msgid "Increase (decrease) in work in progress"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_23
-#: model:account.group,name:l10n_be.1_be_group_251
-#: model:account.group,name:l10n_be.2_be_group_23
-#: model:account.group,name:l10n_be.2_be_group_251
-#: model:account.group.template,name:l10n_be.be_group_23
-#: model:account.group.template,name:l10n_be.be_group_251
-msgid "Installations, machines et outillage"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a213
-#: model:account.account,name:l10n_be.2_a213
-#: model:account.account.template,name:l10n_be.a213
-msgid "Intangible fixed assets - Advance payments"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6500
-#: model:account.account,name:l10n_be.2_a6500
-#: model:account.account.template,name:l10n_be.a6500
-msgid "Interests, commissions and other charges relating to debts"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_794
-#: model:account.group,name:l10n_be.2_be_group_794
-#: model:account.group.template,name:l10n_be.be_group_794
-msgid "Intervention d'associés (ou du propriétaire) dans la perte"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a15
-#: model:account.account,name:l10n_be.2_a15
-#: model:account.account.template,name:l10n_be.a15
-msgid "Investment grants"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a753
-#: model:account.account,name:l10n_be.2_a753
-#: model:account.account.template,name:l10n_be.a753
-msgid "Investment grants and interest subsidies"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a151
-#: model:account.account,name:l10n_be.2_a151
-#: model:account.account.template,name:l10n_be.a151
-msgid "Investment grants received in cash"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a152
-#: model:account.account,name:l10n_be.2_a152
-#: model:account.account.template,name:l10n_be.a152
-msgid "Investment grants received in kind"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a444
-#: model:account.account,name:l10n_be.2_a444
-#: model:account.account.template,name:l10n_be.a444
-msgid "Invoices to be received payable within one year"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a100
-#: model:account.account,name:l10n_be.2_a100
-#: model:account.account.template,name:l10n_be.a100
-msgid "Issued capital"
-msgstr ""
-
-#. module: l10n_be
 #: model:ir.model,name:l10n_be.model_account_journal
 msgid "Journal"
 msgstr ""
@@ -3584,6 +2202,7 @@ msgid "Journal Entry"
 msgstr ""
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a220
 #: model:account.account,name:l10n_be.2_a220
 #: model:account.account.template,name:l10n_be.a220
@@ -3994,10 +2613,14 @@ msgstr ""
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_title_operations
+=======
+#: model:account.tax.report.line,name:l10n_be.tax_report_title_operations
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Opérations"
 msgstr ""
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a668
 #: model:account.account,name:l10n_be.2_a668
 #: model:account.account.template,name:l10n_be.a668
@@ -5840,10 +4463,14 @@ msgstr ""
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_title_taxes
+=======
+#: model:account.tax.report.line,name:l10n_be.tax_report_title_taxes
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Taxes"
 msgstr ""
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a412
 #: model:account.account,name:l10n_be.2_a412
 #: model:account.account.template,name:l10n_be.a412
@@ -6118,10 +4745,14 @@ msgstr ""
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_title_taxes_deductibles
+=======
+#: model:account.tax.report.line,name:l10n_be.tax_report_title_taxes_deductibles
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "V Déductibles"
 msgstr ""
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a4512
 #: model:account.account,name:l10n_be.2_a4512
 #: model:account.account.template,name:l10n_be.a4512
@@ -6207,143 +4838,15 @@ msgstr ""
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_title_taxes_soldes
+=======
+#: model:account.tax.report.line,name:l10n_be.tax_report_title_taxes_soldes
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "VI Soldes"
 msgstr ""
 
 #. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_300
-#: model:account.group,name:l10n_be.1_be_group_310
-#: model:account.group,name:l10n_be.1_be_group_320
-#: model:account.group,name:l10n_be.1_be_group_340
-#: model:account.group,name:l10n_be.1_be_group_350
-#: model:account.group,name:l10n_be.1_be_group_370
-#: model:account.group,name:l10n_be.1_be_group_510
-#: model:account.group,name:l10n_be.1_be_group_520
-#: model:account.group,name:l10n_be.2_be_group_300
-#: model:account.group,name:l10n_be.2_be_group_310
-#: model:account.group,name:l10n_be.2_be_group_320
-#: model:account.group,name:l10n_be.2_be_group_340
-#: model:account.group,name:l10n_be.2_be_group_350
-#: model:account.group,name:l10n_be.2_be_group_370
-#: model:account.group,name:l10n_be.2_be_group_510
-#: model:account.group,name:l10n_be.2_be_group_520
-#: model:account.group.template,name:l10n_be.be_group_300
-#: model:account.group.template,name:l10n_be.be_group_310
-#: model:account.group.template,name:l10n_be.be_group_320
-#: model:account.group.template,name:l10n_be.be_group_340
-#: model:account.group.template,name:l10n_be.be_group_350
-#: model:account.group.template,name:l10n_be.be_group_370
-#: model:account.group.template,name:l10n_be.be_group_510
-#: model:account.group.template,name:l10n_be.be_group_520
-msgid "Valeur d'acquisition"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_54
-#: model:account.group,name:l10n_be.2_be_group_54
-#: model:account.group.template,name:l10n_be.be_group_54
-msgid "Valeurs échues à l'encaissement"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_71
-#: model:account.group,name:l10n_be.2_be_group_71
-#: model:account.group.template,name:l10n_be.be_group_71
-msgid "Variation des stocks et des commandes en cours d'exécution"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_609
-#: model:account.group,name:l10n_be.2_be_group_609
-#: model:account.group.template,name:l10n_be.be_group_609
-msgid "Variations des stocks"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_700
-#: model:account.group,name:l10n_be.2_be_group_700
-#: model:account.group.template,name:l10n_be.be_group_700
-msgid "Ventes et prestations de services"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_58
-#: model:account.group,name:l10n_be.2_be_group_58
-#: model:account.group.template,name:l10n_be.be_group_58
-msgid "Virements internes"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a792
-#: model:account.account,name:l10n_be.2_a792
-#: model:account.account.template,name:l10n_be.a792
-msgid "Withdrawal from allocated funds"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a791
-#: model:account.account,name:l10n_be.2_a791
-#: model:account.account.template,name:l10n_be.a791
-msgid "Withdrawal from the association or foundation funds"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a320
-#: model:account.account,name:l10n_be.2_a320
-#: model:account.account.template,name:l10n_be.a320
-msgid "Work in progress - Acquisition value"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a329
-#: model:account.account,name:l10n_be.2_a329
-#: model:account.account.template,name:l10n_be.a329
-msgid "Work in progress - amounts written down"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a761
-#: model:account.account,name:l10n_be.2_a761
-#: model:account.account.template,name:l10n_be.a761
-msgid "Write-back of amounts written down financial fixed assets"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7600
-#: model:account.account,name:l10n_be.2_a7600
-#: model:account.account.template,name:l10n_be.a7600
-msgid "Write-back of depreciation and of amounts written off intangible fixed assets"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7601
-#: model:account.account,name:l10n_be.2_a7601
-#: model:account.account.template,name:l10n_be.a7601
-msgid "Write-back of depreciation and of amounts written off tangible fixed assets"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7621
-#: model:account.account,name:l10n_be.2_a7621
-#: model:account.account.template,name:l10n_be.a7621
-msgid "Write-back of provisions for non-recurring financial liabilities and charges"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7620
-#: model:account.account,name:l10n_be.2_a7620
-#: model:account.account.template,name:l10n_be.a7620
-msgid "Write-back of provisions for non-recurring operating liabilities and charges"
-msgstr ""
-
-#. module: l10n_be
 #: model:ir.model.fields,help:l10n_be.field_account_journal__invoice_reference_model
-msgid "You can choose different models for each type of reference. The default one is the Odoo reference."
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_755
-#: model:account.group,name:l10n_be.2_be_group_755
-#: model:account.group.template,name:l10n_be.be_group_755
-msgid "Écart de conversion des devises"
+msgid ""
+"You can choose different models for each type of reference. The default one "
+"is the Odoo reference."
 msgstr ""

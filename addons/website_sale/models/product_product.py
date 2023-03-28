@@ -99,7 +99,11 @@ class Product(models.Model):
     def _get_contextual_price_tax_selection(self):
         self.ensure_one()
         price = self._get_contextual_price()
+<<<<<<< HEAD
         line_tax_type = self.env['ir.config_parameter'].sudo().get_param('account.show_line_subtotals_tax_selection')
+=======
+        line_tax_type = self.env.company.show_line_subtotals_tax_selection
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         company_taxes = self.taxes_id.filtered(lambda tax: tax.company_id == self.env.company)
         if line_tax_type == "tax_included" and company_taxes:
             price = company_taxes.compute_all(price, product=self, partner=self.env['res.partner'])['total_included']

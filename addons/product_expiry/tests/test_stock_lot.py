@@ -526,6 +526,7 @@ class TestStockLot(TestStockCommon):
 
         self.assertEqual(sml.expiration_date, exp_date)
 
+<<<<<<< HEAD
         exp_date = exp_date + relativedelta(days=10)
         lot.expiration_date = exp_date
         self.assertEqual(sml.expiration_date, exp_date)
@@ -566,6 +567,8 @@ class TestStockLot(TestStockCommon):
         self.assertAlmostEqual(
             lot.alert_date, exp_date - timedelta(days=self.apple_product.alert_time), delta=time_gap)
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def test_apply_same_date_on_expiry_fields(self):
         expiration_time = 10
         self.apple_product.write({

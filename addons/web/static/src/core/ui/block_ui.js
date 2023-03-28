@@ -2,7 +2,11 @@
 
 import { browser } from "@web/core/browser/browser";
 
+<<<<<<< HEAD
 import { Component, useState, xml } from "@odoo/owl";
+=======
+import { EventBus, Component, useState, xml } from "@odoo/owl";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 export class BlockUI extends Component {
     setup() {
@@ -69,6 +73,9 @@ export class BlockUI extends Component {
         this.state.line2 = "";
     }
 }
+BlockUI.props = {
+    bus: EventBus,
+};
 
 BlockUI.template = xml`
     <div t-att-class="state.blockUI ? 'o_blockUI fixed-top d-flex justify-content-center align-items-center flex-column vh-100 bg-black-50' : ''">

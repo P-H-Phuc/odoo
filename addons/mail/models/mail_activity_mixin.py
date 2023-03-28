@@ -258,7 +258,7 @@ class MailActivityMixin(models.AbstractModel):
 
         # explicitly check access rights, since we bypass the ORM
         self.check_access_rights('read')
-        self._flush_search(domain, fields=[group_by_fname], order='id')
+        self._flush_search(domain, fields=[group_by_fname])
         self.env['mail.activity'].flush_model(['res_model', 'res_id', 'user_id', 'date_deadline'])
         self.env['res.users'].flush_model(['partner_id'])
         self.env['res.partner'].flush_model(['tz'])
@@ -342,11 +342,10 @@ class MailActivityMixin(models.AbstractModel):
         template = self.env['mail.template'].browse(template_id).exists()
         if not template:
             return False
-        for record in self:
-            record.message_post_with_template(
-                template_id,
-                composition_mode='comment'
-            )
+        self.message_post_with_source(
+            template,
+            subtype_xmlid='mail.mt_comment',
+        )
         return True
 
     def activity_search(self, act_type_xmlids='', user_id=None, additional_domain=None):

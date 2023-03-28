@@ -20,10 +20,14 @@ Withholding and Pension Fund handling for the E-invoice implementation for Italy
     'category': 'Accounting/Localizations/EDI',
     'website': 'https://www.odoo.com/documentation/16.0/applications/finance/accounting/fiscal_localizations/localizations/italy.html',
     'data': [
+<<<<<<< HEAD
         'data/account_tax_group_data.xml',
         'data/account_withholding_report_data.xml',
         'data/account.account.template.csv',
         'data/account_tax_template.xml',
+=======
+        'data/account_withholding_report_data.xml',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         'data/invoice_it_template.xml',
         'views/l10n_it_view.xml'
     ],

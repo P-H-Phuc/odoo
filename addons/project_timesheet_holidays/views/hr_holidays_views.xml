@@ -8,6 +8,12 @@
         <field name="arch" type="xml">
             <xpath expr="//group[@name='visual']" position="before">
                 <group name="timesheet" groups="base.group_no_one" string="Timesheet">
+<<<<<<< HEAD
+=======
+                    <div class="text-muted mb-4" colspan="2">
+                        Generate timesheets when validating time off of this type.
+                    </div>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     <group>
                         <field name="timesheet_project_id" context="{'active_test': False}"/>
                         <field name="company_id" invisible="1"/>

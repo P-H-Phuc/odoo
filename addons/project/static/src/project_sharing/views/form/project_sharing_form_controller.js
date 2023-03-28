@@ -21,7 +21,11 @@ export class ProjectSharingFormController extends FormController {
         this.mailTemplate = mailTemplates.Mail;
     }
 
+<<<<<<< HEAD
     getActionMenuItems() {
+=======
+    get actionMenuItems() {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return {};
     }
 

@@ -20,8 +20,9 @@
                     <field name="journal_id"/>
                     <field name="payment_method_line_id"/>
                     <field name="partner_id" string="Customer"/>
-                    <field name="amount_signed" string="Amount in Currency" groups="base.group_multi_currency" optional="hide"/>
-                    <field name="currency_id" string="Payment Currency" groups="base.group_multi_currency" optional="hide"/>
+                    <field name="amount_signed" string="Amount in Currency" optional="hide" groups="!base.group_multi_currency"/>
+                    <field name="amount_signed" string="Amount in Currency" optional="show" groups="base.group_multi_currency"/>
+                    <field name="currency_id" string="Payment Currency" optional="hide"/>
                     <field name="amount_company_currency_signed" widget="monetary" string="Amount" sum="Total"/>
                     <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'posted'"/>
                 </tree>
@@ -69,7 +70,7 @@
                                         <strong><span><field name="name"/></span></strong>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <strong><i class="fa fa-clock-o" role="img" aria-label="Date" title="Date"/> <t t-esc="record.date.value"/></strong>
+                                        <strong><i class="fa fa-clock-o" role="img" aria-label="Date" title="Date"/> <t t-out="record.date.value"/></strong>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -189,6 +190,7 @@
                         <field name="company_id" invisible="1"/>
                         <field name="paired_internal_transfer_payment_id" invisible="1"/>
                         <field name="available_journal_ids" invisible="1"/>
+                        <field name="currency_id" invisible="1"/>
 
                         <div class="oe_button_box" name="button_box">
                             <!-- Invoice stat button -->
@@ -284,14 +286,14 @@
                                        attrs="{'readonly': [('state', '!=', 'draft')]}"/>
 
                                 <field name="partner_bank_id" string="Customer Bank Account"
-                                      context="{'default_partner_id': partner_id, 'default_allow_out_payment': True}"
+                                      context="{'default_partner_id': partner_id, 'display_account_trust': True}"
                                         attrs="{
                                             'invisible': ['|', '|', '|', ('show_partner_bank_account', '=', False), ('partner_type','!=','customer'), ('is_internal_transfer', '=', True), ('payment_type', '=', 'inbound')],
                                             'required': [('require_partner_bank_account', '=', True), ('is_internal_transfer', '=', False)],
                                         }"/>
 
                                 <field name="partner_bank_id" string="Vendor Bank Account"
-                                        context="{'default_partner_id': partner_id, 'default_allow_out_payment': True}"
+                                        context="{'default_partner_id': partner_id, 'display_account_trust': True}"
                                         attrs="{
                                             'invisible': ['|', '|', '|', ('show_partner_bank_account', '=', False), ('partner_type','!=','supplier'), ('is_internal_transfer', '=', True), ('payment_type', '=', 'inbound')],
                                             'required': [('require_partner_bank_account', '=', True), ('is_internal_transfer', '=', False)],
@@ -300,7 +302,7 @@
                                 <!-- This field should always be readonly but using readonly="1" overrides the other partner_bank_id
                                 fields readonly condition in the framework, preventing the modification of these fields -->
                                 <field name="partner_bank_id" string="Company Bank Account"
-                                        context="{'default_partner_id': partner_id, 'default_allow_out_payment': True}"
+                                        context="{'default_partner_id': partner_id, 'display_account_trust': True}"
                                         attrs="{
                                             'invisible': ['|', '|', ('show_partner_bank_account', '=', False), ('is_internal_transfer', '=', True), ('payment_type', '=', 'outbound')],
                                             'required': [('require_partner_bank_account', '=', True), ('is_internal_transfer', '=', False)],
@@ -351,6 +353,7 @@
                 'default_partner_type': 'customer',
                 'search_default_inbound_filter': 1,
                 'default_move_journal_types': ('bank', 'cash'),
+                'display_account_trust': True,
             }</field>
             <field name="view_id" ref="view_account_payment_tree"/>
             <field name="help" type="html">
@@ -371,6 +374,7 @@
                 'default_partner_type': 'supplier',
                 'search_default_outbound_filter': 1,
                 'default_move_journal_types': ('bank', 'cash'),
+                'display_account_trust': True,
             }</field>
             <field name="view_id" ref="view_account_supplier_payment_tree"/>
             <field name="help" type="html">
@@ -386,7 +390,7 @@
             <field name="name">Internal Transfers</field>
             <field name="res_model">account.payment</field>
             <field name="view_mode">tree,kanban,form,graph</field>
-            <field name="context">{'default_payment_type': 'outbound', 'search_default_transfers_filter': 1}</field>
+            <field name="context">{'default_payment_type': 'outbound', 'search_default_transfers_filter': 1, 'display_account_trust': True}</field>
             <field name="domain">[]</field>
             <field name="view_id" ref="view_account_supplier_payment_tree"/>
             <field name="help" type="html">
@@ -414,7 +418,6 @@
         <!-- Action confirm_payments for multi -->
         <record id="action_account_confirm_payments" model="ir.actions.server">
             <field name="name">Post Payments</field>
-            <field name="type">ir.actions.server</field>
             <field name="state">code</field>
             <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>
             <field name="model_id" ref="account.model_account_payment"/>
@@ -434,7 +437,6 @@
             <field name="context" eval="{
                 'mail_post_autofollow': True,
                 'default_composition_mode': 'comment',
-                'default_use_template': True,
                 'default_template_id': ref('account.mail_template_data_payment_receipt'),
                 'default_email_layout_xmlid': 'mail.mail_notification_light',
             }"/>
@@ -451,7 +453,6 @@
             <field name="context" eval="{
                 'mail_post_autofollow': True,
                 'default_composition_mode': 'mass_mail',
-                'default_use_template': True,
                 'default_template_id': ref('account.mail_template_data_payment_receipt'),
                 'default_email_layout_xmlid': 'mail.mail_notification_light',
             }"/>

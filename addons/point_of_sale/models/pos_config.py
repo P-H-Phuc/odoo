@@ -5,7 +5,7 @@ from datetime import datetime
 from uuid import uuid4
 import pytz
 
-from odoo import api, fields, models, tools, _
+from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError
 
 
@@ -39,9 +39,12 @@ class PosConfig(models.Model):
         available_cash_pm = self.env['pos.payment.method'].search(domain + [('is_cash_count', '=', True),
                                                                             ('config_ids', '=', False)], limit=1)
         return non_cash_pm | available_cash_pm
+<<<<<<< HEAD
 
     def _default_pricelist(self):
         return self.env['product.pricelist'].search([('company_id', 'in', (False, self.env.company.id)), ('currency_id', '=', self.env.company.currency_id.id)], limit=1)
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     def _get_group_pos_manager(self):
         return self.env.ref('point_of_sale.group_pos_manager')
@@ -110,15 +113,15 @@ class PosConfig(models.Model):
     session_ids = fields.One2many('pos.session', 'config_id', string='Sessions')
     current_session_id = fields.Many2one('pos.session', compute='_compute_current_session', string="Current Session")
     current_session_state = fields.Char(compute='_compute_current_session')
-    number_of_opened_session = fields.Integer(string="Number of Opened Session", compute='_compute_current_session')
+    number_of_rescue_session = fields.Integer(string="Number of Rescue Session", compute='_compute_current_session')
     last_session_closing_cash = fields.Float(compute='_compute_last_session')
     last_session_closing_date = fields.Date(compute='_compute_last_session')
     pos_session_username = fields.Char(compute='_compute_current_session_user')
     pos_session_state = fields.Char(compute='_compute_current_session_user')
     pos_session_duration = fields.Char(compute='_compute_current_session_user')
-    pricelist_id = fields.Many2one('product.pricelist', string='Default Pricelist', required=True, default=_default_pricelist,
-        help="The pricelist used if no customer is selected or if the customer has no Sale Pricelist configured.")
-    available_pricelist_ids = fields.Many2many('product.pricelist', string='Available Pricelists', default=_default_pricelist,
+    pricelist_id = fields.Many2one('product.pricelist', string='Default Pricelist',
+        help="The pricelist used if no customer is selected or if the customer has no Sale Pricelist configured if any.")
+    available_pricelist_ids = fields.Many2many('product.pricelist', string='Available Pricelists',
         help="Make several pricelists available in the Point of Sale. You can also apply a pricelist to specific customers from their contact form (in Sales tab). To be valid, this pricelist must be listed here as an available pricelist. Otherwise the default pricelist will apply.")
     company_id = fields.Many2one('res.company', string='Company', required=True, default=lambda self: self.env.company)
     group_pos_manager_id = fields.Many2one('res.groups', string='Point of Sale Manager Group', default=_get_group_pos_manager,
@@ -145,7 +148,7 @@ class PosConfig(models.Model):
         help="This field depicts the maximum difference allowed between the ending balance and the theoretical cash when "
              "closing a session, for non-POS managers. If this maximum is reached, the user will have an error message at "
              "the closing of his session saying that he needs to contact his manager.")
-    payment_method_ids = fields.Many2many('pos.payment.method', string='Payment Methods', default=lambda self: self._default_payment_methods())
+    payment_method_ids = fields.Many2many('pos.payment.method', string='Payment Methods', default=lambda self: self._default_payment_methods(), copy=False)
     company_has_template = fields.Boolean(string="Company has chart of accounts", compute="_compute_company_has_template")
     current_user_id = fields.Many2one('res.users', string='Current Session Responsible', compute='_compute_current_session_user')
     other_devices = fields.Boolean(string="Other Devices", help="Connect devices to your PoS without an IoT Box.")
@@ -177,6 +180,10 @@ class PosConfig(models.Model):
                                                    "In the meantime, you can use the 'Load Customers' button to load partners from database.")
     limited_partners_amount = fields.Integer(default=100)
     partner_load_background = fields.Boolean(default=True)
+    auto_validate_terminal_payment = fields.Boolean(default=True, help="Automatically validates orders paid with a payment terminal.")
+    trusted_config_ids = fields.Many2many("pos.config", relation="pos_config_trust_relation", column1="is_trusting",
+                                          column2="is_trusted", string="Trusted Point of Sale Configurations",
+                                          domain="[('id', '!=', pos_config_id), ('module_pos_restaurant', '=', False)]")
 
     @api.depends('payment_method_ids')
     def _compute_cash_control(self):
@@ -193,7 +200,7 @@ class PosConfig(models.Model):
     @api.depends('company_id')
     def _compute_company_has_template(self):
         for config in self:
-            if config.company_id.chart_template_id:
+            if config.company_id.chart_template:
                 config.company_has_template = True
             else:
                 config.company_has_template = False
@@ -216,13 +223,14 @@ class PosConfig(models.Model):
         """If there is an open session, store it to current_session_id / current_session_State.
         """
         for pos_config in self:
-            opened_sessions = pos_config.session_ids.filtered(lambda s: not s.state == 'closed')
-            session = pos_config.session_ids.filtered(lambda s: not s.state == 'closed' and not s.rescue)
+            opened_sessions = pos_config.session_ids.filtered(lambda s: s.state != 'closed')
+            rescue_sessions = opened_sessions.filtered('rescue')
+            session = pos_config.session_ids.filtered(lambda s: s.state != 'closed' and not s.rescue)
             # sessions ordered by id desc
-            pos_config.number_of_opened_session = len(opened_sessions)
             pos_config.has_active_session = opened_sessions and True or False
             pos_config.current_session_id = session and session[0].id or False
             pos_config.current_session_state = session and session[0].state or False
+            pos_config.number_of_rescue_session = len(rescue_sessions)
 
     @api.depends('session_ids')
     def _compute_last_session(self):
@@ -304,7 +312,7 @@ class PosConfig(models.Model):
     @api.constrains('pricelist_id', 'use_pricelist', 'available_pricelist_ids', 'journal_id', 'invoice_journal_id', 'payment_method_ids')
     def _check_currencies(self):
         for config in self:
-            if config.use_pricelist and config.pricelist_id not in config.available_pricelist_ids:
+            if config.use_pricelist and config.pricelist_id and config.pricelist_id not in config.available_pricelist_ids:
                 raise ValidationError(_("The default pricelist must be included in the available pricelists."))
 
             # Check if the config's payment methods are compatible with its currency
@@ -346,6 +354,31 @@ class PosConfig(models.Model):
         for config in self:
             if any(pricelist.company_id.id not in [False, config.company_id.id] for pricelist in config.available_pricelist_ids):
                 raise ValidationError(_("The selected pricelists must belong to no company or the company of the point of sale."))
+
+    def _check_company_has_template(self):
+        self.ensure_one()
+        if not self.company_has_template:
+            raise ValidationError(_("No chart of account configured, go to the \"configuration / settings\" menu, and "
+                                    "install one from the Invoicing tab."))
+
+    @api.constrains('payment_method_ids')
+    def _check_payment_method_ids_journal(self):
+        cash_journal = self.env['account.journal'].search(
+            [('company_id', '=', self.env.company.id), ('type', '=', 'cash')])
+
+        for cash_method in self.payment_method_ids.filtered(lambda s: s.journal_id.id in cash_journal.ids):
+            if self.env['pos.config'].search([('id', '!=', self.id), ('payment_method_ids', 'in', cash_method.ids)]):
+                raise ValidationError(_("This cash payment method is already used in another Point of Sale.\n"
+                                        "A new cash payment method should be created for this Point of Sale."))
+            if len(cash_method.journal_id.pos_payment_method_ids) > 1:
+                raise ValidationError(_("You cannot use the same journal on multiples cash payment methods."))
+
+    @api.constrains('trusted_config_ids')
+    def _check_trusted_config_ids_currency(self):
+        for config in self:
+            for trusted_config in config.trusted_config_ids:
+                if trusted_config.currency_id != config.currency_id:
+                    raise ValidationError(_("You cannot share open orders with configuration that does not use the same currency."))
 
     def name_get(self):
         result = []
@@ -394,6 +427,12 @@ class PosConfig(models.Model):
             forbidden_fields = []
             for key in self._get_forbidden_change_fields():
                 if key in vals.keys():
+                    if key == 'use_pricelist' and vals[key]:
+                        continue
+                    if key == 'available_pricelist_ids':
+                        removed_pricelist = set(self.available_pricelist_ids.ids) - set(vals[key][0][2])
+                        if len(removed_pricelist) == 0:
+                            continue
                     field_name = self._fields[key].get_description(self.env)["string"]
                     forbidden_fields.append(field_name)
             if len(forbidden_fields) > 0:
@@ -461,7 +500,6 @@ class PosConfig(models.Model):
         return {
              'type': 'ir.actions.client',
              'tag': 'reload',
-             'params': {'wait': True}
          }
 
     def _force_http(self):
@@ -482,6 +520,7 @@ class PosConfig(models.Model):
         }
 
     def _check_before_creating_new_session(self):
+        self._check_company_has_template()
         self._check_pricelists()
         self._check_company_journal()
         self._check_company_invoice_journal()
@@ -511,7 +550,6 @@ class PosConfig(models.Model):
             return {
                 'name': _("There is no product linked to your PoS"),
                 'type': 'ir.actions.act_window',
-                'view_type': 'form',
                 'view_mode': 'form',
                 'res_model': 'pos.session.check_product_wizard',
                 'target': 'new',
@@ -539,13 +577,13 @@ class PosConfig(models.Model):
             'type': 'ir.actions.act_window',
         }
 
-    def open_opened_session_list(self):
+    def open_opened_rescue_session_form(self):
+        self.ensure_one()
         return {
-            'name': _('Opened Sessions'),
             'res_model': 'pos.session',
-            'view_mode': 'tree,kanban,form',
+            'view_mode': 'form',
+            'res_id': self.session_ids.filtered(lambda s: s.state != 'closed' and s.rescue).id,
             'type': 'ir.actions.act_window',
-            'domain': [('state', '!=', 'closed'), ('config_id', '=', self.id)]
         }
 
     # All following methods are made to create data needed in POS, when a localisation
@@ -556,7 +594,7 @@ class PosConfig(models.Model):
         self = self.sudo()
         if not companies:
             companies = self.env['res.company'].search([])
-        for company in companies.filtered('chart_template_id'):
+        for company in companies.filtered('chart_template'):
             pos_configs = self.search([('company_id', '=', company.id)])
             pos_configs.setup_defaults(company)
 
@@ -581,7 +619,11 @@ class PosConfig(models.Model):
             if cash_journal:
                 payment_methods |= payment_methods.create({
                     'name': _('Cash'),
-                    'journal_id': cash_journal.id,
+                    'journal_id': self.env['account.journal'].create({
+                                    'name': "Cash",
+                                    'code': "CSH %s" % pos_config.id,
+                                    'type': 'cash',
+                                }).id,
                     'company_id': company.id,
                 })
             if bank_journal:
@@ -683,3 +725,9 @@ class PosConfig(models.Model):
             'res_id': self.id,
             'context': {'pos_config_open_modal': True},
         }
+
+    def _add_trusted_config_id(self, config_id):
+        self.trusted_config_ids += config_id
+
+    def _remove_trusted_config_id(self, config_id):
+        self.trusted_config_ids -= config_id

@@ -45,7 +45,7 @@ class DiscussController(http.Controller):
     @http.route('/discuss/channel/<int:channel_id>', methods=['GET'], type='http', auth='public')
     def discuss_channel(self, channel_id, **kwargs):
         channel_member_sudo = request.env['mail.channel.member']._get_as_sudo_from_request_or_raise(request=request, channel_id=int(channel_id))
-        return self._response_discuss_public_channel_template(channel_sudo=channel_member_sudo.channel_id)
+        return self._response_discuss_public_template(channel_sudo=channel_member_sudo.channel_id)
 
     def _response_discuss_channel_from_token(self, create_token, channel_name=None, default_display_mode=False):
         if not request.env['ir.config_parameter'].sudo().get_param('mail.chat_from_token'):
@@ -97,18 +97,18 @@ class DiscussController(http.Controller):
                     if channel_sudo.group_public_id:
                         raise NotFound()
                     guest = channel_sudo.env['mail.guest'].create({
-                        'country_id': channel_sudo.env['res.country'].search([('code', '=', request.geoip.get('country_code'))], limit=1).id,
+                        'country_id': channel_sudo.env['res.country'].search([('code', '=', request.geoip.country_code)], limit=1).id,
                         'lang': get_lang(channel_sudo.env).code,
                         'name': _("Guest"),
                         'timezone': channel_sudo.env['mail.guest']._get_timezone_from_request(request),
                     })
                     add_guest_cookie = True
                     discuss_public_view_data.update({
-                        'shouldAddGuestAsMemberOnJoin': True,
+                        'addGuestAsMemberOnJoin': True,
                         'shouldDisplayWelcomeViewInitially': True,
                     })
                 channel_sudo = channel_sudo.with_context(guest=guest)
-        response = self._response_discuss_public_channel_template(channel_sudo=channel_sudo, discuss_public_view_data=discuss_public_view_data)
+        response = self._response_discuss_public_template(channel_sudo=channel_sudo, discuss_public_view_data=discuss_public_view_data)
         if add_guest_cookie:
             # Discuss Guest ID: every route in this file will make use of it to authenticate
             # the guest through `_get_as_sudo_from_request` or `_get_as_sudo_from_request_or_raise`.
@@ -116,7 +116,7 @@ class DiscussController(http.Controller):
             response.set_cookie(guest._cookie_name, f"{guest.id}{guest._cookie_separator}{guest.access_token}", httponly=True, expires=expiration_date)
         return response
 
-    def _response_discuss_public_channel_template(self, channel_sudo, discuss_public_view_data=None):
+    def _response_discuss_public_template(self, channel_sudo, discuss_public_view_data=None):
         discuss_public_view_data = discuss_public_view_data or {}
         return request.render('mail.discuss_public_channel_template', {
             'data': {
@@ -199,6 +199,11 @@ class DiscussController(http.Controller):
             return guest.sudo()._init_messaging()
         raise NotFound()
 
+    @http.route('/mail/channel/members', methods=['POST'], type='json', auth='public')
+    def mail_channel_members(self, channel_id, known_member_ids):
+        channel_member = request.env['mail.channel.member']._get_as_sudo_from_request_or_raise(request=request, channel_id=channel_id)
+        return channel_member.channel_id.sudo().load_more_members(known_member_ids)
+
     @http.route('/mail/load_message_failures', methods=['POST'], type='json', auth='user')
     def mail_load_message_failures(self, **kwargs):
         return request.env.user.partner_id._message_fetch_failed()
@@ -233,7 +238,10 @@ class DiscussController(http.Controller):
             thread = channel_member_sudo.channel_id
         else:
             thread = request.env[thread_model].browse(int(thread_id)).exists()
-        return thread.message_post(**{key: value for key, value in post_data.items() if key in self._get_allowed_message_post_params()}).message_format()[0]
+        message_data = thread.message_post(**{key: value for key, value in post_data.items() if key in self._get_allowed_message_post_params()}).message_format()[0]
+        if 'temporary_id' in request.context:
+            message_data['temporary_id'] = request.context['temporary_id']
+        return message_data
 
     @http.route('/mail/message/update_content', methods=['POST'], type='json', auth='public')
     def mail_message_update_content(self, message_id, body, attachment_ids):
@@ -251,7 +259,7 @@ class DiscussController(http.Controller):
         return {
             'id': message_sudo.id,
             'body': message_sudo.body,
-            'attachments': message_sudo.attachment_ids._attachment_format(),
+            'attachment_ids': message_sudo.attachment_ids._attachment_format(),
         }
 
     @http.route('/mail/attachment/upload', methods=['POST'], type='http', auth='public')
@@ -340,7 +348,7 @@ class DiscussController(http.Controller):
                 'content': content,
                 'count': len(reactions),
                 'guests': guests,
-                'message': {'id', message_sudo.id},
+                'message': {'id': message_sudo.id},
                 'partners': partners,
             })],
         }
@@ -410,9 +418,9 @@ class DiscussController(http.Controller):
         return messages.message_format()
 
     @http.route('/mail/channel/set_last_seen_message', methods=['POST'], type='json', auth='public')
-    def mail_channel_mark_as_seen(self, channel_id, last_message_id, **kwargs):
+    def mail_channel_mark_as_seen(self, channel_id, last_message_id, allow_older=False, **kwargs):
         channel_member_sudo = request.env['mail.channel.member']._get_as_sudo_from_request_or_raise(request=request, channel_id=int(channel_id))
-        return channel_member_sudo.channel_id._channel_seen(int(last_message_id))
+        return channel_member_sudo.channel_id._channel_seen(last_message_id, allow_older=allow_older)
 
     @http.route('/mail/channel/notify_typing', methods=['POST'], type='json', auth='public')
     def mail_channel_notify_typing(self, channel_id, is_typing, **kwargs):
@@ -483,7 +491,7 @@ class DiscussController(http.Controller):
                       key=lambda it: (it['parent_model'] or '', it['res_model'] or '', it['internal'], it['sequence']))
 
     # --------------------------------------------------------------------------
-    # RTC API TODO move check logic in routes.
+    # RTC API
     # --------------------------------------------------------------------------
 
     @http.route('/mail/rtc/session/notify_call_members', methods=['POST'], type="json", auth="public")
@@ -543,10 +551,9 @@ class DiscussController(http.Controller):
 
     @http.route('/mail/rtc/channel/cancel_call_invitation', methods=['POST'], type="json", auth="public")
     def channel_call_cancel_invitation(self, channel_id, member_ids=None):
-        """ Sends invitations to join the RTC call to all connected members of the thread who are not already invited,
-            if member_ids is provided, only the specified ids will be invited.
-
-            :param list member_ids: list of member ids to invite
+        """
+            :param member_ids: members whose invitation is to cancel
+            :type member_ids: list(int) or None
         """
         channel_member_sudo = request.env['mail.channel.member']._get_as_sudo_from_request_or_raise(request=request, channel_id=int(channel_id))
         return channel_member_sudo.channel_id._rtc_cancel_invitations(member_ids=member_ids)

@@ -55,7 +55,10 @@ export class ListArchParser extends XMLParser {
 
     parse(arch, models, modelName) {
         const xmlDoc = this.parseXML(arch);
+        const className = xmlDoc.getAttribute("class") || null;
         const fieldNodes = {};
+        const widgetNodes = {};
+        let widgetNextId = 0;
         const columns = [];
         const fields = models[modelName];
         let buttonId = 0;
@@ -68,7 +71,6 @@ export class ListArchParser extends XMLParser {
         const groupListArchParser = new GroupListArchParser();
         let buttonGroup;
         let handleField = null;
-        let defaultOrder = stringToOrderBy(xmlDoc.getAttribute("default_order") || null);
         const treeAttr = {};
         let nextId = 0;
         const activeFields = {};
@@ -107,23 +109,30 @@ export class ListArchParser extends XMLParser {
                 addFieldDependencies(
                     activeFields,
                     models[modelName],
-                    fieldInfo.FieldComponent.fieldDependencies
+                    fieldInfo.field.fieldDependencies
                 );
                 if (this.isColumnVisible(fieldInfo.modifiers.column_invisible)) {
+<<<<<<< HEAD
                     const label = fieldInfo.FieldComponent.label;
+=======
+                    const label = fieldInfo.field.label;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     columns.push({
                         ...fieldInfo,
                         id: `column_${nextId++}`,
                         className: node.getAttribute("class"), // for oe_edit_only and oe_read_only
                         optional: node.getAttribute("optional") || false,
                         type: "field",
-                        hasLabel: !(fieldInfo.noLabel || fieldInfo.FieldComponent.noLabel),
+                        hasLabel: !(
+                            archParseBoolean(fieldInfo.attrs.nolabel) || fieldInfo.field.noLabel
+                        ),
                         label: (fieldInfo.widget && label && label.toString()) || fieldInfo.string,
                     });
                 }
                 return false;
             } else if (node.tagName === "widget") {
                 const widgetInfo = this.parseWidgetNode(node);
+<<<<<<< HEAD
                 addFieldDependencies(
                     activeFields,
                     models[modelName],
@@ -136,6 +145,23 @@ export class ListArchParser extends XMLParser {
                     // can decode it later...
                     node: encodeObjectForTemplate({ attrs: widgetInfo.rawAttrs }).slice(1, -1),
                     className: node.getAttribute("class"),
+=======
+                const widgetId = `widget_${++widgetNextId}`;
+                widgetNodes[widgetId] = widgetInfo;
+                node.setAttribute("widget_id", widgetId);
+                addFieldDependencies(
+                    activeFields,
+                    models[modelName],
+                    widgetInfo.widget.fieldDependencies
+                );
+
+                const widgetProps = {
+                    name: widgetInfo.name,
+                    // FIXME: this is dumb, we encode it into a weird object so that the widget
+                    // can decode it later...
+                    node: encodeObjectForTemplate({ attrs: widgetInfo.attrs }).slice(1, -1),
+                    className: node.getAttribute("class") || "",
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 };
                 columns.push({
                     ...widgetInfo,
@@ -210,6 +236,11 @@ export class ListArchParser extends XMLParser {
                 treeAttr.rawExpand = xmlDoc.getAttribute("expand");
                 treeAttr.decorations = getDecoration(xmlDoc);
 
+                treeAttr.defaultGroupBy = xmlDoc.getAttribute("default_group_by");
+                treeAttr.defaultOrder = stringToOrderBy(
+                    xmlDoc.getAttribute("default_order") || null
+                );
+
                 // custom open action when clicking on record row
                 const action = xmlDoc.getAttribute("action");
                 const type = xmlDoc.getAttribute("type");
@@ -217,8 +248,8 @@ export class ListArchParser extends XMLParser {
             }
         });
 
-        if (!defaultOrder.length && handleField) {
-            defaultOrder = stringToOrderBy(handleField);
+        if (!treeAttr.defaultOrder.length && handleField) {
+            treeAttr.defaultOrder = stringToOrderBy(handleField);
         }
 
         for (const [key, field] of Object.entries(fieldNodes)) {
@@ -226,14 +257,15 @@ export class ListArchParser extends XMLParser {
         }
 
         return {
+            className,
             creates,
             handleField,
             headerButtons,
             fieldNodes,
+            widgetNodes,
             activeFields,
             columns,
             groupBy,
-            defaultOrder,
             __rawArch: arch,
             ...treeAttr,
         };

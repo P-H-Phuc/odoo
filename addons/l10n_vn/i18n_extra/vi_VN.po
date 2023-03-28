@@ -16,6 +16,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_vn
+<<<<<<< HEAD
 #: model:account.account,name:l10n_vn.1_chart335
 #: model:account.account.template,name:l10n_vn.chart335
 msgid "Accrued expenses"
@@ -879,10 +880,14 @@ msgstr "Giá mua hàng hóa"
 
 #. module: l10n_vn
 #: model:account.report.line,name:l10n_vn.account_tax_report_line_01_vn
+=======
+#: model:account.tax.report.line,name:l10n_vn.account_tax_report_line_01_vn
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Purchase of Goods and Services"
 msgstr "HHDV Mua vào"
 
 #. module: l10n_vn
+<<<<<<< HEAD
 #: model:account.account,name:l10n_vn.1_chart6111
 #: model:account.account.template,name:l10n_vn.chart6111
 msgid "Purchases of raw materials"
@@ -938,10 +943,14 @@ msgstr "Doanh thu cung cấp dịch vụ"
 
 #. module: l10n_vn
 #: model:account.report.line,name:l10n_vn.account_tax_report_line_02_vn
+=======
+#: model:account.tax.report.line,name:l10n_vn.account_tax_report_line_02_vn
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Sales of Goods and Services"
 msgstr "HHDV Bán ra"
 
 #. module: l10n_vn
+<<<<<<< HEAD
 #: model:account.account,name:l10n_vn.1_chart5213
 #: model:account.account.template,name:l10n_vn.chart5213
 msgid "Sales rebates"
@@ -1102,6 +1111,9 @@ msgstr "Bảo hiểm thất nghiệp"
 
 #. module: l10n_vn
 #: model:account.report.line,name:l10n_vn.account_tax_report_line_02_01_vn
+=======
+#: model:account.tax.report.line,name:l10n_vn.account_tax_report_line_02_01_vn
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Untaxed Purchase of Goods and Services"
 msgstr "Giá trị HHDV Mua vào"
 
@@ -1147,6 +1159,7 @@ msgid "Untaxed sales of goods and services taxed 5%"
 msgstr "Giá trị HHDV Bán ra chịu thuế 5%"
 
 #. module: l10n_vn
+<<<<<<< HEAD
 #: model:account.tax.group,name:l10n_vn.tax_group_0
 msgid "VAT 0%"
 msgstr "Thuế GTGT 0%"
@@ -1177,6 +1190,9 @@ msgstr "Thuế GTGT được khấu trừ của tài sản cố định"
 #: model:account.account,name:l10n_vn.1_chart1331
 #: model:account.account.template,name:l10n_vn.chart1331
 #: model:account.report.line,name:l10n_vn.account_tax_report_line_01_01_vn
+=======
+#: model:account.tax.report.line,name:l10n_vn.account_tax_report_line_01_01_vn
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "VAT on purchase of goods and services"
 msgstr "Thuế GTGT HHDV mua vào"
 
@@ -1222,71 +1238,6 @@ msgid "VAT on sales of goods and services 5%"
 msgstr "Thuế GTGT HHDV bán ra chịu thuế 5%"
 
 #. module: l10n_vn
-#: model:account.chart.template,name:l10n_vn.vn_template
-msgid "VN - Chart of Accounts"
-msgstr "VN - Hệ thống tài khoản"
-
-#. module: l10n_vn
-#: model:account.tax,description:l10n_vn.1_tax_sale_vat0
-#: model:account.tax,name:l10n_vn.1_tax_sale_vat0
-#: model:account.tax.template,description:l10n_vn.tax_sale_vat0
-#: model:account.tax.template,name:l10n_vn.tax_sale_vat0
-msgid "Value Added Tax (VAT) 0%"
-msgstr "Thuế GTGT phải nộp 0%"
-
-#. module: l10n_vn
-#: model:account.tax,description:l10n_vn.1_tax_sale_vat10
-#: model:account.tax,name:l10n_vn.1_tax_sale_vat10
-#: model:account.tax.template,description:l10n_vn.tax_sale_vat10
-#: model:account.tax.template,name:l10n_vn.tax_sale_vat10
-msgid "Value Added Tax (VAT) 10%"
-msgstr "Thuế GTGT phải nộp 10%"
-
-#. module: l10n_vn
-#: model:account.tax,description:l10n_vn.1_tax_sale_vat5
-#: model:account.tax,name:l10n_vn.1_tax_sale_vat5
-#: model:account.tax.template,description:l10n_vn.tax_sale_vat5
-#: model:account.tax.template,name:l10n_vn.tax_sale_vat5
-msgid "Value Added Tax (VAT) 5%"
-msgstr "Thuế GTGT phải nộp 5%"
-
-#. module: l10n_vn
 #: model:ir.ui.menu,name:l10n_vn.account_reports_vn_statements_menu
 msgid "Vietnam"
 msgstr "Việt Nam"
-
-#. module: l10n_vn
-#: model:account.account,name:l10n_vn.1_chart1121
-#: model:account.account.template,name:l10n_vn.chart1121
-msgid "Vietnamese Dong"
-msgstr "Tiền Việt Nam"
-
-#. module: l10n_vn
-#: model:account.account,name:l10n_vn.1_chart1544
-#: model:account.account.template,name:l10n_vn.chart1544
-msgid "Warranty costs"
-msgstr "Chi phí bảo hành xây lắp"
-
-#. module: l10n_vn
-#: model:account.account,name:l10n_vn.1_chart6415
-#: model:account.account.template,name:l10n_vn.chart6415
-msgid "Warranty expenses"
-msgstr "Chi phí bảo hành"
-
-#. module: l10n_vn
-#: model:account.account,name:l10n_vn.1_chart3532
-#: model:account.account.template,name:l10n_vn.chart3532
-msgid "Welfare fund"
-msgstr "Quỹ phúc lợi"
-
-#. module: l10n_vn
-#: model:account.account,name:l10n_vn.1_chart3533
-#: model:account.account.template,name:l10n_vn.chart3533
-msgid "Welfare fund used for fixed asset acquisitions"
-msgstr "Quỹ phúc lợi đã hình thành TSCĐ"
-
-#. module: l10n_vn
-#: model:account.account,name:l10n_vn.1_chart1361
-#: model:account.account.template,name:l10n_vn.chart1361
-msgid "Working capital provided to sub-units"
-msgstr "Vốn kinh doanh ở các đơn vị trực thuộc"

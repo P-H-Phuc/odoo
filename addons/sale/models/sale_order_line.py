@@ -149,6 +149,7 @@ class SaleOrderLine(models.Model):
         digits='Discount',
         store=True, readonly=False, precompute=True)
 
+<<<<<<< HEAD
     # The price_reduce field should not be used for amounts computations
     # because of its digits precision. It will be removed in next version.
     price_reduce = fields.Float(
@@ -156,6 +157,8 @@ class SaleOrderLine(models.Model):
         compute='_compute_price_reduce',
         digits='Product Price',
         store=True, precompute=True)
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     price_subtotal = fields.Monetary(
         string="Subtotal",
         compute='_compute_amount',
@@ -204,7 +207,7 @@ class SaleOrderLine(models.Model):
         string="Method to update delivered qty",
         compute='_compute_qty_delivered_method',
         store=True, precompute=True,
-        help="According to product configuration, the delivered quantity can be automatically computed by mechanism :\n"
+        help="According to product configuration, the delivered quantity can be automatically computed by mechanism:\n"
              "  - Manual: the quantity is set manually on the line\n"
              "  - Analytic From expenses: the quantity is the quantity sum from posted expenses\n"
              "  - Timesheet: the quantity is the sum of hours recorded on tasks linked to this sale line\n"
@@ -263,6 +266,9 @@ class SaleOrderLine(models.Model):
         compute='_compute_product_updatable')
     product_uom_readonly = fields.Boolean(
         compute='_compute_product_uom_readonly')
+    tax_calculation_rounding_method = fields.Selection(
+        related='company_id.tax_calculation_rounding_method',
+        string='Tax calculation rounding method', readonly=True)
 
     #=== COMPUTE METHODS ===#
 
@@ -419,7 +425,7 @@ class SaleOrderLine(models.Model):
             else:
                 line.pricelist_item_id = line.order_id.pricelist_id._get_product_rule(
                     line.product_id,
-                    line.product_uom_qty or 1.0,
+                    quantity=line.product_uom_qty or 1.0,
                     uom=line.product_uom,
                     date=line.order_id.date_order,
                 )
@@ -431,7 +437,7 @@ class SaleOrderLine(models.Model):
             # manually edited
             if line.qty_invoiced > 0:
                 continue
-            if not line.product_uom or not line.product_id or not line.order_id.pricelist_id:
+            if not line.product_uom or not line.product_id:
                 line.price_unit = 0.0
             else:
                 price = line.with_company(line.company_id)._get_display_price()
@@ -482,11 +488,11 @@ class SaleOrderLine(models.Model):
         pricelist_rule = self.pricelist_item_id
         order_date = self.order_id.date_order or fields.Date.today()
         product = self.product_id.with_context(**self._get_product_price_context())
-        qty = self.product_uom_qty or 1.0
+        quantity = self.product_uom_qty or 1.0
         uom = self.product_uom or self.product_id.uom_id
 
         price = pricelist_rule._compute_price(
-            product, qty, uom, order_date, currency=self.currency_id)
+            product, quantity, uom, order_date, currency=self.currency_id)
 
         return price
 
@@ -497,21 +503,9 @@ class SaleOrderLine(models.Model):
         :rtype: dict
         """
         self.ensure_one()
-        res = {}
-
-        # It is possible that a no_variant attribute is still in a variant if
-        # the type of the attribute has been changed after creation.
-        no_variant_attributes_price_extra = [
-            ptav.price_extra for ptav in self.product_no_variant_attribute_value_ids.filtered(
-                lambda ptav:
-                    ptav.price_extra and
-                    ptav not in self.product_id.product_template_attribute_value_ids
-            )
-        ]
-        if no_variant_attributes_price_extra:
-            res['no_variant_attributes_price_extra'] = tuple(no_variant_attributes_price_extra)
-
-        return res
+        return self.product_id._get_product_price_context(
+            self.product_no_variant_attribute_value_ids,
+        )
 
     def _get_pricelist_price_before_discount(self):
         """Compute the price used as base for the pricelist price computation.
@@ -525,7 +519,7 @@ class SaleOrderLine(models.Model):
         pricelist_rule = self.pricelist_item_id
         order_date = self.order_id.date_order or fields.Date.today()
         product = self.product_id.with_context(**self._get_product_price_context())
-        qty = self.product_uom_qty or 1.0
+        quantity = self.product_uom_qty or 1.0
         uom = self.product_uom
 
         if pricelist_rule:
@@ -535,14 +529,14 @@ class SaleOrderLine(models.Model):
                 # to show the discount to the customer.
                 while pricelist_item.base == 'pricelist' and pricelist_item.base_pricelist_id.discount_policy == 'without_discount':
                     rule_id = pricelist_item.base_pricelist_id._get_product_rule(
-                        product, qty, uom=uom, date=order_date)
+                        product, quantity, currency=self.currency_id, uom=uom, date=order_date)
                     pricelist_item = self.env['product.pricelist.item'].browse(rule_id)
 
             pricelist_rule = pricelist_item
 
         price = pricelist_rule._compute_base_price(
             product,
-            qty,
+            quantity,
             uom,
             order_date,
             target_currency=self.currency_id,
@@ -581,12 +575,7 @@ class SaleOrderLine(models.Model):
                     # otherwise it's a surcharge which shouldn't be shown to the customer
                     line.discount = discount
 
-    @api.depends('price_unit', 'discount')
-    def _compute_price_reduce(self):
-        for line in self:
-            line.price_reduce = line.price_unit * (1.0 - line.discount / 100.0)
-
-    def _convert_to_tax_base_line_dict(self):
+    def _convert_to_tax_base_line_dict(self, **kwargs):
         """ Convert the current record to a dictionary in order to use the generic taxes computation method
         defined on account.tax.
 
@@ -603,6 +592,7 @@ class SaleOrderLine(models.Model):
             quantity=self.product_uom_qty,
             discount=self.discount,
             price_subtotal=self.price_subtotal,
+            **kwargs,
         )
 
     @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id')
@@ -611,7 +601,9 @@ class SaleOrderLine(models.Model):
         Compute the amounts of the SO line.
         """
         for line in self:
-            tax_results = self.env['account.tax']._compute_taxes([line._convert_to_tax_base_line_dict()])
+            tax_results = self.env['account.tax']._compute_taxes([
+                line._convert_to_tax_base_line_dict()
+            ])
             totals = list(tax_results['totals'].values())[0]
             amount_untaxed = totals['amount_untaxed']
             amount_tax = totals['amount_tax']
@@ -843,7 +835,7 @@ class SaleOrderLine(models.Model):
                         amount_invoiced -= invoice_line.currency_id._convert(invoice_line.price_subtotal, line.currency_id, line.company_id, invoice_date)
             line.untaxed_amount_invoiced = amount_invoiced
 
-    @api.depends('state', 'price_reduce', 'product_id', 'untaxed_amount_invoiced', 'qty_delivered', 'product_uom_qty')
+    @api.depends('state', 'product_id', 'untaxed_amount_invoiced', 'qty_delivered', 'product_uom_qty')
     def _compute_untaxed_amount_to_invoice(self):
         """ Total of remaining amount to invoice on the sale order line (taxes excl.) as
                 total_sol - amount already invoiced
@@ -1148,12 +1140,22 @@ class SaleOrderLine(models.Model):
 
     #=== CORE METHODS OVERRIDES ===#
 
+    def _additional_name_per_id(self):
+        return {
+            so_line.id:
+            '(%s)' % (so_line.order_partner_id.ref or so_line.order_partner_id.name)
+            for so_line in self
+            if so_line.order_partner_id.ref or so_line.order_partner_id.name
+        }
+
     def name_get(self):
         result = []
+        name_per_id = self._additional_name_per_id()
         for so_line in self.sudo():
             name = '%s - %s' % (so_line.order_id.name, so_line.name and so_line.name.split('\n')[0] or so_line.product_id.name)
-            if so_line.order_partner_id.ref:
-                name = '%s (%s)' % (name, so_line.order_partner_id.ref)
+            additional_name = name_per_id.get(so_line.id)
+            if additional_name:
+                name = '%s %s' % (name, additional_name)
             result.append((so_line.id, name))
         return result
 
@@ -1166,3 +1168,28 @@ class SaleOrderLine(models.Model):
     def _is_not_sellable_line(self):
         # True if the line is a computed line (reward, delivery, ...) that user cannot add manually
         return False
+
+    #=== TOOLING ===#
+
+    def _convert_to_sol_currency(self, amount, currency):
+        """Convert the given amount from the given currency to the SO(L) currency.
+
+        :param float amount: the amount to convert
+        :param currency: currency in which the given amount is expressed
+        :type currency: `res.currency` record
+        :returns: converted amount
+        :rtype: float
+        """
+        self.ensure_one()
+        to_currency = self.currency_id or self.order_id.currency_id
+        if currency and to_currency and currency != to_currency:
+            conversion_date = self.order_id.date_order or fields.Date.context_today(self)
+            company = self.company_id or self.order_id.company_id or self.env.company
+            return currency._convert(
+                from_amount=amount,
+                to_currency=to_currency,
+                company=company,
+                date=conversion_date,
+                round=False,
+            )
+        return amount

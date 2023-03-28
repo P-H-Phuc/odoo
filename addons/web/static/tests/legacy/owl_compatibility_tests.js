@@ -1,25 +1,16 @@
 odoo.define('web.OwlCompatibilityTests', function (require) {
     "use strict";
 
-    const fieldRegistry = require('web.field_registry');
-    const widgetRegistry = require('web.widgetRegistry');
-    const FormView = require('web.FormView');
-
     const {
         ComponentAdapter,
         ComponentWrapper,
         WidgetAdapterMixin,
-        standaloneAdapter,
     } = require('web.OwlCompatibility');
     const testUtils = require('web.test_utils');
     const Widget = require('web.Widget');
-    const Dialog = require("web.Dialog");
     const { registry } = require("@web/core/registry");
     const { LegacyComponent } = require("@web/legacy/legacy_component");
     const { mapLegacyEnvToWowlEnv, useWowlService } = require("@web/legacy/utils");
-
-    const { legacyServiceProvider } = require("@web/legacy/legacy_service_provider");
-    const { click } = require("@web/../tests/helpers/utils");
 
     const makeTestEnvironment = require("web.test_env");
     const { makeTestEnv } = require("@web/../tests/helpers/mock_env");
@@ -812,69 +803,6 @@ odoo.define('web.OwlCompatibilityTests', function (require) {
 
             assert.verifySteps(["GED", "AAB", "MCM"]);
         });
-
-        QUnit.test("standaloneAdapter can trigger in the DOM and execute action", async (assert) => {
-            assert.expect(3)
-            const done = assert.async();
-
-            const MyDialog = Dialog.extend({
-                async start() {
-                    const res = await this._super(...arguments);
-                    const btn = document.createElement("button");
-                    btn.classList.add("myButton");
-                    btn.addEventListener("click", () => {
-                        this.trigger_up("execute_action", {
-                            action_data: {},
-                            env: {},
-                        });
-                    });
-                    this.el.appendChild(btn);
-                    return res;
-                }
-            });
-
-            const dialogOpened = makeTestPromise();
-            class MyComp extends Component {
-                setup() {
-                    onWillDestroy(() => {
-                        this.dialog.destroy();
-                    })
-                }
-                async spawnDialog() {
-                    const parent = standaloneAdapter();
-                    this.dialog = new MyDialog(parent);
-                    await this.dialog.open();
-                    dialogOpened.resolve();
-                }
-            }
-            MyComp.template = xml`<button class="spawnDialog" t-on-click="spawnDialog"/>`;
-
-            const actionService = {
-                start() {
-                    return {
-                        async doActionButton() {
-                            assert.step("doActionButton");
-                        }
-                    }
-                }
-            }
-
-            registry.category("services").add("action", actionService);
-            registry.category("services").add("legacy_service_provider", legacyServiceProvider);
-
-            const env = await makeTestEnv();
-            await addMockEnvironmentOwl(Component);
-
-            const target = getFixture()
-            await mount(MyComp, target, {env});
-            await click(target.querySelector(".spawnDialog"));
-            await dialogOpened;
-
-            assert.containsOnce(document.body, ".modal"); // legacy modal
-            await click(document.body.querySelector(".modal .myButton"));
-            assert.verifySteps(["doActionButton"]);
-            done();
-        })
 
         QUnit.module('WidgetAdapterMixin and ComponentWrapper');
 
@@ -1725,65 +1653,6 @@ odoo.define('web.OwlCompatibilityTests', function (require) {
             ]);
 
             parent.destroy();
-        });
-
-        QUnit.module("WidgetWrapper");
-
-        QUnit.test("correctly update widget component during mounting", async function (assert) {
-            // It comes with a fix for a bug that occurred because in some circonstances,
-            // a widget component can be updated twice.
-            // Specifically, this occurs when there is 'pad' widget in the form view, because this
-            // widget does a 'setValue' in its 'renderEdit', which thus resets the widget component.
-            assert.expect(4);
-
-            const PadLikeWidget = fieldRegistry.get('char').extend({
-                _renderEdit() {
-                    assert.step("setValue");
-                    this._setValue("some value");
-                }
-            });
-            fieldRegistry.add('pad_like', PadLikeWidget);
-
-            class WidgetComponent extends LegacyComponent {}
-            WidgetComponent.template = xml`<div>Widget</div>`;
-            widgetRegistry.add("widget_comp", WidgetComponent);
-
-            const form = await testUtils.createView({
-                View: FormView,
-                model: 'partner',
-                res_id: 1,
-                data: {
-                    partner: {
-                        fields: {
-                            id: {string: "id", type:"integer"},
-                            foo: {string: "Foo", type: "char"},
-                        },
-                        records: [{
-                            id: 1,
-                            foo: "value",
-                        }],
-                    },
-                },
-                arch: `
-                    <form><sheet><group>
-                        <field name="foo" widget="pad_like" />
-                        <widget name="widget_comp" />
-                    </group></sheet></form>
-                `,
-            });
-
-            assert.containsOnce(form, ".o_legacy_form_view.o_form_readonly");
-
-            await testUtils.dom.click(form.$(".o_form_label")[0]);
-            await testUtils.nextTick(); // wait for quick edit
-
-            assert.containsOnce(form, ".o_legacy_form_view.o_form_editable");
-            assert.verifySteps(["setValue"]);
-
-            form.destroy();
-
-            delete fieldRegistry.map.pad_like;
-            delete widgetRegistry.map.widget_comp;
         });
 
         QUnit.module("useWowlService");

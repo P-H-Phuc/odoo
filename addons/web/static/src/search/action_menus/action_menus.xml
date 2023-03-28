@@ -2,7 +2,11 @@
 <templates xml:space="preserve">
 
     <t t-name="web.ActionMenus" owl="1">
+<<<<<<< HEAD
         <div class="o_cp_action_menus">
+=======
+        <div class="o_cp_action_menus pe-2">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             <Dropdown t-if="printItems.length" class="'d-inline-block'" togglerClass="'btn btn-light'" hotkey="'shift+u'">
                 <t t-set-slot="toggler">
                     <i class="me-md-1 fa fa-print"/>

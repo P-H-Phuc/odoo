@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-15 12:49+0000\n"
 "PO-Revision-Date: 2022-12-15 12:49+0000\n"
+=======
+"Project-Id-Version: Odoo Server saas~16.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-23 12:37+0000\n"
+"PO-Revision-Date: 2023-02-23 12:37+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -46,6 +53,7 @@ msgid "'Print Badge - %s' % (object.name).replace('/', '')"
 msgstr ""
 
 #. module: hr
+<<<<<<< HEAD
 #: model_terms:hr.job,job_details:hr.job_ceo
 #: model_terms:hr.job,job_details:hr.job_consultant
 #: model_terms:hr.job,job_details:hr.job_cto
@@ -101,6 +109,8 @@ msgid "4 Days after Interview"
 msgstr ""
 
 #. module: hr
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/hr/models/hr_employee.py:0
 #, python-format
@@ -112,11 +122,6 @@ msgstr ""
 #. module: hr
 #: model_terms:ir.ui.view,arch_db:hr.hr_department_view_kanban
 msgid "<i class=\"fa fa-building-o\" role=\"img\" aria-label=\"Company\" title=\"Company\"/>"
-msgstr ""
-
-#. module: hr
-#: model_terms:ir.ui.view,arch_db:hr.hr_department_view_kanban
-msgid "<i class=\"fa fa-ellipsis-v\" role=\"img\" aria-label=\"Manage\" title=\"Manage\"/>"
 msgstr ""
 
 #. module: hr
@@ -200,14 +205,6 @@ msgstr ""
 #. module: hr
 #: model_terms:ir.ui.view,arch_db:hr.res_config_settings_view_form
 msgid ""
-"<span class=\"fa fa-lg fa-building-o\" title=\"Values set here are company-"
-"specific.\" role=\"img\" aria-label=\"Values set here are company-"
-"specific.\" groups=\"base.group_multi_company\"/>"
-msgstr ""
-
-#. module: hr
-#: model_terms:ir.ui.view,arch_db:hr.res_config_settings_view_form
-msgid ""
 "<span class=\"flex-shrink-0 ml8 me-2\">IP Addresses (comma-separated)</span>"
 msgstr ""
 
@@ -240,11 +237,6 @@ msgstr ""
 #. module: hr
 #: model_terms:ir.ui.view,arch_db:hr.hr_departure_wizard_view_form
 msgid "<span class=\"o_form_label o_hr_form_label cursor-default\">HR Info</span>"
-msgstr ""
-
-#. module: hr
-#: model_terms:ir.ui.view,arch_db:hr.res_config_settings_view_form
-msgid "<span class=\"o_form_label\">Presence Control</span>"
 msgstr ""
 
 #. module: hr
@@ -314,6 +306,7 @@ msgid "<span>Km</span>"
 msgstr ""
 
 #. module: hr
+<<<<<<< HEAD
 #: model_terms:hr.job,website_description:hr.job_ceo
 #: model_terms:hr.job,website_description:hr.job_consultant
 #: model_terms:hr.job,website_description:hr.job_cto
@@ -325,6 +318,8 @@ msgid "A full-time position <br>Attractive salary package."
 msgstr ""
 
 #. module: hr
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.constraint,message:hr.constraint_hr_employee_user_uniq
 msgid "A user cannot be linked to multiple employees in the same company."
 msgstr ""
@@ -1089,11 +1084,14 @@ msgid "Discover our products."
 msgstr ""
 
 #. module: hr
+<<<<<<< HEAD
 #: model:ir.model,name:hr.model_mail_channel
 msgid "Discussion Channel"
 msgstr ""
 
 #. module: hr
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:hr.field_hr_contract_type__display_name
 #: model:ir.model.fields,field_description:hr.field_hr_department__display_name
 #: model:ir.model.fields,field_description:hr.field_hr_departure_reason__display_name
@@ -1366,6 +1364,7 @@ msgid ""
 msgstr ""
 
 #. module: hr
+<<<<<<< HEAD
 #: model_terms:hr.job,website_description:hr.job_ceo
 #: model_terms:hr.job,website_description:hr.job_consultant
 #: model_terms:hr.job,website_description:hr.job_cto
@@ -1377,6 +1376,8 @@ msgid "Experience in writing online content"
 msgstr ""
 
 #. module: hr
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:hr.job,name:hr.job_developer
 msgid "Experienced Developer"
 msgstr ""
@@ -1465,6 +1466,7 @@ msgid "Generate"
 msgstr ""
 
 #. module: hr
+<<<<<<< HEAD
 #: model_terms:hr.job,website_description:hr.job_ceo
 #: model_terms:hr.job,website_description:hr.job_consultant
 #: model_terms:hr.job,website_description:hr.job_cto
@@ -1473,6 +1475,10 @@ msgstr ""
 #: model_terms:hr.job,website_description:hr.job_marketing
 #: model_terms:hr.job,website_description:hr.job_trainee
 msgid "Google Adwords experience"
+=======
+#: model_terms:ir.ui.view,arch_db:hr.hr_departure_wizard_view_form
+msgid "Give more details about the reason of archiving the employee."
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: hr
@@ -1505,7 +1511,10 @@ msgstr ""
 
 #. module: hr
 #: model:ir.actions.server,name:hr.ir_cron_data_check_work_permit_validity_ir_actions_server
+<<<<<<< HEAD
 #: model:ir.cron,cron_name:hr.ir_cron_data_check_work_permit_validity
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "HR Employee: check work permit validity"
 msgstr ""
 
@@ -1626,11 +1635,8 @@ msgstr ""
 
 #. module: hr
 #: model:ir.model.fields,help:hr.field_hr_department__message_has_error
-#: model:ir.model.fields,help:hr.field_hr_department__message_has_sms_error
 #: model:ir.model.fields,help:hr.field_hr_employee__message_has_error
-#: model:ir.model.fields,help:hr.field_hr_employee__message_has_sms_error
 #: model:ir.model.fields,help:hr.field_hr_job__message_has_error
-#: model:ir.model.fields,help:hr.field_hr_job__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
 msgstr ""
 
@@ -1639,6 +1645,11 @@ msgstr ""
 msgid ""
 "If the active field is set to False, it will allow you to hide the resource "
 "record without removing it."
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,help:hr.field_hr_employee__private_car_plate
+msgid "If you have more than one car, just separate the plates by a space."
 msgstr ""
 
 #. module: hr
@@ -1736,7 +1747,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr.field_hr_employee_public__job_title
 #: model:ir.model.fields,field_description:hr.field_res_users__job_title
 #: model_terms:ir.ui.view,arch_db:hr.hr_employee_public_view_form
-#: model_terms:ir.ui.view,arch_db:hr.hr_employee_public_view_search
 msgid "Job Title"
 msgstr ""
 
@@ -1771,22 +1781,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:hr.field_hr_employee_public__last_activity_time
 #: model:ir.model.fields,field_description:hr.field_res_users__last_activity_time
 msgid "Last Activity Time"
-msgstr ""
-
-#. module: hr
-#: model:ir.model.fields,field_description:hr.field_hr_contract_type____last_update
-#: model:ir.model.fields,field_description:hr.field_hr_department____last_update
-#: model:ir.model.fields,field_description:hr.field_hr_departure_reason____last_update
-#: model:ir.model.fields,field_description:hr.field_hr_departure_wizard____last_update
-#: model:ir.model.fields,field_description:hr.field_hr_employee____last_update
-#: model:ir.model.fields,field_description:hr.field_hr_employee_category____last_update
-#: model:ir.model.fields,field_description:hr.field_hr_employee_public____last_update
-#: model:ir.model.fields,field_description:hr.field_hr_job____last_update
-#: model:ir.model.fields,field_description:hr.field_hr_plan____last_update
-#: model:ir.model.fields,field_description:hr.field_hr_plan_activity_type____last_update
-#: model:ir.model.fields,field_description:hr.field_hr_plan_wizard____last_update
-#: model:ir.model.fields,field_description:hr.field_hr_work_location____last_update
-msgid "Last Modified on"
 msgstr ""
 
 #. module: hr
@@ -2023,6 +2017,7 @@ msgid "Nationality (Country)"
 msgstr ""
 
 #. module: hr
+<<<<<<< HEAD
 #: model_terms:hr.job,website_description:hr.job_ceo
 #: model_terms:hr.job,website_description:hr.job_consultant
 #: model_terms:hr.job,website_description:hr.job_cto
@@ -2034,6 +2029,8 @@ msgid "Negotiate and contract"
 msgstr ""
 
 #. module: hr
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:hr.field_hr_employee__activity_calendar_event_id
 msgid "Next Activity Calendar Event"
 msgstr ""
@@ -2054,6 +2051,7 @@ msgid "Next Activity Type"
 msgstr ""
 
 #. module: hr
+<<<<<<< HEAD
 #: model_terms:hr.job,website_description:hr.job_ceo
 #: model_terms:hr.job,website_description:hr.job_consultant
 #: model_terms:hr.job,website_description:hr.job_cto
@@ -2076,6 +2074,8 @@ msgid "No dumb managers, no stupid tools to use, no rigid working hours"
 msgstr ""
 
 #. module: hr
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/hr/models/hr_plan_activity_type.py:0
 #, python-format
@@ -2282,6 +2282,7 @@ msgid "Payroll"
 msgstr ""
 
 #. module: hr
+<<<<<<< HEAD
 #: model_terms:hr.job,website_description:hr.job_ceo
 #: model_terms:hr.job,website_description:hr.job_consultant
 #: model_terms:hr.job,website_description:hr.job_cto
@@ -2304,11 +2305,14 @@ msgid "Perks"
 msgstr ""
 
 #. module: hr
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:hr.contract.type,name:hr.contract_type_permanent
 msgid "Permanent"
 msgstr ""
 
 #. module: hr
+<<<<<<< HEAD
 #: model_terms:hr.job,website_description:hr.job_ceo
 #: model_terms:hr.job,website_description:hr.job_consultant
 #: model_terms:hr.job,website_description:hr.job_cto
@@ -2317,6 +2321,12 @@ msgstr ""
 #: model_terms:hr.job,website_description:hr.job_marketing
 #: model_terms:hr.job,website_description:hr.job_trainee
 msgid "Personal Evolution"
+=======
+#. odoo-python
+#: code:addons/hr/models/res_users.py:0
+#, python-format
+msgid "Personal information update."
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: hr
@@ -2399,6 +2409,11 @@ msgstr ""
 
 #. module: hr
 #: model_terms:ir.ui.view,arch_db:hr.res_config_settings_view_form
+msgid "Presence Control"
+msgstr ""
+
+#. module: hr
+#: model_terms:ir.ui.view,arch_db:hr.res_config_settings_view_form
 msgid "Presence of employees"
 msgstr ""
 
@@ -2433,6 +2448,11 @@ msgstr ""
 #. module: hr
 #: model_terms:ir.ui.view,arch_db:hr.res_users_view_form_profile
 msgid "Private Address"
+msgstr ""
+
+#. module: hr
+#: model:ir.model.fields,field_description:hr.field_hr_employee__private_car_plate
+msgid "Private Car Plate"
 msgstr ""
 
 #. module: hr
@@ -2644,13 +2664,6 @@ msgstr ""
 #. module: hr
 #: model:ir.model.fields,field_description:hr.field_hr_employee__sinid
 msgid "SIN No"
-msgstr ""
-
-#. module: hr
-#: model:ir.model.fields,field_description:hr.field_hr_department__message_has_sms_error
-#: model:ir.model.fields,field_description:hr.field_hr_employee__message_has_sms_error
-#: model:ir.model.fields,field_description:hr.field_hr_job__message_has_sms_error
-msgid "SMS Delivery error"
 msgstr ""
 
 #. module: hr
@@ -2934,6 +2947,16 @@ msgstr ""
 
 #. module: hr
 #. odoo-python
+<<<<<<< HEAD
+=======
+#: code:addons/hr/models/res_users.py:0
+#, python-format
+msgid "The following fields were modified by %s"
+msgstr ""
+
+#. module: hr
+#. odoo-python
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/hr/models/hr_plan_activity_type.py:0
 #, python-format
 msgid "The manager of %s should be linked to a user."
@@ -3142,6 +3165,7 @@ msgid "Warning"
 msgstr ""
 
 #. module: hr
+<<<<<<< HEAD
 #: model:ir.model.fields,field_description:hr.field_hr_department__website_message_ids
 #: model:ir.model.fields,field_description:hr.field_hr_employee__website_message_ids
 #: model:ir.model.fields,field_description:hr.field_hr_job__website_message_ids
@@ -3178,6 +3202,8 @@ msgid "What's great in the job?"
 msgstr ""
 
 #. module: hr
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,help:hr.field_hr_employee__member_of_department
 #: model:ir.model.fields,help:hr.field_hr_employee_base__member_of_department
 #: model:ir.model.fields,help:hr.field_hr_employee_public__member_of_department
@@ -3193,19 +3219,19 @@ msgstr ""
 
 #. module: hr
 #: model_terms:ir.actions.act_window,help:hr.act_employee_from_department
+#: model_terms:ir.actions.act_window,help:hr.open_view_employee_list_my
+msgid ""
+"With just a quick glance on the Odoo employee screen, you\n"
+"                    can easily find all the information you need for each person;\n"
+"                    contact data, job position, availability, etc."
+msgstr ""
+
+#. module: hr
 #: model_terms:ir.actions.act_window,help:hr.hr_employee_public_action
 msgid ""
 "With just a quick glance on the Odoo employee screen, you\n"
 "                can easily find all the information you need for each person;\n"
 "                contact data, job position, availability, etc."
-msgstr ""
-
-#. module: hr
-#: model_terms:ir.actions.act_window,help:hr.open_view_employee_list_my
-msgid ""
-"With just a quick glance on the Odoo employee screen, you\n"
-"               can easily find all the information you need for each person;\n"
-"               contact data, job position, availability, etc."
 msgstr ""
 
 #. module: hr

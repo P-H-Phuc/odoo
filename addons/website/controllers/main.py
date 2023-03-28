@@ -44,7 +44,8 @@ class QueryURL(object):
         self.path_args = OrderedSet(path_args or [])
 
     def __call__(self, path=None, path_args=None, **kw):
-        path = path or self.path
+        path_prefix = path or self.path
+        path = ''
         for key, value in self.args.items():
             kw.setdefault(key, value)
         path_args = OrderedSet(path_args or []) | self.path_args
@@ -66,12 +67,14 @@ class QueryURL(object):
                 path += '/' + key + '/' + value
         if fragments:
             path += '?' + '&'.join(fragments)
+        if not path.startswith(path_prefix):
+            path = path_prefix + path
         return path
 
 
 class Website(Home):
 
-    @http.route('/', type='http', auth="public", website=True, sitemap=True)
+    @http.route('/', auth="public", website=True, sitemap=True)
     def index(self, **kw):
         """ The goal of this controller is to make sure we don't serve a 404 as
         the website homepage. As this is the website entry point, serving a 404
@@ -282,6 +285,15 @@ class Website(Home):
                 create_sitemap('/sitemap-%d.xml' % current_website.id, content)
 
         return request.make_response(content, [('Content-Type', mimetype)])
+
+    # if not icon provided in DOM, browser tries to access /favicon.ico, eg when
+    # opening an order pdf
+    @http.route(['/favicon.ico'], type='http', auth='public', website=True, multilang=False, sitemap=False)
+    def favicon(self, **kw):
+        website = request.website
+        response = request.redirect(website.image_url(website, 'favicon'), code=301)
+        response.headers['Cache-Control'] = 'public, max-age=%s' % http.STATIC_CACHE_LONG
+        return response
 
     @http.route('/website/info', type='http', auth="public", website=True, sitemap=True)
     def website_info(self, **kwargs):
@@ -498,16 +510,19 @@ class Website(Home):
             'fuzzy_search': fuzzy_term,
         }
 
-    @http.route(['/pages', '/pages/page/<int:page>'], type='http', auth="public", website=True, sitemap=False)
-    def pages_list(self, page=1, search='', **kw):
-        options = {
+    def _get_page_search_options(self, **post):
+        return {
             'displayDescription': False,
             'displayDetail': False,
             'displayExtraDetail': False,
             'displayExtraLink': False,
             'displayImage': False,
-            'allowFuzzy': not kw.get('noFuzzy'),
+            'allowFuzzy': not post.get('noFuzzy'),
         }
+
+    @http.route(['/pages', '/pages/page/<int:page>'], type='http', auth="public", website=True, sitemap=False)
+    def pages_list(self, page=1, search='', **kw):
+        options = self._get_page_search_options(**kw)
         step = 50
         pages_count, details, fuzzy_search_term = request.website._search_with_fuzzy(
             "pages", search, limit=page * step, order='name asc, website_id desc, id',
@@ -533,6 +548,16 @@ class Website(Home):
         }
         return request.render("website.list_website_public_pages", values)
 
+    def _get_hybrid_search_options(self, **post):
+        return {
+            'displayDescription': True,
+            'displayDetail': True,
+            'displayExtraDetail': True,
+            'displayExtraLink': True,
+            'displayImage': True,
+            'allowFuzzy': not post.get('noFuzzy'),
+        }
+
     @http.route([
         '/website/search',
         '/website/search/page/<int:page>',
@@ -543,14 +568,7 @@ class Website(Home):
         if not search:
             return request.render("website.list_hybrid")
 
-        options = {
-            'displayDescription': True,
-            'displayDetail': True,
-            'displayExtraDetail': True,
-            'displayExtraLink': True,
-            'displayImage': True,
-            'allowFuzzy': not kw.get('noFuzzy'),
-        }
+        options = self._get_hybrid_search_options(**kw)
         data = self.autocomplete(search_type=search_type, term=search, order='name asc', limit=500, max_nb_chars=200, options=options)
 
         results = data.get('results', [])
@@ -800,6 +818,7 @@ class WebsiteBinary(Binary):
             if unique:
                 kw['unique'] = unique
         return self.content_image(**kw)
+<<<<<<< HEAD
 
     # TODO in master: move this route outside the WebsiteBinary class
     # if not icon provided in DOM, browser tries to access /favicon.ico, eg when opening an order pdf
@@ -809,3 +828,5 @@ class WebsiteBinary(Binary):
         response = request.redirect(website.image_url(website, 'favicon'), code=301)
         response.headers['Cache-Control'] = 'public, max-age=%s' % http.STATIC_CACHE_LONG
         return response
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

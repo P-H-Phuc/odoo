@@ -13,11 +13,12 @@ export class EmployeeListController extends ListController {
         this.archiveEmployee = useArchiveEmployee();
     }
 
-    getActionMenuItems() {
-        const menuItems = super.getActionMenuItems();
+    getStaticActionMenuItems() {
+        const menuItems = super.getStaticActionMenuItems();
         const selectedRecords = this.model.root.selection;
 
         // Only override the Archive action when only 1 record is selected.
+<<<<<<< HEAD
         if (!this.archiveEnabled || selectedRecords.length > 1 || !selectedRecords[0].data.active) {
             return menuItems;
         }
@@ -25,6 +26,10 @@ export class EmployeeListController extends ListController {
         const archiveAction = menuItems.other.find((item) => item.key === "archive");
         if (archiveAction) {
             archiveAction.callback = this.archiveEmployee.bind(this, selectedRecords[0].resId);
+=======
+        if (selectedRecords.length === 1 && selectedRecords[0].data.active) {
+            menuItems.archive.callback = this.archiveEmployee.bind(this, selectedRecords[0].resId);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
         return menuItems;
     }

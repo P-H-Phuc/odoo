@@ -54,11 +54,11 @@ const UrlPickerUserValueWidget = InputUserValueWidget.extend({
         await this._super(...arguments);
         const linkButton = document.createElement('we-button');
         const icon = document.createElement('i');
-        icon.classList.add('fa', 'fa-fw', 'fa-external-link')
-        linkButton.classList.add('o_we_redirect_to');
-        linkButton.title = _t("Redirect to URL in a new tab");
+        icon.classList.add('fa', 'fa-fw', 'fa-external-link');
+        linkButton.classList.add('o_we_redirect_to', 'o_we_link', 'ms-1');
+        linkButton.title = _t("Preview this URL in a new tab");
         linkButton.appendChild(icon);
-        this.containerEl.appendChild(linkButton);
+        this.containerEl.after(linkButton);
         this.el.classList.add('o_we_large');
         this.inputEl.classList.add('text-start');
         const options = {
@@ -150,12 +150,18 @@ const FontFamilyPickerUserValueWidget = SelectUserValueWidget.extend({
                 fontFamily = 'var(--o-system-fonts)';
             }
             const fontEl = document.createElement('we-button');
+<<<<<<< HEAD
             // TODO: Remove me in master;
             fontEl.classList.add(`o_we_option_font_${realFontNb}`);
             fontEl.setAttribute('string', fontName);
             fontEl.dataset.variable = variable;
             fontEl.dataset[methodName] = fontKey;
             fontEl.dataset.font = realFontNb;
+=======
+            fontEl.setAttribute('string', fontName);
+            fontEl.dataset.variable = variable;
+            fontEl.dataset[methodName] = fontKey;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             fontEl.dataset.fontFamily = fontFamily;
             fontEls.push(fontEl);
             this.menuEl.appendChild(fontEl);
@@ -197,6 +203,7 @@ const FontFamilyPickerUserValueWidget = SelectUserValueWidget.extend({
     async setValue() {
         await this._super(...arguments);
 
+<<<<<<< HEAD
         // TODO: Remove me in master
         for (const className of this.menuTogglerEl.classList) {
             if (className.match(/^o_we_option_font_\d+$/)) {
@@ -208,6 +215,12 @@ const FontFamilyPickerUserValueWidget = SelectUserValueWidget.extend({
             this.menuTogglerEl.style.fontFamily = activeWidget.el.dataset.fontFamily;
             // TODO: Remove me in master
             this.menuTogglerEl.classList.add(`o_we_option_font_${activeWidget.el.dataset.font}`);
+=======
+        this.menuTogglerEl.style.fontFamily = '';
+        const activeWidget = this._userValueWidgets.find(widget => !widget.isPreviewed() && widget.isActive());
+        if (activeWidget) {
+            this.menuTogglerEl.style.fontFamily = activeWidget.el.dataset.fontFamily;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
     },
 
@@ -331,9 +344,17 @@ const FontFamilyPickerUserValueWidget = SelectUserValueWidget.extend({
 });
 
 const GPSPicker = InputUserValueWidget.extend({
+<<<<<<< HEAD
     events: { // Explicitly not consider all InputUserValueWidget events
         'blur input': '_onInputBlur',
     },
+=======
+    // Explicitly not consider all InputUserValueWidget events. E.g. we actually
+    // don't want input focusout messing with the google map API. Because of
+    // this, clicking on google map autocomplete suggestion on Firefox was not
+    // working properly.
+    events: {},
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     /**
      * @constructor
@@ -1661,7 +1682,7 @@ options.registry.company_data = options.Class.extend({
         var self = this;
         var proto = options.registry.company_data.prototype;
 
-        Dialog.confirm(this, _t("Do you want to edit the company data ?"), {
+        Dialog.confirm(this, _t("Do you want to edit the company data?"), {
             confirm_callback: function () {
                 self.trigger_up('request_save', {
                     reload: false,
@@ -2277,6 +2298,7 @@ const VisibilityPageOptionUpdate = options.Class.extend({
     /**
      * @override
      */
+<<<<<<< HEAD
     async start() {
         await this._super(...arguments);
         // TODO in master: Use the data-invisible system to get rid of this
@@ -2288,6 +2310,8 @@ const VisibilityPageOptionUpdate = options.Class.extend({
     /**
      * @override
      */
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     async onTargetShow() {
         if (await this._isShown()) {
             // onTargetShow may be called even if the element is already shown.
@@ -3033,6 +3057,7 @@ options.registry.ScrollButton = options.Class.extend({
      * @override
      */
     _renderCustomXML(uiFragment) {
+<<<<<<< HEAD
         // TODO adapt in master. This sets up a different UI for the image
         // gallery snippet: for this one, we allow to force a specific height
         // in auto mode. It was done in stable as without it, the default height
@@ -3067,6 +3092,14 @@ options.registry.ScrollButton = options.Class.extend({
         // be reset to 'auto' in mobile (generic css rules).
         heightEl.dataset.forceStyle = '';
         uiFragment.appendChild(heightEl);
+=======
+        // TODO We should have a better way to change labels depending on some
+        // condition (maybe a dedicated way in updateUI...)
+        if (this.$target[0].dataset.snippet === 's_image_gallery') {
+            const minHeightEl = uiFragment.querySelector('[data-name="minheight_auto_opt"]');
+            minHeightEl.parentElement.setAttribute('string', _t("Min-Height"));
+        }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
     /**
      * @override
@@ -3075,6 +3108,15 @@ options.registry.ScrollButton = options.Class.extend({
         switch (methodName) {
             case 'toggleButton':
                 return !!this.$button.parent().length;
+        }
+        return this._super(...arguments);
+    },
+    /**
+     * @override
+     */
+    _computeWidgetVisibility(widgetName, params) {
+        if (widgetName === 'fixed_height_opt') {
+            return (this.$target[0].dataset.snippet === 's_image_gallery');
         }
         return this._super(...arguments);
     },

@@ -22,7 +22,11 @@ $o-cw-filter-avatar-size: 20px;
     position: relative;
     @include o-webclient-padding($top: $o-horizontal-padding/2);
     background-color: $o-view-background-color;
+<<<<<<< HEAD
     border-left: 1px solid $border-color;
+=======
+    border-right: 1px solid $border-color;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     overflow-y: auto;
 
     .o_calendar_sidebar {

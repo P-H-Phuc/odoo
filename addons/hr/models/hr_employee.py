@@ -26,7 +26,7 @@ class HrEmployeePrivate(models.Model):
     _name = "hr.employee"
     _description = "Employee"
     _order = 'name'
-    _inherit = ['hr.employee.base', 'mail.thread', 'mail.activity.mixin', 'resource.mixin', 'avatar.mixin']
+    _inherit = ['hr.employee.base', 'mail.thread.main.attachment', 'mail.activity.mixin', 'resource.mixin', 'avatar.mixin']
     _mail_post_access = 'read'
 
     # resource and user
@@ -35,6 +35,7 @@ class HrEmployeePrivate(models.Model):
     user_id = fields.Many2one('res.users', 'User', related='resource_id.user_id', store=True, readonly=False)
     user_partner_id = fields.Many2one(related='user_id.partner_id', related_sudo=False, string="User's partner")
     active = fields.Boolean('Active', related='resource_id.active', default=True, store=True, readonly=False)
+    resource_calendar_id = fields.Many2one(tracking=True)
     company_id = fields.Many2one('res.company', required=True)
     company_country_id = fields.Many2one('res.country', 'Company Country', related='company_id.country_id', readonly=True)
     company_country_code = fields.Char(related='company_country_id.code', depends=['company_country_id'], readonly=True)
@@ -120,6 +121,10 @@ class HrEmployeePrivate(models.Model):
     message_main_attachment_id = fields.Many2one(groups="hr.group_hr_user")
     id_card = fields.Binary(string="ID Card Copy", groups="hr.group_hr_user")
     driving_license = fields.Binary(string="Driving License", groups="hr.group_hr_user")
+<<<<<<< HEAD
+=======
+    private_car_plate = fields.Char(groups="hr.group_hr_user", help="If you have more than one car, just separate the plates by a space.")
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     currency_id = fields.Many2one('res.currency', related='company_id.currency_id', readonly=True)
 
     _sql_constraints = [
@@ -168,13 +173,13 @@ class HrEmployeePrivate(models.Model):
             'view_mode': 'form',
             'view_id': self.env.ref('hr.view_users_simple_form').id,
             'target': 'new',
-            'context': {
+            'context': dict(self._context, **{
                 'default_create_employee_id': self.id,
                 'default_name': self.name,
                 'default_phone': self.work_phone,
                 'default_mobile': self.mobile_phone,
                 'default_login': self.work_email,
-            }
+            })
         }
 
     def name_get(self):
@@ -182,17 +187,45 @@ class HrEmployeePrivate(models.Model):
             return super(HrEmployeePrivate, self).name_get()
         return self.env['hr.employee.public'].browse(self.ids).name_get()
 
-    def _read(self, fields):
+    def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
         if self.check_access_rights('read', raise_exception=False):
-            return super(HrEmployeePrivate, self)._read(fields)
+            return super().search_fetch(domain, field_names, offset, limit, order)
 
         # HACK: retrieve publicly available values from hr.employee.public and
         # copy them to the cache of self; non-public data will be missing from
         # cache, and interpreted as an access error
-        self.flush_recordset(fields)
+        self._check_private_fields(field_names)
+        self.flush_model(field_names)
+        public = self.env['hr.employee.public'].search_fetch(domain, field_names, offset, limit, order)
+        employees = self.browse(public._ids)
+        employees._copy_cache_from(public, field_names)
+        return employees
+
+    def fetch(self, field_names):
+        if self.check_access_rights('read', raise_exception=False):
+            return super().fetch(field_names)
+
+        # HACK: retrieve publicly available values from hr.employee.public and
+        # copy them to the cache of self; non-public data will be missing from
+        # cache, and interpreted as an access error
+        self._check_private_fields(field_names)
+        self.flush_recordset(field_names)
         public = self.env['hr.employee.public'].browse(self._ids)
-        public.read(fields)
-        for fname in fields:
+        public.fetch(field_names)
+        self._copy_cache_from(public, field_names)
+
+    def _check_private_fields(self, field_names):
+        """ Check whether ``field_names`` contain private fields. """
+        public_fields = self.env['hr.employee.public']._fields
+        private_fields = [fname for fname in field_names if fname not in public_fields]
+        if private_fields:
+            raise AccessError(_('The fields "%s" you try to read is not available on the public employee profile.') % (','.join(private_fields)))
+
+    def _copy_cache_from(self, public, field_names):
+        # HACK: retrieve publicly available values from hr.employee.public and
+        # copy them to the cache of self; non-public data will be missing from
+        # cache, and interpreted as an access error
+        for fname in field_names:
             values = self.env.cache.get_values(public, public._fields[fname])
             if self._fields[fname].translate:
                 values = [(value.copy() if value else None) for value in values]
@@ -219,14 +252,6 @@ class HrEmployeePrivate(models.Model):
                     user_id=responsible_user_id)
         employees_scheduled.write({'work_permit_scheduled_activity': True})
 
-    def read(self, fields, load='_classic_read'):
-        if self.check_access_rights('read', raise_exception=False):
-            return super(HrEmployeePrivate, self).read(fields, load=load)
-        private_fields = set(fields).difference(self.env['hr.employee.public']._fields.keys())
-        if private_fields:
-            raise AccessError(_('The fields "%s" you try to read is not available on the public employee profile.') % (','.join(private_fields)))
-        return self.env['hr.employee.public'].browse(self.ids).read(fields, load=load)
-
     @api.model
     def get_view(self, view_id=None, view_type='form', **options):
         if self.check_access_rights('read', raise_exception=False):
@@ -234,7 +259,7 @@ class HrEmployeePrivate(models.Model):
         return self.env['hr.employee.public'].get_view(view_id, view_type, **options)
 
     @api.model
-    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+    def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
         """
             We override the _search because it is the method that checks the access rights
             This is correct to override the _search. That way we enforce the fact that calling
@@ -244,15 +269,13 @@ class HrEmployeePrivate(models.Model):
             employees exactly match the ids of the related hr.employee.
         """
         if self.check_access_rights('read', raise_exception=False):
-            return super(HrEmployeePrivate, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
+            return super()._search(domain, offset, limit, order, access_rights_uid)
         try:
-            ids = self.env['hr.employee.public']._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
+            ids = self.env['hr.employee.public']._search(domain, offset, limit, order, access_rights_uid)
         except ValueError:
             raise AccessError(_('You do not have access to this document.'))
-        if not count and isinstance(ids, Query):
-            # the result is expected from this table, so we should link tables
-            ids = super(HrEmployeePrivate, self.sudo())._search([('id', 'in', ids)])
-        return ids
+        # the result is expected from this table, so we should link tables
+        return super(HrEmployeePrivate, self.sudo())._search([('id', 'in', ids)], order=order)
 
     def get_formview_id(self, access_uid=None):
         """ Override this method in order to redirect many2one towards the right model depending on access_uid """

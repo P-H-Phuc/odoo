@@ -3,7 +3,6 @@
     <record id="action_picking_type_list" model="ir.actions.act_window">
         <field name="name">Operations Types</field>
         <field name="res_model">stock.picking.type</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -17,7 +16,6 @@
     <record id="stock_picking_type_action" model="ir.actions.act_window">
         <field name="name">Inventory Overview</field>
         <field name="res_model">stock.picking.type</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="view_mode">kanban,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -130,7 +128,7 @@
         <field name="name">stock.picking.type.kanban</field>
         <field name="model">stock.picking.type</field>
         <field name="arch" type="xml">
-            <kanban class="oe_background_grey o_kanban_dashboard o_emphasize_colors o_stock_kanban" create="0" group_create="false">
+            <kanban class="o_kanban_dashboard o_emphasize_colors" create="0" group_create="false">
                 <field name="color"/>
                 <field name="code" readonly="1"/>
                 <field name="count_picking_ready"/>
@@ -138,9 +136,54 @@
                 <field name="count_picking_waiting"/>
                 <field name="count_picking_late"/>
                 <field name="count_picking_backorders"/>
+                <field name="show_picking_type" invisible="1"/>
                 <templates>
+                    <t t-name="kanban-menu" t-if="!selection_mode">
+                        <div class="container" t-if="record.show_picking_type.raw_value">
+                            <div class="row">
+                                <div class="col-6 o_kanban_card_manage_section o_kanban_manage_view">
+                                    <div role="menuitem" class="o_kanban_card_manage_title">
+                                        <span t-if="record.code.raw_value == 'internal'">Transfers</span>
+                                        <span t-else="">View</span>
+                                    </div>
+                                    <div role="menuitem">
+                                        <a name="get_stock_picking_action_picking_type" type="object">All</a>
+                                    </div>
+                                    <div role="menuitem">
+                                        <a name="get_action_picking_tree_ready" type="object">Ready</a>
+                                    </div>
+                                    <div role="menuitem">
+                                        <a name="get_action_picking_tree_waiting" type="object">Waiting</a>
+                                    </div>
+                                    <div role="menuitem">
+                                        <a name="get_action_picking_type_operations" type="object">Operations</a>
+                                    </div>
+                                </div>
+                                <div class="col-6 o_kanban_card_manage_section o_kanban_manage_new">
+                                    <div role="menuitem" class="o_kanban_card_manage_title">
+                                        <span>New</span>
+                                    </div>
+                                    <div role="menuitem">
+                                        <a name="%(action_picking_form)d" type="action" context="{'default_immediate_transfer': True}">Immediate Transfer</a>
+                                    </div>
+                                    <div role="menuitem">
+                                        <a name="%(action_picking_form)d" type="action">Planned Transfer</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                                <div class="col-8" role="menuitem" aria-haspopup="true">
+                                    <ul class="oe_kanban_colorpicker" data-field="color" role="menu"/>
+                                </div>
+                                <div role="menuitem" class="col-4">
+                                    <a class="dropdown-item" role="menuitem" type="edit">Configuration</a>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
                     <t t-name="kanban-box">
-                        <div t-if="['incoming', 'outgoing', 'internal'].indexOf(record.code.raw_value) > -1" t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}" name="stock_picking">
+                        <div t-if="record.show_picking_type.raw_value" t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''}" name="stock_picking">
                             <div t-attf-class="o_kanban_card_header">
                                 <div class="o_kanban_card_header_title">
                                     <div class="o_primary" t-if="!selection_mode">
@@ -153,17 +196,12 @@
                                     </div>
                                     <div class="o_secondary"><field class="o_secondary"  name="warehouse_id" readonly="1" groups="stock.group_stock_multi_warehouses"/></div>
                                 </div>
-                                <div class="o_kanban_manage_button_section" t-if="!selection_mode">
-                                    <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v" role="img" aria-label="Manage" title="Manage"/></a>
-                                </div>
                             </div>
                             <div class="container o_kanban_card_content" t-if="!selection_mode">
                                 <div class="row">
                                     <div class="col-6 o_kanban_primary_left">
                                         <button class="btn btn-primary" name="get_action_picking_tree_ready" type="object">
-                                            <span t-if="record.code.raw_value == 'incoming'"><t t-esc="record.count_picking_ready.value"/> To Process</span>
-                                            <span t-elif="record.code.raw_value == 'outgoing'"><t t-esc="record.count_picking_ready.value"/> To Process</span>
-                                            <span t-elif="record.code.raw_value == 'internal'"><t t-esc="record.count_picking_ready.value"/> To Process</span>
+                                            <span><t t-esc="record.count_picking_ready.value"/> To Process</span>
                                         </button>
                                     </div>
                                     <div class="col-6 o_kanban_primary_right">
@@ -196,48 +234,6 @@
                                                 </a>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="container o_kanban_card_manage_pane dropdown-menu" role="menu">
-                                <div class="row">
-                                    <div class="col-6 o_kanban_card_manage_section o_kanban_manage_view">
-                                        <div role="menuitem" class="o_kanban_card_manage_title">
-                                            <span t-if="record.code.raw_value == 'internal'">Transfers</span>
-                                            <span t-else="">View</span>
-                                        </div>
-                                        <div role="menuitem">
-                                            <a name="get_stock_picking_action_picking_type" type="object">All</a>
-                                        </div>
-                                        <div role="menuitem">
-                                            <a name="get_action_picking_tree_ready" type="object">Ready</a>
-                                        </div>
-                                        <div role="menuitem">
-                                            <a name="get_action_picking_tree_waiting" type="object">Waiting</a>
-                                        </div>
-                                        <div role="menuitem">
-                                            <a name="get_action_picking_type_operations" type="object">Operations</a>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 o_kanban_card_manage_section o_kanban_manage_new">
-                                        <div role="menuitem" class="o_kanban_card_manage_title">
-                                            <span>New</span>
-                                        </div>
-                                        <div role="menuitem">
-                                            <a name="%(action_picking_form)d" type="action" context="{'default_immediate_transfer': True}">Immediate Transfer</a>
-                                        </div>
-                                        <div role="menuitem">
-                                            <a name="%(action_picking_form)d" type="action">Planned Transfer</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
-                                    <div class="col-8" role="menuitem" aria-haspopup="true">
-                                        <ul class="oe_kanban_colorpicker" data-field="color" role="menu"/>
-                                    </div>
-                                    <div role="menuitem" class="col-4">
-                                        <a class="dropdown-item" role="menuitem" type="edit">Configuration</a>
                                     </div>
                                 </div>
                             </div>

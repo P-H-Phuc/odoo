@@ -14,6 +14,7 @@ import { View, ViewNotFoundError } from "@web/views/view";
 import { ActionDialog } from "./action_dialog";
 import { CallbackRecorder } from "./action_hook";
 import { ReportAction } from "./reports/report_action";
+import { UPDATE_METHODS } from "@web/core/orm_service";
 
 import {
     Component,
@@ -57,6 +58,12 @@ export async function clearUncommittedChanges(env) {
     return !res.includes(false);
 }
 
+export const standardActionServiceProps = {
+    action: Object, // prop added by _getActionInfo
+    actionId: { type: Number, optional: true }, // prop added by _getActionInfo
+    className: String, // prop added by the ActionContainer
+};
+
 function parseActiveIds(ids) {
     const activeIds = [];
     if (typeof ids === "string") {
@@ -80,7 +87,8 @@ export class InvalidButtonParamsError extends Error {}
 // -----------------------------------------------------------------------------
 
 // regex that matches context keys not to forward from an action to another
-const CTX_KEY_REGEX = /^(?:(?:default_|search_default_|show_).+|.+_view_ref|group_by|group_by_no_leaf|active_id|active_ids|orderedBy)$/;
+const CTX_KEY_REGEX =
+    /^(?:(?:default_|search_default_|show_).+|.+_view_ref|group_by|group_by_no_leaf|active_id|active_ids|orderedBy)$/;
 
 // only register this template once for all dynamic classes ControllerComponent
 const ControllerComponentTemplate = xml`<t t-component="Component" t-props="props"/>`;
@@ -103,6 +111,12 @@ function makeActionManager(env) {
 
     env.bus.addEventListener("CLEAR-CACHES", () => {
         actionCache = {};
+    });
+    env.bus.addEventListener("RPC:RESPONSE", (ev) => {
+        const { model, method } = ev.detail.data.params;
+        if (model === "ir.actions.act_window" && UPDATE_METHODS.includes(method)) {
+            actionCache = {};
+        }
     });
 
     // ---------------------------------------------------------------------------
@@ -197,7 +211,7 @@ function makeActionManager(env) {
     function _preprocessAction(action, context = {}) {
         try {
             action._originalAction = JSON.stringify(action);
-        } catch (_e) {
+        } catch {
             // do nothing, the action might simply not be serializable
         }
         action.context = makeContext([context, action.context], env.services.user.context);
@@ -468,8 +482,11 @@ function makeActionManager(env) {
                         }
                     };
                 }
+<<<<<<< HEAD
             } else if (context.form_view_initial_mode) {
                 viewProps.mode = context.form_view_initial_mode;
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
             if (action.flags && "mode" in action.flags) {
                 viewProps.mode = action.flags.mode;
@@ -499,17 +516,6 @@ function makeActionManager(env) {
         if (action.res_id && !viewProps.resId) {
             viewProps.resId = action.res_id;
         }
-
-        // LEGACY CODE COMPATIBILITY: remove when all views will be written in owl
-        if (view.isLegacy) {
-            const legacyActionInfo = { ...action, ...viewProps.action };
-            Object.assign(viewProps, {
-                action: legacyActionInfo,
-                View: view,
-                views: action.views,
-            });
-        }
-        // END LEGACY CODE COMPATIBILITY
 
         viewProps.noBreadcrumbs = action.context.no_breadcrumbs;
         delete action.context.no_breadcrumbs;
@@ -705,16 +711,7 @@ function makeActionManager(env) {
                     const toDestroy = new Set();
                     for (const c of controllerStack) {
                         if (!nextStackActionIds.includes(c.action.jsId)) {
-                            if (c.action.type === "ir.actions.act_window") {
-                                for (const viewType in c.action.controllers) {
-                                    const controller = c.action.controllers[viewType];
-                                    if (controller.view.isLegacy) {
-                                        toDestroy.add(controller);
-                                    }
-                                }
-                            } else {
-                                toDestroy.add(c);
-                            }
+                            toDestroy.add(c);
                         }
                     }
                     for (const c of toDestroy) {
@@ -743,6 +740,9 @@ function makeActionManager(env) {
         }
         ControllerComponent.template = ControllerComponentTemplate;
         ControllerComponent.Component = controller.Component;
+        ControllerComponent.props = {
+            "*": true,
+        };
 
         let nextDialog = null;
         if (action.target === "new") {
@@ -824,7 +824,17 @@ function makeActionManager(env) {
      */
     function _executeActURLAction(action, options) {
         if (action.target === "self") {
-            env.services.router.redirect(action.url);
+            let willUnload = false;
+            const onUnload = () => {
+                willUnload = true;
+            };
+            browser.addEventListener("beforeunload", onUnload);
+            env.services.ui.block();
+            browser.location.assign(action.url);
+            browser.removeEventListener("beforeunload", onUnload);
+            if (!willUnload) {
+                env.services.ui.unblock();
+            }
         } else {
             const w = browser.open(action.url, "_blank");
             if (!w || w.closed || typeof w.closed === "undefined") {
@@ -837,7 +847,12 @@ function makeActionManager(env) {
                     type: "warning",
                 });
             }
-            if (options.onClose) {
+            if (action.close) {
+                return doAction(
+                    { type: "ir.actions.act_window_close" },
+                    { onClose: options.onClose }
+                );
+            } else if (options.onClose) {
                 options.onClose();
             }
         }
@@ -855,25 +870,9 @@ function makeActionManager(env) {
      * @param {ActionOptions} options
      */
     async function _executeActWindowAction(action, options) {
-        // LEGACY CODE COMPATIBILITY: load views to determine js_class if any, s.t.
-        // we know if the view to use is legacy or not
-        // When all views will be converted, this will be done exclusively by View
-        // #action-serv-leg-compat-js-class
-        const loadViewParams = {
-            context: action.context || {},
-            views: action.views,
-            resModel: action.res_model,
-        };
-        const loadViewOptions = {
-            actionId: action.id,
-            loadActionMenus: action.target !== "new" && action.target !== "inline",
-            loadIrFilters: action.views.some((v) => v[1] === "search"),
-        };
-        const prom = env.services.view.loadViews(loadViewParams, loadViewOptions);
-        const { views: viewDescriptions } = await keepLast.add(prom);
-        const domParser = new DOMParser();
         const views = [];
         for (const [, type] of action.views) {
+<<<<<<< HEAD
             if (type !== "search") {
                 const arch = viewDescriptions[type].arch;
                 const archDoc = domParser.parseFromString(arch, "text/xml").documentElement;
@@ -882,15 +881,12 @@ function makeActionManager(env) {
                 if (view) {
                     views.push(view);
                 }
+=======
+            if (type !== "search" && viewRegistry.contains(type)) {
+                views.push(viewRegistry.get(type));
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
         }
-        // END LEGACY CODE COMPATIBILITY
-        // const views = [];
-        // for (const [, type] of action.views) {
-        //     if (type !== "search" && viewRegistry.contains(type)) {
-        //         views.push(viewRegistry.get(key));
-        //     }
-        // }
         if (!views.length) {
             throw new Error(`No view found for act_window action ${action.id}`);
         }
@@ -915,7 +911,7 @@ function makeActionManager(env) {
 
         const controller = {
             jsId: `controller_${++id}`,
-            Component: view.isLegacy ? view.Controller : View,
+            Component: View,
             action,
             view,
             views,
@@ -932,7 +928,7 @@ function makeActionManager(env) {
         if (lazyView) {
             updateUIOptions.lazyController = {
                 jsId: `controller_${++id}`,
-                Component: lazyView.isLegacy ? lazyView.Controller : View,
+                Component: View,
                 action,
                 view: lazyView,
                 views,
@@ -1270,7 +1266,7 @@ function makeActionManager(env) {
                     // warning: quotes and double quotes problem due to json and xml clash
                     // maybe we should force escaping in xml or do a better parse of the args array
                     additionalArgs = JSON.parse(params.args.replace(/'/g, '"'));
-                } catch (_e) {
+                } catch {
                     browser.console.error("Could not JSON.parse arguments", params.args);
                 }
                 args = args.concat(additionalArgs);
@@ -1354,23 +1350,16 @@ function makeActionManager(env) {
         }
         const newController = controller.action.controllers[viewType] || {
             jsId: `controller_${++id}`,
-            Component: view.isLegacy ? view.Controller : View,
+            Component: View,
             action: controller.action,
             views: controller.views,
             view,
         };
 
-        // LEGACY CODE COMPATIBILITY: remove when controllers will be written in owl
-        if (view.isLegacy && newController.jsId === controller.jsId) {
-            // case where a legacy view is reloaded via the view switcher
-            const { __legacy_widget__ } = controller.getLocalState();
-            const params = {};
-            if ("resId" in props) {
-                params.currentId = props.resId;
-            }
-            return __legacy_widget__.reload(params);
+        const canProceed = await clearUncommittedChanges(env);
+        if (!canProceed) {
+            return;
         }
-        // END LEGACY CODE COMPATIBILITY
 
         const canProceed = await clearUncommittedChanges(env);
         if (!canProceed) {
@@ -1518,7 +1507,6 @@ export const actionService = {
         "router",
         "rpc",
         "title",
-        "view", // for legacy view compatibility #action-serv-leg-compat-js-class
         "ui",
         "user",
     ],

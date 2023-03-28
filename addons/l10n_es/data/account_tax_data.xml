@@ -297,6 +297,7 @@
         <field name="applicability">taxes</field>
         <field name="country_id" ref="base.es"/>
     </record>
+<<<<<<< HEAD
     <record id="account_tax_template_s_iva21b" model="account.tax.template">
         <field name="sequence" eval="0"/>
         <!-- Para que sea el impuesto por defecto de ventas -->
@@ -3986,4 +3987,6 @@
             }),
         ]"/>
     </record>
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 </odoo>

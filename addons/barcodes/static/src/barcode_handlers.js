@@ -26,11 +26,10 @@ function updatePager(position) {
     if (current === next) {
         return;
     }
-    const engine = new MacroEngine();
+    const engine = new MacroEngine({ defaultCheckDelay: 16 });
     engine.activate({
         name: "updating pager",
         timeout: 1000,
-        interval: 0,
         steps: [
             {
                 trigger: "span.o_pager_value",
@@ -67,7 +66,7 @@ export const barcodeGenericHandlers = {
                     // the scanned barcode could be anything, and could crash the queryselectorall
                     // function
                     targets = getVisibleElements(ui.activeElement, `[barcode_trigger=${barcode.slice(6)}]`);
-                } catch (_e) {
+                } catch {
                     console.warn(`Barcode '${barcode}' is not valid`);
                 }
                 for (let elem of targets) {

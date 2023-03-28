@@ -1,14 +1,15 @@
 /** @odoo-module **/
 
-import tour from 'web_tour.tour';
+import { registry } from "@web/core/registry";
+import { stepUtils } from "@web_tour/tour_service/tour_utils";
 
 // Note: please keep this test without pricelist for maximum coverage.
 // The pricelist is tested on the other tours.
 
-tour.register('sale_product_configurator_tour', {
+registry.category("web_tour.tours").add('sale_product_configurator_tour', {
     url: '/web',
     test: true,
-}, [tour.stepUtils.showAppsMenuItem(), {
+    steps: [stepUtils.showAppsMenuItem(), {
     trigger: '.o_app[data-menu-xmlid="sale.sale_menu_root"]',
 }, {
     trigger: '.o_list_button_add',
@@ -60,7 +61,11 @@ tour.register('sale_product_configurator_tour', {
     trigger: 'td.o_data_cell:contains("Chair floor protection")',
     run: function (){}
 }, {
+<<<<<<< HEAD
     trigger: 'span[name=amount_total]:contains("0.00")',
+=======
+    trigger: 'span[name=amount_total]:contains("960.60")',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     run: function (){}
-}, ...tour.stepUtils.discardForm()
-]);
+}, ...stepUtils.discardForm()
+]});

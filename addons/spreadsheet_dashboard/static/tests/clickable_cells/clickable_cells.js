@@ -8,13 +8,20 @@ import { getBasicData } from "@spreadsheet/../tests/utils/data";
 
 const { Model } = spreadsheet;
 const { functionRegistry } = spreadsheet.registries;
+<<<<<<< HEAD
 const { args } = spreadsheet.helpers;
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 async function createDashboardWithModel(model) {
     const serverData = getDashboardServerData();
     const json = JSON.stringify(model.exportData());
     const dashboard = serverData.models["spreadsheet.dashboard"].records[0];
+<<<<<<< HEAD
     dashboard.raw = json;
+=======
+    dashboard.spreadsheet_data = json;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     dashboard.json_data = json;
     serverData.models = {
         ...serverData.models,
@@ -62,7 +69,11 @@ QUnit.test("pivot/list formulas should be clickable", async (assert) => {
     const mock = {
         description: "Mock function to avoid setup all data sources process",
         compute: () => 1,
+<<<<<<< HEAD
         args: args(``),
+=======
+        args: [],
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         returns: ["NUMBER"],
     };
 

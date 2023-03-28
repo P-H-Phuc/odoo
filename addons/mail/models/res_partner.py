@@ -75,6 +75,11 @@ class Partner(models.Model):
     # ------------------------------------------------------------
     # ORM
     # ------------------------------------------------------------
+    @api.model
+    def _get_view_cache_key(self, view_id=None, view_type='form', **options):
+        """Add context variable force_email in the key as _get_view depends on it."""
+        key = super()._get_view_cache_key(view_id, view_type, **options)
+        return key + (self._context.get('force_email'),)
 
     @api.model
     @api.returns('self', lambda value: value.id)
@@ -101,6 +106,106 @@ class Partner(models.Model):
         if parsed_email:  # otherwise keep default_email in context
             create_values['email'] = parsed_email
         return self.create(create_values)
+
+    @api.model
+    def _find_or_create_from_emails(self, emails, additional_values=None):
+        """ Based on a list of emails, find or create partners. Additional values
+        can be given to newly created partners. If an email is not unique (e.g.
+        multi-email input), only the first found email is considered.
+
+        Additional values allow to customize the created partner when context
+        allows to give more information. It data is based on email normalized
+        as it is the main information used in this method to distinguish or
+        find partners.
+
+        If no valid email is found for a given item, the given value is used to
+        find partners with same invalid email or create a new one with the wrong
+        value. It allows updating it afterwards. Notably with notifications
+        resend it is possible to update emails, if only a typo prevents from
+        having a real email for example.
+
+        :param list emails: list of emails that may be formatted (each input
+          will be parsed and normalized);
+        :param dict additional_values: additional values per normalized email
+          given to create if the partner is not found. Typically used to
+          propagate a company_id and customer information from related record.
+          Values for key 'False' are used when creating partner for invalid
+          emails;
+
+        :return: res.partner records in a list, following order of emails. It
+          is not a recordset, to keep Falsy values.
+        """
+        additional_values = additional_values if additional_values else {}
+        partners, tocreate_vals_list = self.env['res.partner'], []
+        name_emails = [self._parse_partner_name(email) for email in emails]
+
+        # find valid emails_normalized, filtering out false / void values, and search
+        # for existing partners based on those emails
+        emails_normalized = {email_normalized
+                             for _name, email_normalized in name_emails
+                             if email_normalized}
+        # find partners for invalid (but not void) emails, aka either invalid email
+        # either no email and a name that will be used as email
+        names = {
+            name.strip()
+            for name, email_normalized in name_emails
+            if not email_normalized and name.strip()
+        }
+        if emails_normalized or names:
+            domains = []
+            if emails_normalized:
+                domains.append([('email_normalized', 'in', list(emails_normalized))])
+            if names:
+                domains.append([('email', 'in', list(names))])
+            partners += self.search(expression.OR(domains))
+
+        # create partners for valid email without any existing partner. Keep
+        # only first found occurrence of each normalized email, aka: ('Norbert',
+        # 'norbert@gmail.com'), ('Norbert With Surname', 'norbert@gmail.com')'
+        # -> a single partner is created for email 'norbert@gmail.com'
+        seen = set()
+        notfound_emails = (emails_normalized - set(partners.mapped('email_normalized'))) if partners else emails_normalized
+        notfound_name_emails = [
+            name_email
+            for name_email in name_emails
+            if name_email[1] in notfound_emails and name_email[1] not in seen
+               and not seen.add(name_email[1])
+        ]
+        tocreate_vals_list += [
+            {
+                self._rec_name: name or email_normalized,
+                'email': email_normalized,
+                **additional_values.get(email_normalized, {}),
+            }
+            for name, email_normalized in notfound_name_emails
+        ]
+
+        # create partners for invalid emails (aka name and not email_normalized)
+        # without any existing partner
+        tocreate_vals_list += [
+            {
+                self._rec_name: name,
+                'email': name,
+                **additional_values.get(False, {}),
+            }
+            for name in names if name not in partners.mapped('email')
+        ]
+
+        # create partners once
+        if tocreate_vals_list:
+            partners += self.create(tocreate_vals_list)
+
+        return [
+            next(
+                (partner for partner in partners
+                    if (email_normalized and partner.email_normalized == email_normalized)
+                    or (not email_normalized and email and partner.email == email)
+                    or (not email_normalized and name and partner.name == name)
+                ),
+                self.env['res.partner']
+            )
+            for (name, email_normalized), email in zip(name_emails, emails)
+        ]
 
     # ------------------------------------------------------------
     # DISCUSS
@@ -229,19 +334,23 @@ class Partner(models.Model):
         return list(partners_format.values())
 
     @api.model
-    def im_search(self, name, limit=20):
+    def im_search(self, name, limit=20, excluded_ids=None):
         """ Search partner with a name and return its id, name and im_status.
             Note : the user must be logged
             :param name : the partner name to search
             :param limit : the limit of result to return
+            :param excluded_ids : the ids of excluded partners
         """
         # This method is supposed to be used only in the context of channel creation or
         # extension via an invite. As both of these actions require the 'create' access
         # right, we check this specific ACL.
+        if excluded_ids is None:
+            excluded_ids = []
         users = self.env['res.users'].search([
             ('id', '!=', self.env.user.id),
             ('name', 'ilike', name),
             ('active', '=', True),
             ('share', '=', False),
+            ('partner_id', 'not in', excluded_ids)
         ], order='name, id', limit=limit)
         return list(users.partner_id.mail_partner_format().values())

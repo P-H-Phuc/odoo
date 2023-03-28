@@ -31,8 +31,7 @@ class ResConfigSettings(models.TransientModel):
         domain="[('deprecated', '=', False), ('company_id', '=', company_id),\
                 ('account_type', '=', 'expense')]")
     has_chart_of_accounts = fields.Boolean(compute='_compute_has_chart_of_accounts', string='Company has a chart of accounts')
-    chart_template_id = fields.Many2one('account.chart.template', string='Template', default=lambda self: self.env.company.chart_template_id,
-        domain="[('visible','=', True)]")
+    chart_template = fields.Selection(selection=lambda self: self.env.company._chart_template_selection(), default=lambda self: self.env.company.chart_template)
     sale_tax_id = fields.Many2one('account.tax', string="Default Sale Tax", related='company_id.account_sale_tax_id', readonly=False)
     purchase_tax_id = fields.Many2one('account.tax', string="Default Purchase Tax", related='company_id.account_purchase_tax_id', readonly=False)
     tax_calculation_rounding_method = fields.Selection(
@@ -72,28 +71,10 @@ class ResConfigSettings(models.TransientModel):
     module_account_accountant = fields.Boolean(string='Accounting')
     group_warning_account = fields.Boolean(string="Warnings in Invoices", implied_group='account.group_warning_account')
     group_cash_rounding = fields.Boolean(string="Cash Rounding", implied_group='account.group_cash_rounding')
-    # group_show_line_subtotals_tax_excluded and group_show_line_subtotals_tax_included are opposite,
-    # so we can assume exactly one of them will be set, and not the other.
-    # We need both of them to coexist so we can take advantage of automatic group assignation.
-    group_show_line_subtotals_tax_excluded = fields.Boolean(
-        "Show line subtotals without taxes (B2B)",
-        implied_group='account.group_show_line_subtotals_tax_excluded',
-        group='base.group_portal,base.group_user,base.group_public',
-        compute='_compute_group_show_line_subtotals', store=True, readonly=False)
-    group_show_line_subtotals_tax_included = fields.Boolean(
-        "Show line subtotals with taxes (B2C)",
-        implied_group='account.group_show_line_subtotals_tax_included',
-        group='base.group_portal,base.group_user,base.group_public',
-        compute='_compute_group_show_line_subtotals', store=True, readonly=False)
     group_show_sale_receipts = fields.Boolean(string='Sale Receipt',
         implied_group='account.group_sale_receipts')
     group_show_purchase_receipts = fields.Boolean(string='Purchase Receipt',
         implied_group='account.group_purchase_receipts')
-    show_line_subtotals_tax_selection = fields.Selection([
-        ('tax_excluded', 'Tax Excluded'),
-        ('tax_included', 'Tax Included')], string="Line Subtotals Tax Display",
-        required=True, default='tax_excluded',
-        config_parameter='account.show_line_subtotals_tax_selection')
     module_account_budget = fields.Boolean(string='Budget Management')
     module_account_payment = fields.Boolean(string='Invoice Online Payment')
     module_account_reports = fields.Boolean("Dynamic Reports")
@@ -105,7 +86,7 @@ class ResConfigSettings(models.TransientModel):
     module_account_sepa_direct_debit = fields.Boolean(string='Use SEPA Direct Debit')
     module_account_bank_statement_import_qif = fields.Boolean("Import .qif files")
     module_account_bank_statement_import_ofx = fields.Boolean("Import in .ofx format")
-    module_account_bank_statement_import_csv = fields.Boolean("Import in .csv format")
+    module_account_bank_statement_import_csv = fields.Boolean("Import in .csv, .xls, and .xlsx format")
     module_account_bank_statement_import_camt = fields.Boolean("Import in CAMT.053 format")
     module_currency_rate_live = fields.Boolean(string="Automatic Currency Rates")
     module_account_intrastat = fields.Boolean(string='Intrastat')
@@ -133,6 +114,11 @@ class ResConfigSettings(models.TransientModel):
                                      readonly=False)
     terms_type = fields.Selection(
         related='company_id.terms_type', readonly=False)
+    display_invoice_amount_total_words = fields.Boolean(
+        string="Total amount of invoice in letters",
+        related='company_id.display_invoice_amount_total_words',
+        readonly=False
+    )
     preview_ready = fields.Boolean(string="Display preview button", compute='_compute_terms_preview')
 
     use_invoice_terms = fields.Boolean(
@@ -158,7 +144,6 @@ class ResConfigSettings(models.TransientModel):
     # Quick encoding (fiduciary mode)
     quick_edit_mode = fields.Selection(string="Quick encoding", readonly=False, related='company_id.quick_edit_mode')
 
-    early_pay_discount_computation = fields.Selection(related='company_id.early_pay_discount_computation', string='Tax setting', readonly=False)
     account_journal_early_pay_discount_loss_account_id = fields.Many2one(
         comodel_name='account.account',
         string='Cash Discount Loss account',
@@ -179,10 +164,12 @@ class ResConfigSettings(models.TransientModel):
     def set_values(self):
         super().set_values()
         # install a chart of accounts for the given company (if required)
-        if self.env.company == self.company_id \
-                and self.chart_template_id \
-                and self.chart_template_id != self.company_id.chart_template_id:
-            self.chart_template_id._load(self.env.company)
+        if self.env.company == self.company_id and self.chart_template \
+        and self.chart_template != self.company_id.chart_template:
+            self.env['account.chart.template'].try_loading(self.chart_template, company=self.company_id)
+
+    def reload_template(self):
+        self.env['account.chart.template'].try_loading(self.company_id.chart_template, company=self.company_id)
 
     @api.depends('company_id')
     def _compute_account_default_credit_limit(self):
@@ -200,14 +187,8 @@ class ResConfigSettings(models.TransientModel):
 
     @api.depends('company_id')
     def _compute_has_chart_of_accounts(self):
-        self.has_chart_of_accounts = bool(self.company_id.chart_template_id)
-        self.has_accounting_entries = self.env['account.chart.template'].existing_accounting(self.company_id)
-
-    @api.depends('show_line_subtotals_tax_selection')
-    def _compute_group_show_line_subtotals(self):
-        for wizard in self:
-            wizard.group_show_line_subtotals_tax_included = wizard.show_line_subtotals_tax_selection == "tax_included"
-            wizard.group_show_line_subtotals_tax_excluded = wizard.show_line_subtotals_tax_selection == "tax_excluded"
+        self.has_chart_of_accounts = bool(self.company_id.chart_template)
+        self.has_accounting_entries = self.company_id._existing_accounting()
 
     @api.onchange('group_analytic_accounting')
     def onchange_analytic_accounting(self):

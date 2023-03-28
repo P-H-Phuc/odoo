@@ -53,6 +53,7 @@ QUnit.module("Fields", (hooks) => {
                             type: "properties",
                             searchable: false,
                             definition_record: "company_id",
+                            definition_record_field: "definitions",
                         },
                         company_id: {
                             string: "Company",
@@ -152,6 +153,49 @@ QUnit.module("Fields", (hooks) => {
                 },
                 company: {
                     fields: {
+                        name: { string: "Name", type: "char" },
+                        definitions: { type: "properties_definitions" },
+                    },
+                    records: [
+                        {
+                            id: 37,
+                            display_name: "Company 1",
+                            definitions: [
+                                {
+                                    name: "property_1",
+                                    string: "My Char",
+                                    type: "char",
+                                    view_in_kanban: true,
+                                },
+                                {
+                                    name: "property_2",
+                                    string: "My Selection",
+                                    type: "selection",
+                                    selection: [
+                                        ["a", "A"],
+                                        ["b", "B"],
+                                        ["c", "C"],
+                                    ],
+                                    default: "c",
+                                    view_in_kanban: true,
+                                },
+                                {
+                                    name: "property_3",
+                                    string: "My Char 3",
+                                    type: "char",
+                                },
+                                {
+                                    name: "property_4",
+                                    string: "My Char 4",
+                                    type: "char",
+                                    view_in_kanban: true,
+                                },
+                            ],
+                        },
+                    ],
+                },
+                "res.users": {
+                    fields: {
                         name: {
                             string: "Name",
                             type: "char",
@@ -159,8 +203,16 @@ QUnit.module("Fields", (hooks) => {
                     },
                     records: [
                         {
-                            id: 37,
-                            display_name: "Company 1",
+                            id: 1,
+                            display_name: "Alice",
+                        },
+                        {
+                            id: 2,
+                            display_name: "Bob",
+                        },
+                        {
+                            id: 3,
+                            display_name: "Eve",
                         },
                     ],
                 },
@@ -984,7 +1036,7 @@ QUnit.module("Fields", (hooks) => {
 
     QUnit.test("properties: date(time) property manipulations", async function (assert) {
         serverData.models.partner.records.push({
-            id: 3,
+            id: 5000,
             display_name: "third partner",
             properties: [
                 {
@@ -1005,7 +1057,7 @@ QUnit.module("Fields", (hooks) => {
         await makeView({
             type: "form",
             resModel: "partner",
-            resId: 3,
+            resId: 5000,
             serverData,
             arch: `<form><field name="company_id"/><field name="properties"/></form>`,
             mockRPC(route, { method, args }) {

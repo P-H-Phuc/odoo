@@ -60,9 +60,9 @@ class Lang(models.Model):
     flag_image_url = fields.Char(compute=_compute_field_flag_image_url)
 
     _sql_constraints = [
-        ('name_uniq', 'unique(name)', 'The name of the language must be unique !'),
-        ('code_uniq', 'unique(code)', 'The code of the language must be unique !'),
-        ('url_code_uniq', 'unique(url_code)', 'The URL code of the language must be unique !'),
+        ('name_uniq', 'unique(name)', 'The name of the language must be unique!'),
+        ('code_uniq', 'unique(code)', 'The code of the language must be unique!'),
+        ('url_code_uniq', 'unique(url_code)', 'The URL code of the language must be unique!'),
     ]
 
     @api.constrains('active')
@@ -115,12 +115,6 @@ class Lang(models.Model):
         # check that there is at least one active language
         if not self.search_count([]):
             _logger.error("No language is active.")
-
-    # TODO remove me after v14
-    def load_lang(self, lang, lang_name=None):
-        _logger.warning("Call to deprecated method load_lang, use _create_lang or _activate_lang instead")
-        language = self._activate_lang(lang) or self._create_lang(lang, lang_name)
-        return language.id
 
     def _activate_lang(self, code):
         """ Activate languages

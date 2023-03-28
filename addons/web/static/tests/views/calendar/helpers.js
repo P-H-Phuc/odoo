@@ -1,7 +1,13 @@
 /** @odoo-module **/
 
 import { uiService } from "@web/core/ui/ui_service";
+<<<<<<< HEAD
 import { registry } from "@web/core/registry";
+=======
+import { createElement } from "@web/core/utils/xml";
+import { registry } from "@web/core/registry";
+import { Field } from "@web/views/fields/field";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { clearRegistryWithCleanup, makeTestEnv } from "../../helpers/mock_env";
 import { click, getFixture, mount, nextTick, triggerEvent } from "../../helpers/utils";
 import { setupViewRegistries } from "@web/../tests/views/helpers";
@@ -206,6 +212,11 @@ export const FAKE_FIELDS = {
 };
 
 function makeFakeModelState() {
+<<<<<<< HEAD
+=======
+    const fakeFieldNode = createElement("field", { name: "name" });
+    const fakeModels = { event: FAKE_FIELDS };
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     return {
         canCreate: true,
         canDelete: true,
@@ -228,7 +239,11 @@ function makeFakeModelState() {
         hasEditDialog: false,
         hasQuickCreate: false,
         popoverFields: {
+<<<<<<< HEAD
             name: { rawAttrs: {}, options: {} },
+=======
+            name: Field.parseFieldNode(fakeFieldNode, fakeModels, "event", "calendar"),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         },
         rangeEnd: makeFakeDate().endOf("month"),
         rangeStart: makeFakeDate().startOf("month"),
@@ -498,8 +513,13 @@ export async function resizeEventToTime(target, eventId, dateTime) {
 }
 
 export async function changeScale(target, scale) {
+<<<<<<< HEAD
     await click(target, `.o_calendar_scale_buttons .scale_button_selection`);
     await click(target, `.o_calendar_scale_buttons .o_calendar_button_${scale}`);
+=======
+    await click(target, `.o_view_scale_selector .scale_button_selection`);
+    await click(target, `.o_view_scale_selector .o_scale_button_${scale}`);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     await nextTick();
 }
 

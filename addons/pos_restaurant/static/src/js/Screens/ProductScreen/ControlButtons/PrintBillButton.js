@@ -1,11 +1,10 @@
-odoo.define('pos_restaurant.PrintBillButton', function(require) {
-    'use strict';
+/** @odoo-module */
 
-    const PosComponent = require('point_of_sale.PosComponent');
-    const ProductScreen = require('point_of_sale.ProductScreen');
-    const { useListener } = require("@web/core/utils/hooks");
-    const Registries = require('point_of_sale.Registries');
+import { usePos } from "@point_of_sale/app/pos_hook";
+import { ProductScreen } from "@point_of_sale/js/Screens/ProductScreen/ProductScreen";
+import { Component } from "@odoo/owl";
 
+<<<<<<< HEAD
     class PrintBillButton extends PosComponent {
         setup() {
             super.setup();
@@ -23,17 +22,27 @@ odoo.define('pos_restaurant.PrintBillButton', function(require) {
                 });
             }
         }
+=======
+export class PrintBillButton extends Component {
+    static template = "PrintBillButton";
+
+    setup() {
+        super.setup();
+        this.pos = usePos();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
-    PrintBillButton.template = 'PrintBillButton';
+    _isDisabled() {
+        const order = this.env.pos.get_order();
+        return order.get_orderlines().length === 0;
+    }
+    click() {
+        this.pos.showTempScreen("BillScreen");
+    }
+}
 
-    ProductScreen.addControlButton({
-        component: PrintBillButton,
-        condition: function() {
-            return this.env.pos.config.iface_printbill;
-        },
-    });
-
-    Registries.Component.add(PrintBillButton);
-
-    return PrintBillButton;
+ProductScreen.addControlButton({
+    component: PrintBillButton,
+    condition: function () {
+        return this.env.pos.config.iface_printbill;
+    },
 });

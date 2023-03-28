@@ -439,7 +439,10 @@ class TestPointOfSaleHttpCommon(AccountTestInvoicingHttpCommon):
                                                 'type': 'sale',
                                                 'company_id': main_company.id})
 
-        all_pricelists = env['product.pricelist'].search([('id', '!=', excluded_pricelist.id)])
+        all_pricelists = env['product.pricelist'].search([
+            ('id', '!=', excluded_pricelist.id),
+            '|', ('company_id', '=', main_company.id), ('company_id', '=', False)
+        ])
         all_pricelists.write(dict(currency_id=main_company.currency_id.id))
 
         src_tax = env['account.tax'].create({'name': "SRC", 'amount': 10})
@@ -686,6 +689,7 @@ class TestUi(TestPointOfSaleHttpCommon):
         pos_session = self.main_pos_config.current_session_id
         self.assertEqual(len(pos_session.statement_line_ids), 1)
         self.assertEqual(pos_session.statement_line_ids[0].amount, -10)
+<<<<<<< HEAD
 
     def test_fiscal_position_no_tax(self):
         #create a tax of 15% with price included
@@ -727,3 +731,5 @@ class TestUi(TestPointOfSaleHttpCommon):
         })
         self.main_pos_config.open_ui()
         self.start_tour("/pos/ui?config_id=%d" % self.main_pos_config.id, 'FiscalPositionNoTax', login="accountman")
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

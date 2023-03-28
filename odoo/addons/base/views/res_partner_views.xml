@@ -30,7 +30,6 @@
 
         <record id="action_partner_title_contact" model="ir.actions.act_window">
             <field name="name">Contact Titles</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner.title</field>
             <field name="domain">[]</field>
             <field name="context">{}</field>
@@ -61,6 +60,7 @@
                     <field name="display_name" string="Name"/>
                     <field name="function" invisible="1"/>
                     <field name="phone" class="o_force_ltr" optional="show"/>
+                    <field name="mobile" optional="hide"/>
                     <field name="email" optional="show"/>
                     <field name="user_id" optional="show" widget="many2one_avatar_user" domain="[('share', '=', False)]"/>
                     <field name="city" optional="show"/>
@@ -81,10 +81,22 @@
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
                 <form string="Contact">
-                    <field name="is_company" invisible="1"/>
-                    <field name="type" invisible="1"/>
+                    <!-- Invisible fields allows other modules to populate partner (ex.: creation from a lead) -->
                     <field name="avatar_128" invisible="1"/>
+                    <field name="city" invisible="1"/>
+                    <field name="comment" invisible="1"/>
+                    <field name="country_id" invisible="1"/>
+                    <field name="is_company" invisible="1"/>
+                    <field name="name" invisible="1"/>
+                    <field name="state_id" invisible="1"/>
+                    <field name="street" invisible="1"/>
+                    <field name="street2" invisible="1"/>
+                    <field name="title" invisible="1"/>
+                    <field name="type" invisible="1"/>
                     <field name="user_id" invisible="1"/>
+                    <field name="website" invisible="1"/>
+                    <field name="zip" invisible="1"/>
+
                     <field name="image_1920" widget='image' class="oe_avatar" options='{"preview_image": "avatar_128"}'/>
                     <div class="oe_title">
                         <field name="company_type" options="{'horizontal': true}" widget="radio" groups="base.group_no_one"/>
@@ -444,7 +456,7 @@
             <field name="name">res.partner.kanban</field>
             <field name="model">res.partner</field>
             <field name="arch" type="xml">
-                <kanban class="o_res_partner_kanban" sample="1">
+                <kanban sample="1">
                     <field name="id"/>
                     <field name="color"/>
                     <field name="display_name"/>
@@ -512,7 +524,6 @@
 
         <record id="action_partner_form" model="ir.actions.act_window">
             <field name="name">Customers</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="context">{'res_partner_search_mode': 'customer'}</field>
@@ -546,7 +557,6 @@
 
         <record id="action_partner_customer_form" model="ir.actions.act_window">
             <field name="name">Customers</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="domain">[]</field>
@@ -581,7 +591,6 @@
 
         <record id="action_partner_supplier_form" model="ir.actions.act_window">
             <field name="name">Vendors</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="domain">[]</field>
             <field name="view_mode">kanban,tree,form</field>
@@ -659,7 +668,6 @@
 
         <record id="action_partner_category_form" model="ir.actions.act_window">
             <field name="name">Contact Tags</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner.category</field>
             <field name="search_view_id" ref="res_partner_category_view_search"/>
             <field name="help" type="html">
@@ -716,7 +724,6 @@
 
         <record id="res_partner_industry_action" model="ir.actions.act_window">
             <field name="name">Industries</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner.industry</field>
             <field name="view_mode">tree,form</field>
             <field name="search_view_id" ref="res_partner_industry_view_search"/>

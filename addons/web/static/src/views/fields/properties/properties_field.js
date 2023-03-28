@@ -12,15 +12,35 @@ import { useService } from "@web/core/utils/hooks";
 import { usePopover } from "@web/core/popover/popover_hook";
 import { sprintf } from "@web/core/utils/strings";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
+<<<<<<< HEAD
 import { reposition } from '@web/core/position_hook';
 import { archParseBoolean } from '@web/views/utils';
+=======
+import { reposition } from "@web/core/position_hook";
+import { archParseBoolean } from "@web/views/utils";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 import { Component, useRef, useState, useEffect, onWillStart } from "@odoo/owl";
 
 export class PropertiesField extends Component {
+    static template = "web.PropertiesField";
+    static components = {
+        Dropdown,
+        DropdownItem,
+        PropertyDefinition,
+        PropertyValue,
+    };
+    static props = {
+        ...standardFieldProps,
+        context: { type: Object, optional: true },
+        columns: { type: Number, optional: true },
+        hideKanbanOption: { type: Boolean, optional: true },
+    };
+
     setup() {
         this.notification = useService("notification");
         this.orm = useService("orm");
+        this.user = useService("user");
         this.dialogService = useService("dialog");
         this.popover = usePopover();
         this.propertiesRef = useRef("properties");
@@ -60,15 +80,6 @@ export class PropertiesField extends Component {
      * -------------------------------------------------------- */
 
     /**
-     * Return the current context
-     *
-     * @returns {object}
-     */
-    get context() {
-        return this.props.record.getFieldContext(this.props.name);
-    }
-
-    /**
      * Return the current properties value.
      *
      * Make a deep copy of this properties values, so when we will modify it
@@ -78,7 +89,9 @@ export class PropertiesField extends Component {
      * @returns {array}
      */
     get propertiesList() {
-        const propertiesValues = JSON.parse(JSON.stringify(this.props.value || []));
+        const propertiesValues = JSON.parse(
+            JSON.stringify(this.props.record.data[this.props.name] || [])
+        );
         return propertiesValues.filter((definition) => !definition.definition_deleted);
     }
 
@@ -90,7 +103,11 @@ export class PropertiesField extends Component {
     get groupedPropertiesList() {
         const columns = this.env.isSmall ? 1 : this.props.columns;
         // If no properties, assure that the "Add Property" button is shown.
+<<<<<<< HEAD
         const res = [...Array(columns)].map(col => []);
+=======
+        const res = [...Array(columns)].map((col) => []);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.propertiesList.forEach((val, index) => {
             res[index % columns].push(val);
         });
@@ -179,7 +196,11 @@ export class PropertiesField extends Component {
         propertiesValues[targetIndex] = propertiesValues[propertyIndex];
         propertiesValues[propertyIndex] = prop;
         propertiesValues[propertyIndex].definition_changed = true;
+<<<<<<< HEAD
         this.props.update(propertiesValues).then(() => {
+=======
+        this.props.record.update({ [this.props.name]: propertiesValues }).then(() => {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             // move the popover once the DOM is updated
             this.shouldUpdatePopoverPosition = true;
         });
@@ -195,7 +216,7 @@ export class PropertiesField extends Component {
     onPropertyValueChange(propertyName, propertyValue) {
         const propertiesValues = this.propertiesList;
         propertiesValues.find((property) => property.name === propertyName).value = propertyValue;
-        this.props.update(propertiesValues);
+        this.props.record.update({ [this.props.name]: propertiesValues });
     }
 
     /**
@@ -233,7 +254,7 @@ export class PropertiesField extends Component {
         this._regeneratePropertyName(propertyDefinition);
 
         propertiesValues[propertyIndex] = propertyDefinition;
-        this.props.update(propertiesValues);
+        this.props.record.update({ [this.props.name]: propertiesValues });
     }
 
     /**
@@ -261,7 +282,7 @@ export class PropertiesField extends Component {
                 propertiesDefinitions.find(
                     (property) => property.name === propertyName
                 ).definition_deleted = true;
-                this.props.update(propertiesDefinitions);
+                this.props.record.update({ [this.props.name]: propertiesDefinitions });
             },
             cancel: () => {},
         };
@@ -293,7 +314,7 @@ export class PropertiesField extends Component {
             definition_changed: true,
         });
         this.openLastPropertyDefinition = true;
-        this.props.update(propertiesDefinitions);
+        this.props.record.update({ [this.props.name]: propertiesDefinitions });
     }
 
     /**
@@ -341,11 +362,15 @@ export class PropertiesField extends Component {
             `.o_property_field[property-name="${propertyName}"] .o_field_property_open_popover`
         );
 
+<<<<<<< HEAD
         reposition(
             targetElement,
             popover,
             { position: "top", margin: 10 },
         );
+=======
+        reposition(targetElement, popover, { position: "top", margin: 10 });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         const arrow = popover.querySelector(".popover-arrow");
         if (arrow) {
@@ -368,10 +393,14 @@ export class PropertiesField extends Component {
         }
 
         // check if we can write on the definition record
-        this.state.canChangeDefinition = await this.orm.call(
+        this.state.canChangeDefinition = await this.user.checkAccessRight(
             definitionRecordModel,
+<<<<<<< HEAD
             "check_access_rights",
             ["write", false],
+=======
+            "write"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         );
     }
 
@@ -419,7 +448,7 @@ export class PropertiesField extends Component {
         // initial properties values, if the type or the model changed, the
         // name will be regenerated in order to reset the value on the children
         this.initialValues = {};
-        for (const propertiesValues of this.props.value || []) {
+        for (const propertiesValues of this.props.record.data[this.props.name] || []) {
             this.initialValues[propertiesValues.name] = {
                 name: propertiesValues.name,
                 type: propertiesValues.type,
@@ -465,10 +494,18 @@ export class PropertiesField extends Component {
                 propertyDefinition: this.propertiesList.find(
                     (property) => property.name === currentName(propertyName)
                 ),
+<<<<<<< HEAD
                 context: this.context,
                 onChange: this.onPropertyDefinitionChange.bind(this),
                 onDelete: () => this.onPropertyDelete(currentName(propertyName)),
                 onPropertyMove: (direction) => this.onPropertyMove(currentName(propertyName), direction),
+=======
+                context: this.props.context,
+                onChange: this.onPropertyDefinitionChange.bind(this),
+                onDelete: () => this.onPropertyDelete(currentName(propertyName)),
+                onPropertyMove: (direction) =>
+                    this.onPropertyMove(currentName(propertyName), direction),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 isNewlyCreated: isNewlyCreated,
                 propertyIndex: propertyIndex,
                 propertiesSize: propertiesList.length,
@@ -485,7 +522,11 @@ export class PropertiesField extends Component {
                         this._setDefaultPropertyValue(currentName(propertyName));
                     }
                 },
+<<<<<<< HEAD
             },
+=======
+            }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         );
     }
 
@@ -502,6 +543,7 @@ export class PropertiesField extends Component {
         // is called not synchronously, and so if we click on "create a property", it will close
         // the popover, calling this function, but the value will be overwritten because of onPropertyCreate
         this.props.value = propertiesValues;
+<<<<<<< HEAD
         this.props.update(propertiesValues);
     }
 }
@@ -522,9 +564,23 @@ PropertiesField.extractProps = ({ attrs, field }) => {
     const columns = parseInt(attrs.columns || "1");
     const hideKanbanOption = archParseBoolean(attrs.hideKanbanOption);
     return { columns, hideKanbanOption };
+=======
+        this.props.record.update({ [this.props.name]: propertiesValues });
+    }
+}
+
+export const propertiesField = {
+    component: PropertiesField,
+    displayName: _lt("Properties"),
+    supportedTypes: ["properties"],
+    extractProps({ attrs }, dynamicInfo) {
+        return {
+            context: dynamicInfo.context,
+            columns: parseInt(attrs.columns || "1"),
+            hideKanbanOption: archParseBoolean(attrs.hideKanbanOption),
+        };
+    },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 };
 
-PropertiesField.displayName = _lt("Properties");
-PropertiesField.supportedTypes = ["properties"];
-
-registry.category("fields").add("properties", PropertiesField);
+registry.category("fields").add("properties", propertiesField);

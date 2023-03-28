@@ -3,12 +3,63 @@
 
 from freezegun import freeze_time
 
-from odoo import _, fields
+from odoo import _, Command, fields
 from odoo.addons.survey.tests import common
 from odoo.tests.common import users
 
 
 class TestSurveyInternals(common.TestSurveyCommon):
+
+    @users('survey_manager')
+    def test_allowed_triggering_question_ids(self):
+        # Create 2 surveys, each with 3 questions, each with 2 suggested answers
+        survey_1, survey_2 = self.env['survey.survey'].create([
+            {'title': 'Test Survey 1'},
+            {'title': 'Test Survey 2'}
+        ])
+        self.env['survey.question'].create([
+            {
+                'survey_id': survey_id,
+                'title': f'Question {question_idx}',
+                'question_type': 'simple_choice',
+                'suggested_answer_ids': [
+                    Command.create({
+                        'value': f'Answer {answer_idx}',
+                    }) for answer_idx in range(2)],
+            }
+            for question_idx in range(3)
+            for survey_id in (survey_1 | survey_2).ids
+        ])
+        survey_1_q_1, survey_1_q_2, _ = survey_1.question_ids
+        survey_2_q_1, survey_2_q_2, _ = survey_2.question_ids
+
+        # Make sure they are already configured as conditionally triggered
+        survey_1_q_2.write({
+            'is_conditional': True,
+            'triggering_question_id': survey_1_q_1,
+            'triggering_answer_id': survey_1_q_1.suggested_answer_ids[0]
+        })
+        survey_2_q_2.write({
+            'is_conditional': True,
+            'triggering_question_id': survey_2_q_1,
+            'triggering_answer_id': survey_2_q_1.suggested_answer_ids[0]
+        })
+
+        with self.subTest('Editing existing questions'):
+            # Only previous questions from the same survey
+            self.assertFalse(survey_1_q_2.allowed_triggering_question_ids & survey_2_q_2.allowed_triggering_question_ids)
+            self.assertEqual(survey_1_q_2.allowed_triggering_question_ids, survey_1_q_1)
+            self.assertEqual(survey_2_q_2.allowed_triggering_question_ids, survey_2_q_1)
+
+        survey_1_new_question = self.env['survey.question'].new({'survey_id': survey_1, 'is_conditional': True})
+        survey_2_new_question = self.env['survey.question'].new({'survey_id': survey_2, 'is_conditional': True})
+
+        with self.subTest('New questions'):
+            # New questions should be allowed to use any question with choices from the same survey
+            self.assertFalse(survey_1_new_question.allowed_triggering_question_ids
+                             & survey_2_new_question.allowed_triggering_question_ids)
+            self.assertEqual(survey_1_new_question.allowed_triggering_question_ids.ids, survey_1.question_ids.ids)
+            self.assertEqual(survey_2_new_question.allowed_triggering_question_ids.ids, survey_2.question_ids.ids)
 
     def test_answer_attempts_count(self):
         """ As 'attempts_number' and 'attempts_count' are computed using raw SQL queries, let us
@@ -100,7 +151,7 @@ class TestSurveyInternals(common.TestSurveyCommon):
             validation_min_date='2015-03-20', validation_max_date='2015-03-25', validation_error_msg='ValidationError')
 
         self.assertEqual(
-            question.validate_question('Is Alfred an answer ?'),
+            question.validate_question('Is Alfred an answer?'),
             {question.id: _('This is not a date')}
         )
 
@@ -126,7 +177,7 @@ class TestSurveyInternals(common.TestSurveyCommon):
             validation_min_float_value=2.2, validation_max_float_value=3.3, validation_error_msg='ValidationError')
 
         self.assertEqual(
-            question.validate_question('Is Alfred an answer ?'),
+            question.validate_question('Is Alfred an answer?'),
             {question.id: _('This is not a number')}
         )
 
@@ -246,7 +297,7 @@ class TestSurveyInternals(common.TestSurveyCommon):
             return survey.question_ids.filtered(lambda q: q.title == title)[0]
 
         # Create the survey questions (! texts of the questions must be unique as they are used to query them)
-        q_is_vegetarian_text = 'Are you vegetarian ?'
+        q_is_vegetarian_text = 'Are you vegetarian?'
         q_is_vegetarian = self._add_question(
             self.page_0, q_is_vegetarian_text, 'multiple_choice', survey_id=self.survey.id,
             sequence=100, labels=[{'value': 'Yes'}, {'value': 'No'}])
@@ -297,6 +348,52 @@ class TestSurveyInternals(common.TestSurveyCommon):
         self.assertNotEqual(q_food_not_vegetarian_cloned.triggering_answer_id.id,
                             q_is_vegetarian.suggested_answer_ids[1].id)
 
+<<<<<<< HEAD
+=======
+    @users('survey_manager')
+    def test_unlink_triggers(self):
+        # Create the survey questions
+        q_is_vegetarian_text = 'Are you vegetarian?'
+        q_is_vegetarian = self._add_question(
+            self.page_0, q_is_vegetarian_text, 'multiple_choice', survey_id=self.survey.id,
+            sequence=100, labels=[{'value': 'Yes'}, {'value': 'No'}])
+        q_food_vegetarian_text = 'Choose your green meal'
+        veggie_question = self._add_question(
+            self.page_0, q_food_vegetarian_text, 'multiple_choice',
+            is_conditional=True, sequence=101,
+            triggering_question_id=q_is_vegetarian.id,
+            triggering_answer_id=q_is_vegetarian.suggested_answer_ids[0].id,
+            survey_id=self.survey.id,
+            labels=[{'value': 'Vegetarian pizza'}, {'value': 'Vegetarian burger'}])
+        q_food_not_vegetarian_text = 'Choose your meal'
+        not_veggie_question = self._add_question(
+            self.page_0, q_food_not_vegetarian_text, 'multiple_choice',
+            is_conditional=True, sequence=102,
+            triggering_question_id=q_is_vegetarian.id,
+            triggering_answer_id=q_is_vegetarian.suggested_answer_ids[1].id,
+            survey_id=self.survey.id,
+            labels=[{'value': 'Steak with french fries'}, {'value': 'Fish'}])
+
+        q_is_vegetarian.suggested_answer_ids[0].unlink()
+
+        # Deleting answer Yes makes the following question always visible
+        self.assertEqual(veggie_question.is_conditional, False)
+        self.assertEqual(veggie_question.triggering_question_id.id, False)
+        self.assertEqual(veggie_question.triggering_answer_id.id, False)
+
+        # But the other is still conditional
+        self.assertEqual(not_veggie_question.is_conditional, True)
+        self.assertEqual(not_veggie_question.triggering_question_id.id, q_is_vegetarian.id)
+        self.assertEqual(not_veggie_question.triggering_answer_id.id, q_is_vegetarian.suggested_answer_ids[0].id)
+
+        q_is_vegetarian.unlink()
+
+        # Now it will also be always visible
+        self.assertEqual(not_veggie_question.is_conditional, False)
+        self.assertEqual(not_veggie_question.triggering_question_id.id, False)
+        self.assertEqual(not_veggie_question.triggering_answer_id.id, False)
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def test_get_pages_and_questions_to_show(self):
         """
         Tests the method `_get_pages_and_questions_to_show` - it takes a recordset of

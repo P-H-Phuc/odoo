@@ -27,8 +27,6 @@ class ResConfigSettings(models.TransientModel):
     )
     module_auth_oauth = fields.Boolean("Use external authentication providers (OAuth)")
     module_auth_ldap = fields.Boolean("LDAP Authentication")
-    # TODO: remove in master
-    module_base_gengo = fields.Boolean("Translate Your Website with Gengo")
     module_account_inter_company_rules = fields.Boolean("Manage Inter Company")
     module_voip = fields.Boolean("Asterisk (VoIP)")
     module_web_unsplash = fields.Boolean("Unsplash Image Library")
@@ -57,9 +55,6 @@ class ResConfigSettings(models.TransientModel):
             'res_model': 'res.company',
             'res_id': self.env.company.id,
             'target': 'current',
-            'context': {
-                'form_view_initial_mode': 'edit',
-            },
         }
 
     def open_default_user(self):

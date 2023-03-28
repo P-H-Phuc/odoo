@@ -8,15 +8,24 @@ import { standardFieldProps } from "../standard_field_props";
 import { Component, onWillUpdateProps, useState } from "@odoo/owl";
 
 export class ImageUrlField extends Component {
+    static template = "web.ImageUrlField";
+    static props = {
+        ...standardFieldProps,
+        width: { type: Number, optional: true },
+        height: { type: Number, optional: true },
+    };
+
+    static fallbackSrc = "/web/static/img/placeholder.png";
+
     setup() {
         this.notification = useService("notification");
         this.state = useState({
-            src: this.props.value,
+            src: this.props.record.data[this.props.name],
         });
 
         onWillUpdateProps((nextProps) => {
-            if (this.props.value !== nextProps.value) {
-                this.state.value = nextProps.value;
+            if (this.props.record.data[this.props.name] !== nextProps.record.data[nextProps.name]) {
+                this.state.value = nextProps.record.data[nextProps.name];
             }
         });
     }
@@ -40,25 +49,14 @@ export class ImageUrlField extends Component {
     }
 }
 
-ImageUrlField.fallbackSrc = "/web/static/img/placeholder.png";
-
-ImageUrlField.template = "web.ImageUrlField";
-ImageUrlField.props = {
-    ...standardFieldProps,
-    width: { type: Number, optional: true },
-    height: { type: Number, optional: true },
+export const imageUrlField = {
+    component: ImageUrlField,
+    displayName: _lt("Image"),
+    supportedTypes: ["char"],
+    extractProps: ({ attrs, options }) => ({
+        width: options.size ? options.size[0] : attrs.width,
+        height: options.size ? options.size[1] : attrs.height,
+    }),
 };
 
-ImageUrlField.displayName = _lt("Image");
-ImageUrlField.supportedTypes = ["char"];
-
-ImageUrlField.extractProps = ({ attrs }) => {
-    return {
-        width: attrs.options.size ? attrs.options.size[0] : attrs.width,
-        height: attrs.options.size ? attrs.options.size[1] : attrs.height,
-    };
-};
-
-registry.category("fields").add("image_url", ImageUrlField);
-// TODO WOWL: remove below when old registry is removed.
-registry.category("fields").add("kanban.image_url", ImageUrlField);
+registry.category("fields").add("image_url", imageUrlField);

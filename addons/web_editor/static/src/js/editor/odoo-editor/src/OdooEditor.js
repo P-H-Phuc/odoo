@@ -61,13 +61,16 @@ import {
     isBlock,
     getTraversedNodes,
     getSelectedNodes,
-    isVisibleTextNode,
     descendants,
     hasValidSelection,
     hasTableSelection,
     pxToFloat,
     parseHTML,
     splitTextNode,
+<<<<<<< HEAD
+=======
+    isEditorTab,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     isMacOS,
     isVoidElement,
     cleanZWS,
@@ -349,14 +352,6 @@ export class OdooEditor extends EventTarget {
                 colNumber: ev.detail.colNumber,
             });
         });
-        // Create the table picker for the toolbar.
-        this.toolbarTablePicker = new TablePicker({ document: this.document });
-        this.toolbarTablePicker.addEventListener('cell-selected', ev => {
-            this.execCommand('insertTable', {
-                rowNumber: ev.detail.rowNumber,
-                colNumber: ev.detail.colNumber,
-            });
-        });
         // Create the table UI.
         const parser = new DOMParser();
         for (const direction of ['row', 'column']) {
@@ -456,7 +451,7 @@ export class OdooEditor extends EventTarget {
                     category: this.options._t('Structure'),
                     name: this.options._t('Bulleted list'),
                     priority: 110,
-                    description: this.options._t('Create a simple bulleted list.'),
+                    description: this.options._t('Create a simple bulleted list'),
                     fontawesome: 'fa-list-ul',
                     isDisabled: () => !this.isSelectionInBlockRoot(),
                     callback: () => {
@@ -467,7 +462,7 @@ export class OdooEditor extends EventTarget {
                     category: this.options._t('Structure'),
                     name: this.options._t('Numbered list'),
                     priority: 100,
-                    description: this.options._t('Create a list with numbering.'),
+                    description: this.options._t('Create a list with numbering'),
                     fontawesome: 'fa-list-ol',
                     isDisabled: () => !this.isSelectionInBlockRoot(),
                     callback: () => {
@@ -478,7 +473,7 @@ export class OdooEditor extends EventTarget {
                     category: this.options._t('Structure'),
                     name: this.options._t('Checklist'),
                     priority: 90,
-                    description: this.options._t('Track tasks with a checklist.'),
+                    description: this.options._t('Track tasks with a checklist'),
                     fontawesome: 'fa-check-square-o',
                     isDisabled: () => !this.isSelectionInBlockRoot(),
                     callback: () => {
@@ -489,7 +484,7 @@ export class OdooEditor extends EventTarget {
                     category: this.options._t('Structure'),
                     name: this.options._t('Table'),
                     priority: 80,
-                    description: this.options._t('Insert a table.'),
+                    description: this.options._t('Insert a table'),
                     fontawesome: 'fa-table',
                     isDisabled: () => !this.isSelectionInBlockRoot(),
                     callback: () => {
@@ -500,7 +495,7 @@ export class OdooEditor extends EventTarget {
                     category: this.options._t('Format'),
                     name: this.options._t('Heading 1'),
                     priority: 50,
-                    description: this.options._t('Big section heading.'),
+                    description: this.options._t('Big section heading'),
                     fontawesome: 'fa-header',
                     isDisabled: () => !this.isSelectionInBlockRoot(),
                     callback: () => {
@@ -511,7 +506,7 @@ export class OdooEditor extends EventTarget {
                     category: this.options._t('Format'),
                     name: this.options._t('Heading 2'),
                     priority: 40,
-                    description: this.options._t('Medium section heading.'),
+                    description: this.options._t('Medium section heading'),
                     fontawesome: 'fa-header',
                     isDisabled: () => !this.isSelectionInBlockRoot(),
                     callback: () => {
@@ -522,7 +517,7 @@ export class OdooEditor extends EventTarget {
                     category: this.options._t('Format'),
                     name: this.options._t('Heading 3'),
                     priority: 30,
-                    description: this.options._t('Small section heading.'),
+                    description: this.options._t('Small section heading'),
                     fontawesome: 'fa-header',
                     isDisabled: () => !this.isSelectionInBlockRoot(),
                     callback: () => {
@@ -533,7 +528,7 @@ export class OdooEditor extends EventTarget {
                     category: this.options._t('Format'),
                     name: this.options._t('Switch direction'),
                     priority: 20,
-                    description: this.options._t('Switch the text\'s direction.'),
+                    description: this.options._t('Switch the text\'s direction'),
                     fontawesome: 'fa-exchange',
                     callback: () => {
                         this.execCommand('switchDirection');
@@ -543,7 +538,7 @@ export class OdooEditor extends EventTarget {
                     category: this.options._t('Format'),
                     name: this.options._t('Text'),
                     priority: 10,
-                    description: this.options._t('Paragraph block.'),
+                    description: this.options._t('Paragraph block'),
                     fontawesome: 'fa-paragraph',
                     isDisabled: () => !this.isSelectionInBlockRoot(),
                     callback: () => {
@@ -554,7 +549,7 @@ export class OdooEditor extends EventTarget {
                     category: this.options._t('Widgets'),
                     name: this.options._t('3 Stars'),
                     priority: 20,
-                    description: this.options._t('Insert a rating over 3 stars.'),
+                    description: this.options._t('Insert a rating over 3 stars'),
                     fontawesome: 'fa-star-o',
                     callback: () => {
                         let html = '\u200B<span contenteditable="false" class="o_stars o_three_stars">';
@@ -567,7 +562,7 @@ export class OdooEditor extends EventTarget {
                     category: this.options._t('Widgets'),
                     name: this.options._t('5 Stars'),
                     priority: 10,
-                    description: this.options._t('Insert a rating over 5 stars.'),
+                    description: this.options._t('Insert a rating over 5 stars'),
                     fontawesome: 'fa-star',
                     callback: () => {
                         let html = '\u200B<span contenteditable="false" class="o_stars o_five_stars">';
@@ -582,7 +577,11 @@ export class OdooEditor extends EventTarget {
                         category: this.options._t('Structure'),
                         name: this.options._t('Separator'),
                         priority: 40,
+<<<<<<< HEAD
                         description: this.options._t('Insert an horizontal rule separator.'),
+=======
+                        description: this.options._t('Insert a horizontal rule separator'),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         fontawesome: 'fa-minus',
                         isDisabled: () => !this.isSelectionInBlockRoot(),
                         callback: () => {
@@ -634,7 +633,34 @@ export class OdooEditor extends EventTarget {
         // -------
 
         if (this.options.toolbar) {
+<<<<<<< HEAD
             this.setupToolbar(this.options.toolbar);
+=======
+            this.toolbar = this.options.toolbar;
+            this.bindExecCommand(this.toolbar);
+            // Ensure anchors in the toolbar don't trigger a hash change.
+            const toolbarAnchors = this.toolbar.querySelectorAll('a');
+            toolbarAnchors.forEach(a => a.addEventListener('click', e => e.preventDefault()));
+            for (const colorLabel of this.toolbar.querySelectorAll('label')) {
+                colorLabel.addEventListener('mousedown', ev => {
+                    // Hack to prevent loss of focus (done by preventDefault) while still opening
+                    // color picker dialog (which is also prevented by preventDefault on chrome,
+                    // except when click detail is 2, which happens on a double-click but isn't
+                    // triggered by a dblclick event)
+                    if (ev.detail < 2) {
+                        ev.preventDefault();
+                        ev.currentTarget.dispatchEvent(new MouseEvent('click', { detail: 2 }));
+                    }
+                });
+                colorLabel.addEventListener('input', ev => {
+                    this.document.execCommand(ev.target.name, false, ev.target.value);
+                    this.updateColorpickerLabels();
+                });
+            }
+            if (this.isMobile) {
+                this.editable.before(this.toolbar);
+            }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
         // placeholder hint
         if (editable.textContent === '' && this.options.placeholder) {
@@ -661,6 +687,7 @@ export class OdooEditor extends EventTarget {
         this._columnUi.remove();
     }
 
+<<<<<<< HEAD
     setupToolbar(toolbar) {
         this.toolbar = toolbar;
         this.autohideToolbar = this.options.autohideToolbar;
@@ -694,6 +721,8 @@ export class OdooEditor extends EventTarget {
         }
     }
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     resetContent(value) {
         value = value || '<p><br></p>';
         this.editable.innerHTML = value;
@@ -1900,10 +1929,15 @@ export class OdooEditor extends EventTarget {
         });
         // If the end container was fully selected, extractContents may have
         // emptied it without removing it. Ensure it's gone.
+<<<<<<< HEAD
         const isRemovableInvisible = (node, noBlocks = true) =>
             !isVisible(node, noBlocks) && !isUnremovable(node);
+=======
+        const isRemovableInvisible = node =>
+            !isVisible(node) && !isZWS(node) && !isUnremovable(node);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         const endIsStart = end === start;
-        while (end && isRemovableInvisible(end, false) && !end.contains(range.endContainer)) {
+        while (end && isRemovableInvisible(end) && !end.contains(range.endContainer)) {
             const parent = end.parentNode;
             end.remove();
             end = parent;
@@ -1911,7 +1945,7 @@ export class OdooEditor extends EventTarget {
         // Same with the start container
         while (
             start &&
-            isRemovableInvisible(start) &&
+            !isBlock(start) && isRemovableInvisible(start) &&
             !(endIsStart && start.contains(range.startContainer))
         ) {
             const parent = start.parentNode;
@@ -2352,7 +2386,7 @@ export class OdooEditor extends EventTarget {
                     this._selectTableCells(range);
                     appliedCustomSelection = true;
                 }
-            } else if (!descendants(startTd).some(child => isVisibleTextNode(child) && child.textContent !== '\u200B') &&
+            } else if (!isVisible(startTd) &&
                 ev.clientX - (this._lastMouseClickPosition ? this._lastMouseClickPosition[0] : ev.clientX) >= 15
             ) {
                 // Handle selecting an empty cell.
@@ -2770,7 +2804,11 @@ export class OdooEditor extends EventTarget {
                 }
             }
         }
+<<<<<<< HEAD
         if (this.autohideToolbar && !this.toolbar.contains(sel.anchorNode)) {
+=======
+        if (this.options.autohideToolbar && !this.toolbar.contains(sel.anchorNode)) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             if (!this.isMobile) {
                 if (show !== undefined) {
                     this.toolbar.style.visibility = show ? 'visible' : 'hidden';
@@ -2902,7 +2940,11 @@ export class OdooEditor extends EventTarget {
         undoButton && undoButton.classList.toggle('disabled', !this.historyCanUndo());
         const redoButton = this.toolbar.querySelector('#redo');
         redoButton && redoButton.classList.toggle('disabled', !this.historyCanRedo());
+<<<<<<< HEAD
         if (this.autohideToolbar && !this.isMobile && !this.toolbar.contains(sel.anchorNode)) {
+=======
+        if (this.options.autohideToolbar && !this.isMobile && !this.toolbar.contains(sel.anchorNode)) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             this._positionToolbar();
         }
     }
@@ -3477,15 +3519,83 @@ export class OdooEditor extends EventTarget {
             }
         } else if (ev.key === 'Tab') {
             // Tab
+            const tabHtml = '<span class="oe-tabs" contenteditable="false">\u0009</span>\u200B';
             const sel = this.document.getSelection();
-            const closestTag = (closestElement(sel.anchorNode, 'li, table') || {}).tagName;
-
-            if (closestTag === 'LI') {
-                this._applyCommand('indentList', ev.shiftKey ? 'outdent' : 'indent');
-            } else if (closestTag === 'TABLE') {
+            if (closestElement(sel.anchorNode, 'table')) {
                 this._onTabulationInTable(ev);
-            } else if (!ev.shiftKey) {
-                this.execCommand('insert', parseHTML('<span class="oe-tabs" contenteditable="false">\u0009</span>\u200B'));
+            } else if (!ev.shiftKey && sel.isCollapsed && !closestElement(sel.anchorNode, 'li')) {
+                // Indent text (collapsed selection).
+                this.execCommand('insert', parseHTML(tabHtml));
+            } else {
+                // Indent/outdent selection.
+                // Split traversed nodes into list items and the rest.
+                const listItems = new Set();
+                const nonListItems = new Set();
+                for (const node of getTraversedNodes(this.editable)) {
+                    const closestLi = closestElement(node, 'li');
+                    const target = closestLi || node;
+                    if (!(target.querySelector && target.querySelector('li'))) {
+                        if (closestLi) {
+                            listItems.add(closestLi);
+                        } else {
+                            nonListItems.add(node);
+                        }
+                    }
+                }
+
+                const restore = preserveCursor(this.document);
+
+                // Indent/outdent list items.
+                for (const listItem of listItems) {
+                    if (ev.shiftKey) {
+                        listItem.oShiftTab(0);
+                    } else {
+                        listItem.oTab(0);
+                    }
+                }
+
+                // Indent/outdent the rest.
+                if (ev.shiftKey) {
+                    const editorTabs = new Set(
+                        [...nonListItems].map(node => {
+                            const block = closestBlock(node);
+                            if (block && isEditorTab(block.firstElementChild)) {
+                                return block.firstElementChild;
+                            }
+                        }).filter(node => (
+                            // Filter out tabs preceded by visible text.
+                            node && !getAdjacentPreviousSiblings(node).some(sibling => (
+                                sibling.nodeType === Node.TEXT_NODE && !/^[\u200B\s]*$/.test(sibling.textContent)
+                            ))
+                    )));
+                    for (const tab of editorTabs) {
+                        let { anchorNode, anchorOffset, focusNode, focusOffset } = sel;
+                        const updateAnchor = anchorNode === tab.nextSibling;
+                        const updateFocus = focusNode === tab.nextSibling;
+                        let zwsRemoved = 0;
+                        while (tab.nextSibling && tab.nextSibling.nodeType === Node.TEXT_NODE && tab.nextSibling.textContent.startsWith('\u200B')) {
+                            splitTextNode(tab.nextSibling, 1, DIRECTIONS.LEFT);
+                            tab.nextSibling.remove();
+                            zwsRemoved++;
+                        }
+                        if (updateAnchor || updateFocus) {
+                            setSelection(
+                                updateAnchor ? tab.nextSibling : anchorNode,
+                                updateAnchor ? Math.max(0, anchorOffset - zwsRemoved) : anchorOffset,
+                                updateFocus ? tab.nextSibling : focusNode,
+                                updateFocus ? Math.max(0, focusOffset - zwsRemoved) : focusOffset
+                            );
+                        }
+                        tab.remove();
+                    };
+                } else {
+                    const tab = parseHTML(tabHtml);
+                    for (const block of new Set([...nonListItems].map(node => closestBlock(node)).filter(node => node))) {
+                        block.prepend(tab.cloneNode(true));
+                    }
+                    restore();
+                }
+                this.historyStep();
             }
             ev.preventDefault();
             ev.stopPropagation();
@@ -3678,21 +3788,6 @@ export class OdooEditor extends EventTarget {
         }
     }
 
-    /**
-     * Returns true if the current selection content is only one ZWS
-     *
-     * @private
-     * @param {Object} selection
-     * @returns {boolean}
-     */
-    _isSelectionOnlyZws(selection) {
-        let range = selection.getRangeAt(0);
-        if (selection.isCollapsed || !range) {
-            return false;
-        }
-        return range.cloneContents().textContent === '\u200B';
-    }
-
     getCurrentCollaborativeSelection() {
         const selection = this._latestComputedSelection || this._computeHistorySelection();
         return {
@@ -3716,8 +3811,7 @@ export class OdooEditor extends EventTarget {
     }
 
     /**
-     * initialise the provided element to be ready for edition
-     *
+     * Initialize the provided element to be ready for edition.
      */
     initElementForEdition(element = this.editable) {
         // Detect if the editable base element contain orphan inline nodes. If
@@ -4268,7 +4362,19 @@ export class OdooEditor extends EventTarget {
                 this.execCommand('insert', fragment);
             }
         } else if (files.length && targetSupportsHtmlContent) {
+<<<<<<< HEAD
             this.addImagesFiles(files).then(html => this.execCommand('insert', this._prepareClipboardData(html)));
+=======
+            this.addImagesFiles(files).then(html => {
+                const imageNodes = this.execCommand('insert', this._prepareClipboardData(html));
+                if (imageNodes && this.options.dropImageAsAttachment) {
+                    // Mark images as having to be saved as attachments.
+                    for (const imageNode of imageNodes) {
+                        imageNode.classList.add('o_b64_image_to_save');
+                    }
+                }
+            });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         } else if (clipboardHtml && targetSupportsHtmlContent) {
             this.execCommand('insert', this._prepareClipboardData(clipboardHtml));
         } else {
@@ -4296,7 +4402,7 @@ export class OdooEditor extends EventTarget {
                         {
                             category: this.options._t('Paste'),
                             name: this.options._t('Paste as URL'),
-                            description: this.options._t('Create an URL.'),
+                            description: this.options._t('Create an URL'),
                             fontawesome: 'fa-link',
                             callback: () => {
                                 this.historyUndo();
@@ -4319,7 +4425,7 @@ export class OdooEditor extends EventTarget {
                         {
                             category: this.options._t('Paste'),
                             name: this.options._t('Paste as text'),
-                            description: this.options._t('Simple text paste.'),
+                            description: this.options._t('Simple text paste'),
                             fontawesome: 'fa-font',
                             callback: () => {},
                         },
@@ -4342,7 +4448,7 @@ export class OdooEditor extends EventTarget {
                             {
                                 category: this.options._t('Embed'),
                                 name: this.options._t('Embed Image'),
-                                description: this.options._t('Embed the image in the document.'),
+                                description: this.options._t('Embed the image in the document'),
                                 fontawesome: 'fa-image',
                                 callback: () => {
                                     execCommandAtStepIndex(stepIndexBeforeInsert, () => {
@@ -4368,7 +4474,7 @@ export class OdooEditor extends EventTarget {
                             {
                                 category: this.options._t('Embed'),
                                 name: this.options._t('Embed Youtube Video'),
-                                description: this.options._t('Embed the youtube video in the document.'),
+                                description: this.options._t('Embed the youtube video in the document'),
                                 fontawesome: 'fa-youtube-play',
                                 callback: async () => {
                                     let videoElement;
@@ -4486,7 +4592,17 @@ export class OdooEditor extends EventTarget {
             this.execCommand('insert', this._prepareClipboardData(html));
         } else if (fileTransferItems.length) {
             this.addImagesFiles(fileTransferItems).then(html => {
+<<<<<<< HEAD
                 this.execCommand('insert', this._prepareClipboardData(html));
+=======
+                const imageNodes = this.execCommand('insert', this._prepareClipboardData(html));
+                if (imageNodes && this.options.dropImageAsAttachment) {
+                    // Mark images as having to be saved as attachments.
+                    for (const imageNode of imageNodes) {
+                        imageNode.classList.add('o_b64_image_to_save');
+                    }
+                }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             });
         } else if (htmlTransferItem) {
             htmlTransferItem.getAsString(pastedText => {

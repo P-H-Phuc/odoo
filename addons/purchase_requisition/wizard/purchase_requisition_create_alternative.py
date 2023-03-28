@@ -78,6 +78,7 @@ class PurchaseRequisitionCreateAlternative(models.TransientModel):
             'dest_address_id': self.origin_po_id.dest_address_id.id,
         }
         if self.copy_products and self.origin_po_id:
+<<<<<<< HEAD
             vals['order_line'] = [Command.create({
                 'product_id': line.product_id.id,
                 'product_qty': line.product_qty,
@@ -85,4 +86,17 @@ class PurchaseRequisitionCreateAlternative(models.TransientModel):
                 'display_type': line.display_type,
                 'name': line.name,
             }) for line in self.origin_po_id.order_line]
+=======
+            vals['order_line'] = [Command.create(self._get_alternative_line_value(line)) for line in self.origin_po_id.order_line]
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return vals
+
+    @api.model
+    def _get_alternative_line_value(self, order_line):
+        return {
+            'product_id': order_line.product_id.id,
+            'product_qty': order_line.product_qty,
+            'product_uom': order_line.product_uom.id,
+            'display_type': order_line.display_type,
+            'name': order_line.name,
+        }

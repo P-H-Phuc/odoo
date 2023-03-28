@@ -105,79 +105,6 @@ class AccountEdiFormat(models.Model):
     # Import methods to override based on EDI Format
     ####################################################
 
-    def _create_invoice_from_xml_tree(self, filename, tree, journal=None):
-        """ Create a new invoice with the data inside the xml.
-
-        :param filename: The name of the xml.
-        :param tree:     The tree of the xml to import.
-        :param journal:  The journal on which importing the invoice.
-        :returns:        The created invoice.
-        """
-        # TO OVERRIDE
-        self.ensure_one()
-        return self.env['account.move']
-
-    def _update_invoice_from_xml_tree(self, filename, tree, invoice):
-        """ Update an existing invoice with the data inside the xml.
-
-        :param filename: The name of the xml.
-        :param tree:     The tree of the xml to import.
-        :param invoice:  The invoice to update.
-        :returns:        The updated invoice.
-        """
-        # TO OVERRIDE
-        self.ensure_one()
-        return self.env['account.move']
-
-    def _create_invoice_from_pdf_reader(self, filename, reader):
-        """ Create a new invoice with the data inside a pdf.
-
-        :param filename: The name of the pdf.
-        :param reader:   The OdooPdfFileReader of the pdf to import.
-        :returns:        The created invoice.
-        """
-        # TO OVERRIDE
-        self.ensure_one()
-
-        return self.env['account.move']
-
-    def _update_invoice_from_pdf_reader(self, filename, reader, invoice):
-        """ Update an existing invoice with the data inside the pdf.
-
-        :param filename: The name of the pdf.
-        :param reader:   The OdooPdfFileReader of the pdf to import.
-        :param invoice:  The invoice to update.
-        :returns:        The updated invoice.
-        """
-        # TO OVERRIDE
-        self.ensure_one()
-        return self.env['account.move']
-
-    def _create_invoice_from_binary(self, filename, content, extension):
-        """ Create a new invoice with the data inside a binary file.
-
-        :param filename:  The name of the file.
-        :param content:   The content of the binary file.
-        :param extension: The extensions as a string.
-        :returns:         The created invoice.
-        """
-        # TO OVERRIDE
-        self.ensure_one()
-        return self.env['account.move']
-
-    def _update_invoice_from_binary(self, filename, content, extension, invoice):
-        """ Update an existing invoice with the data inside a binary file.
-
-        :param filename: The name of the file.
-        :param content:  The content of the binary file.
-        :param extension: The extensions as a string.
-        :param invoice:  The invoice to update.
-        :returns:        The updated invoice.
-        """
-        # TO OVERRIDE
-        self.ensure_one()
-        return self.env['account.move']
-
     def _prepare_invoice_report(self, pdf_writer, edi_document):
         """
         Prepare invoice report to be printed.
@@ -188,6 +115,7 @@ class AccountEdiFormat(models.Model):
         self.ensure_one()
 
     ####################################################
+<<<<<<< HEAD
     # Import Internal methods (not meant to be overridden)
     ####################################################
 
@@ -535,6 +463,8 @@ class AccountEdiFormat(models.Model):
         return currency
 
     ####################################################
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     # Other helpers
     ####################################################
 

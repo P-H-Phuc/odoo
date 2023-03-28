@@ -297,6 +297,7 @@
 <template id="snippet_options_background_options" inherit_id="web_editor.snippet_options_background_options" primary="True">
     <xpath expr="//div[@data-js='BackgroundImage']" position="attributes">
         <attribute name="data-js">MassMailingBackgroundImage</attribute>
+<<<<<<< HEAD
     </xpath>
 </template>
 
@@ -326,8 +327,31 @@
     </xpath>
     <xpath expr="//div[hasclass('o_we_image_shape')]//we-select-page[hasclass('o_we_basic_shapes')]" position="attributes">
         <attribute name="t-if">True</attribute>
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     </xpath>
 
+<<<<<<< HEAD
+=======
+<template id="snippet_options_extra_shapes" inherit_id="web_editor.snippet_options">
+    <div><!-- TODO remove me in 16.0 post-backport --></div>
+</template>
+
+<template id="snippet_options_image_styles" inherit_id="web_editor.snippet_options">
+    <div><!-- TODO remove me in 16.0 post-backport --></div>
+</template>
+
+<!-- Mass Mailing Snippet Options -->
+<template id="snippet_options" inherit_id="web_editor.snippet_options" primary="True">
+    <!-- =================================================================== -->
+    <!-- Modify generic snippet options                                      -->
+    <!-- =================================================================== -->
+
+    <xpath expr="//t[@t-set='no_animations']" position="attributes">
+        <attribute name="t-value">True</attribute>
+    </xpath>
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     <!-- Image styles -->
     <!-- TODO review to only modify what's really necessary and potentially -->
     <!-- make the changes in web_editor directly so that website can benefit -->
@@ -423,18 +447,20 @@
             <we-button class="fa fa-fw fa-align-right" title="Right" data-select-class="ms-auto"/>
         </we-button-group>
     </div>
+<<<<<<< HEAD
     <!-- TODO there is no data-js associated to this but a data-option-name, -->
     <!-- somehow it acts as data-js... it will be reviewed in master. -->
     <div data-option-name="minHeight" data-selector=".o_mail_snippet_general" data-exclude=".o_mail_snippet_general .row > div *">
+=======
+
+    <div data-selector=".o_mail_snippet_general" data-exclude=".o_mail_snippet_general .row > div *">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         <we-button-group string="Height">
             <we-button data-name="minheight_auto_opt" data-select-class="" title="Fit content">Auto</we-button>
             <we-button data-select-class="o_height_400" title="400px">50%</we-button>
             <we-button data-select-class="o_height_800" title="800px">100%</we-button>
         </we-button-group>
     </div>
-    <div data-js="mass_mailing_sizing_x"
-        data-selector="img, .mv, .col_mv, td, th"
-        data-exclude=".o_mail_no_resize, .o_mail_no_options"/>
 
     <div data-js="table_row"
         data-selector="tr:has(> .row), tr:has(> .col_mv)"
@@ -480,8 +506,7 @@
 
     <div data-selector=".note-editable .oe_structure > div:not(:has(> .o_mail_snippet_general)),
         .note-editable .oe_structure > div.o_mail_snippet_general,
-        .note-editable .oe_structure > div.o_mail_snippet_general .o_cc,
-        .note-editable .oe_structure > div.o_mail_snippet_general .btn:not(.btn-link)"
+        .note-editable .oe_structure > div.o_mail_snippet_general .o_cc"
         data-exclude=".o_mail_no_colorpicker, .o_mail_no_options, .s_mail_color_blocks_2, .s_mail_color_blocks_2 .row > div">
         <we-colorpicker string="Background Color"
             data-select-style="true"
@@ -540,7 +565,7 @@
     </div>
 
     <!--  Vertical Alignment -->
-    <div data-option-name="vAlignment" id="row_valign_snippet_option" data-selector=".s_text_image, .s_image_text, .s_three_columns, s_mail_block_event" data-target=".row">
+    <div id="row_valign_snippet_option" data-selector=".s_text_image, .s_image_text, .s_three_columns, s_mail_block_event" data-target=".row">
         <we-button-group string="Vert. Alignment" title="Vertical Alignment">
             <we-button title="Align Top"
                        data-select-class="align-items-start"

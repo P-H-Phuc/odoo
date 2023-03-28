@@ -32,6 +32,7 @@
     var factories = Object.create(null);
     var jobDeps = [];
     var jobPromises = [];
+    const failed = [];
 
     var services = Object.create({});
 
@@ -74,42 +75,23 @@
                     return dep.to;
                 });
         },
-        getWaitedJobs: function () {
-            return jobs
-                .map(function (job) {
-                    return job.name;
-                })
-                .filter(function (item, index, self) {
-                    // uniq
-                    return self.indexOf(item) === index;
-                });
-        },
-        getMissingJobs: function () {
-            var self = this;
-            var waited = this.getWaitedJobs();
-            var missing = [];
-            waited.forEach(function (job) {
-                self.getDependencies(job).forEach(function (job) {
-                    if (!(job in self.services)) {
-                        missing.push(job);
+        getMissingJobs() {
+            const waited = new Set(
+                jobs.filter((job) => !job.ignoreMissingDeps).map((job) => job.name)
+            );
+            const missing = new Set();
+            for (const job of waited) {
+                for (const dep of this.getDependencies(job)) {
+                    if (
+                        !(dep in this.services) &&
+                        !waited.has(dep) &&
+                        !failed.find((job) => job.name === dep)
+                    ) {
+                        missing.add(dep);
                     }
-                });
-            });
-            return missing
-                .filter(function (item, index, self) {
-                    return self.indexOf(item) === index;
-                })
-                .filter(function (item) {
-                    return waited.indexOf(item) < 0;
-                })
-                .filter(function (job) {
-                    return !job.error;
-                });
-        },
-        getFailedJobs: function () {
-            return jobs.filter(function (job) {
-                return !!job.error;
-            });
+                }
+            }
+            return [...missing];
         },
         processJobs: function () {
             var job;
@@ -120,6 +102,7 @@
                 var jobExec;
                 function onError(e) {
                     job.error = e;
+                    failed.push(job);
                     console.error(`Error while loading ${job.name}: ${e.message}`, e);
                     Promise.reject(e);
                 }
@@ -245,6 +228,7 @@
             deps: deps,
             resolve: promiseResolve,
             promise: promise,
+            ignoreMissingDeps: globalThis.__odooIgnoreMissingDependencies,
         });
 
         deps.forEach(function (dep) {
@@ -255,7 +239,6 @@
     };
     odoo.log = function () {
         var missing = [];
-        var failed = [];
         var cycle = null;
 
         if (jobs.length) {
@@ -266,6 +249,9 @@
             var jobdep;
 
             for (var k = 0; k < jobs.length; k++) {
+                if (jobs[k].ignoreMissingDeps) {
+                    continue;
+                }
                 debugJobs[jobs[k].name] = job = {
                     dependencies: jobs[k].deps,
                     dependents: odoo.__DEBUG__.getDependents(jobs[k].name),
@@ -306,7 +292,6 @@
                 }
             }
             missing = odoo.__DEBUG__.getMissingJobs();
-            failed = odoo.__DEBUG__.getFailedJobs();
             var unloaded = Object.keys(debugJobs) // Object.values is not supported
                 .map(function (key) {
                     return debugJobs[key];
@@ -357,12 +342,15 @@
                 }
             }
         }
-        odoo.__DEBUG__.jsModules = {
+        const moduleInfo = {
             missing: missing,
             failed: failed.map((mod) => mod.name),
             unloaded: unloaded ? unloaded.map((mod) => mod.name) : [],
             cycle,
         };
+        odoo.__DEBUG__.jsModules = moduleInfo;
+        displayModuleErrors(moduleInfo);
+
         didLogInfoResolve(true);
     };
     /**
@@ -440,5 +428,61 @@
 
         // visit each root to find cycles
         return visitJobs(jobs.map((j) => j.name));
+    }
+
+    function displayModuleErrors({ failed, missing, unloaded, cycle }) {
+        const list = (heading, arr) => {
+            const frag = document.createDocumentFragment();
+            if (!arr || !arr.length) {
+                return frag;
+            }
+            frag.textContent = heading;
+            const ul = document.createElement("ul");
+            for (const el of arr) {
+                const li = document.createElement("li");
+                li.textContent = el;
+                ul.append(li);
+            }
+            frag.appendChild(ul);
+            return frag;
+        };
+        if ([failed, missing, unloaded].some((arr) => arr.length) || cycle) {
+            // Empty body
+            while (document.body.childNodes.length) {
+                document.body.childNodes[0].remove();
+            }
+            const container = document.createElement("div");
+            container.className =
+                "position-fixed w-100 h-100 d-flex align-items-center flex-column bg-white overflow-auto modal";
+            container.style.zIndex = "10000";
+            const alert = document.createElement("div");
+            alert.className = "alert alert-danger o_error_detail fw-bold m-auto";
+            container.appendChild(alert);
+            alert.appendChild(
+                list(
+                    "The following modules failed to load because of an error, you may find more information in the devtools console:",
+                    failed
+                )
+            );
+            alert.appendChild(
+                list(
+                    "The following modules could not be loaded because they form a dependency cycle:",
+                    cycle && [cycle]
+                )
+            );
+            alert.appendChild(
+                list(
+                    "The following modules are needed by other modules but have not been defined, they may not be present in the correct asset bundle:",
+                    missing
+                )
+            );
+            alert.appendChild(
+                list(
+                    "The following modules could not be loaded because they have unmet dependencies, this is a secondary error which is likely caused by one of the above problems:",
+                    unloaded
+                )
+            );
+            document.body.appendChild(container);
+        }
     }
 })();

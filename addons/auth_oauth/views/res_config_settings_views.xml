@@ -12,6 +12,7 @@
                         </div>
                     </div>
                 </div>
+<<<<<<< HEAD
                 <div id="module_auth_oauth" position="after">
                     <div class="col-12 col-lg-6 o_setting_box"
                         id="signin_google_setting"
@@ -31,10 +32,20 @@
                                     <field name="auth_oauth_google_client_id" placeholder="e.g. 1234-xyz.apps.googleusercontent.com"/>
                                 </div>
                                 <a href="https://www.odoo.com/documentation/16.0/applications/general/auth/google.html" target="_blank"><i class="fa fa-fw fa-arrow-right"/>Tutorial</a>
+=======
+                <setting id="module_auth_oauth" position="after">
+                    <setting id="signin_google_setting" string="Google Authentication" help="Allow users to sign in with their Google account" documentation="/applications/general/auth/google.html" attrs="{'invisible': [('module_auth_oauth','=',False)]}">
+                        <field name="auth_oauth_google_enabled"/>
+                        <div class="content-group" attrs="{'invisible': [('auth_oauth_google_enabled','=',False)]}">
+                            <div class="row mt16">
+                                <label for="auth_oauth_google_client_id" string="Client ID:" class="col-lg-3 o_light_label"/>
+                                <field name="auth_oauth_google_client_id" placeholder="e.g. 1234-xyz.apps.googleusercontent.com"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                             </div>
+                            <a href="https://www.odoo.com/documentation/master/applications/general/auth/google.html" target="_blank"><i class="fa fa-fw fa-arrow-right"/>Tutorial</a>
                         </div>
-                    </div>
-                </div>
+                    </setting>
+                </setting>
             </field>
         </record>
 </odoo>

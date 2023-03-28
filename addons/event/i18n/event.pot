@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-02 10:34+0000\n"
 "PO-Revision-Date: 2023-02-02 10:34+0000\n"
+=======
+"Project-Id-Version: Odoo Server saas~16.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-17 10:54+0000\n"
+"PO-Revision-Date: 2023-01-17 10:54+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -42,6 +49,23 @@ msgstr ""
 
 #. module: event
 #. odoo-python
+<<<<<<< HEAD
+=======
+#: code:addons/event/models/event_registration.py:0
+#, python-format
+msgid "%(event_name)s - Registration #%(registration_id)s"
+msgstr ""
+
+#. module: event
+#. odoo-python
+#: code:addons/event/models/event_registration.py:0
+#, python-format
+msgid "%(event_name)s - Registration for %(attendee_name)s"
+msgstr ""
+
+#. module: event
+#. odoo-python
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/event/models/event_ticket.py:0
 #, python-format
 msgid "%(ticket_name)s (%(count)s seats remaining)"
@@ -169,14 +193,14 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:event.res_config_settings_view_form
 msgid ""
 "<br/>\n"
-"                                            <span class=\"text-muted\">Air your tracks online through a Youtube integration</span>"
+"                                        <span class=\"text-muted\">Air your tracks online through a Youtube integration</span>"
 msgstr ""
 
 #. module: event
 #: model_terms:ir.ui.view,arch_db:event.res_config_settings_view_form
 msgid ""
 "<br/>\n"
-"                                            <span class=\"text-muted\">Share a quiz to your attendees once a track is over</span>"
+"                                        <span class=\"text-muted\">Share a quiz to your attendees once a track is over</span>"
 msgstr ""
 
 #. module: event
@@ -274,13 +298,6 @@ msgstr ""
 #. module: event
 #: model_terms:ir.ui.view,arch_db:event.event_registration_view_kanban
 msgid "<span class=\"bg-danger\">Archived</span>"
-msgstr ""
-
-#. module: event
-#: model_terms:ir.ui.view,arch_db:event.res_config_settings_view_form
-msgid ""
-"<span class=\"fa fa-lg fa-building-o\" title=\"Values set here are company-"
-"specific.\" groups=\"base.group_multi_company\"/>"
 msgstr ""
 
 #. module: event
@@ -1119,6 +1136,7 @@ msgid "Compose Email"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model:event.tag,name:event.event_tag_category_3_tag_2
 #: model:event.type,name:event.event_type_data_conference
 msgid "Conference"
@@ -1136,6 +1154,8 @@ msgid "Conferences, workshops and trainings will be organized in 6 rooms:"
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model,name:event.model_res_config_settings
 msgid "Config Settings"
 msgstr ""
@@ -1241,11 +1261,14 @@ msgid "Created on"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model:event.tag,name:event.event_tag_category_2_tag_1
 msgid "Culture"
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/event/models/event_registration.py:0
 #, python-format
@@ -1588,7 +1611,10 @@ msgstr ""
 
 #. module: event
 #: model:ir.actions.server,name:event.event_mail_scheduler_ir_actions_server
+<<<<<<< HEAD
 #: model:ir.cron,cron_name:event.event_mail_scheduler
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Event: Mail Scheduler"
 msgstr ""
 
@@ -1825,11 +1851,14 @@ msgid "Global communication Status"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model:event.event,name:event.event_1
 msgid "Great Reno Ballon Race"
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/event/static/src/js/tours/event_tour.js:0
 #, python-format
@@ -1980,11 +2009,14 @@ msgid "Immediately"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model_terms:event.event,ticket_instructions:event.event_0
 msgid "Important ticket information"
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/event/models/event_stage.py:0
 #: model:event.stage,legend_normal:event.event_stage_announced
@@ -2004,11 +2036,14 @@ msgid "Interval"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model_terms:event.event,description:event.event_2
 msgid "Introduction, CRM, Sales Management"
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/event/models/event_registration.py:0
 #, python-format
@@ -2101,21 +2136,6 @@ msgstr ""
 #. module: event
 #: model_terms:ir.ui.view,arch_db:event.view_registration_search
 msgid "Last 30 days"
-msgstr ""
-
-#. module: event
-#: model:ir.model.fields,field_description:event.field_event_event____last_update
-#: model:ir.model.fields,field_description:event.field_event_event_ticket____last_update
-#: model:ir.model.fields,field_description:event.field_event_mail____last_update
-#: model:ir.model.fields,field_description:event.field_event_mail_registration____last_update
-#: model:ir.model.fields,field_description:event.field_event_registration____last_update
-#: model:ir.model.fields,field_description:event.field_event_stage____last_update
-#: model:ir.model.fields,field_description:event.field_event_tag____last_update
-#: model:ir.model.fields,field_description:event.field_event_tag_category____last_update
-#: model:ir.model.fields,field_description:event.field_event_type____last_update
-#: model:ir.model.fields,field_description:event.field_event_type_mail____last_update
-#: model:ir.model.fields,field_description:event.field_event_type_ticket____last_update
-msgid "Last Modified on"
 msgstr ""
 
 #. module: event
@@ -2239,7 +2259,7 @@ msgstr ""
 
 #. module: event
 #: model_terms:ir.ui.view,arch_db:event.res_config_settings_view_form
-msgid "Manage &amp; publish a schedule with tracks"
+msgid "Manage & publish a schedule with tracks"
 msgstr ""
 
 #. module: event
@@ -2479,6 +2499,7 @@ msgid "Open date range picker. Pick a Start date for your event"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model_terms:event.event,description:event.event_0
 msgid ""
 "OpenElec Applications reserves the right to cancel, re-name or re-locate the"
@@ -2498,6 +2519,8 @@ msgid ""
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/event/models/event_event.py:0
 #, python-format
@@ -2776,6 +2799,7 @@ msgid "Scheduled Time"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model_terms:event.event,description:event.event_5
 msgid "Seasoned Hockey Fans and curious people, this tournament is for you !"
 msgstr ""
@@ -2786,6 +2810,8 @@ msgid "Sell Online"
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model_terms:ir.ui.view,arch_db:event.res_config_settings_view_form
 msgid "Sell tickets on your website"
 msgstr ""
@@ -2830,10 +2856,15 @@ msgid "Sent to attendees after registering to an event"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
+=======
+#: model:ir.model.fields,field_description:event.field_event_event_ticket__sequence
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:event.field_event_stage__sequence
 #: model:ir.model.fields,field_description:event.field_event_tag__sequence
 #: model:ir.model.fields,field_description:event.field_event_tag_category__sequence
 #: model:ir.model.fields,field_description:event.field_event_type__sequence
+#: model:ir.model.fields,field_description:event.field_event_type_ticket__sequence
 msgid "Sequence"
 msgstr ""
 
@@ -2981,6 +3012,7 @@ msgid "Template Model"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model:event.event,subtitle:event.event_1
 msgid ""
 "The Great Reno Balloon Race is the world's largest free hot-air ballooning "
@@ -3002,6 +3034,8 @@ msgid ""
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/event/models/event_event.py:0
 #, python-format
@@ -3026,6 +3060,7 @@ msgid ""
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model_terms:event.event,description:event.event_7
 msgid ""
 "The finest OpenWood furnitures are coming to your house in a brand new "
@@ -3033,6 +3068,8 @@ msgid ""
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/event/models/event_ticket.py:0
 #, python-format
@@ -3047,11 +3084,14 @@ msgid "The place has been reserved"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model_terms:event.event,description:event.event_1
 msgid "The safety of our attendees and our aeronauts comes first !"
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/event/models/event_ticket.py:0
 #, python-format
@@ -3097,6 +3137,7 @@ msgid "This is the <b>name</b> your guests will see when registering."
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model_terms:event.event,description:event.event_1
 msgid ""
 "This is the perfect place for spending a nice day with your family, we "
@@ -3111,6 +3152,8 @@ msgid ""
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/event/models/event_event.py:0
 #: code:addons/event/models/event_event.py:0
@@ -3295,6 +3338,7 @@ msgid "User"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model:event.event.ticket,name:event.event_0_ticket_2
 #: model:event.event.ticket,name:event.event_2_ticket_2
 #: model:event.event.ticket,name:event.event_3_ticket_1
@@ -3303,6 +3347,8 @@ msgid "VIP"
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/event/models/event_event.py:0
 #: code:addons/event/models/event_event.py:0
@@ -3369,11 +3415,14 @@ msgid "Weeks"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model_terms:event.event,description:event.event_0
 msgid "What's new?"
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,help:event.field_event_event__is_ongoing
 msgid "Whether event has begun"
 msgstr ""
@@ -3440,6 +3489,7 @@ msgid "e.g. VIP Ticket"
 msgstr ""
 
 #. module: event
+<<<<<<< HEAD
 #: model_terms:event.event,description:event.event_2
 msgid "events@odoo.com"
 msgstr ""
@@ -3458,6 +3508,8 @@ msgid "events@yourcompany.com"
 msgstr ""
 
 #. module: event
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/event/models/event_registration.py:0
 #, python-format

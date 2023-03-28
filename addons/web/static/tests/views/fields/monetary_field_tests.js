@@ -10,7 +10,7 @@ import {
     patchWithCleanup,
     triggerEvent,
 } from "@web/../tests/helpers/utils";
-import { session } from "@web/session";
+import { currencies } from "@web/core/currency";
 
 let serverData;
 let target;
@@ -252,15 +252,12 @@ QUnit.module("Fields", (hooks) => {
 
     QUnit.test("with currency digits != 2 - float field", async function (assert) {
         // need to also add it to the session (as currencies are loaded there)
-        patchWithCleanup(session, {
-            currencies: {
-                ...session.currencies,
-                3: {
-                    name: "VEF",
-                    symbol: "Bs.F",
-                    position: "after",
-                    digits: [0, 4],
-                },
+        patchWithCleanup(currencies, {
+            3: {
+                name: "VEF",
+                symbol: "Bs.F",
+                position: "after",
+                digits: [0, 4],
             },
         });
 
@@ -313,15 +310,12 @@ QUnit.module("Fields", (hooks) => {
 
     QUnit.test("with currency digits != 2 - monetary field", async function (assert) {
         // need to also add it to the session (as currencies are loaded there)
-        patchWithCleanup(session, {
-            currencies: {
-                ...session.currencies,
-                3: {
-                    name: "VEF",
-                    symbol: "Bs.F",
-                    position: "after",
-                    digits: [0, 4],
-                },
+        patchWithCleanup(currencies, {
+            3: {
+                name: "VEF",
+                symbol: "Bs.F",
+                position: "after",
+                digits: [0, 4],
             },
         });
 
@@ -865,6 +859,7 @@ QUnit.module("Fields", (hooks) => {
             },
         ];
 
+<<<<<<< HEAD
         patchWithCleanup(session, {
             currencies: {
                 ...session.currencies,
@@ -874,6 +869,14 @@ QUnit.module("Fields", (hooks) => {
                     position: "before",
                     digits: [0, 4],
                 },
+=======
+        patchWithCleanup(currencies, {
+            1: {
+                name: "USD",
+                symbol: "$",
+                position: "before",
+                digits: [0, 4],
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             },
         });
 

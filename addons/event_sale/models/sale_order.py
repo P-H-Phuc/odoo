@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
 
@@ -57,6 +57,7 @@ class SaleOrder(models.Model):
     def unlink(self):
         self.order_line._unlink_associated_registrations()
         return super(SaleOrder, self).unlink()
+<<<<<<< HEAD
 
 
 class SaleOrderLine(models.Model):
@@ -184,3 +185,5 @@ class SaleOrderLine(models.Model):
                 self.order_id.company_id or self.env.company.id,
                 self.order_id.date_order or fields.Date.today())
         return super()._get_display_price()
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

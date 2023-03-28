@@ -4,6 +4,7 @@ from collections import defaultdict
 from itertools import product as cartesian_product
 import json
 import logging
+
 from datetime import datetime
 from werkzeug.exceptions import Forbidden, NotFound
 from werkzeug.urls import url_decode, url_encode, url_parse
@@ -11,7 +12,7 @@ from werkzeug.urls import url_decode, url_encode, url_parse
 from odoo import fields, http, SUPERUSER_ID, tools, _
 from odoo.fields import Command
 from odoo.http import request
-from odoo.addons.base.models.ir_qweb_fields import nl2br
+from odoo.addons.base.models.ir_qweb_fields import nl2br_enclose
 from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.payment import utils as payment_utils
 from odoo.addons.payment.controllers import portal as payment_portal
@@ -22,7 +23,7 @@ from odoo.exceptions import AccessError, MissingError, ValidationError
 from odoo.addons.portal.controllers.portal import _build_url_w_params
 from odoo.addons.website.controllers import main
 from odoo.addons.website.controllers.form import WebsiteForm
-from odoo.addons.sale.controllers import portal
+from odoo.addons.sale.controllers import portal as sale_portal
 from odoo.osv import expression
 from odoo.tools import lazy
 from odoo.tools.json import scriptsafe as json_scriptsafe
@@ -113,13 +114,10 @@ class WebsiteSaleForm(WebsiteForm):
             order.write(data['record'])
 
         if data['custom']:
-            values = {
-                'body': nl2br(data['custom']),
-                'model': 'sale.order',
-                'message_type': 'comment',
-                'res_id': order.id,
-            }
-            request.env['mail.message'].with_user(SUPERUSER_ID).create(values)
+            order._message_log(
+                body=nl2br_enclose(data['custom'], 'p'),
+                message_type='comment',
+            )
 
         if data['attachments']:
             self.insert_attachment(model_record, order.id, data['attachments'])
@@ -151,6 +149,10 @@ class Website(main.Website):
 
 class WebsiteSale(http.Controller):
     _express_checkout_route = '/shop/express_checkout'
+<<<<<<< HEAD
+=======
+    _express_checkout_shipping_route = '/shop/express/shipping_address_change'
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     WRITABLE_PARTNER_FIELDS = [
         'name',
@@ -217,7 +219,7 @@ class WebsiteSale(http.Controller):
                 yield {'loc': loc}
 
     def _get_search_options(
-        self, category=None, attrib_values=None, pricelist=None, min_price=0.0, max_price=0.0, conversion_rate=1, **post
+        self, category=None, attrib_values=None, min_price=0.0, max_price=0.0, conversion_rate=1, **post
     ):
         return {
             'displayDescription': True,
@@ -230,7 +232,7 @@ class WebsiteSale(http.Controller):
             'min_price': min_price / conversion_rate,
             'max_price': max_price / conversion_rate,
             'attrib_values': attrib_values,
-            'display_currency': pricelist.currency_id,
+            'display_currency': post.get('display_currency'),
         }
 
     def _shop_lookup_products(self, attrib_set, options, post, search, website):
@@ -347,9 +349,9 @@ class WebsiteSale(http.Controller):
         keep = QueryURL('/shop', **self._shop_get_query_url_kwargs(category and int(category), search, min_price, max_price, **post))
 
         now = datetime.timestamp(datetime.now())
-        pricelist = request.env['product.pricelist'].browse(request.session.get('website_sale_current_pl'))
-        if not pricelist or request.session.get('website_sale_pricelist_time', 0) < now - 60*60: # test: 1 hour in session
-            pricelist = website.get_current_pricelist()
+        pricelist = website.get_current_pricelist()
+        if request.session.get('website_sale_pricelist_time', 0) < now - 60*60: # test: 1 hour in session
+            pricelist = website.pricelist_id
             request.session['website_sale_pricelist_time'] = now
             request.session['website_sale_current_pl'] = pricelist.id
 
@@ -359,7 +361,7 @@ class WebsiteSale(http.Controller):
         if filter_by_price_enabled:
             company_currency = website.company_id.currency_id
             conversion_rate = request.env['res.currency']._get_conversion_rate(
-                company_currency, pricelist.currency_id, request.website.company_id, fields.Date.today())
+                company_currency, website.currency_id, request.website.company_id, fields.Date.today())
         else:
             conversion_rate = 1
 
@@ -372,10 +374,10 @@ class WebsiteSale(http.Controller):
         options = self._get_search_options(
             category=category,
             attrib_values=attrib_values,
-            pricelist=pricelist,
             min_price=min_price,
             max_price=max_price,
             conversion_rate=conversion_rate,
+            display_currency=website.currency_id,
             **post
         )
         fuzzy_search_term, product_count, search_product = self._shop_lookup_products(attrib_set, options, post, search, website)
@@ -733,6 +735,13 @@ class WebsiteSale(http.Controller):
                 order_sudo._cart_update_pricelist(update_pricelist=True)
         return request.redirect(redirect)
 
+    def _cart_values(self, **post):
+        """
+        This method is a hook to pass additional values when rendering the 'website_sale.cart' template (e.g. add
+        a flag to trigger a style variation)
+        """
+        return {}
+
     @http.route(['/shop/cart'], type='http', auth="public", website=True, sitemap=False)
     def cart(self, access_token=None, revive='', **post):
         """
@@ -741,6 +750,12 @@ class WebsiteSale(http.Controller):
         revive: Revival method when abandoned cart. Can be 'merge' or 'squash'
         """
         order = request.website.sale_get_order()
+        if order and order.carrier_id:
+            # Express checkout is based on the amout of the sale order. If there is already a
+            # delivery line, Express Checkout form will display and compute the price of the
+            # delivery two times (One already computed in the total amount of the SO and one added
+            # in the form while selecting the delivery carrier)
+            order._remove_delivery_line()
         if order and order.state != 'draft':
             request.session['sale_order_id'] = None
             order = request.website.sale_get_order()
@@ -777,6 +792,7 @@ class WebsiteSale(http.Controller):
             # force no-cache so IE11 doesn't cache this XHR
             return request.render("website_sale.cart_popover", values, headers={'Cache-Control': 'no-cache'})
 
+        values.update(self._cart_values(**post))
         return request.render("website_sale.cart", values)
 
     @http.route(['/shop/cart/update'], type='http', auth="public", methods=['POST'], website=True)
@@ -1181,22 +1197,33 @@ class WebsiteSale(http.Controller):
         _express_checkout_route, type='json', methods=['POST'], auth="public", website=True,
         sitemap=False
     )
+<<<<<<< HEAD
     def process_express_checkout(self, billing_address, **kwargs):
+=======
+    def process_express_checkout(
+            self, billing_address, shipping_address=None, shipping_option=None, **kwargs
+        ):
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         """ Records the partner information on the order when using express checkout flow.
 
         Depending on whether the partner is registered and logged in, either creates a new partner
         or uses an existing one that matches all received data.
 
         :param dict billing_address: Billing information sent by the express payment form.
+<<<<<<< HEAD
+=======
+        :param dict shipping_address: Shipping information sent by the express payment form.
+        :param dict shipping_option: Carrier information sent by the express payment form.
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         :param dict kwargs: Optional data. This parameter is not used here.
         :return int: The order's partner id.
         """
+
         order_sudo = request.website.sale_get_order()
         public_partner = request.website.partner_id
 
         # Update the partner with all the information
         self._include_country_and_state_in_address(billing_address)
-
         if order_sudo.partner_id == public_partner:
             billing_partner_id = self._create_or_edit_partner(billing_address, type='invoice')
             order_sudo.partner_id = billing_partner_id
@@ -1214,20 +1241,42 @@ class WebsiteSale(http.Controller):
             child_partner_id = self._find_child_partner(
                 order_sudo.partner_id.commercial_partner_id.id, billing_address
             )
-            if child_partner_id:
-                order_sudo.partner_invoice_id = child_partner_id
-            else:
-                billing_partner_id = self._create_or_edit_partner(
-                    billing_address,
-                    type='invoice',
-                    parent_id=order_sudo.partner_id.id,
-                )
-                order_sudo.partner_invoice_id = billing_partner_id
+            order_sudo.partner_invoice_id = child_partner_id or self._create_or_edit_partner(
+                billing_address, type='invoice', parent_id=order_sudo.partner_id.id
+            )
 
         # In a non-express flow, `sale_last_order_id` would be added in the session before the
         # payment. As we skip all the steps with the express checkout, `sale_last_order_id` must be
         # assigned to ensure the right behavior from `shop_payment_confirmation()`.
         request.session['sale_last_order_id'] = order_sudo.id
+
+        if shipping_address and shipping_option:
+            self._include_country_and_state_in_address(shipping_address)
+
+            if order_sudo.partner_shipping_id.name.endswith(order_sudo.name):
+                # The existing partner was created by `process_express_checkout_delivery_choice`, it
+                # means that the partner is missing information, so we update it.
+                order_sudo.partner_shipping_id = self._create_or_edit_partner(
+                    shipping_address,
+                    edit=True,
+                    type='delivery',
+                    partner_id=order_sudo.partner_shipping_id.id,
+                )
+            elif any(
+                shipping_address[k] != order_sudo.partner_shipping_id[k] for k in shipping_address
+            ):
+                # The sale order's shipping partner's address is different from the one received. If
+                # all the sale order's child partners' address differs from the one received, we
+                # create a new partner. The phone isn't always checked because it isn't sent in
+                # shipping information with Google Pay.
+                child_partner_id = self._find_child_partner(
+                    order_sudo.partner_id.commercial_partner_id.id, shipping_address
+                )
+                order_sudo.partner_shipping_id = child_partner_id or self._create_or_edit_partner(
+                    shipping_address, type='delivery', parent_id=order_sudo.partner_id.id
+                )
+            # Process the delivery carrier
+            order_sudo._check_carrier_quotation(force_carrier_id=int(shipping_option['id']))
 
         return order_sudo.partner_id.id
 
@@ -1326,9 +1375,8 @@ class WebsiteSale(http.Controller):
         def_country_id = order.partner_id.country_id
         # IF PUBLIC ORDER
         if order.partner_id.id == request.website.user_id.sudo().partner_id.id:
-            country_code = request.geoip.get('country_code')
-            if country_code:
-                def_country_id = request.env['res.country'].search([('code', '=', country_code)], limit=1)
+            if request.geoip.country_code:
+                def_country_id = request.env['res.country'].search([('code', '=', request.geoip.country_code)], limit=1)
             else:
                 def_country_id = request.website.user_id.sudo().country_id
 
@@ -1389,6 +1437,13 @@ class WebsiteSale(http.Controller):
     # ------------------------------------------------------
     # Extra step
     # ------------------------------------------------------
+    def _extra_info_values(self, **post):
+        """
+        This method is a hook to pass additional values when rendering the 'website_sale.extra_info' template (e.g. add
+        a flag to trigger a style variation)
+        """
+        return {}
+
     @http.route(['/shop/extra_info'], type='http', auth="public", website=True, sitemap=False)
     def extra_info(self, **post):
         # Check that this option is activated
@@ -1409,6 +1464,7 @@ class WebsiteSale(http.Controller):
             'partner': order.partner_id.id,
             'order': order,
         }
+        values.update(self._extra_info_values(**post))
         return request.render("website_sale.extra_info", values)
 
     # ------------------------------------------------------
@@ -1416,76 +1472,67 @@ class WebsiteSale(http.Controller):
     # ------------------------------------------------------
 
     def _get_express_shop_payment_values(self, order, **kwargs):
-        logged_in = not request.website.is_public_user()
-        providers_sudo = request.env['payment.provider'].sudo()._get_compatible_providers(
-            order.company_id.id,
-            order.partner_id.id,
-            order.amount_total,
-            currency_id=order.currency_id.id,
-            is_express_checkout=True,
-            sale_order_id=order.id,
-            website_id=request.website.id,
-        )  # In sudo mode to read the fields of providers, order and partner (if not logged in)
-        fees_by_provider = {
-            p_sudo: p_sudo._compute_fees(
-                order.amount_total, order.currency_id, order.partner_id.country_id
-            ) for p_sudo in providers_sudo.filtered('fees_active')
-        }
-        return {
-            # Payment express form values
-            'providers_sudo': providers_sudo,
-            'fees_by_provider': fees_by_provider,
-            'amount': order.amount_total,
+        request.session['sale_last_order_id'] = order.id
+        payment_form_values = sale_portal.CustomerPortal._get_payment_values(
+            self, order, website_id=request.website.id, is_express_checkout=True
+        )
+        payment_form_values.update({
+            'payment_access_token': payment_form_values.pop('access_token'),  # Rename the key.
             'minor_amount': payment_utils.to_minor_currency_units(
-               order.amount_total, order.currency_id
+                order.amount_total, order.currency_id
             ),
             'merchant_name': request.website.name,
-            'currency': order.currency_id,
-            'partner_id': order.partner_id.id if logged_in else -1,
-            'payment_access_token': order._portal_ensure_token(),
             'transaction_route': f'/shop/payment/transaction/{order.id}',
             'express_checkout_route': self._express_checkout_route,
             'landing_route': '/shop/payment/validate',
-        }
+        })
+        if request.website.is_public_user():
+            payment_form_values['partner_id'] = -1
+        if request.website.enabled_delivery:
+            payment_form_values.update({
+                'shipping_info_required': not order.only_services,
+                'shipping_address_update_route': self._express_checkout_shipping_route,
+            })
+        return payment_form_values
 
     def _get_shop_payment_values(self, order, **kwargs):
-        logged_in = not request.env.user._is_public()
-        providers_sudo = request.env['payment.provider'].sudo()._get_compatible_providers(
-            order.company_id.id,
-            order.partner_id.id,
-            order.amount_total,
-            currency_id=order.currency_id.id,
-            sale_order_id=order.id,
-            website_id=request.website.id,
-        )  # In sudo mode to read the fields of providers, order and partner (if not logged in)
-        tokens = request.env['payment.token'].search(
-            [('provider_id', 'in', providers_sudo.ids), ('partner_id', '=', order.partner_id.id)]
-        ) if logged_in else request.env['payment.token']
-        fees_by_provider = {
-            p_sudo: p_sudo._compute_fees(
-                order.amount_total, order.currency_id, order.partner_id.country_id
-            ) for p_sudo in providers_sudo.filtered('fees_active')
-        }
-        return {
+        portal_page_values = {
             'website_sale_order': order,
             'errors': [],
             'partner': order.partner_id,
             'order': order,
             'payment_action_id': request.env.ref('payment.action_payment_provider').id,
-            # Payment form common (checkout and manage) values
-            'providers': providers_sudo,
-            'tokens': tokens,
-            'fees_by_provider': fees_by_provider,
-            'show_tokenize_input': PaymentPortal._compute_show_tokenize_input_mapping(
-                providers_sudo, logged_in=logged_in, sale_order_id=order.id
+        }
+        payment_form_values = {
+            **sale_portal.CustomerPortal._get_payment_values(
+                self, order, website_id=request.website.id
             ),
-            'amount': order.amount_total,
-            'currency': order.currency_id,
-            'partner_id': order.partner_id.id,
-            'access_token': order._portal_ensure_token(),
             'transaction_route': f'/shop/payment/transaction/{order.id}',
             'landing_route': '/shop/payment/validate',
         }
+        values = {**portal_page_values, **payment_form_values}
+        if request.website.enabled_delivery:
+            has_storable_products = any(
+                line.product_id.type in ['consu', 'product'] for line in order.order_line
+            )
+            if not order._get_delivery_methods() and has_storable_products:
+                values['errors'].append((
+                    _('Sorry, we are unable to ship your order'),
+                    _('No shipping method is available for your current order and shipping address.'
+                    ' Please contact us for more information.')
+                ))
+
+            if has_storable_products:
+                if order.carrier_id and not order.delivery_rating_success:
+                    order._remove_delivery_line()
+                values['deliveries'] = order._get_delivery_methods().sudo()
+
+            values['delivery_has_storable'] = has_storable_products
+            values['delivery_action_id'] = request.env.ref(
+                'delivery.action_delivery_carrier_form'
+            ).id
+
+        return values
 
     @http.route('/shop/payment', type='http', auth='public', website=True, sitemap=False)
     def shop_payment(self, **post):
@@ -1498,7 +1545,18 @@ class WebsiteSale(http.Controller):
            did go to a payment.provider website but closed the tab without
            paying / canceling
         """
+        carrier_id = post.get('carrier_id')
+        keep_carrier = post.get('keep_carrier', False)
+        if keep_carrier:
+            keep_carrier = bool(int(keep_carrier))
+        if carrier_id:
+            carrier_id = int(carrier_id)
         order = request.website.sale_get_order()
+        if order:
+            order._check_carrier_quotation(force_carrier_id=carrier_id, keep_carrier=keep_carrier)
+            if carrier_id:
+                return request.redirect("/shop/payment")
+
         redirection = self.checkout_redirection(order) or self.checkout_check_address(order)
         if redirection:
             return redirection
@@ -1657,7 +1715,7 @@ class WebsiteSale(http.Controller):
     def order_lines_2_google_api(self, order_lines):
         """ Transforms a list of order lines into a dict for google analytics """
         ret = []
-        for line in order_lines:
+        for line in order_lines.filtered(lambda line: not line.is_delivery):
             product = line.product_id
             ret.append({
                 'item_id': product.barcode or product.id,
@@ -1670,7 +1728,7 @@ class WebsiteSale(http.Controller):
 
     def order_2_return_dict(self, order):
         """ Returns the tracking_cart dict of the order for Google analytics basically defined to be inherited """
-        return {
+        tracking_cart_dict = {
             'transaction_id': order.id,
             'affiliation': order.company_id.name,
             'value': order.amount_total,
@@ -1678,6 +1736,10 @@ class WebsiteSale(http.Controller):
             'currency': order.currency_id.name,
             'items': self.order_lines_2_google_api(order.order_line),
         }
+        delivery_line = order.order_line.filtered('is_delivery')
+        if delivery_line:
+            tracking_cart_dict['shipping'] = delivery_line.price_unit
+        return tracking_cart_dict
 
     @http.route(['/shop/country_infos/<model("res.country"):country>'], type='json', auth="public", methods=['POST'], website=True)
     def country_infos(self, country, mode, **kw):
@@ -1769,7 +1831,7 @@ class PaymentPortal(payment_portal.PaymentPortal):
         return tx_sudo._get_processing_values()
 
 
-class CustomerPortal(portal.CustomerPortal):
+class CustomerPortal(sale_portal.CustomerPortal):
     def _sale_reorder_get_line_context(self):
         return {}
 

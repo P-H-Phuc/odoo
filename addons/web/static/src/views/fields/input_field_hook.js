@@ -3,7 +3,11 @@
 import { getActiveHotkey } from "@web/core/hotkeys/hotkey_service";
 import { useBus } from "@web/core/utils/hooks";
 
+<<<<<<< HEAD
 import { useComponent, useEffect, useRef, useEnv } from "@odoo/owl";
+=======
+import { useComponent, useEffect, useRef } from "@odoo/owl";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 /**
  * This hook is meant to be used by field components that use an input or
@@ -16,7 +20,10 @@ import { useComponent, useEffect, useRef, useEnv } from "@odoo/owl";
  * @param {string} [refName="input"] the ref of the input/textarea
  */
 export function useInputField(params) {
+<<<<<<< HEAD
     const env = useEnv();
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     const inputRef = params.ref || useRef(params.refName || "input");
     const component = useComponent();
 
@@ -46,9 +53,7 @@ export function useInputField(params) {
      */
     function onInput(ev) {
         isDirty = ev.target.value !== lastSetValue;
-        if (component.props.setDirty) {
-            component.props.setDirty(isDirty);
-        }
+        component.props.record.model.bus.trigger("FIELD_IS_DIRTY", isDirty);
     }
 
     /**
@@ -63,25 +68,34 @@ export function useInputField(params) {
             if (params.parse) {
                 try {
                     val = params.parse(val);
+<<<<<<< HEAD
                 } catch (_e) {
                     if (component.props.record) {
                         component.props.record.setInvalidField(component.props.name);
                     }
+=======
+                } catch {
+                    component.props.record.setInvalidField(component.props.name);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     isInvalid = true;
                 }
             }
 
             if (!isInvalid) {
                 pendingUpdate = true;
+<<<<<<< HEAD
                 Promise.resolve(component.props.update(val)).then(() => {
+=======
+                Promise.resolve(
+                    component.props.record.update({ [component.props.name]: val })
+                ).then(() => {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     pendingUpdate = false;
                 });
                 lastSetValue = ev.target.value;
             }
 
-            if (component.props.setDirty) {
-                component.props.setDirty(isDirty);
-            }
+            component.props.record.model.bus.trigger("FIELD_IS_DIRTY", isDirty);
         }
     }
     function onKeydown(ev) {
@@ -114,19 +128,22 @@ export function useInputField(params) {
      * If it is not such a case, we update the field with the new value.
      */
     useEffect(() => {
+<<<<<<< HEAD
         const isInvalid = component.props.record
             ? component.props.record.isInvalid(component.props.name)
             : false;
         if (inputRef.el && !isDirty && !isInvalid) {
+=======
+        if (inputRef.el && !isDirty && !component.props.record.isInvalid(component.props.name)) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             inputRef.el.value = params.getValue();
             lastSetValue = inputRef.el.value;
         }
     });
 
-    useBus(env.bus, "RELATIONAL_MODEL:WILL_SAVE_URGENTLY", () => commitChanges(true));
-    useBus(env.bus, "RELATIONAL_MODEL:NEED_LOCAL_CHANGES", (ev) =>
-        ev.detail.proms.push(commitChanges())
-    );
+    const { model } = component.props.record;
+    useBus(model.bus, "WILL_SAVE_URGENTLY", () => commitChanges(true));
+    useBus(model.bus, "NEED_LOCAL_CHANGES", (ev) => ev.detail.proms.push(commitChanges()));
 
     /**
      * Roughly the same as onChange, but called at more specific / critical times. (See bus events)
@@ -144,7 +161,7 @@ export function useInputField(params) {
             if (params.parse) {
                 try {
                     val = params.parse(val);
-                } catch (_e) {
+                } catch {
                     isInvalid = true;
                     if (urgent) {
                         return;
@@ -158,12 +175,15 @@ export function useInputField(params) {
                 return;
             }
 
+<<<<<<< HEAD
             if ((val || false) !== (component.props.value || false)) {
                 await component.props.update(val);
+=======
+            if ((val || false) !== (component.props.record.data[component.props.name] || false)) {
+                await component.props.record.update({ [component.props.name]: val });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 lastSetValue = inputRef.el.value;
-                if (component.props.setDirty) {
-                    component.props.setDirty(isDirty);
-                }
+                component.props.record.model.bus.trigger("FIELD_IS_DIRTY", isDirty);
             }
         }
     }

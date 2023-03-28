@@ -14,7 +14,11 @@ export class QtyAtDatePopover extends Component {
     }
 
     openForecast() {
+<<<<<<< HEAD
         this.actionService.doAction("stock.stock_replenishment_product_product_action", {
+=======
+        this.actionService.doAction("stock.stock_forecasted_product_product_action", {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             additionalContext: {
                 active_model: 'product.product',
                 active_id: this.props.record.data.product_id[0],
@@ -89,4 +93,11 @@ export class QtyAtDateWidget extends Component {
 QtyAtDateWidget.components = { Popover: QtyAtDatePopover };
 QtyAtDateWidget.template = "sale_stock.qtyAtDate";
 
+<<<<<<< HEAD
 registry.category("view_widgets").add("qty_at_date_widget", QtyAtDateWidget);
+=======
+export const qtyAtDateWidget = {
+    component: QtyAtDateWidget,
+};
+registry.category("view_widgets").add("qty_at_date_widget", qtyAtDateWidget);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

@@ -16,6 +16,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.tax,description:l10n_bg.1_l10n_bg_sale_vat_0_140
 #: model:account.tax,description:l10n_bg.2_l10n_bg_sale_vat_0_140
 #: model:account.tax,name:l10n_bg.1_l10n_bg_sale_vat_0_140
@@ -120,6 +121,9 @@ msgstr ""
 
 #. module: l10n_bg
 #: model:account.report.line,tag_name:l10n_bg.l10n_bg_tax_report_11
+=======
+#: model:account.tax.report.line,tag_name:l10n_bg.l10n_bg_tax_report_11
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "11"
 msgstr ""
 
@@ -169,6 +173,7 @@ msgid "19"
 msgstr ""
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_bg.1_l10n_bg_purchase_vat_20_ftc
 #: model:account.tax,name:l10n_bg.2_l10n_bg_purchase_vat_20_ftc
 #: model:account.tax.template,name:l10n_bg.l10n_bg_purchase_vat_20_ftc
@@ -327,6 +332,9 @@ msgstr ""
 
 #. module: l10n_bg
 #: model:account.report.line,tag_name:l10n_bg.l10n_bg_tax_report_21
+=======
+#: model:account.tax.report.line,tag_name:l10n_bg.l10n_bg_tax_report_21
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "21"
 msgstr ""
 
@@ -371,221 +379,12 @@ msgid "42"
 msgstr ""
 
 #. module: l10n_bg
-#: model:account.tax,name:l10n_bg.1_l10n_bg_purchase_vat_9_ftc
-#: model:account.tax,name:l10n_bg.2_l10n_bg_purchase_vat_9_ftc
-#: model:account.tax.template,name:l10n_bg.l10n_bg_purchase_vat_9_ftc
-msgid "9% FTC"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.tax,description:l10n_bg.1_l10n_bg_purchase_vat_9_ftc
-#: model:account.tax,description:l10n_bg.2_l10n_bg_purchase_vat_9_ftc
-#: model:account.tax.template,description:l10n_bg.l10n_bg_purchase_vat_9_ftc
-msgid "9% Foreign Tax Credit"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.tax,name:l10n_bg.1_l10n_bg_purchase_vat_9_otc
-#: model:account.tax,name:l10n_bg.2_l10n_bg_purchase_vat_9_otc
-#: model:account.tax.template,name:l10n_bg.l10n_bg_purchase_vat_9_otc
-msgid "9% OTC"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.tax,description:l10n_bg.1_l10n_bg_purchase_vat_9_otc
-#: model:account.tax,description:l10n_bg.2_l10n_bg_purchase_vat_9_otc
-#: model:account.tax.template,description:l10n_bg.l10n_bg_purchase_vat_9_otc
-msgid "9% Other Tax Credit"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.tax,description:l10n_bg.1_l10n_bg_sale_vat_9_personal
-#: model:account.tax,description:l10n_bg.2_l10n_bg_sale_vat_9_personal
-#: model:account.tax,name:l10n_bg.1_l10n_bg_sale_vat_9_personal
-#: model:account.tax,name:l10n_bg.2_l10n_bg_sale_vat_9_personal
-#: model:account.tax.template,description:l10n_bg.l10n_bg_sale_vat_9_personal
-#: model:account.tax.template,name:l10n_bg.l10n_bg_sale_vat_9_personal
-msgid "9% Personal use"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.tax,description:l10n_bg.1_l10n_bg_sale_vat_9
-#: model:account.tax,description:l10n_bg.2_l10n_bg_sale_vat_9
-#: model:account.tax,name:l10n_bg.1_l10n_bg_sale_vat_9
-#: model:account.tax,name:l10n_bg.2_l10n_bg_sale_vat_9
-#: model:account.tax.group,name:l10n_bg.tax_group_vat_9
-#: model:account.tax.template,description:l10n_bg.l10n_bg_sale_vat_9
-#: model:account.tax.template,name:l10n_bg.l10n_bg_sale_vat_9
-msgid "9% VAT"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_422
-#: model:account.account,name:l10n_bg.2_l10n_bg_422
-#: model:account.account.template,name:l10n_bg.l10n_bg_422
-msgid "Accountable persons"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_5
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_5
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_5
-msgid "Accounts for financial resources"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_2
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_2
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_2
-msgid "Accounts for fixed assets"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_3
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_3
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_3
-msgid "Accounts for inventories"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_4
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_4
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_4
-msgid "Accounts for settlements"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_982
-#: model:account.account,name:l10n_bg.2_l10n_bg_982
-#: model:account.account.template,name:l10n_bg.l10n_bg_982
-msgid "Accounts receivable"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_68
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_68
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_68
-msgid "Active reinsurance expenses"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_61
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_61
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_61
-msgid "Activity costs"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_614
-#: model:account.account,name:l10n_bg.2_l10n_bg_614
-#: model:account.account.template,name:l10n_bg.l10n_bg_614
-msgid "Administrative costs"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_402
-#: model:account.account,name:l10n_bg.2_l10n_bg_402
-#: model:account.account.template,name:l10n_bg.l10n_bg_402
-msgid "Advance providers"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_242
-#: model:account.account,name:l10n_bg.2_l10n_bg_242
-#: model:account.account.template,name:l10n_bg.l10n_bg_242
-msgid "Amortization of intangible fixed assets"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_612
-#: model:account.account,name:l10n_bg.2_l10n_bg_612
-#: model:account.account.template,name:l10n_bg.l10n_bg_612
-msgid "Ancillary activity costs"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_316
-#: model:account.account,name:l10n_bg.2_l10n_bg_316
-#: model:account.account.template,name:l10n_bg.l10n_bg_316
-msgid "Animals for experimental purposes"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_315
-#: model:account.account,name:l10n_bg.2_l10n_bg_315
-#: model:account.account.template,name:l10n_bg.l10n_bg_315
-msgid "Animals for fattening"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_274
-#: model:account.account,name:l10n_bg.2_l10n_bg_274
-#: model:account.account.template,name:l10n_bg.l10n_bg_274
-msgid "Animals in major herds"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_962
-#: model:account.account,name:l10n_bg.2_l10n_bg_962
-#: model:account.account.template,name:l10n_bg.l10n_bg_962
-msgid "Assets in use, reported"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_16
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_16
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_16
-msgid "Attracted funds on deposit accounts"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_445
-#: model:account.account,name:l10n_bg.2_l10n_bg_445
-#: model:account.account.template,name:l10n_bg.l10n_bg_445
-msgid "Awarded receivables"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_141
-#: model:account.account,name:l10n_bg.2_l10n_bg_141
-#: model:account.account.template,name:l10n_bg.l10n_bg_141
-msgid "Banknotes for circulation"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_313
-#: model:account.account,name:l10n_bg.2_l10n_bg_313
-#: model:account.account.template,name:l10n_bg.l10n_bg_313
-msgid "Bee families"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_312
-#: model:account.account,name:l10n_bg.2_l10n_bg_312
-#: model:account.account.template,name:l10n_bg.l10n_bg_312
-msgid "Bird-main flocks"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_17
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_17
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_17
-msgid "Borrowed funds on current and other accounts"
-msgstr ""
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_203
-#: model:account.account,name:l10n_bg.2_l10n_bg_203
-#: model:account.account.template,name:l10n_bg.l10n_bg_203
-msgid "Buildings and structures"
-msgstr ""
-
-#. module: l10n_bg
 #: model:ir.ui.menu,name:l10n_bg.bg_reports_menu
 msgid "Bulgaria"
 msgstr ""
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.chart.template,name:l10n_bg.l10n_bg_chart_template
 msgid "Bulgaria - National Chart of Accounts"
 msgstr ""
@@ -889,10 +688,14 @@ msgstr ""
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_12_2
+=======
+#: model:account.tax.report.line,name:l10n_bg.l10n_bg_tax_report_12_2
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Deliveries under Art. 82, para. 2-6"
 msgstr ""
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.account,name:l10n_bg.1_l10n_bg_301
 #: model:account.account,name:l10n_bg.2_l10n_bg_301
 #: model:account.account.template,name:l10n_bg.l10n_bg_301
@@ -1799,10 +1602,14 @@ msgstr ""
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_12_1
+=======
+#: model:account.tax.report.line,name:l10n_bg.l10n_bg_tax_report_12_1
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Intra-community acquisitions"
 msgstr ""
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.account,name:l10n_bg.1_l10n_bg_224
 #: model:account.account,name:l10n_bg.2_l10n_bg_224
 #: model:account.account.template,name:l10n_bg.l10n_bg_224
@@ -2902,6 +2709,9 @@ msgstr ""
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_a
+=======
+#: model:account.tax.report.line,name:l10n_bg.l10n_bg_tax_report_a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Section A: Data on value added tax charged"
 msgstr ""
 
@@ -2916,6 +2726,7 @@ msgid "Section C: Result for the period"
 msgstr ""
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.account,name:l10n_bg.1_l10n_bg_431
 #: model:account.account,name:l10n_bg.2_l10n_bg_431
 #: model:account.account.template,name:l10n_bg.l10n_bg_431
@@ -3112,6 +2923,9 @@ msgstr ""
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_b_2
+=======
+#: model:account.tax.report.line,name:l10n_bg.l10n_bg_tax_report_b_2
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid ""
 "Tax base of the received deliveries, VAT, the received deliveries under art."
 " 82, para 2-6 of the VAT Act, the import, as well as the tax base of the "
@@ -3130,6 +2944,7 @@ msgid "Tax base subject to taxation at a rate of 20%"
 msgstr ""
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.account,name:l10n_bg.1_l10n_bg_403
 #: model:account.account,name:l10n_bg.2_l10n_bg_403
 #: model:account.account.template,name:l10n_bg.l10n_bg_403
@@ -3257,6 +3072,9 @@ msgstr ""
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_01
+=======
+#: model:account.tax.report.line,name:l10n_bg.l10n_bg_tax_report_01
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid ""
 "[01] Total amount of the tax bases for VAT taxation (amount from class 11 to"
 " class 16)"

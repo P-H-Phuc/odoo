@@ -16,6 +16,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_il
+<<<<<<< HEAD
 #: model:account.tax.template,description:l10n_il.il_vat_pa_purchase_16
 msgid "16%"
 msgstr ""
@@ -158,11 +159,14 @@ msgid "Depretiation expenses"
 msgstr "הוצאות פחת"
 
 #. module: l10n_il
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.account.tag,name:l10n_il.account_tag_dividend_account
 msgid "Dividend Account"
 msgstr "דיבידנדים"
 
 #. module: l10n_il
+<<<<<<< HEAD
 #: model:account.account.template,name:l10n_il.il_account_202300
 msgid "Donations"
 msgstr "תרומות"
@@ -517,6 +521,9 @@ msgstr "מע\"מ 17%"
 
 #. module: l10n_il
 #: model:account.report.line,name:l10n_il.account_tax_report_line_vat_due
+=======
+#: model:account.tax.report.line,name:l10n_il.account_tax_report_line_vat_due
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "VAT DUE"
 msgstr "מע\"מ לתשלום"
 
@@ -540,6 +547,7 @@ msgid "VAT INPUTS (fixed assets)"
 msgstr "מע\"מ תשומות (רכוש קבוע)"
 
 #. module: l10n_il
+<<<<<<< HEAD
 #: model:account.tax.template,description:l10n_il.il_vat_only_purchase
 #: model:account.tax.template,name:l10n_il.il_vat_only_purchase
 msgid "VAT Import Line"
@@ -549,6 +557,10 @@ msgstr "שורת מע\"מ ייבוא"
 #: model:account.report.line,name:l10n_il.account_tax_report_line_in_balance_1_4
 #: model:account.report.line,tag_name:l10n_il.account_tax_report_line_in_balance_1_4
 #: model:account.tax.template,name:l10n_il.il_vat_inputs_1_4_17
+=======
+#: model:account.tax.report.line,name:l10n_il.account_tax_report_line_in_balance_1_4
+#: model:account.tax.report.line,tag_name:l10n_il.account_tax_report_line_in_balance_1_4
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "VAT Inputs 1/4"
 msgstr "מע\"מ תשומות 1/4"
 
@@ -559,9 +571,14 @@ msgid "VAT Inputs 17%"
 msgstr "מע\"מ תשומות 17%"
 
 #. module: l10n_il
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_il.account_tax_report_line_in_balance_2_3
 #: model:account.report.line,tag_name:l10n_il.account_tax_report_line_in_balance_2_3
 #: model:account.tax.template,name:l10n_il.il_vat_inputs_2_3_17
+=======
+#: model:account.tax.report.line,name:l10n_il.account_tax_report_line_in_balance_2_3
+#: model:account.tax.report.line,tag_name:l10n_il.account_tax_report_line_in_balance_2_3
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "VAT Inputs 2/3"
 msgstr "מע\"מ תשומות 2/3"
 
@@ -572,10 +589,15 @@ msgid "VAT Inputs PA 16%"
 msgstr "מע\"מ תשומות 16%"
 
 #. module: l10n_il
+<<<<<<< HEAD
 #: model:account.account.template,name:l10n_il.il_account_111120
 #: model:account.report.line,name:l10n_il.account_tax_report_line_out_balance_pa
 #: model:account.report.line,tag_name:l10n_il.account_tax_report_line_out_balance_pa
 #: model:account.tax.template,name:l10n_il.il_vat_pa_sales_17
+=======
+#: model:account.tax.report.line,name:l10n_il.account_tax_report_line_out_balance_pa
+#: model:account.tax.report.line,tag_name:l10n_il.account_tax_report_line_out_balance_pa
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "VAT PA Sales"
 msgstr "מע\"מ עסקאות- פלסטין"
 
@@ -592,14 +614,20 @@ msgid "VAT SALES (TAX)"
 msgstr "מע\"מ עסקאות"
 
 #. module: l10n_il
+<<<<<<< HEAD
 #: model:account.account.template,name:l10n_il.il_account_111110
 #: model:account.report.line,name:l10n_il.account_tax_report_line_out_balance
 #: model:account.report.line,tag_name:l10n_il.account_tax_report_line_out_balance
 #: model:account.tax.template,name:l10n_il.il_vat_sales_17
+=======
+#: model:account.tax.report.line,name:l10n_il.account_tax_report_line_out_balance
+#: model:account.tax.report.line,tag_name:l10n_il.account_tax_report_line_out_balance
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "VAT Sales"
 msgstr "מע\"מ עסקאות"
 
 #. module: l10n_il
+<<<<<<< HEAD
 #: model:account.tax.template,name:l10n_il.il_vat_purchase_zero
 #: model:account.tax.template,name:l10n_il.il_vat_sales_zero
 msgid "VAT Zero"
@@ -662,6 +690,8 @@ msgid "Vendor returns"
 msgstr "החזרות לספקים"
 
 #. module: l10n_il
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.account.tag,name:l10n_il.account_tag_retention_tax_customers_account
 msgid "Withholding Customers Tax Account"
 msgstr "ניכוי במקור - לקוחות"
@@ -680,8 +710,11 @@ msgstr "ניכוי במקור - עובדים"
 #: model:account.account.tag,name:l10n_il.account_tag_retention_tax_vendor_account
 msgid "Withholding Vendor Tax Account"
 msgstr "ניכוי מס במקור- ספקים"
+<<<<<<< HEAD
 
 #. module: l10n_il
 #: model:account.account.template,name:l10n_il.il_account_300270
 msgid "current year earnings"
 msgstr "עודפים מהשנה הנוכחית"
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

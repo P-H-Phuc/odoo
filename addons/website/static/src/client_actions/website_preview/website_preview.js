@@ -1,5 +1,6 @@
 /** @odoo-module **/
 
+import { browser } from '@web/core/browser/browser';
 import { registry } from '@web/core/registry';
 import { useService, useBus } from '@web/core/utils/hooks';
 import core from 'web.core';
@@ -102,9 +103,12 @@ export class WebsitePreview extends Component {
         });
 
         onWillUnmount(() => {
+<<<<<<< HEAD
             this.env.services.messaging.modelManager.messagingCreatedPromise.then(() => {
                 this.env.services.messaging.modelManager.messaging.update({ isWebsitePreviewOpen: false });
             });
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             const { pathname, search, hash } = this.iframe.el.contentWindow.location;
             this.websiteService.lastUrl = `${pathname}${search}${hash}`;
             this.websiteService.currentWebsiteId = null;
@@ -363,7 +367,11 @@ export class WebsitePreview extends Component {
                     additionalContext: {
                         params: {
                             website_id: this.websiteId,
+<<<<<<< HEAD
                             url_return: $.deparam(href).url_return || '/[lang]',
+=======
+                            url_return: $.deparam(href).url_return,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         },
                     },
                 });
@@ -381,6 +389,7 @@ export class WebsitePreview extends Component {
                     },
                     reloadIframe: false,
                 });
+<<<<<<< HEAD
             } else if (href && target !== '_blank' && !isEditing) {
                 if (this._isTopWindowURL(linkEl)) {
                     ev.preventDefault();
@@ -389,6 +398,13 @@ export class WebsitePreview extends Component {
                     // This scenario triggers a navigation inside the iframe.
                     this.websiteService.websiteRootInstance = undefined;
                 }
+=======
+            } else if (href && target !== '_blank' && !isEditing && this._isTopWindowURL(linkEl)) {
+                ev.preventDefault();
+                browser.location.assign(href);
+            } else if (this.iframe.el.contentWindow.location.pathname !== new URL(href).pathname) {
+                this.websiteService.websiteRootInstance = undefined;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
         });
         this.iframe.el.contentDocument.addEventListener('keydown', ev => {

@@ -8,27 +8,25 @@ import { CheckBox } from "@web/core/checkbox/checkbox";
 import { Component } from "@odoo/owl";
 
 export class BooleanField extends Component {
-    get isReadonly() {
-        return !(this.props.record.isInEdition && !this.props.record.isReadonly(this.props.name));
-    }
+    static template = "web.BooleanField";
+    static components = { CheckBox };
+    static props = {
+        ...standardFieldProps,
+    };
 
     /**
      * @param {boolean} newValue
      */
     onChange(newValue) {
-        this.props.update(newValue);
+        this.props.record.update({ [this.props.name]: newValue });
     }
 }
 
-BooleanField.template = "web.BooleanField";
-BooleanField.components = { CheckBox };
-BooleanField.props = {
-    ...standardFieldProps,
+export const booleanField = {
+    component: BooleanField,
+    displayName: _lt("Checkbox"),
+    supportedTypes: ["boolean"],
+    isEmpty: () => false,
 };
 
-BooleanField.displayName = _lt("Checkbox");
-BooleanField.supportedTypes = ["boolean"];
-
-BooleanField.isEmpty = () => false;
-
-registry.category("fields").add("boolean", BooleanField);
+registry.category("fields").add("boolean", booleanField);

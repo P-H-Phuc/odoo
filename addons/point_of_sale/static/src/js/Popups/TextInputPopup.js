@@ -1,10 +1,10 @@
-odoo.define('point_of_sale.TextInputPopup', function(require) {
-    'use strict';
+/** @odoo-module */
 
-    const AbstractAwaitablePopup = require('point_of_sale.AbstractAwaitablePopup');
-    const Registries = require('point_of_sale.Registries');
-    const { _lt } = require('@web/core/l10n/translation');
+import { AbstractAwaitablePopup } from "@point_of_sale/js/Popups/AbstractAwaitablePopup";
+import { _lt } from "@web/core/l10n/translation";
+import { onMounted, useRef, useState } from "@odoo/owl";
 
+<<<<<<< HEAD
     const { onMounted, useRef, useState } = owl;
 
     // formerly TextInputPopupWidget
@@ -30,9 +30,30 @@ odoo.define('point_of_sale.TextInputPopup', function(require) {
         body: '',
         startingValue: '',
         placeholder: '',
+=======
+// formerly TextInputPopupWidget
+export class TextInputPopup extends AbstractAwaitablePopup {
+    static template = "TextInputPopup";
+    static defaultProps = {
+        confirmText: _lt("Confirm"),
+        cancelText: _lt("Discard"),
+        title: "",
+        body: "",
+        startingValue: "",
+        placeholder: "",
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     };
 
-    Registries.Component.add(TextInputPopup);
-
-    return TextInputPopup;
-});
+    setup() {
+        super.setup();
+        this.state = useState({ inputValue: this.props.startingValue });
+        this.inputRef = useRef("input");
+        onMounted(this.onMounted);
+    }
+    onMounted() {
+        this.inputRef.el.focus();
+    }
+    getPayload() {
+        return this.state.inputValue;
+    }
+}

@@ -95,6 +95,7 @@ class PickingType(models.Model):
              " * Ask: users are asked to choose if they want to make a backorder for remaining products\n"
              " * Always: a backorder is automatically created for the remaining products\n"
              " * Never: remaining products are cancelled")
+    show_picking_type = fields.Boolean(compute='_compute_show_picking_type')
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -173,13 +174,13 @@ class PickingType(models.Model):
         return res
 
     @api.model
-    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
+    def _name_search(self, name, domain=None, operator='ilike', limit=None, order=None, name_get_uid=None):
         # Try to reverse the `name_get` structure
         parts = name.split(': ')
         if len(parts) == 2:
-            domain = [('warehouse_id.name', operator, parts[0]), ('name', operator, parts[1])]
-            return self._search(expression.AND([domain, args]), limit=limit, access_rights_uid=name_get_uid)
-        return super()._name_search(name=name, args=args, operator=operator, limit=limit, name_get_uid=name_get_uid)
+            name_domain = [('warehouse_id.name', operator, parts[0]), ('name', operator, parts[1])]
+            return self._search(expression.AND([name_domain, domain]), limit=limit, order=order, access_rights_uid=name_get_uid)
+        return super()._name_search(name, domain, operator, limit, order, name_get_uid)
 
     @api.onchange('code')
     def _onchange_picking_code(self):
@@ -267,12 +268,26 @@ class PickingType(models.Model):
     def get_stock_picking_action_picking_type(self):
         return self._get_action('stock.stock_picking_action_picking_type')
 
+    @api.depends('code')
+    def _compute_show_picking_type(self):
+        for record in self:
+            record.show_picking_type = record.code in ['incoming', 'outgoing', 'internal']
+
 
 class Picking(models.Model):
     _name = "stock.picking"
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = "Transfer"
     _order = "priority desc, scheduled_date asc, id desc"
+
+    def _default_picking_type_id(self):
+        picking_type_code = self.env.context.get('restricted_picking_type_code')
+        if picking_type_code:
+            picking_types = self.env['stock.picking.type'].search([
+                ('code', '=', picking_type_code),
+                ('company_id', '=', self.env.company.id),
+            ])
+            return picking_types[:1].id
 
     name = fields.Char(
         'Reference', default='/',
@@ -352,6 +367,7 @@ class Picking(models.Model):
     picking_type_id = fields.Many2one(
         'stock.picking.type', 'Operation Type',
         required=True, readonly=True, index=True,
+        default=_default_picking_type_id,
         states={'draft': [('readonly', False)]})
     picking_type_code = fields.Selection(
         related='picking_type_id.code',
@@ -359,7 +375,7 @@ class Picking(models.Model):
     picking_type_entire_packs = fields.Boolean(related='picking_type_id.show_entire_packs')
     use_create_lots = fields.Boolean(related='picking_type_id.use_create_lots')
     use_existing_lots = fields.Boolean(related='picking_type_id.use_existing_lots')
-    hide_picking_type = fields.Boolean(compute='_compute_hide_pickign_type')
+    hide_picking_type = fields.Boolean(compute='_compute_hide_picking_type')
     partner_id = fields.Many2one(
         'res.partner', 'Contact',
         check_company=True,
@@ -452,7 +468,7 @@ class Picking(models.Model):
         for picking in self:
             picking.has_deadline_issue = picking.date_deadline and picking.date_deadline < picking.scheduled_date or False
 
-    def _compute_hide_pickign_type(self):
+    def _compute_hide_picking_type(self):
         self.hide_picking_type = self.env.context.get('default_picking_type_id', False)
 
     @api.depends('move_ids.delay_alert_date')
@@ -709,15 +725,6 @@ class Picking(models.Model):
         late_stock_moves = self.env['stock.move'].search([('delay_alert_date', operator, value)])
         return [('move_ids', 'in', late_stock_moves.ids)]
 
-    @api.onchange('partner_id')
-    def onchange_partner_id(self):
-        for picking in self:
-            picking_id = isinstance(picking.id, int) and picking.id or getattr(picking, '_origin', False) and picking._origin.id
-            if picking_id:
-                moves = self.env['stock.move'].search([('picking_id', '=', picking_id)])
-                for move in moves:
-                    move.write({'partner_id': picking.partner_id.id})
-
     @api.onchange('picking_type_id', 'partner_id')
     def _onchange_picking_type(self):
         if self.picking_type_id and self.state == 'draft':
@@ -900,9 +907,14 @@ class Picking(models.Model):
         return True
 
     def _send_confirmation_email(self):
+        subtype_id = self.env['ir.model.data']._xmlid_to_res_id('mail.mt_comment')
         for stock_pick in self.filtered(lambda p: p.company_id.stock_move_email_validation and p.picking_type_id.code == 'outgoing'):
-            delivery_template_id = stock_pick.company_id.stock_mail_confirmation_template_id.id
-            stock_pick.with_context(force_send=True).message_post_with_template(delivery_template_id, email_layout_xmlid='mail.mail_notification_light')
+            delivery_template = stock_pick.company_id.stock_mail_confirmation_template_id
+            stock_pick.with_context(force_send=True).message_post_with_source(
+                delivery_template,
+                email_layout_xmlid='mail.mail_notification_light',
+                subtype_id=subtype_id,
+            )
 
     @api.depends('state', 'move_ids', 'move_ids.state', 'move_ids.package_level_id', 'move_ids.move_line_ids.package_level_id')
     def _compute_move_without_package(self):
@@ -1177,19 +1189,13 @@ class Picking(models.Model):
                 continue
             quantity_todo = {}
             quantity_done = {}
-            for move in picking.move_ids.filtered(lambda m: m.state != "cancel"):
+            for move in picking.move_ids:
+                if move.state == "cancel":
+                    continue
                 quantity_todo.setdefault(move.product_id.id, 0)
                 quantity_done.setdefault(move.product_id.id, 0)
-                quantity_todo[move.product_id.id] += move.product_uom._compute_quantity(move.product_uom_qty, move.product_id.uom_id, rounding_method='HALF-UP')
+                quantity_todo[move.product_id.id] += sum(move.move_line_ids.mapped('reserved_qty'))
                 quantity_done[move.product_id.id] += move.product_uom._compute_quantity(move.quantity_done, move.product_id.uom_id, rounding_method='HALF-UP')
-            # FIXME: the next block doesn't seem nor should be used.
-            for ops in picking.mapped('move_line_ids').filtered(lambda x: x.package_id and not x.product_id and not x.move_id):
-                for quant in ops.package_id.quant_ids:
-                    quantity_done.setdefault(quant.product_id.id, 0)
-                    quantity_done[quant.product_id.id] += quant.qty
-            for pack in picking.mapped('move_line_ids').filtered(lambda x: x.product_id and not x.move_id):
-                quantity_done.setdefault(pack.product_id.id, 0)
-                quantity_done[pack.product_id.id] += pack.product_uom_id._compute_quantity(pack.qty_done, pack.product_id.uom_id)
             if any(
                 float_compare(quantity_done[x], quantity_todo.get(x, 0), precision_digits=prec,) == -1
                 for x in quantity_done
@@ -1571,7 +1577,7 @@ class Picking(models.Model):
             'target': 'new',
             'context': {
                 'default_product_ids': self.move_ids.product_id.ids,
-                'default_move_line_ids': self.move_line_ids.ids,
+                'default_move_ids': self.move_ids.ids,
                 'default_picking_quantity': 'picking'},
         }
 

@@ -31,4 +31,8 @@ export class ComparisonMenu extends Component {
     }
 }
 ComparisonMenu.template = "web.ComparisonMenu";
+<<<<<<< HEAD
 ComparisonMenu.components = { Dropdown, DropdownItem: SearchDropdownItem };
+=======
+ComparisonMenu.components = { Dropdown, SearchDropdownItem };
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

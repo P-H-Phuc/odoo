@@ -44,6 +44,7 @@ class HRLeave(models.Model):
                     raise ValidationError(_('The employee does not have enough extra hours to extend this leave.'))
                 leave.overtime_id.sudo().duration = -1 * duration
         return res
+<<<<<<< HEAD
 
     def _check_overtime_deductible(self, leaves):
         # If the type of leave is overtime deductible, we have to check that the employee has enough extra hours
@@ -57,6 +58,27 @@ class HRLeave(models.Model):
                     raise ValidationError(_('You do not have enough extra hours to request this leave'))
                 raise ValidationError(_('The employee does not have enough extra hours to request this leave.'))
             if not leave.overtime_id:
+                leave.sudo().overtime_id = self.env['hr.attendance.overtime'].sudo().create({
+                    'employee_id': employee.id,
+                    'date': fields.Date.today(),
+                    'adjustment': True,
+                    'duration': -1 * duration,
+                })
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
+
+    def _check_overtime_deductible(self, leaves):
+        # If the type of leave is overtime deductible, we have to check that the employee has enough extra hours
+        for leave in leaves:
+            if not leave.overtime_deductible:
+                continue
+            employee = leave.employee_id.sudo()
+            duration = leave.number_of_hours_display
+            if duration > employee.total_overtime:
+                if employee.user_id == self.env.user:
+                    raise ValidationError(_('You do not have enough extra hours to request this leave'))
+                raise ValidationError(_('The employee does not have enough extra hours to request this leave.'))
+            if not leave.sudo().overtime_id:
                 leave.sudo().overtime_id = self.env['hr.attendance.overtime'].sudo().create({
                     'employee_id': employee.id,
                     'date': fields.Date.today(),

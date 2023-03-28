@@ -1,9 +1,15 @@
 /** @odoo-module **/
 
+import { checkRainbowmanMessage } from "@crm/views/check_rainbowman_message";
 import { registry } from "@web/core/registry";
+<<<<<<< HEAD
 import { formView } from "@web/views/form/form_view";
 import { checkRainbowmanMessage } from "@crm/views/check_rainbowman_message";
 import { Record, RelationalModel } from "@web/views/basic_relational_model";
+=======
+import { useService } from "@web/core/utils/hooks";
+import { formView } from "@web/views/form/form_view";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 /**
  * This Form Controller makes sure we display a rainbowman message
@@ -12,7 +18,19 @@ import { Record, RelationalModel } from "@web/views/basic_relational_model";
  * if the lead is won and if a message should be displayed to the user
  * with a rainbowman like when the user click on the button "Mark Won".
  */
+<<<<<<< HEAD
 export class CrmFormRecord extends Record {
+=======
+
+class CrmFormController extends formView.Controller {
+    setup() {
+        super.setup();
+        this.orm = useService("orm");
+        this.effect = useService("effect");
+        this.changedStage = false;
+    }
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     /**
      * Main method used when saving the record hitting the "Save" button.
      * We check if the stage_id field was altered and if we need to display a rainbowman
@@ -30,9 +48,15 @@ export class CrmFormRecord extends Record {
      *
      * @override
      */
+<<<<<<< HEAD
     async save() {
         const recordID = this.__bm_handle__;
         const localData = this.model.__bm__.localData[recordID];
+=======
+    async onWillSaveRecord(record) {
+        const recordID = record.__bm_handle__;
+        const localData = record.model.__bm__.localData[recordID];
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         const changes = localData._changes || {};
 
         const needsSynchronizationEmail =
@@ -58,19 +82,31 @@ export class CrmFormRecord extends Record {
         if (!localData._changes && Object.keys(changes).length) {
             localData._changes = changes;
         }
-        let changedStage = false;
+
         if ("stage_id" in changes) {
+<<<<<<< HEAD
             const bm = this.model.__bm__;
+=======
+            const bm = record.model.__bm__;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             let oldStageId = false;
             if (bm.localData[recordID].data.stage_id) {
                 oldStageId = bm.get(bm.localData[recordID].data.stage_id).data.id;
             }
             const newStageId = bm.get(bm.localData[recordID]._changes.stage_id).data.id;
-            changedStage = oldStageId !== newStageId;
+            this.changedStage = oldStageId !== newStageId;
         }
+<<<<<<< HEAD
         const isSaved = await super.save(...arguments);
         if (changedStage && isSaved) {
             await checkRainbowmanMessage(this.model.orm, this.model.effect, this.resId);
+=======
+    }
+
+    async onRecordSaved(record) {
+        if (this.changedStage) {
+            await checkRainbowmanMessage(this.orm, this.effect, record.resId);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
         return isSaved;
     }

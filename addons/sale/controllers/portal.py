@@ -168,6 +168,7 @@ class CustomerPortal(portal.CustomerPortal):
 
         return request.render('sale.sale_order_portal_template', values)
 
+<<<<<<< HEAD
     def _get_payment_values(self, order_sudo):
         """ Return the payment-specific QWeb context values.
 
@@ -211,10 +212,61 @@ class CustomerPortal(portal.CustomerPortal):
             'currency': order_sudo.pricelist_id.currency_id,
             'partner_id': order_sudo.partner_id.id,
             'access_token': order_sudo.access_token,
+=======
+    def _get_payment_values(self, order_sudo, **kwargs):
+        """ Return the payment-specific QWeb context values.
+
+        :param sale.order order_sudo: The sales order being paid.
+        :param dict kwargs: Locally unused data passed to `_get_compatible_providers` and
+                            `_get_available_tokens`.
+        :return: The payment-specific values.
+        :rtype: dict
+        """
+        partner = order_sudo.partner_id
+        company = order_sudo.company_id
+        amount = order_sudo.amount_total
+        currency = order_sudo.currency_id
+        providers_sudo = request.env['payment.provider'].sudo()._get_compatible_providers(
+            company.id,
+            partner.id,
+            amount,
+            currency_id=currency.id,
+            sale_order_id=order_sudo.id,
+            **kwargs,
+        )  # In sudo mode to read the fields of providers and partner (if not logged in).
+        fees_by_provider = {
+            provider: provider._compute_fees(
+                amount, currency, partner.country_id
+            ) for provider in providers_sudo.filtered('fees_active')
+        }
+        payment_form_values = {
+            'providers': providers_sudo,
+            'tokens': request.env['payment.token']._get_available_tokens(
+                providers_sudo.ids, partner.id, **kwargs
+            ),
+            'fees_by_provider': fees_by_provider,
+            'show_tokenize_input': PaymentPortal._compute_show_tokenize_input_mapping(
+                providers_sudo, sale_order_id=order_sudo.id
+            ),
+            'amount': amount,
+            'currency': currency,
+            'partner_id': partner.id,
+            'access_token': order_sudo._portal_ensure_token(),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'transaction_route': order_sudo.get_portal_url(suffix='/transaction'),
             'landing_route': order_sudo.get_portal_url(),
         }
 
+<<<<<<< HEAD
+=======
+        company_mismatch = not payment_portal.PaymentPortal._can_partner_pay_in_company(
+            partner, company
+        )  # Make sure that the partner's company matches the order's company.
+        portal_page_values = {'company_mismatch': company_mismatch, 'expected_company': company}
+
+        return {**portal_page_values, **payment_form_values}
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     @http.route(['/my/orders/<int:order_id>/accept'], type='json', auth="public", website=True)
     def portal_quote_accept(self, order_id, access_token=None, name=None, signature=None):
         # get from query string if not on json param

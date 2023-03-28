@@ -26,17 +26,17 @@ class TestUiFeedback(HttpCaseWithUserDemo):
                     'is_page': True,
                     'description': """<p>This section is about general information about you. Answering them helps qualifying your answers.</p>""",
                 }), (0, 0, {
-                    'title': 'Where do you live ?',
+                    'title': 'Where do you live?',
                     'sequence': 2,
                     'question_type': 'char_box',
                     'constr_mandatory': False,
                 }), (0, 0, {
-                    'title': 'When is your date of birth ?',
+                    'title': 'When is your date of birth?',
                     'sequence': 3,
                     'question_type': 'date',
                     'description': False,
                 }), (0, 0, {
-                    'title': 'How frequently do you buy products online ?',
+                    'title': 'How frequently do you buy products online?',
                     'sequence': 4,
                     'question_type': 'simple_choice',
                     'comments_allowed': True,
@@ -60,7 +60,7 @@ class TestUiFeedback(HttpCaseWithUserDemo):
                             'sequence': 5,
                         })],
                 }), (0, 0, {
-                    'title': 'How many times did you order products on our website ?',
+                    'title': 'How many times did you order products on our website?',
                     'sequence': 5,
                     'question_type': 'numerical_box',
                     'constr_mandatory': True,
@@ -71,7 +71,7 @@ class TestUiFeedback(HttpCaseWithUserDemo):
                     'question_type': False,
                     'description': """<p>This section is about our eCommerce experience itself.</p>""",
                 }), (0, 0, {
-                    'title': 'Which of the following words would you use to describe our products ?',
+                    'title': 'Which of the following words would you use to describe our products?',
                     'sequence': 7,
                     'question_type': 'multiple_choice',
                     'constr_mandatory': True,
@@ -107,7 +107,7 @@ class TestUiFeedback(HttpCaseWithUserDemo):
                             'sequence': 9,
                         })],
                 }), (0, 0, {
-                    'title': 'What do your think about our new eCommerce ?',
+                    'title': 'What do your think about our new eCommerce?',
                     'sequence': 8,
                     'question_type': 'matrix',
                     'matrix_subtype': 'multiple',
@@ -142,7 +142,7 @@ class TestUiFeedback(HttpCaseWithUserDemo):
                         'sequence': 5,
                     })],
                 }), (0, 0, {
-                    'title': 'Do you have any other comments, questions, or concerns ?',
+                    'title': 'Do you have any other comments, questions, or concerns?',
                     'sequence': 9,
                     'question_type': 'text_box',
                     'constr_mandatory': False,
@@ -209,7 +209,10 @@ class TestUiFeedback(HttpCaseWithUserDemo):
                             'sequence': 2,
                         })
                     ],
+<<<<<<< HEAD
                     'is_conditional': True,
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     'constr_mandatory': True,
                 }), (0, 0, {
                     'title': 'Q3',
@@ -224,7 +227,10 @@ class TestUiFeedback(HttpCaseWithUserDemo):
                             'sequence': 2,
                         })
                     ],
+<<<<<<< HEAD
                     'is_conditional': True,
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     'constr_mandatory': True,
                 }),
             ]
@@ -236,11 +242,24 @@ class TestUiFeedback(HttpCaseWithUserDemo):
         q2_a1 = q2.suggested_answer_ids.filtered(lambda a: a.value == 'Answer 1')
         q3 = survey_with_triggers.question_ids.filtered(lambda q: q.title == 'Q3')
 
+<<<<<<< HEAD
         q2.triggering_question_id = q1
         q2.triggering_answer_id = q1_a1
 
         q3.triggering_question_id = q2
         q3.triggering_answer_id = q2_a1
+=======
+        q2.write({
+            'is_conditional': True,
+            'triggering_question_id': q1,
+            'triggering_answer_id': q1_a1,
+        })
+        q3.write({
+            'is_conditional': True,
+            'triggering_question_id': q2,
+            'triggering_answer_id': q2_a1,
+        })
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         access_token = survey_with_triggers.access_token
         self.start_tour("/survey/start/%s" % access_token, 'test_survey_chained_conditional_questions')

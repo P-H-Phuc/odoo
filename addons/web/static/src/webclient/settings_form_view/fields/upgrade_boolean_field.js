@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
-import { BooleanField } from "@web/views/fields/boolean/boolean_field";
+import { booleanField, BooleanField } from "@web/views/fields/boolean/boolean_field";
 import { useService } from "@web/core/utils/hooks";
 import { UpgradeDialog } from "./upgrade_dialog";
 
@@ -24,7 +24,7 @@ export class UpgradeBooleanField extends BooleanField {
                 {},
                 {
                     onClose: () => {
-                        this.props.update(false);
+                        this.props.record.update({ [this.props.name]: false });
                     },
                 }
             );
@@ -33,6 +33,7 @@ export class UpgradeBooleanField extends BooleanField {
         }
     }
 }
+<<<<<<< HEAD
 UpgradeBooleanField.isUpgradeField = true;
 UpgradeBooleanField.additionalClasses = [
     ...UpgradeBooleanField.additionalClasses || [],
@@ -40,3 +41,14 @@ UpgradeBooleanField.additionalClasses = [
 ];
 
 registry.category("fields").add("upgrade_boolean", UpgradeBooleanField);
+=======
+
+export const upgradeBooleanField = {
+    ...booleanField,
+    component: UpgradeBooleanField,
+    isUpgradeField: true,
+    additionalClasses: [...(booleanField.additionalClasses || []), "o_field_boolean"],
+};
+
+registry.category("fields").add("upgrade_boolean", upgradeBooleanField);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

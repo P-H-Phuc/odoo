@@ -42,8 +42,8 @@ class MaintenanceEquipmentCategory(models.Model):
     technician_user_id = fields.Many2one('res.users', 'Responsible', tracking=True, default=lambda self: self.env.uid)
     color = fields.Integer('Color Index')
     note = fields.Html('Comments', translate=True)
-    equipment_ids = fields.One2many('maintenance.equipment', 'category_id', string='Equipments', copy=False)
-    equipment_count = fields.Integer(string="Equipment", compute='_compute_equipment_count')
+    equipment_ids = fields.One2many('maintenance.equipment', 'category_id', string='Equipment', copy=False)
+    equipment_count = fields.Integer(string="Equipment Count", compute='_compute_equipment_count')
     maintenance_ids = fields.One2many('maintenance.request', 'category_id', copy=False)
     maintenance_count = fields.Integer(string="Maintenance Count", compute='_compute_maintenance_count')
     alias_id = fields.Many2one(
@@ -68,7 +68,7 @@ class MaintenanceEquipmentCategory(models.Model):
     def _unlink_except_contains_maintenance_requests(self):
         for category in self:
             if category.equipment_ids or category.maintenance_ids:
-                raise UserError(_("You cannot delete an equipment category containing equipments or maintenance requests."))
+                raise UserError(_("You cannot delete an equipment category containing equipment or maintenance requests."))
 
     def _alias_get_creation_values(self):
         values = super(MaintenanceEquipmentCategory, self)._alias_get_creation_values()
@@ -101,12 +101,12 @@ class MaintenanceEquipment(models.Model):
         return result
 
     @api.model
-    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
-        args = args or []
-        equipment_ids = []
+    def _name_search(self, name, domain=None, operator='ilike', limit=None, order=None, name_get_uid=None):
+        domain = domain or []
+        query = None
         if name and operator not in expression.NEGATIVE_TERM_OPERATORS and operator != '=':
-            equipment_ids = self._search([('name', '=', name)] + args, limit=limit, access_rights_uid=name_get_uid)
-        return equipment_ids or super()._name_search(name, args, operator, limit, name_get_uid)
+            query = self._search([('name', '=', name)] + domain, limit=limit, order=order, access_rights_uid=name_get_uid)
+        return query or super()._name_search(name, domain, operator, limit, order, name_get_uid)
 
     name = fields.Char('Equipment Name', required=True, translate=True)
     company_id = fields.Many2one('res.company', string='Company',

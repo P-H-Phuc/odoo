@@ -32,8 +32,8 @@ class StockWarehouse(models.Model):
         ('pbm', 'Pick components and then manufacture (2 steps)'),
         ('pbm_sam', 'Pick components, manufacture and then store products (3 steps)')],
         'Manufacture', default='mrp_one_step', required=True,
-        help="Produce : Move the components to the production location\
-        directly and start the manufacturing process.\nPick / Produce : Unload\
+        help="Produce: Move the components to the production location\
+        directly and start the manufacturing process.\nPick / Produce: Unload\
         the components from the Stock to Input location first, and then\
         transfer it to the Production location.")
 
@@ -133,7 +133,7 @@ class StockWarehouse(models.Model):
                     'company_id': self.company_id.id,
                     'action': 'pull',
                     'auto': 'manual',
-                    'route_id': self._find_global_route('stock.route_warehouse0_mto', _('Make To Order')).id,
+                    'route_id': self._find_global_route('stock.route_warehouse0_mto', _('Replenish on Order (MTO)')).id,
                     'location_dest_id': production_location.id,
                     'location_src_id': location_src.id,
                     'picking_type_id': self.manu_type_id.id
@@ -150,7 +150,7 @@ class StockWarehouse(models.Model):
                     'company_id': self.company_id.id,
                     'action': 'pull',
                     'auto': 'manual',
-                    'route_id': self._find_global_route('stock.route_warehouse0_mto', _('Make To Order')).id,
+                    'route_id': self._find_global_route('stock.route_warehouse0_mto', _('Replenish on Order (MTO)')).id,
                     'name': self._format_rulename(self.lot_stock_id, self.pbm_loc_id, 'MTO'),
                     'location_dest_id': self.pbm_loc_id.id,
                     'location_src_id': self.lot_stock_id.id,
@@ -303,9 +303,13 @@ class Orderpoint(models.Model):
 
     @api.constrains('product_id')
     def check_product_is_not_kit(self):
-        if self.env['mrp.bom'].search(['|', ('product_id', 'in', self.product_id.ids),
-                                            '&', ('product_id', '=', False), ('product_tmpl_id', 'in', self.product_id.product_tmpl_id.ids),
-                                       ('type', '=', 'phantom')], count=True):
+        domain = [
+            '|', ('product_id', 'in', self.product_id.ids),
+                 '&', ('product_id', '=', False),
+                      ('product_tmpl_id', 'in', self.product_id.product_tmpl_id.ids),
+            ('type', '=', 'phantom'),
+        ]
+        if self.env['mrp.bom'].search_count(domain, limit=1):
             raise ValidationError(_("A product with a kit-type bill of materials can not have a reordering rule."))
 
     def _get_orderpoint_products(self):

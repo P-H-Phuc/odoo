@@ -120,6 +120,7 @@ class TestSMSComposerComment(TestSMSCommon, TestSMSRecipients):
 
         self.assertSMSNotification([{'partner': self.test_record.customer_id, 'number': self.test_record.mobile_nbr}], 'Dear %s this is an SMS.' % self.test_record.display_name, messages)
 
+<<<<<<< HEAD
     def test_composer_comment_nofield(self):
         """ Test the Send Message in SMS Composer when a Model does not contain any phone number related field """
         test_record = self.env['mail.test.sms.partner'].create({'name': 'Test'})
@@ -133,6 +134,8 @@ class TestSMSComposerComment(TestSMSCommon, TestSMSRecipients):
             sms_composer._action_send_sms()
         self.assertSMSNotification([{'number': self.random_numbers_san[0]}], self._test_body)
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def test_composer_default_recipient(self):
         self.test_record.write({
             'phone_nbr': '0123456789',

@@ -55,7 +55,7 @@ class Project(models.Model):
     warning_employee_rate = fields.Boolean(compute='_compute_warning_employee_rate', compute_sudo=True)
     partner_id = fields.Many2one(
         compute='_compute_partner_id', store=True, readonly=False)
-    allocated_hours = fields.Float(compute='_compute_allocated_hours', store=True, readonly=False, copy=False)
+    allocated_hours = fields.Float(copy=False)
 
     @api.model
     def _get_view(self, view_id=None, view_type='form', **options):
@@ -184,11 +184,14 @@ class Project(models.Model):
             ], limit=1)
             project.sale_line_id = sol or project.sale_line_employee_ids.sale_line_id[:1]  # get the first SOL containing in the employee mappings if no sol found in the search
 
+<<<<<<< HEAD
     @api.depends('sale_line_id.product_uom_qty', 'sale_line_id.product_uom')
     def _compute_allocated_hours(self):
         # TODO: remove in master
         return
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     @api.depends('sale_line_employee_ids.sale_line_id', 'allow_billable')
     def _compute_sale_order_count(self):
         billable_projects = self.filtered('allow_billable')
@@ -281,7 +284,7 @@ class Project(models.Model):
             action['context'].update(search_default_groupby_timesheet_invoice_type=False, **self.env.context)
             graph_view = False
             if section_name == 'billable_time':
-                graph_view = self.env.ref('hr_timesheet.view_hr_timesheet_line_graph_all').id
+                graph_view = self.env.ref('sale_timesheet.view_hr_timesheet_line_graph_invoice_employee').id
             action['views'] = [
                 (view_id, view_type) if view_type != 'graph' else (graph_view or view_id, view_type)
                 for view_id, view_type in action['views']
@@ -447,7 +450,6 @@ class Project(models.Model):
                 if record_ids:
                     if invoice_type not in ['other_costs', 'other_revenues'] and can_see_timesheets:  # action to see the timesheets
                         action = get_timesheets_action(invoice_type, record_ids)
-                        action['context'] = json.dumps({'search_default_groupby_invoice': 1 if not cost and invoice_type == 'billable_time' else 0})
                         data['action'] = action
                 profitability_data.append(data)
             return profitability_data
@@ -466,7 +468,6 @@ class Project(models.Model):
             record_ids = aal_revenue.get('record_ids', [])
             if can_see_timesheets and record_ids:
                 action = get_timesheets_action(revenue_id, record_ids)
-                action['context'] = json.dumps({'search_default_groupby_invoice': 1 if revenue_id == 'billable_time' else 0})
                 revenue['action'] = action
 
         for cost in profitability_items['costs']['data']:
@@ -521,7 +522,6 @@ class ProjectTask(models.Model):
     pricing_type = fields.Selection(related="project_id.pricing_type")
     is_project_map_empty = fields.Boolean("Is Project map empty", compute='_compute_is_project_map_empty')
     has_multi_sol = fields.Boolean(compute='_compute_has_multi_sol', compute_sudo=True)
-    allow_billable = fields.Boolean(related="project_id.allow_billable")
     timesheet_product_id = fields.Many2one(related="project_id.timesheet_product_id")
     remaining_hours_so = fields.Float('Remaining Hours on SO', compute='_compute_remaining_hours_so', search='_search_remaining_hours_so', compute_sudo=True)
     remaining_hours_available = fields.Boolean(related="sale_line_id.remaining_hours_available")
@@ -529,7 +529,6 @@ class ProjectTask(models.Model):
     @property
     def SELF_READABLE_FIELDS(self):
         return super().SELF_READABLE_FIELDS | {
-            'allow_billable',
             'remaining_hours_available',
             'remaining_hours_so',
         }
@@ -564,19 +563,11 @@ class ProjectTask(models.Model):
         for task in self:
             task.analytic_account_active = task.analytic_account_active or task.so_analytic_account_id.active
 
-    @api.depends('allow_billable')
-    def _compute_sale_order_id(self):
-        billable_tasks = self.filtered('allow_billable')
-        super(ProjectTask, billable_tasks)._compute_sale_order_id()
-        (self - billable_tasks).sale_order_id = False
-
-    @api.depends('commercial_partner_id', 'sale_line_id.order_partner_id', 'parent_id.sale_line_id', 'project_id.sale_line_id', 'allow_billable')
+    @api.depends('partner_id.commercial_partner_id', 'sale_line_id.order_partner_id', 'parent_id.sale_line_id', 'project_id.sale_line_id', 'allow_billable')
     def _compute_sale_line(self):
-        billable_tasks = self.filtered('allow_billable')
-        (self - billable_tasks).update({'sale_line_id': False})
-        super(ProjectTask, billable_tasks)._compute_sale_line()
-        for task in billable_tasks:
-            if not task.sale_line_id:
+        super()._compute_sale_line()
+        for task in self:
+            if task.allow_billable and not task.sale_line_id:
                 task.sale_line_id = task._get_last_sol_of_customer()
 
     @api.depends('project_id.sale_line_employee_ids')
@@ -592,10 +583,10 @@ class ProjectTask(models.Model):
     def _get_last_sol_of_customer(self):
         # Get the last SOL made for the customer in the current task where we need to compute
         self.ensure_one()
-        if not self.commercial_partner_id or not self.allow_billable:
+        if not self.partner_id.commercial_partner_id or not self.allow_billable:
             return False
-        domain = [('company_id', '=', self.company_id.id), ('is_service', '=', True), ('order_partner_id', 'child_of', self.commercial_partner_id.id), ('is_expense', '=', False), ('state', 'in', ['sale', 'done']), ('remaining_hours', '>', 0)]
-        if self.project_id.pricing_type != 'task_rate' and self.project_sale_order_id and self.commercial_partner_id == self.project_id.partner_id.commercial_partner_id:
+        domain = [('company_id', '=', self.company_id.id), ('is_service', '=', True), ('order_partner_id', 'child_of', self.partner_id.commercial_partner_id.id), ('is_expense', '=', False), ('state', 'in', ['sale', 'done']), ('remaining_hours', '>', 0)]
+        if self.project_id.pricing_type != 'task_rate' and self.project_sale_order_id and self.partner_id.commercial_partner_id == self.project_id.partner_id.commercial_partner_id:
             domain.append(('order_id', '=?', self.project_sale_order_id.id))
         return self.env['sale.order.line'].search(domain, limit=1)
 
@@ -611,5 +602,5 @@ class ProjectTaskRecurrence(models.Model):
     _inherit = 'project.task.recurrence'
 
     @api.model
-    def _get_recurring_fields(self):
-        return ['so_analytic_account_id'] + super(ProjectTaskRecurrence, self)._get_recurring_fields()
+    def _get_recurring_fields_to_copy(self):
+        return super(ProjectTaskRecurrence, self)._get_recurring_fields_to_copy() + ['so_analytic_account_id']

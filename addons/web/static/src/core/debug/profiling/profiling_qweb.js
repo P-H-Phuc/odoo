@@ -8,14 +8,26 @@ import { useDebounced } from "@web/core/utils/timing";
 
 import { Component, useState, useRef, onWillStart, onMounted, onWillUnmount } from "@odoo/owl";
 
+<<<<<<< HEAD
 class MenuItem extends Component {}
 MenuItem.template = "web.ProfilingQwebView.menuitem";
+=======
+class MenuItem extends Component {
+    static template = "web.ProfilingQwebView.menuitem";
+}
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 /**
  * This widget is intended to be used on Text fields. It will provide Ace Editor
  * for display XML and Python profiling.
  */
 export class ProfilingQwebView extends Component {
+<<<<<<< HEAD
+=======
+    static template = "web.ProfilingQwebView";
+    static components = { MenuItem };
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     setup() {
         super.setup();
 
@@ -36,11 +48,19 @@ export class ProfilingQwebView extends Component {
         onWillStart(async () => {
             await loadBundle({
                 jsLibs: [
+<<<<<<< HEAD
                     '/web/static/lib/ace/ace.js',
                     [
                         '/web/static/lib/ace/mode-python.js',
                         '/web/static/lib/ace/mode-xml.js',
                         '/web/static/lib/ace/mode-qweb.js'
+=======
+                    "/web/static/lib/ace/ace.js",
+                    [
+                        "/web/static/lib/ace/mode-python.js",
+                        "/web/static/lib/ace/mode-xml.js",
+                        "/web/static/lib/ace/mode-qweb.js",
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     ],
                 ],
             });
@@ -65,8 +85,13 @@ export class ProfilingQwebView extends Component {
      * @returns {archs, data: {template, xpath, directive, time, duration, query }[]}
      */
     get profile() {
+<<<<<<< HEAD
         if (this.props.value) {
             return JSON.parse(this.props.value)[0].results;
+=======
+        if (this.props.record.data[this.props.name]) {
+            return JSON.parse(this.props.record.data[this.props.name])[0].results;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
         return { archs: {}, data: [] };
     }
@@ -81,7 +106,11 @@ export class ProfilingQwebView extends Component {
      * @private
      * @returns {Promise<viewObjects>}
      */
+<<<<<<< HEAD
     async _fetchViewData () {
+=======
+    async _fetchViewData() {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         const viewIDs = Array.from(new Set(this.profile.data.map((line) => line.view_id)));
         const viewObjects = await this.orm.call("ir.ui.view", "search_read", [], {
             fields: ["id", "display_name", "key"],
@@ -111,7 +140,11 @@ export class ProfilingQwebView extends Component {
      * @param {number} delay
      * @returns {string}
      */
+<<<<<<< HEAD
     _formatDelay (delay) {
+=======
+    _formatDelay(delay) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return delay ? _.str.sprintf("%.1f", Math.ceil(delay * 10) / 10) : ".";
     }
 
@@ -122,7 +155,11 @@ export class ProfilingQwebView extends Component {
      * @private
      * @param {Node} node - the DOM element the ace library must initialize on
      */
+<<<<<<< HEAD
      _startAce (node) {
+=======
+    _startAce(node) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.aceEditor = window.ace.edit(node);
         this.aceEditor.setOptions({
             maxLines: Infinity,
@@ -150,6 +187,7 @@ export class ProfilingQwebView extends Component {
         this.aceEditor.renderer.on("afterRender", this.renderProfilingInformation.bind(this));
     }
 
+<<<<<<< HEAD
     renderProfilingInformation () {
         this._unmoutInfo();
 
@@ -158,12 +196,28 @@ export class ProfilingQwebView extends Component {
         const rows = this.ace.el.querySelectorAll(".ace_gutter .ace_gutter-cell");
         const elems = this.ace.el.querySelectorAll(".ace_tag-open, .ace_end-tag-close, .ace_end-tag-open, .ace_qweb");
         elems.forEach(node => {
+=======
+    renderProfilingInformation() {
+        this._unmoutInfo();
+
+        const flat = {};
+        const arch = [{ xpath: "", children: [] }];
+        const rows = this.ace.el.querySelectorAll(".ace_gutter .ace_gutter-cell");
+        const elems = this.ace.el.querySelectorAll(
+            ".ace_tag-open, .ace_end-tag-close, .ace_end-tag-open, .ace_qweb"
+        );
+        elems.forEach((node) => {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             const parent = arch[arch.length - 1];
             let xpath = parent.xpath;
             if (node.classList.contains("ace_end-tag-close")) {
                 // Close tag.
                 let previous = node;
+<<<<<<< HEAD
                 while (previous = previous.previousElementSibling) {
+=======
+                while ((previous = previous.previousElementSibling)) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     if (previous && previous.classList.contains("ace_tag-name")) {
                         break;
                     }
@@ -220,7 +274,16 @@ export class ProfilingQwebView extends Component {
                     i++;
                 }
                 xpath += "[" + i + "]";
+<<<<<<< HEAD
                 flat[xpath] = { xpath: xpath, tag: nodeTagName.textContent, children: [], directive: [] };
+=======
+                flat[xpath] = {
+                    xpath: xpath,
+                    tag: nodeTagName.textContent,
+                    children: [],
+                    directive: [],
+                };
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 arch.push(flat[xpath]);
                 parent.children.push(flat[xpath]);
 
@@ -278,6 +341,7 @@ export class ProfilingQwebView extends Component {
     }
     _unmoutInfo() {
         if (this.hover) {
+<<<<<<< HEAD
             if (this.ace.el.querySelector('.o_ace_hover')) {
                 this.ace.el.querySelector('.o_ace_hover').remove();
             }
@@ -285,10 +349,20 @@ export class ProfilingQwebView extends Component {
         if (this.info) {
             if (this.ace.el.querySelector('.o_ace_info')) {
                 this.ace.el.querySelector('.o_ace_info').remove();
+=======
+            if (this.ace.el.querySelector(".o_ace_hover")) {
+                this.ace.el.querySelector(".o_ace_hover").remove();
+            }
+        }
+        if (this.info) {
+            if (this.ace.el.querySelector(".o_ace_info")) {
+                this.ace.el.querySelector(".o_ace_info").remove();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
         }
     }
     _renderHover(delay, query, node) {
+<<<<<<< HEAD
         const xml = renderToString('web.ProfilingQwebView.hover', {
             delay: this._formatDelay(delay),
             query: query,
@@ -298,12 +372,27 @@ export class ProfilingQwebView extends Component {
     }
     _renderInfo(delays, querys, displayDetail, groups, node) {
         const xml = renderToString('web.ProfilingQwebView.info', {
+=======
+        const xml = renderToString("web.ProfilingQwebView.hover", {
+            delay: this._formatDelay(delay),
+            query: query,
+        });
+        const div = new DOMParser().parseFromString(xml, "text/html").querySelector("div");
+        node.insertBefore(div, node.firstChild);
+    }
+    _renderInfo(delays, querys, displayDetail, groups, node) {
+        const xml = renderToString("web.ProfilingQwebView.info", {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             delay: this._formatDelay(delays.reduce((a, b) => a + b, 0)),
             query: querys.reduce((a, b) => a + b, 0) || ".",
             displayDetail: displayDetail,
             groups: groups,
         });
+<<<<<<< HEAD
         const div = new DOMParser().parseFromString(xml, "text/html").querySelector('div');
+=======
+        const div = new DOMParser().parseFromString(xml, "text/html").querySelector("div");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         node.insertBefore(div, node.firstChild);
     }
 
@@ -315,12 +404,25 @@ export class ProfilingQwebView extends Component {
      * @private
      * @param {MouseEvent} ev
      */
+<<<<<<< HEAD
      _onSelectView (ev) {
+=======
+    _onSelectView(ev) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.state.viewID = +ev.currentTarget.dataset.id;
         this._renderView();
     }
 }
+<<<<<<< HEAD
 ProfilingQwebView.template = "web.ProfilingQwebView";
 ProfilingQwebView.components = { MenuItem };
 
 registry.category("fields").add("profiling_qweb_view", ProfilingQwebView);
+=======
+
+export const profilingQwebView = {
+    component: ProfilingQwebView,
+};
+
+registry.category("fields").add("profiling_qweb_view", profilingQwebView);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

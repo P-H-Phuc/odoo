@@ -38,7 +38,6 @@
         </record>
         <record id="ir_sequence_actions" model="ir.actions.act_window">
             <field name="name">Actions</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">ir.actions.actions</field>
             <field name="view_id" ref="action_view_tree"/>
             <field name="search_view_id" ref="action_view_search"/>
@@ -80,7 +79,7 @@
                             </group>
                         </group>
                         <notebook>
-                            <page name="security" string="Security">
+                            <page name="security" string="Visibility">
                                 <field name="groups_id"/>
                             </page>
                             <page name='advanced' string="Advanced Properties">
@@ -126,12 +125,40 @@
         </record>
         <record id="ir_action_report" model="ir.actions.act_window">
             <field name="name">Reports</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">ir.actions.report</field>
             <field name="view_id" ref="act_report_xml_view_tree"/>
             <field name="search_view_id" ref="act_report_xml_search_view"/>
         </record>
         <menuitem action="ir_action_report" id="menu_ir_action_report" parent="base.next_id_6"/>
+
+        <!-- ir.actions.client -->
+
+        <record id="view_client_action_form" model="ir.ui.view">
+            <field name="name">ir.actions.client.form</field>
+            <field name="model">ir.actions.client</field>
+            <field name="arch" type="xml">
+                <form string="Client Action">
+                    <sheet>
+                        <group>
+                            <group name="main_details">
+                                <field name="name"/>
+                                <field name="xml_id" string="External ID"/>
+                                <field name="binding_type"/>
+                                <field name="tag"/>
+                            </group>
+                            <group name="action_details">
+                                <field name="type" readonly="1"/>
+                                <field name="target"/>
+                                <field name="context"/>
+                            </group>
+                        </group>
+                        <group name="help" string="Help">
+                            <field name="help" colspan="2" nolabel="1" class="oe-bordered-editor"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
 
         <!-- ir.actions.act_window -->
 
@@ -201,7 +228,7 @@
                                 </field>
                             </group>
                         </page>
-                        <page string="Security" name="security">
+                        <page string="Visibility" name="security">
                             <field name="groups_id"/>
                         </page>
                     </notebook>
@@ -220,7 +247,6 @@
         </record>
         <record id="ir_action_window" model="ir.actions.act_window">
             <field name="name">Window Actions</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">ir.actions.act_window</field>
             <field name="search_view_id" ref="view_window_action_search"/>
         </record>
@@ -312,7 +338,7 @@
                                 </field>
                             </page>
 
-                            <page name="security" string="Security">
+                            <page name="security" string="Access Rights">
                                 <field name="groups_id"/>
                             </page>
 
@@ -331,6 +357,7 @@
                                     <h3>Help with Python expressions</h3>
                                     <p>Various fields may use Python code or Python expressions. The following variables can be used:</p>
                                     <ul>
+<<<<<<< HEAD
                                         <li><code>env</code>: Odoo Environment on which the action is triggered</li>
                                         <li><code>model</code>: Odoo Model of the record on which the action is triggered; is a void recordset</li>
                                         <li><code>record</code>: record on which the action is triggered; may be be void</li>
@@ -339,6 +366,18 @@
                                         <li><code>log(message, level='info')</code>: logging function to record debug information in <code>ir.logging</code> table</li>
                                         <li><code>UserError</code>: Warning Exception to use with <code>raise</code></li>
                                         <li><code>Command</code>: x2Many commands namespace</li>
+=======
+                                        <li><code>env</code>: environment on which the action is triggered</li>
+                                        <li><code>model</code>: model of the record on which the action is triggered; is a void recordset</li>
+                                        <li><code>record</code>: record on which the action is triggered; may be be void</li>
+                                        <li><code>records</code>: recordset of all records on which the action is triggered in multi mode; may be void</li>
+                                        <li><code>time</code>, <code>datetime</code>, <code>dateutil</code>, <code>timezone</code>: useful Python libraries</li>
+                                        <li><code>float_compare()</code>: utility function to compare floats based on a specific precision</li>
+                                        <li><code>log(message, level='info')</code>: logging function to record debug information in <code>ir.logging</code> table</li>
+                                        <li><code>_logger.info(message)</code>: logger to emit messages in server logs</li>
+                                        <li><code>UserError</code>: exception class for raising user-facing warning messages</li>
+                                        <li><code>Command</code>: x2many commands namespace</li>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                         <li>To return an action, assign: <code>action = {...}</code></li>
                                     </ul>
                                     <div attrs="{'invisible': [('state', '!=', 'code')]}">
@@ -386,7 +425,6 @@ env['res.partner'].create({'name': partner_name})
         </record>
         <record id="action_server_action" model="ir.actions.act_window">
             <field name="name">Server Actions</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">ir.actions.server</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="view_server_action_tree"/>
@@ -420,7 +458,7 @@ env['res.partner'].create({'name': partner_name})
                   <header>
                         <button name="action_launch"
                             states="open" string="Launch"
-                            type="object" icon="fa-cogs" class="oe_highlight" 
+                            type="object" icon="fa-cogs" class="oe_highlight"
                             help="Launch Configuration Wizard"/>
                         <button name="action_open" states="done"
                             string="Set as Todo" type="object"
@@ -456,7 +494,6 @@ env['res.partner'].create({'name': partner_name})
         <menuitem id="menu_ir_actions_todo_form" action="act_ir_actions_todo_form" parent="base.next_id_6"/>
         <record id="action_run_ir_action_todo" model="ir.actions.server">
             <field name="name">Config: Run Remaining Action Todo</field>
-            <field name="type">ir.actions.server</field>
             <field name="model_id" ref="model_res_config"/>
             <field name="state">code</field>
             <field name="code">

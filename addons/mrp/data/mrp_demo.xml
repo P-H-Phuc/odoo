@@ -37,6 +37,7 @@
             <field name="product_tmpl_id" ref="product.product_product_3_product_template"/>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="sequence">1</field>
+            <field name="produce_delay">10</field>
         </record>
         <record id="mrp_routing_workcenter_0" model="mrp.routing.workcenter">
             <field name="bom_id" ref="mrp_bom_manufacture"/>
@@ -282,7 +283,7 @@
             <field name="product_id" ref="product_product_computer_desk"/>
             <field name="product_uom_id" ref="uom.product_uom_unit"/>
             <field name="product_qty">1</field>
-            <field name="date_planned_start" eval="(DateTime.today() + relativedelta(days=1)).strftime('%Y-%m-%d %H:%M')"/>
+            <field name="date_start" eval="(DateTime.today() + relativedelta(days=1)).strftime('%Y-%m-%d %H:%M')"/>
             <field name="bom_id" ref="mrp_bom_desk"/>
         </record>
 

@@ -4,8 +4,11 @@
         <t t-jquery="div.btn-group.dropdown" t-operation="attributes">
             <attribute name="class" value="btn-group dropup"/>
         </t>
+<<<<<<< HEAD
         <t t-jquery="div.dropdown:not(.btn-group)" t-operation="attributes">
             <attribute name="class" value="dropup"/>
         </t>
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     </t>
 </templates>

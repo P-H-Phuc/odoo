@@ -140,8 +140,13 @@
                     <field name="create_date"/>
                     <field name="name"/>
                     <templates>
+                        <t t-name="kanban-menu">
+                            <a t-attf-href="/web/content/ir.attachment/#{record.id.raw_value}/datas?download=true" download="" class="dropdown-item">Download</a>
+                            <a t-if="widget.deletable" role="menuitem" type="delete" class="dropdown-item">Delete</a>
+                        </t>
                         <t t-name="kanban-box">
                             <div class="oe_kanban_global_area oe_kanban_global_click o_kanban_attachment">
+<<<<<<< HEAD
                                 <div class="row">
                                     <div class="offset-10">
                                         <div class="o_dropdown_kanban dropdown" groups="base.group_user">
@@ -155,6 +160,8 @@
                                         </div>
                                     </div>
                                 </div>
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                 <div class="o_kanban_image">
                                     <div class="o_kanban_image_wrapper">
                                         <t t-set="webimage" t-value="new RegExp('image.*(gif|jpeg|jpg|png)').test(record.mimetype.value)"/>

@@ -95,11 +95,14 @@ msgid "CESS amount"
 msgstr ""
 
 #. module: l10n_in
+<<<<<<< HEAD
 #: model:account.tax.group,name:l10n_in.cgst_group
 msgid "CGST"
 msgstr ""
 
 #. module: l10n_in
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_in.field_l10n_in_account_invoice_report__cgst_amount
 msgid "CGST Amount"
 msgstr ""
@@ -122,11 +125,14 @@ msgid "Central Tax Amount"
 msgstr ""
 
 #. module: l10n_in
+<<<<<<< HEAD
 #: model:account.tax.group,name:l10n_in.cess_group
 msgid "Cess"
 msgstr ""
 
 #. module: l10n_in
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_in.field_l10n_in_account_invoice_report__cess_amount
 #: model:ir.model.fields,field_description:l10n_in.field_l10n_in_product_hsn_report__cess_amount
 msgid "Cess Amount"
@@ -267,11 +273,14 @@ msgid "E-commerce GSTIN"
 msgstr ""
 
 #. module: l10n_in
+<<<<<<< HEAD
 #: model:account.tax.group,name:l10n_in.exempt_group
 msgid "Exempt"
 msgstr ""
 
 #. module: l10n_in
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_in.field_l10n_in_exempted_report__exempted_amount
 msgid "Exempted"
 msgstr ""
@@ -312,11 +321,14 @@ msgid "From where this Refund is created"
 msgstr ""
 
 #. module: l10n_in
+<<<<<<< HEAD
 #: model:account.tax.group,name:l10n_in.gst_group
 msgid "GST"
 msgstr ""
 
 #. module: l10n_in
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_in.field_account_bank_statement_line__l10n_in_gst_treatment
 #: model:ir.model.fields,field_description:l10n_in.field_account_move__l10n_in_gst_treatment
 #: model:ir.model.fields,field_description:l10n_in.field_account_payment__l10n_in_gst_treatment
@@ -412,11 +424,14 @@ msgid "ID"
 msgstr ""
 
 #. module: l10n_in
+<<<<<<< HEAD
 #: model:account.tax.group,name:l10n_in.igst_group
 msgid "IGST"
 msgstr ""
 
 #. module: l10n_in
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_in.field_l10n_in_account_invoice_report__igst_amount
 msgid "IGST Amount"
 msgstr ""
@@ -552,17 +567,23 @@ msgid "Move Type"
 msgstr ""
 
 #. module: l10n_in
+<<<<<<< HEAD
 #: model:account.tax.group,name:l10n_in.nil_rated_group
 msgid "Nil Rated"
 msgstr ""
 
 #. module: l10n_in
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_in.field_l10n_in_exempted_report__nil_rated_amount
 msgid "Nil rated supplies"
 msgstr ""
 
 #. module: l10n_in
+<<<<<<< HEAD
 #: model:account.tax.group,name:l10n_in.non_gst_supplies_group
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_in.field_l10n_in_exempted_report__non_gst_supplies
 msgid "Non GST Supplies"
 msgstr ""
@@ -755,11 +776,14 @@ msgid "Reverse charge"
 msgstr ""
 
 #. module: l10n_in
+<<<<<<< HEAD
 #: model:account.tax.group,name:l10n_in.sgst_group
 msgid "SGST"
 msgstr ""
 
 #. module: l10n_in
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_in.field_l10n_in_account_invoice_report__sgst_amount
 msgid "SGST Amount"
 msgstr ""
@@ -951,6 +975,15 @@ msgid "Use this if setup with Reseller(E-Commerce)."
 msgstr ""
 
 #. module: l10n_in
+<<<<<<< HEAD
+=======
+#: model_terms:ir.ui.view,arch_db:l10n_in.res_config_settings_view_form_inherit_l10n_in
+msgid ""
+"Connect to NIC (National Informatics Center) to submit invoices on posting."
+msgstr ""
+
+#. module: l10n_in
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields.selection,name:l10n_in.selection__l10n_in_account_invoice_report__move_type__in_invoice
 #: model_terms:ir.ui.view,arch_db:l10n_in.l10n_in_report_invoice_document_inherit
 msgid "Vendor Bill"

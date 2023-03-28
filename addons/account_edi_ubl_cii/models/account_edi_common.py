@@ -38,6 +38,7 @@ UOM_TO_UNECE_CODE = {
 # -------------------------------------------------------------------------
 # ELECTRONIC ADDRESS SCHEME (EAS), see https://docs.peppol.eu/poacc/billing/3.0/codelist/eas/
 # -------------------------------------------------------------------------
+<<<<<<< HEAD
 COUNTRY_EAS = {
     'HU': 9910,
     'AT': 9915,
@@ -81,6 +82,53 @@ COUNTRY_EAS = {
     'AU': '0151',
     'NZ': '0088',
     'FI': '0213',
+=======
+EAS_MAPPING = {
+    'AD': {'9922': 'vat'},
+    'AL': {'9923': 'vat'},
+    'AT': {'9915': 'vat'},
+    'AU': {'0151': 'vat'},
+    'BA': {'9924': 'vat'},
+    'BE': {'9925': 'vat'},
+    'BG': {'9926': 'vat'},
+    'CH': {'9927': 'vat'},
+    'CY': {'9928': 'vat'},
+    'CZ': {'9929': 'vat'},
+    'DE': {'9930': 'vat'},
+    'EE': {'9931': 'vat'},
+    'ES': {'9920': 'vat'},
+    'FI': {'0213': 'vat'},
+    'FR': {'9957': 'vat', '0009': 'siret'},
+    'SG': {'0195': 'l10n_sg_unique_entity_number'},
+    'GB': {'9932': 'vat'},
+    'GR': {'9933': 'vat'},
+    'HR': {'9934': 'vat'},
+    'HU': {'9910': 'vat'},
+    'IE': {'9935': 'vat'},
+    'LI': {'9936': 'vat'},
+    'LT': {'9937': 'vat'},
+    'LU': {'9938': 'vat'},
+    'LV': {'9939': 'vat'},
+    'MC': {'9940': 'vat'},
+    'ME': {'9941': 'vat'},
+    'MK': {'9942': 'vat'},
+    'MT': {'9943': 'vat'},
+    # Do not add the vat for NL, since: "[NL-R-003] For suppliers in the Netherlands, the legal entity identifier
+    # MUST be either a KVK or OIN number (schemeID 0106 or 0190)" in the Bis 3 rules (in PartyLegalEntity/CompanyID).
+    'NL': {'0106': None, '0190': None},
+    'NO': {'0192': 'l10n_no_bronnoysund_number'},
+    'NZ': {'0088': 'company_registry'},
+    'PL': {'9945': 'vat'},
+    'PT': {'9946': 'vat'},
+    'RO': {'9947': 'vat'},
+    'RS': {'9948': 'vat'},
+    'SE': {'9955': 'vat'},
+    'SI': {'9949': 'vat'},
+    'SK': {'9950': 'vat'},
+    'SM': {'9951': 'vat'},
+    'TR': {'9952': 'vat'},
+    'VA': {'9953': 'vat'},
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 }
 
 
@@ -250,6 +298,7 @@ class AccountEdiCommon(models.AbstractModel):
     # Import invoice
     # -------------------------------------------------------------------------
 
+<<<<<<< HEAD
     def _import_invoice(self, journal, filename, tree, existing_invoice=None):
         move_types, qty_factor = self._get_import_document_amount_sign(filename, tree)
         if not move_types:
@@ -275,6 +324,30 @@ class AccountEdiCommon(models.AbstractModel):
         # This has to be done after the first import in order to let Odoo compute the taxes before overriding if needed.
         with invoice.with_context(account_predictive_bills_disable_prediction=True)._get_edi_creation() as invoice:
             self._correct_invoice_tax_amount(tree, invoice)
+=======
+    def _import_invoice_ubl_cii(self, invoice, file_data, new=False):
+        tree = file_data['xml_tree']
+
+        # Not able to decode the move_type from the xml.
+        move_type, qty_factor = self._get_import_document_amount_sign(tree)
+        if not move_type:
+            return
+
+        # Check for inconsistent move_type.
+        journal = invoice.journal_id
+        if journal.type == 'sale':
+            move_type = 'out_' + move_type
+        elif journal.type == 'purchase':
+            move_type = 'in_' + move_type
+        else:
+            return
+        if not new and invoice.move_type != move_type:
+            return
+
+        # Update the invoice.
+        invoice.move_type = move_type
+        logs = self._import_fill_invoice_form(invoice, tree, qty_factor)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         if invoice:
             if logs:
                 body = _(
@@ -283,7 +356,12 @@ class AccountEdiCommon(models.AbstractModel):
                 )
             else:
                 body = _("<strong>Format used to import the invoice: %s</strong>", str(self._description))
-            invoice.with_context(no_new_invoice=True).message_post(body=body)
+            invoice.message_post(body=body)
+
+        # For UBL, we should override the computed tax amount if it is less than 0.05 different of the one in the xml.
+        # In order to support use case where the tax total is adapted for rounding purpose.
+        # This has to be done after the first import in order to let Odoo compute the taxes before overriding if needed.
+        self._correct_invoice_tax_amount(tree, invoice)
 
         # === Import the embedded PDF in the xml if some are found ===
 
@@ -311,9 +389,9 @@ class AccountEdiCommon(models.AbstractModel):
         if attachments:
             invoice.with_context(no_new_invoice=True).message_post(attachment_ids=attachments.ids)
 
-        return invoice
+        return True
 
-    def _import_fill_invoice_allowance_charge(self, tree, invoice, journal, qty_factor):
+    def _import_fill_invoice_allowance_charge(self, tree, invoice, qty_factor):
         logs = []
         if '{urn:oasis:names:specification:ubl:schema:xsd' in tree.tag:
             is_ubl = True
@@ -365,10 +443,14 @@ class AccountEdiCommon(models.AbstractModel):
             tax_ids = []
             for tax_categ_percent_el in allow_el.findall(tax_xpath):
                 tax = self.env['account.tax'].search([
-                    ('company_id', '=', journal.company_id.id),
+                    ('company_id', '=', invoice.company_id.id),
                     ('amount', '=', float(tax_categ_percent_el.text)),
                     ('amount_type', '=', 'percent'),
+<<<<<<< HEAD
                     ('type_tax_use', '=', journal.type),
+=======
+                    ('type_tax_use', '=', invoice.journal_id.type),  # Journal type is ensured by _create_invoice_from_xml_tree to be either 'sale' or 'purchase'
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 ], limit=1)
                 if tax:
                     tax_ids += tax.ids
@@ -571,16 +653,26 @@ class AccountEdiCommon(models.AbstractModel):
             'product_uom_id': product_uom_id,
         }
 
+<<<<<<< HEAD
     def _import_fill_invoice_line_taxes(self, journal, tax_nodes, invoice_line_form, inv_line_vals, logs):
+=======
+    def _import_fill_invoice_line_taxes(self, tax_nodes, invoice_line, inv_line_vals, logs):
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         # Taxes: all amounts are tax excluded, so first try to fetch price_include=False taxes,
         # if no results, try to fetch the price_include=True taxes. If results, need to adapt the price_unit.
         inv_line_vals['taxes'] = []
         for tax_node in tax_nodes:
             amount = float(tax_node.text)
             domain = [
+<<<<<<< HEAD
                 ('company_id', '=', journal.company_id.id),
                 ('amount_type', '=', 'percent'),
                 ('type_tax_use', '=', journal.type),
+=======
+                ('company_id', '=', invoice_line.company_id.id),
+                ('amount_type', '=', 'percent'),
+                ('type_tax_use', '=', invoice_line.move_id.journal_id.type),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 ('amount', '=', amount),
             ]
             tax_excl = self.env['account.tax'].search(domain + [('price_include', '=', False)], limit=1)
@@ -591,6 +683,7 @@ class AccountEdiCommon(models.AbstractModel):
                 inv_line_vals['taxes'].append(tax_incl.id)
                 inv_line_vals['price_unit'] *= (1 + tax_incl.amount / 100)
             else:
+<<<<<<< HEAD
                 logs.append(_("Could not retrieve the tax: %s %% for line '%s'.", amount, invoice_line_form.name))
         # Set the values on the line_form
         invoice_line_form.quantity = inv_line_vals['quantity']
@@ -602,6 +695,19 @@ class AccountEdiCommon(models.AbstractModel):
         invoice_line_form.price_unit = inv_line_vals['price_unit']
         invoice_line_form.discount = inv_line_vals['discount']
         invoice_line_form.tax_ids = inv_line_vals['taxes']
+=======
+                logs.append(_("Could not retrieve the tax: %s %% for line '%s'.", amount, invoice_line.name))
+        # Set the values on the line_form
+        invoice_line.quantity = inv_line_vals['quantity']
+        if inv_line_vals.get('product_uom_id'):
+            invoice_line.product_uom_id = inv_line_vals['product_uom_id']
+        else:
+            logs.append(
+                _("Could not retrieve the unit of measure for line with label '%s'.", invoice_line.name))
+        invoice_line.price_unit = inv_line_vals['price_unit']
+        invoice_line.discount = inv_line_vals['discount']
+        invoice_line.tax_ids = inv_line_vals['taxes']
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return logs
 
     def _correct_invoice_tax_amount(self, tree, invoice):
@@ -621,9 +727,7 @@ class AccountEdiCommon(models.AbstractModel):
         elif invoice.move_type == 'out_refund':
             ecosio_format = ecosio_formats['credit_note']
         else:
-            invoice.with_context(no_new_invoice=True).message_post(
-                body="ECOSIO: could not validate xml, formats only exist for invoice or credit notes"
-            )
+            invoice.message_post(body="ECOSIO: could not validate xml, formats only exist for invoice or credit notes")
             return
         if not ecosio_format:
             return
@@ -646,11 +750,9 @@ class AccountEdiCommon(models.AbstractModel):
                         "<li><font style='color:Tomato;'><strong>" + detail['errorText'] + "</strong></font></li>")
 
         if errors_cnt == 0:
-            invoice.with_context(no_new_invoice=True).message_post(
-                body=f"<font style='color:Green;'><strong>ECOSIO: All clear for format {ecosio_format}!</strong></font>"
-            )
+            invoice.message_post(body=f"<font style='color:Green;'><strong>ECOSIO: All clear for format {ecosio_format}!</strong></font>")
         else:
-            invoice.with_context(no_new_invoice=True).message_post(
+            invoice.message_post(
                 body=f"<font style='color:Tomato;'><strong>ECOSIO ERRORS/WARNINGS for format {ecosio_format}</strong></font>: <ul> "
                      + "\n".join(report) + " </ul>"
             )

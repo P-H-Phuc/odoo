@@ -5,7 +5,11 @@ import datetime
 from lxml import etree
 from collections import namedtuple
 
+<<<<<<< HEAD
 from odoo import tools
+=======
+from odoo import fields
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 from odoo.tests import tagged
 from odoo.exceptions import ValidationError
 from odoo.addons.l10n_it_edi.tests.common import TestItEdi
@@ -18,10 +22,15 @@ class TestWithholdingAndPensionFundTaxes(TestItEdi):
     def setUpClass(cls):
         super().setUpClass()
 
+<<<<<<< HEAD
         cls.purchase_journal = cls.company_data_2['default_journal_purchase']
 
         def find_tax_by_ref(ref_name):
             return cls.env.ref(f'l10n_it_edi_withholding.{cls.company.id}_{ref_name}')
+=======
+        def find_tax_by_ref(ref_name):
+            return cls.env['account.chart.template'].with_company(cls.company).ref(ref_name)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         cls.withholding_sale_tax = find_tax_by_ref('20vwc')
         cls.withholding_sale_tax_23 = find_tax_by_ref('23vwo')
@@ -60,6 +69,10 @@ class TestWithholdingAndPensionFundTaxes(TestItEdi):
         }
 
         invoice_data = cls.get_real_client_invoice_data()
+<<<<<<< HEAD
+=======
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         cls.withholding_tax_invoice = cls.env['account.move'].with_company(cls.company).create({
             'move_type': 'out_invoice',
             'company_id': cls.company.id,
@@ -109,6 +122,7 @@ class TestWithholdingAndPensionFundTaxes(TestItEdi):
         cls.pension_fund_tax_invoice._post()
         cls.enasarco_tax_invoice._post()
 
+<<<<<<< HEAD
         cls.edi_withholding_tax_xml = cls._get_withholding_test_file_content('IT00470550013_withh.xml')
         cls.edi_pension_fund_tax_xml = cls._get_withholding_test_file_content('IT00470550013_pfund.xml')
         cls.edi_enasarco_tax_xml = cls._get_withholding_test_file_content('IT00470550013_enasa.xml')
@@ -119,6 +133,9 @@ class TestWithholdingAndPensionFundTaxes(TestItEdi):
         path = 'l10n_it_edi_withholding/tests/expected_xmls/' + filename
         with tools.file_open(path, mode='rb') as test_file:
             return test_file.read()
+=======
+        cls.module = 'l10n_it_edi_withholding'
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     @classmethod
     def get_real_client_invoice_data(cls):
@@ -151,6 +168,13 @@ class TestWithholdingAndPensionFundTaxes(TestItEdi):
         with self.assertRaises(ValidationError):
             self.company.account_sale_tax_id.l10n_it_withholding_type = "RT02"
 
+<<<<<<< HEAD
+=======
+    ####################################################
+    # WITHHOLDING TAX
+    ####################################################
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def test_withholding_taxes_export(self):
         """
             Invoice
@@ -166,6 +190,7 @@ class TestWithholdingAndPensionFundTaxes(TestItEdi):
             Document total:  Untaxed Amount + VAT                  915.00
             Payment amount:  Document total - Withholding          765.00
         """
+<<<<<<< HEAD
         invoice_etree = etree.fromstring(self.edi_format._l10n_it_edi_export_invoice_as_xml(self.withholding_tax_invoice))
         invoice_data = self.get_real_client_invoice_data()
         expected_etree = self.with_applied_xpath(
@@ -214,13 +239,36 @@ class TestWithholdingAndPensionFundTaxes(TestItEdi):
     def test_withholding_taxes_import(self):
         imported_etree = etree.fromstring(self.edi_withholding_tax_xml)
         invoice = self.edi_format._create_invoice_from_xml_tree("IT00470550013_withh.xml", imported_etree, self.purchase_journal)
+=======
+        self._assert_export_invoice(self.withholding_tax_invoice, 'withholding_tax_invoice.xml')
+
+    def test_withholding_taxes_import(self):
+        invoice = self._assert_import_invoice('IT00470550013_withh.xml', [{
+            'invoice_date': fields.Date.from_string('2022-03-24'),
+            'amount_untaxed': 750.0,
+            'amount_total': 765.00,
+            'amount_tax': 15.0,
+            'invoice_line_ids': [{
+                'name': name,
+                'price_unit': price_unit,
+            } for name, price_unit in self.get_real_client_invoice_data().lines]
+        }])
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         invoice_data = self.get_real_client_invoice_data()
         for line in invoice.line_ids.filtered(lambda x: x.name in [data[0] for data in invoice_data.lines]):
             withholding_taxes = line.tax_ids.filtered(lambda x: x.l10n_it_withholding_type)
             pension_fund_taxes = line.tax_ids.filtered(lambda x: x.l10n_it_pension_fund_type)
             vat_taxes = line.tax_ids - withholding_taxes - pension_fund_taxes
             self.assertEqual([1, 1, 0], [len(x) for x in (vat_taxes, withholding_taxes, pension_fund_taxes)])
+<<<<<<< HEAD
         self.assertEqual(765.00, invoice.amount_total)
+=======
+
+    ####################################################
+    # PENSION FUND TAX
+    ####################################################
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     def test_pension_fund_taxes_export(self):
         """
@@ -238,6 +286,7 @@ class TestWithholdingAndPensionFundTaxes(TestItEdi):
             Document total:  Taxed Amount                          951.60
             Payment amount:  Document total - Withholding          801.60
         """
+<<<<<<< HEAD
         invoice_etree = etree.fromstring(self.edi_format._l10n_it_edi_export_invoice_as_xml(self.pension_fund_tax_invoice))
         invoice_data = self.get_real_client_invoice_data()
         expected_etree = self.with_applied_xpath(
@@ -296,13 +345,36 @@ class TestWithholdingAndPensionFundTaxes(TestItEdi):
     def test_pension_fund_taxes_import(self):
         imported_etree = etree.fromstring(self.edi_pension_fund_tax_xml)
         invoice = self.edi_format._create_invoice_from_xml_tree("IT00470550013_pfund.xml", imported_etree, self.purchase_journal)
+=======
+        self._assert_export_invoice(self.pension_fund_tax_invoice, 'pension_fund_tax_invoice.xml')
+
+    def test_pension_fund_taxes_import(self):
+        invoice = self._assert_import_invoice('IT00470550013_pfund.xml', [{
+            'invoice_date': fields.Date.from_string('2022-03-24'),
+            'amount_untaxed': 750.0,
+            'amount_total': 795.6,
+            'amount_tax': 45.6,
+            'invoice_line_ids': [{
+                'name': name,
+                'price_unit': price_unit,
+            } for name, price_unit in self.get_real_client_invoice_data().lines]
+        }])
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         invoice_data = self.get_real_client_invoice_data()
         for line in invoice.line_ids.filtered(lambda x: x.name in [data[0] for data in invoice_data.lines]):
             withholding_taxes = line.tax_ids.filtered(lambda x: x.l10n_it_withholding_type)
             pension_fund_taxes = line.tax_ids.filtered(lambda x: x.l10n_it_pension_fund_type)
             vat_taxes = line.tax_ids - withholding_taxes - pension_fund_taxes
             self.assertEqual([1, 1, 1], [len(x) for x in (vat_taxes, withholding_taxes, pension_fund_taxes)])
+<<<<<<< HEAD
             self.assertEqual(795.60, invoice.amount_total)
+=======
+
+    ####################################################
+    # ENASARCO TAX
+    ####################################################
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     def test_enasarco_tax_export(self):
         """
@@ -320,6 +392,7 @@ class TestWithholdingAndPensionFundTaxes(TestItEdi):
             Document total:  Taxed Amount                              915.00
             Payment amount:  Document total - Withholding - Enasarco   765.00
         """
+<<<<<<< HEAD
         invoice_etree = etree.fromstring(self.edi_format._l10n_it_edi_export_invoice_as_xml(self.enasarco_tax_invoice))
         invoice_data = self.get_real_client_invoice_data()
         expected_etree = self.with_applied_xpath(
@@ -374,6 +447,22 @@ class TestWithholdingAndPensionFundTaxes(TestItEdi):
         imported_etree = etree.fromstring(self.edi_enasarco_tax_xml)
         invoice = self.edi_format._create_invoice_from_xml_tree("IT00470550013_enasa.xml", imported_etree, self.purchase_journal)
         self.assertTrue(invoice)
+=======
+        self._assert_export_invoice(self.enasarco_tax_invoice, 'enasarco_tax_invoice.xml')
+
+    def test_enasarco_tax_import(self):
+        invoice = self._assert_import_invoice('IT00470550013_enasa.xml', [{
+            'invoice_date': fields.Date.from_string('2022-03-24'),
+            'amount_untaxed': 750.0,
+            'amount_total': 765.0,
+            'amount_tax': 15.0,
+            'invoice_line_ids': [{
+                'name': name,
+                'price_unit': price_unit,
+            } for name, price_unit in self.get_real_client_invoice_data().lines]
+        }])
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         invoice_data = self.get_real_client_invoice_data()
         for line in invoice.line_ids.filtered(lambda x: x.name in [data[0] for data in invoice_data.lines]):
             enasarco_imported_tax = line.tax_ids.filtered(lambda x: x.l10n_it_pension_fund_type == 'TC07')

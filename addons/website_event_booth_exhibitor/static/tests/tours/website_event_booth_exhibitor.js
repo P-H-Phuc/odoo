@@ -20,19 +20,23 @@ odoo.define("website_event_booth_exhibitor.tour_steps", function (require) {
 odoo.define("website_event_booth_exhibitor.tour", function (require) {
     "use strict";
 
-    var tour = require("web_tour.tour");
+    const { registry } = require("@web/core/registry");
     var FinalSteps = require('website_event_booth_exhibitor.tour_steps');
 
 
-    tour.register("webooth_exhibitor_register", {
+    registry.category("web_tour.tours").add("webooth_exhibitor_register", {
         test: true,
         url: "/event",
-    }, [{
+        steps: [{
         content: 'Go on "Online Reveal" page',
         trigger: 'a[href*="/event"]:contains("Online Reveal"):first',
     }, {
         content: 'Browse Booths',
         trigger: 'a:contains("Get A Booth")',
+    }, {
+        content: 'Wait for the first item to be properly selected before proceeding',
+        trigger: 'label.d-block:has(input:checked) h5[name=booth_category_name]',
+        run() {},
     }, {
         content: 'Choose Premium Booths',
         trigger: 'img[alt="Premium Booth"]',
@@ -58,5 +62,5 @@ odoo.define("website_event_booth_exhibitor.tour", function (require) {
         extra_trigger: "input[name='sponsor_name'], input[name='sponsor_email'], input[name='sponsor_phone']",
         trigger: 'button:contains("Book my Booths")',
         run: 'click',
-    }, ...new FinalSteps()._getSteps()].filter(Boolean));
+    }, ...new FinalSteps()._getSteps()].filter(Boolean)});
 });

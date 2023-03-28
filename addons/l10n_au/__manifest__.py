@@ -16,6 +16,7 @@ Also:
     """,
     'depends': ['account'],
     'data': [
+<<<<<<< HEAD
         'data/l10n_au_chart_data.xml',
         'data/account.account.template.csv',
         'data/account_chart_template_data.xml',
@@ -24,6 +25,10 @@ Also:
         'data/account_tax_template_data.xml',
         'data/account_fiscal_position_tax_template_data.xml',
         'data/account_chart_template_configure_data.xml',
+=======
+        'data/account_tax_report_data.xml',
+        'data/account_tax_template_data.xml',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         'data/res_currency_data.xml',
         'views/menuitems.xml',
         'views/report_invoice.xml',

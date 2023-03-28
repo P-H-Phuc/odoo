@@ -370,8 +370,8 @@
                     <field name="contact_name" optional="hide"/>
                     <field name="partner_name" optional="hide"/>
                     <field name="email_from" optional="show"/>
-                    <field name="phone" optional="show" class="o_force_ltr"/>
-                    <field name="company_id" groups="base.group_multi_company" optional="show"/>
+                    <field name="phone" optional="hide" class="o_force_ltr"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="hide"/>
                     <field name="city" optional="show"/>
                     <field name="state_id" optional="hide"/>
                     <field name="country_id" optional="show" options="{'no_open': True, 'no_create': True}"/>
@@ -427,7 +427,7 @@
                                         </div>
                                     </div>
                                     <div class="oe_kanban_bottom_right">
-                                        <field name="user_id" widget="many2one_avatar_user"/>
+                                        <field name="user_id" widget="many2one_avatar_user" domain="[('share', '=', False)]"/>
                                     </div>
                                 </div>
                             </div>
@@ -517,7 +517,7 @@
                     <field name="company_currency"/>
                     <templates>
                         <div t-name="activity-box">
-                            <field name="user_id" widget="many2one_avatar_user"/>
+                            <field name="user_id" widget="many2one_avatar_user" domain="[('share', '=', False)]"/>
                             <div>
                                 <field name="name" display="full"/>
                                 <field name="expected_revenue" widget="monetary" display="full" muted="1"/>
@@ -554,6 +554,11 @@
                         sum_field="expected_revenue" recurring_revenue_sum_field="recurring_revenue_monthly"
                         help="This bar allows to filter the opportunities based on scheduled activities."/>
                     <templates>
+                        <t t-name="kanban-menu">
+                            <t t-if="widget.editable"><a role="menuitem" type="edit" class="dropdown-item">Edit</a></t>
+                            <t t-if="widget.deletable"><a role="menuitem" type="delete" class="dropdown-item">Delete</a></t>
+                            <ul class="oe_kanban_colorpicker" data-field="color"/>
+                        </t>
                         <t t-name="kanban-box">
                             <t t-set="lost_ribbon" t-value="!record.active.raw_value and record.probability and record.probability.raw_value == 0"/>
                             <div t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''} #{lost_ribbon ? 'oe_kanban_card_ribbon' : ''} oe_kanban_global_click oe_kanban_card d-flex flex-column">
@@ -562,16 +567,6 @@
                                     <span class="bg-danger">Lost</span>
                                 </div>
 
-                                <div class="o_dropdown_kanban dropdown">
-                                    <a class="dropdown-toggle o-no-caret btn" role="button" data-bs-toggle="dropdown" data-bs-display="static" href="#" aria-label="Dropdown menu" title="Dropdown menu">
-                                        <span class="fa fa-ellipsis-v"/>
-                                    </a>
-                                    <div class="dropdown-menu" role="menu">
-                                        <t t-if="widget.editable"><a role="menuitem" type="edit" class="dropdown-item">Edit</a></t>
-                                        <t t-if="widget.deletable"><a role="menuitem" type="delete" class="dropdown-item">Delete</a></t>
-                                        <ul class="oe_kanban_colorpicker" data-field="color"/>
-                                    </div>
-                                </div>
                                 <div class="oe_kanban_content flex-grow-1">
                                     <div class="o_kanban_record_title oe_kanban_details">
                                         <strong><field name="name"/></strong>
@@ -582,7 +577,7 @@
                                             <span t-if="record.recurring_revenue and record.recurring_revenue.raw_value" groups="crm.group_use_recurring_revenues"> + </span>
                                         </t>
                                         <t t-if="record.recurring_revenue and record.recurring_revenue.raw_value">
-                                            <field name="recurring_revenue" widget="monetary" options="{'currency_field': 'company_currency'}" groups="crm.group_use_recurring_revenues"/>
+                                            <field class="me-1" name="recurring_revenue" widget="monetary" options="{'currency_field': 'company_currency'}" groups="crm.group_use_recurring_revenues"/>
                                             <field name="recurring_plan" groups="crm.group_use_recurring_revenues"/>
                                         </t>
                                     </div>
@@ -600,7 +595,7 @@
                                             <field name="activity_ids" widget="kanban_activity"/>
                                         </div>
                                         <div class="oe_kanban_bottom_right">
-                                            <field name="user_id" widget="many2one_avatar_user"/>
+                                            <field name="user_id" widget="many2one_avatar_user" domain="[('share', '=', False)]"/>
                                         </div>
                                     </div>
                                 </div>
@@ -628,9 +623,14 @@
                 </xpath>
                 <xpath expr="//field[@name='expected_revenue']" position="replace">
                     <field name="prorated_revenue"/>
+                    <field name="recurring_revenue"/>
+                </xpath>
+                <xpath expr="//field[@name='recurring_revenue_monthly']" position="replace">
+                    <field name="recurring_revenue_monthly_prorated"/>
                 </xpath>
                 <xpath expr="//progressbar" position="attributes">
                     <attribute name="sum_field">prorated_revenue</attribute>
+                    <attribute name="recurring_revenue_sum_field">recurring_revenue_monthly_prorated</attribute>
                 </xpath>
                 <xpath expr="//t[@t-set='lost_ribbon']" position="after">
                     <t t-set="won_ribbon" t-value="record.active.raw_value and record.probability and record.probability.raw_value == 100"/>
@@ -657,7 +657,7 @@
                             <span t-if="record.recurring_revenue and record.recurring_revenue.raw_value" groups="crm.group_use_recurring_revenues"> + </span>
                         </t>
                         <t t-if="record.recurring_revenue and record.recurring_revenue.raw_value">
-                            <field name="recurring_revenue" widget="monetary" options="{'currency_field': 'company_currency'}" groups="crm.group_use_recurring_revenues"/>
+                            <field class="me-1" name="recurring_revenue_prorated" widget="monetary" options="{'currency_field': 'company_currency'}" groups="crm.group_use_recurring_revenues"/>
                             <field name="recurring_plan" groups="crm.group_use_recurring_revenues"/>
                         </t>
                     </div>
@@ -683,6 +683,7 @@
                     <field name="medium_id"/>
                     <field name="campaign_id"/>
                     <field name="activity_state"/>
+                    <field name="lead_properties"/>
                     <separator />
                     <filter string="My Leads"
                             name="assigned_to_me"
@@ -735,7 +736,6 @@
             <field name="target">new</field>
             <field name="context" eval="{
     'default_composition_mode': 'comment',
-    'default_use_template': False,
                 }"/>
             <field name="binding_model_id" ref="model_crm_lead"/>
             <field name="binding_view_types">form</field>
@@ -748,7 +748,6 @@
             <field name="target">new</field>
             <field name="context" eval="{
     'default_composition_mode': 'mass_mail',
-    'default_use_template': False,
                 }"/>
             <field name="binding_model_id" ref="model_crm_lead"/>
             <field name="binding_view_types">list</field>
@@ -775,8 +774,8 @@
                     <field name="partner_id" optional="hide"/>
                     <field name="contact_name" optional="show"/>
                     <field name="email_from"/>
-                    <field name="phone" class="o_force_ltr"/>
-                    <field name="company_id" groups="base.group_multi_company" optional="show"/>
+                    <field name="phone" optional="hide" class="o_force_ltr"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="hide"/>
                     <field name="city" optional="hide"/>
                     <field name="state_id" optional="hide"/>
                     <field name="country_id" optional="hide" options="{'no_open': True, 'no_create': True}"/>
@@ -806,6 +805,7 @@
                     <field name="tag_ids" optional="hide" widget="many2many_tags" options="{'color_field': 'color'}"/>
                     <field name="referred" invisible="1"/>
                     <field name="message_needaction" invisible="1"/>
+                    <field name="lead_properties"/>
                     <button name="%(crm.action_lead_mail_compose)d" type="action" string="Email" icon="fa-envelope"/>
                     <button name="action_reschedule_meeting" class="text-warning" type="object" string="Reschedule"
                         icon="fa-calendar" attrs="{'invisible': ['|', ('my_activity_date_deadline', '=', False),
@@ -984,6 +984,7 @@
                     <field name="city"/>
                     <field name="phone_mobile_search"/>
                     <field name="activity_state"/>
+                    <field name="lead_properties"/>
                     <separator/>
                     <filter string="My Pipeline" name="assigned_to_me"
                         domain="[('user_id', '=', uid)]"
@@ -994,7 +995,7 @@
                         domain="[('probability', '&lt;', 100), ('type', '=', 'opportunity')]"
                         help="Open Opportunities"/>
                     <separator/>
-                    <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction', '=', True)]"/>
+                    <filter string="Unread Messages" name="message_needaction" domain="[('message_needaction', '=', True)]" groups="mail.group_mail_notification_type_inbox"/>
                     <separator/>
                     <filter string="Creation Date" name="creation_date" date="create_date"/>
                     <filter string="Closed Date" name="close_date" date="date_closed"/>
@@ -1287,7 +1288,6 @@
         <record id="crm_lead_action_open_lead_form" model="ir.actions.act_window">
             <field name="name">New Lead</field>
             <field name="res_model">crm.lead</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="crm_lead_view_form"/>
             <field name="domain">[('type','=','lead')]</field>

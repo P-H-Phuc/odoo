@@ -550,9 +550,7 @@ class TestSaleMrpFlow(ValuationReconciliationTestCommon):
         # deliver partially (1 of each instead of 5), check the so's invoice_status and delivered quantities
         pick = so.picking_ids
         pick.move_ids.write({'quantity_done': 1})
-        wiz_act = pick.button_validate()
-        wiz = Form(self.env[wiz_act['res_model']].with_context(wiz_act['context'])).save()
-        wiz.process()
+        pick.button_validate()
         self.assertEqual(so.invoice_status, 'no', 'Sale MRP: so invoice_status should be "no" after partial delivery of a kit')
         del_qty = sum(sol.qty_delivered for sol in so.order_line)
         self.assertEqual(del_qty, 0.0, 'Sale MRP: delivered quantity should be zero after partial delivery of a kit')
@@ -661,7 +659,6 @@ class TestSaleMrpFlow(ValuationReconciliationTestCommon):
                 'product_uom': self.finished_product.uom_id.id,
                 'price_unit': self.finished_product.list_price
             })],
-            'pricelist_id': self.env.ref('product.list0').id,
             'company_id': self.company.id,
         }
         self.so = self.env['sale.order'].create(so_vals)
@@ -1800,15 +1797,24 @@ class TestSaleMrpFlow(ValuationReconciliationTestCommon):
         self.partner = self.env.ref('base.res_partner_1')
         self.category = self.env.ref('product.product_category_1').copy({'name': 'Test category', 'property_valuation': 'real_time', 'property_cost_method': 'fifo'})
         account_receiv = self.env['account.account'].create({'name': 'Receivable', 'code': 'RCV00', 'account_type': 'asset_receivable', 'reconcile': True})
+<<<<<<< HEAD
         account_income = self.env['account.account'].create({'name': 'Income', 'code': 'INC00', 'account_type': 'asset_current', 'reconcile': True})
         account_expense = self.env['account.account'].create({'name': 'Expense', 'code': 'EXP00', 'account_type': 'liability_current', 'reconcile': True})
+=======
+        account_expense = self.env['account.account'].create({'name': 'Expense', 'code': 'EXP00', 'account_type': 'liability_current', 'reconcile': True})
+        account_income = self.env['account.account'].create({'name': 'Income', 'code': 'INC00', 'account_type': 'asset_current', 'reconcile': True})
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         account_output = self.env['account.account'].create({'name': 'Output', 'code': 'OUT00', 'account_type': 'liability_current', 'reconcile': True})
         account_valuation = self.env['account.account'].create({'name': 'Valuation', 'code': 'STV00', 'account_type': 'asset_receivable', 'reconcile': True})
         self.stock_location = self.company_data['default_warehouse'].lot_stock_id
         self.partner.property_account_receivable_id = account_receiv
         self.category.property_account_income_categ_id = account_income
         self.category.property_account_expense_categ_id = account_expense
+<<<<<<< HEAD
         self.category.property_stock_account_input_categ_id = account_income
+=======
+        self.category.property_stock_account_input_categ_id = account_receiv
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         self.category.property_stock_account_output_categ_id = account_output
         self.category.property_stock_valuation_account_id = account_valuation
 
@@ -1896,7 +1902,10 @@ class TestSaleMrpFlow(ValuationReconciliationTestCommon):
                 'product_uom': self.uom_unit.id,
                 'price_unit': 50
             })],
+<<<<<<< HEAD
             'pricelist_id': self.env.ref('product.list0').id,
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'company_id': self.env.company.id
         }
         so = self.env['sale.order'].create(so_vals)

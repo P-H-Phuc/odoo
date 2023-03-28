@@ -551,6 +551,7 @@ QUnit.module("Fields", (hooks) => {
         await click(target, "#o_command_2");
     });
 
+<<<<<<< HEAD
     QUnit.test(
         'smart action "Move to stage..." is unavailable if readonly',
         async function (assert) {
@@ -580,6 +581,9 @@ QUnit.module("Fields", (hooks) => {
     );
 
     QUnit.test("hotkey is unavailable if readonly", async function (assert) {
+=======
+    QUnit.test("smart actions are unavailable if readonly", async function (assert) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         await makeView({
             serverData,
             type: "form",
@@ -594,7 +598,38 @@ QUnit.module("Fields", (hooks) => {
         });
 
         assert.containsOnce(target, ".o_field_widget");
+<<<<<<< HEAD
         triggerHotkey("alt+shift+x");
+=======
+
+        triggerHotkey("control+k");
+        await nextTick();
+        const moveStages = [...target.querySelectorAll(".o_command")].map((el) => el.textContent);
+        assert.notOk(moveStages.includes("Move to Trululu...ALT + SHIFT + X"));
+        assert.notOk(moveStages.includes("Move to next...ALT + X"));
+    });
+
+    QUnit.test("hotkeys are unavailable if readonly", async function (assert) {
+        await makeView({
+            serverData,
+            type: "form",
+            resModel: "partner",
+            arch: `
+                    <form>
+                        <header>
+                            <field name="trululu" widget="statusbar" readonly="1"/>
+                        </header>
+                    </form>`,
+            resId: 1,
+        });
+
+        assert.containsOnce(target, ".o_field_widget");
+        triggerHotkey("alt+shift+x"); // Move to stage...
+        await nextTick();
+        assert.containsNone(target, ".modal", "command palette should not open");
+
+        triggerHotkey("alt+x"); // Move to next
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         await nextTick();
         assert.containsNone(target, ".modal", "command palette should not open");
     });

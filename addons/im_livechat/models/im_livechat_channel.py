@@ -35,10 +35,17 @@ class ImLivechatChannel(models.Model):
     # attribute fields
     name = fields.Char('Channel Name', required=True)
     button_text = fields.Char('Text of the Button', default=_default_button_text,
+<<<<<<< HEAD
         help="Default text displayed on the Livechat Support Button")
     default_message = fields.Char('Welcome Message', default=_default_default_message,
         help="This is an automated 'welcome' message that your visitor will see when they initiate a new conversation.")
     input_placeholder = fields.Char('Chat Input Placeholder', help='Text that prompts the user to initiate the chat.')
+=======
+        help="Default text displayed on the Livechat Support Button", translate=True)
+    default_message = fields.Char('Welcome Message', default=_default_default_message,
+        help="This is an automated 'welcome' message that your visitor will see when they initiate a new conversation.", translate=True)
+    input_placeholder = fields.Char('Chat Input Placeholder', help='Text that prompts the user to initiate the chat.', translate=True)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     header_background_color = fields.Char(default="#875A7B", help="Default background color of the channel header once open")
     title_color = fields.Char(default="#FFFFFF", help="Default title color of the channel once open")
     button_background_color = fields.Char(default="#875A7B", help="Default background color of the Livechat button")

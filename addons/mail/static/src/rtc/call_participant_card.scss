@@ -1,0 +1,67 @@
+// ------------------------------------------------------------------
+// Layout
+// ------------------------------------------------------------------
+
+.o-mail-CallParticipantCard {
+    aspect-ratio: 16/9;
+}
+
+.o-mail-CallParticipantCard-avatar img {
+    max-height: #{"min(100%, 100px)"}; // interpolated as not supported by Sass
+    max-width: #{"min(100%, 100px)"};
+    aspect-ratio: 1;
+    border: solid $gray-500;
+
+    &.o-isTalking {
+        border: solid darken($o-enterprise-primary-color, 5%);
+    }
+
+    &.o-isInvitation:not(:hover) {
+        animation: o-mail-CallParticipantCard-avatarImag_borderPulse 3s linear infinite;
+    }
+
+    &.o-isInvitation:hover {
+        border: solid map-get($theme-colors, 'danger');
+    }
+}
+
+@keyframes o-mail-CallParticipantCard-avatarImag_borderPulse {
+    0% { border: solid white }
+    20% { border: solid $gray-600 }
+    35% { border: solid $gray-100 }
+    50% { border: solid $gray-600 }
+    70% { border: solid $gray-100 }
+    85% { border: solid $gray-700 }
+}
+
+.o-mail-CallParticipantCard-overlay {
+    pointer-events: none;
+    margin: Min(5%, map-get($spacers, 2));
+}
+
+.o-mail-CallParticipantCard-overlayBottom {
+    max-width: 50%;
+}
+
+// ------------------------------------------------------------------
+// Style
+// ------------------------------------------------------------------
+
+.o-mail-CallParticipantCard {
+    &.o-isTalking {
+        box-shadow: inset 0 0 0 map-get($spacers, 1) darken($o-enterprise-primary-color, 5%);
+    }
+}
+
+<<<<<<< HEAD:addons/mail/static/src/components/call_participant_card/call_participant_card.scss
+.o_CallParticipantCard_liveIndicator {
+    user-select: none;
+}
+
+.o_CallParticipantCard_avatarFrame:not(.o-isMinimized) {
+    background-color: var(--CallParticipantCard_avatarFrame-background-color, #{$o-gray-700});
+=======
+.o-mail-CallParticipantCard-avatar:not(.o-minimized) {
+    background-color: var(--o-mail-CallParticipantCard-avatarBgColor, #{$o-gray-700});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6:addons/mail/static/src/rtc/call_participant_card.scss
+}

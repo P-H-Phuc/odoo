@@ -2,22 +2,61 @@
 
 import { _lt } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
+<<<<<<< HEAD
 import { useDynamicPlaceholder } from "../dynamicplaceholder_hook";
+=======
+import { useSpellCheck } from "@web/core/utils/hooks";
+import { useDynamicPlaceholder } from "../dynamic_placeholder_hook";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { useInputField } from "../input_field_hook";
 import { parseInteger } from "../parsers";
 import { standardFieldProps } from "../standard_field_props";
 import { TranslationButton } from "../translation_button";
 
+<<<<<<< HEAD
 import { Component, onMounted, onWillUnmount, useEffect, useRef } from "@odoo/owl";
+=======
+import { Component, useExternalListener, useEffect, useRef } from "@odoo/owl";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 export class TextField extends Component {
+    static template = "web.TextField";
+    static components = {
+        TranslationButton,
+    };
+    static props = {
+        ...standardFieldProps,
+        placeholder: { type: String, optional: true },
+        dynamicPlaceholder: { type: Boolean, optional: true },
+        dynamicPlaceholderModelReferenceField: { type: String, optional: true },
+        rowCount: { type: Number, optional: true },
+    };
+    static defaultProps = {
+        dynamicPlaceholder: false,
+        rowCount: 2,
+    };
+
     setup() {
+<<<<<<< HEAD
         if (this.props.dynamicPlaceholder) {
             this.dynamicPlaceholder = useDynamicPlaceholder();
         }
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.divRef = useRef("div");
         this.textareaRef = useRef("textarea");
-        useInputField({ getValue: () => this.props.value || "", refName: "textarea" });
+        if (this.props.dynamicPlaceholder) {
+            const dynamicPlaceholder = useDynamicPlaceholder(this.textareaRef);
+            useExternalListener(document, "keydown", dynamicPlaceholder.onKeydown);
+            useEffect(() =>
+                dynamicPlaceholder.updateModel(this.props.dynamicPlaceholderModelReferenceField)
+            );
+        }
+        useInputField({
+            getValue: () => this.props.record.data[this.props.name] || "",
+            refName: "textarea",
+        });
+        useSpellCheck({ refName: "textarea" });
 
         useEffect(() => {
             if (!this.props.readonly) {
@@ -64,6 +103,9 @@ export class TextField extends Component {
         this.textareaRef.el.focus();
     }
 
+    get isTranslatable() {
+        return this.props.record.fields[this.props.name].translate;
+    }
     get minimumHeight() {
         return 50;
     }
@@ -103,6 +145,7 @@ export class TextField extends Component {
     }
 }
 
+<<<<<<< HEAD
 TextField.template = "web.TextField";
 TextField.components = {
     TranslationButton,
@@ -132,11 +175,32 @@ TextField.extractProps = ({ attrs, field }) => {
         props.rowCount = parseInteger(attrs.rows);
     }
     return props;
+=======
+export const textField = {
+    component: TextField,
+    displayName: _lt("Multiline Text"),
+    supportedTypes: ["html", "text"],
+    extractProps: ({ attrs, options }) => ({
+        placeholder: attrs.placeholder,
+        dynamicPlaceholder: options?.dynamic_placeholder || false,
+        dynamicPlaceholderModelReferenceField: options?.dynamic_placeholder_model_reference_field || "",
+        rowCount: attrs.rows && parseInteger(attrs.rows),
+    }),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 };
 
-registry.category("fields").add("text", TextField);
+registry.category("fields").add("text", textField);
 
 export class ListTextField extends TextField {
+    static defaultProps = {
+        ...super.defaultProps,
+        rowCount: 1,
+    };
+
+<<<<<<< HEAD
+export class ListTextField extends TextField {
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     get minimumHeight() {
         return 0;
     }
@@ -149,4 +213,9 @@ ListTextField.defaultProps = {
     rowCount: 1,
 };
 
-registry.category("fields").add("list.text", ListTextField);
+export const listTextField = {
+    ...textField,
+    component: ListTextField,
+};
+
+registry.category("fields").add("list.text", listTextField);

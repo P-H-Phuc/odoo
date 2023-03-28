@@ -404,6 +404,9 @@ class TestUi(odoo.tests.HttpCase):
 
     def test_26_website_media_dialog_icons(self):
         self.start_tour("/", 'website_media_dialog_icons', login='admin')
+<<<<<<< HEAD
 
     def test_27_website_clicks(self):
         self.start_tour('/web', 'website_click_tour', login='admin')
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

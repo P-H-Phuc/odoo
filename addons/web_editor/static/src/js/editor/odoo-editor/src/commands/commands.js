@@ -19,12 +19,15 @@ import {
     insertText,
     isBlock,
     isColorGradient,
-    isContentTextNode,
     isSelectionFormat,
     isShrunkBlock,
+<<<<<<< HEAD
     isVisible,
     isVisibleEmpty,
     isVisibleStr,
+=======
+    isSelfClosingElement,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     leftLeafFirstPath,
     preserveCursor,
     rightPos,
@@ -48,6 +51,11 @@ import {
     getDeepestPosition,
     fillEmpty,
     isEmptyBlock,
+<<<<<<< HEAD
+=======
+    isWhitespace,
+    isVisibleTextNode,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 } from '../utils/utils.js';
 
 const TEXT_CLASSES_REGEX = /\btext-[^\s]*\b/g;
@@ -58,7 +66,7 @@ function align(editor, mode) {
     const visitedBlocks = new Set();
     const traversedNode = getTraversedNodes(editor.editable);
     for (const node of traversedNode) {
-        if (isContentTextNode(node) && isVisible(node)) {
+        if (isVisibleTextNode(node)) {
             const block = closestBlock(node);
             if (!visitedBlocks.has(block)) {
                 const hasModifier = getComputedStyle(block).textAlign === mode;
@@ -205,7 +213,11 @@ export const editorCommands = {
         if (startNode.nodeType === Node.ELEMENT_NODE) {
             if (selection.anchorOffset === 0) {
                 const textNode = editor.document.createTextNode('');
+<<<<<<< HEAD
                 if (isVisibleEmpty(startNode)) {
+=======
+                if (isSelfClosingElement(startNode)) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     startNode.parentNode.insertBefore(textNode, startNode);
                 } else {
                     startNode.prepend(textNode);
@@ -483,7 +495,7 @@ export const editorCommands = {
         const blocks = new Set();
 
         for (const node of getTraversedNodes(editor.editable)) {
-            if (node.nodeType === Node.TEXT_NODE && !isVisibleStr(node)) {
+            if (node.nodeType === Node.TEXT_NODE && isWhitespace(node)) {
                 node.remove();
             } else {
                 const block = closestBlock(node);
@@ -551,11 +563,19 @@ export const editorCommands = {
                 } else {
                     font = [];
                 }
+<<<<<<< HEAD
             } else if ((node.nodeType === Node.TEXT_NODE && isVisibleStr(node))
                     || node.nodeName === "BR"
                     || (node.nodeType === Node.ELEMENT_NODE &&
                         ['inline', 'inline-block'].includes(getComputedStyle(node).display) &&
                         isVisibleStr(node.textContent) &&
+=======
+            } else if ((node.nodeType === Node.TEXT_NODE && !isWhitespace(node))
+                    || node.nodeName === "BR"
+                    || (node.nodeType === Node.ELEMENT_NODE &&
+                        ['inline', 'inline-block'].includes(getComputedStyle(node).display) &&
+                        !isWhitespace(node.textContent) &&
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         !node.classList.contains('btn') &&
                         !node.querySelector('font'))) {
                 // Node is a visible text or inline node without font nor a button:

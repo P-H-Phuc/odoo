@@ -2,7 +2,7 @@
 
 import { _lt } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
-import { Many2OneField } from "../many2one/many2one_field";
+import { many2OneField, Many2OneField } from "../many2one/many2one_field";
 
 import { Component, onWillUpdateProps, useState } from "@odoo/owl";
 
@@ -11,19 +11,38 @@ function valuesEqual(a, b) {
 }
 
 export class ReferenceField extends Component {
+    static template = "web.ReferenceField";
+    static components = {
+        Many2OneField,
+    };
+    static props = {
+        ...Many2OneField.props,
+        hideModelSelector: { type: Boolean, optional: true },
+    };
+    static defaultProps = {
+        ...Many2OneField.defaultProps,
+    };
+
     setup() {
         this.state = useState({
             resModel: this.relation,
         });
 
+        this.currentValue = this.getValue(this.props);
+
         onWillUpdateProps((nextProps) => {
             if (
+<<<<<<< HEAD
                 valuesEqual(this.getValue(this.props) || {}, this.getValue(nextProps) || {}) &&
+=======
+                valuesEqual(this.currentValue || {}, this.getValue(nextProps) || {}) &&
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 this.state.resModel &&
                 this.getRelation(nextProps) !== this.state.resModel
             ) {
-                nextProps.update(false);
+                nextProps.record.update({ [this.props.name]: false });
             }
+            this.currentValue = this.getValue(this.props);
         });
     }
 
@@ -31,7 +50,11 @@ export class ReferenceField extends Component {
         return p.record.preloadedData[p.name];
     }
     getValue(p) {
+<<<<<<< HEAD
         if (p.type === "char") {
+=======
+        if (p.record.fields[p.name].type === "char") {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             const pdata = this.getPreloadedData(p);
             if (!pdata) {
                 return null;
@@ -42,7 +65,7 @@ export class ReferenceField extends Component {
                 displayName: pdata.data.display_name,
             };
         } else {
-            return p.value;
+            return p.record.data[p.name];
         }
     }
     get m2oProps() {
@@ -57,7 +80,10 @@ export class ReferenceField extends Component {
         return p;
     }
     get selection() {
-        if (this.props.type !== "char" && !this.props.hideModelSelector) {
+        if (
+            this.props.record.fields[this.props.name].type !== "char" &&
+            !this.props.hideModelSelector
+        ) {
             return this.props.record.fields[this.props.name].selection;
         }
         return [];
@@ -90,35 +116,45 @@ export class ReferenceField extends Component {
 
     updateModel(value) {
         this.state.resModel = value;
-        this.props.update(false);
+        this.props.record.update({ [this.props.name]: false });
     }
 
-    updateM2O(value) {
+    updateM2O(data) {
+        const value = data[this.props.name];
         if (!this.state.resModel) {
             this.state.resModel = this.relation;
         }
-        this.props.update(
-            value && {
+        this.props.record.update({
+            [this.props.name]: value && {
                 resModel: this.state.resModel,
                 resId: value[0],
                 displayName: value[1],
-            }
-        );
+            },
+        });
     }
 }
 
-ReferenceField.template = "web.ReferenceField";
-ReferenceField.components = {
-    Many2OneField,
-};
-ReferenceField.props = {
-    ...Many2OneField.props,
-    hideModelSelector: { type: Boolean, optional: true },
-};
-ReferenceField.defaultProps = {
-    ...Many2OneField.defaultProps,
+export const referenceField = {
+    component: ReferenceField,
+    displayName: _lt("Reference"),
+    supportedTypes: ["reference", "char"],
+    legacySpecialData: "_fetchSpecialReference",
+    extractProps({ options }) {
+        /*
+        1 - <field name="ref" options="{'model_field': 'model_id'}" />
+        2 - <field name="ref" options="{'hide_model': True}" />
+        3 - <field name="ref" options="{'model_field': 'model_id' 'hide_model': True}" />
+        4 - <field name="ref"/>
+
+        We want to display the model selector only in the 4th case.
+        */
+        const props = many2OneField.extractProps(...arguments);
+        props.hideModelSelector = !!options.hide_model || !!options.model_field;
+        return props;
+    },
 };
 
+<<<<<<< HEAD
 ReferenceField.displayName = _lt("Reference");
 ReferenceField.supportedTypes = ["reference", "char"];
 ReferenceField.legacySpecialData = "_fetchSpecialReference";
@@ -140,3 +176,6 @@ ReferenceField.extractProps = ({ attrs, field }) => {
 };
 
 registry.category("fields").add("reference", ReferenceField);
+=======
+registry.category("fields").add("reference", referenceField);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

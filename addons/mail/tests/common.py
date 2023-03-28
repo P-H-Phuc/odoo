@@ -18,6 +18,7 @@ from odoo.addons.bus.models.bus import ImBus, json_dump
 from odoo.addons.mail.models.mail_mail import MailMail
 from odoo.addons.mail.models.mail_message import Message
 from odoo.addons.mail.models.mail_notification import MailNotification
+from odoo.addons.mail.models.res_users import Users
 from odoo.tests import common, new_test_user
 from odoo.tools import formataddr, mute_logger, pycompat
 from odoo.tools.translate import code_translations
@@ -69,10 +70,11 @@ class MockEmail(common.BaseCase, MockSmtplibCase):
         with self.mock_smtplib_connection(), \
              patch.object(IrMailServer, 'build_email', autospec=True, wraps=IrMailServer, side_effect=_ir_mail_server_build_email) as build_email_mocked, \
              patch.object(IrMailServer, 'send_email', autospec=True, wraps=IrMailServer, side_effect=send_email_origin) as send_email_mocked, \
-             patch.object(MailMail, 'create', autospec=True, wraps=MailMail, side_effect=_mail_mail_create), \
+             patch.object(MailMail, 'create', autospec=True, wraps=MailMail, side_effect=_mail_mail_create) as mail_mail_create_mocked, \
              patch.object(MailMail, 'unlink', autospec=True, wraps=MailMail, side_effect=_mail_mail_unlink):
             self.build_email_mocked = build_email_mocked
             self.send_email_mocked = send_email_mocked
+            self.mail_mail_create_mocked = mail_mail_create_mocked
             yield
 
     def _init_mail_mock(self):
@@ -137,7 +139,8 @@ class MockEmail(common.BaseCase, MockSmtplibCase):
                            return_path=return_path, extra=extra,
                            email_from=email_from, msg_id=msg_id,
                            **kwargs)
-        self.env['mail.thread'].message_process(model, mail)
+        # In real use case, fetched mail processing is executed with administrative right.
+        self.env['mail.thread'].sudo().message_process(model, mail)
         return self.env[target_model].search([(target_field, '=', subject)])
 
     def gateway_reply_wrecord(self, template, record, use_in_reply_to=True):
@@ -577,7 +580,11 @@ class MockEmail(common.BaseCase, MockSmtplibCase):
         if 'attachments_info' in expected:
             attachments = sent_mail['attachments']
             for attachment_info in expected['attachments_info']:
-                attachment = next(attach for attach in attachments if attach[0] == attachment_info['name'])
+                attachment = next((attach for attach in attachments if attach[0] == attachment_info['name']), False)
+                self.assertTrue(
+                    bool(attachment),
+                    f'Attachment {attachment_info["name"]} not found in attachments',
+                )
                 if attachment_info.get('raw'):
                     self.assertEqual(attachment[1], attachment_info['raw'])
                 if attachment_info.get('type'):
@@ -919,9 +926,10 @@ class MailCase(MockEmail):
                 if not self.mail_unlink_sent:
                     self.assertMailMail(
                         partners, mail_status,
-                        author=message.author_id if message.author_id else message.email_from,
+                        author=message_info.get('fields_values', {}).get('author_id') or message.author_id or message.email_from,
                         mail_message=message,
                         email_values=email_values,
+                        fields_values=message_info.get('fields_values'),
                     )
                 else:
                     for recipient in partners:
@@ -1041,11 +1049,13 @@ class MailCommon(common.TransactionCase, MailCase):
         cls._init_outgoing_gateway()
         # ensure admin configuration
         cls.user_admin = cls.env.ref('base.user_admin')
-        cls.user_admin.write({
-            'country_id': cls.env.ref('base.be').id,
-            'email': 'test.admin@test.example.com',
-            'notification_type': 'inbox',
-        })
+
+        with patch.object(Users, '_notify_security_setting_update', side_effect=lambda *args, **kwargs: None):
+            cls.user_admin.write({
+                'country_id': cls.env.ref('base.be').id,
+                'email': 'test.admin@test.example.com',
+                'notification_type': 'inbox',
+            })
         cls.partner_admin = cls.env.ref('base.partner_admin')
         cls.company_admin = cls.user_admin.company_id
         cls.company_admin.write({'email': 'company@example.com'})
@@ -1077,7 +1087,11 @@ class MailCommon(common.TransactionCase, MailCase):
         return cls.user_portal
 
     @classmethod
+<<<<<<< HEAD
     def _create_records_for_batch(cls, model, count, additional_values=None, prefix=None):
+=======
+    def _create_records_for_batch(cls, model, count, additional_values=None, prefix=''):
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         additional_values = additional_values or {}
         records = cls.env[model]
         partners = cls.env['res.partner']
@@ -1096,6 +1110,11 @@ class MailCommon(common.TransactionCase, MailCase):
             partner_fnames = cls.env[model]._mail_get_partner_fields()
             if partner_fnames:
                 partner_fname = partner_fnames[0]
+<<<<<<< HEAD
+=======
+        elif 'customer_id' in cls.env[model]:
+            partner_fname = 'customer_id'
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         if partner_fname:
             partners = cls.env['res.partner'].with_context(**cls._test_context).create([{

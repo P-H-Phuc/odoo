@@ -47,12 +47,13 @@ class Contract(models.Model):
         ('close', 'Expired'),
         ('cancel', 'Cancelled')
     ], string='Status', group_expand='_expand_states', copy=False,
-       tracking=True, help='Status of the contract', default='draft')
+        tracking=True, help='Status of the contract', default='draft')
     company_id = fields.Many2one('res.company', compute='_compute_employee_contract', store=True, readonly=False,
         default=lambda self: self.env.company, required=True)
     company_country_id = fields.Many2one('res.country', string="Company country", related='company_id.country_id', readonly=True)
     country_code = fields.Char(related='company_country_id.code', depends=['company_country_id'], readonly=True)
     contract_type_id = fields.Many2one('hr.contract.type', "Contract Type")
+    contracts_count = fields.Integer(related='employee_id.contracts_count')
 
     """
         kanban_state:
@@ -171,6 +172,12 @@ class Contract(models.Model):
                 'mail.mail_activity_data_todo', contract.date_end,
                 _("The contract of %s is about to expire.", contract.employee_id.name),
                 user_id=contract.hr_responsible_id.id or self.env.uid)
+            contract.message_post(
+                body=_(
+                    "According to the contract's end date, this contract has been put in red on the %s. Please advise and correct.",
+                    fields.Date.today()
+                )
+            )
 
         if contracts:
             contracts._safe_write_for_cron({'kanban_state': 'blocked'}, from_cron)
@@ -242,6 +249,7 @@ class Contract(models.Model):
         return self[self._get_contract_wage_field()]
 
     def _get_contract_wage_field(self):
+        self.ensure_one()
         return 'wage'
 
     def write(self, vals):
@@ -252,7 +260,7 @@ class Contract(models.Model):
             self._assign_open_contract()
         today = fields.Date.today()
         for contract in self:
-            if contract == contract.employee_id.contract_id \
+            if contract == contract.sudo().employee_id.contract_id \
                 and old_state[contract.id] == 'open' \
                 and new_state[contract.id] != 'open':
                 running_contract = self.env['hr.contract'].search([
@@ -272,7 +280,11 @@ class Contract(models.Model):
 
         calendar = vals.get('resource_calendar_id')
         if calendar:
-            self.filtered(lambda c: c.state == 'open' or (c.state == 'draft' and c.kanban_state == 'done')).mapped('employee_id').write({'resource_calendar_id': calendar})
+            self.filtered(
+                lambda c: c.state == 'open' or (c.state == 'draft' and c.kanban_state == 'done')
+            ).mapped('employee_id').filtered(
+                lambda e: e.resource_calendar_id
+            ).write({'resource_calendar_id': calendar})
 
         if 'state' in vals and 'kanban_state' not in vals:
             self.write({'kanban_state': 'normal'})
@@ -306,4 +318,10 @@ class Contract(models.Model):
             'views': [(self.env.ref('hr_contract.hr_contract_view_form').id, 'form')],
             'res_id': self.id,
         })
+        return action
+
+    def action_open_contract_history(self):
+        self.ensure_one()
+        action = self.env["ir.actions.actions"]._for_xml_id('hr_contract.hr_contract_history_view_form_action')
+        action['res_id'] = self.employee_id.id
         return action

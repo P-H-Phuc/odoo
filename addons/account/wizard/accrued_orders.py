@@ -24,18 +24,20 @@ class AccruedExpenseRevenue(models.TransientModel):
         orders = self.env[self._context['active_model']].browse(self._context['active_ids'])
         return orders and orders[0].company_id.id
 
+<<<<<<< HEAD
     def _get_default_journal(self):
         return self.env['account.journal'].search([('company_id', '=', self.env.company.id), ('type', '=', 'general')], limit=1)
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def _get_default_date(self):
         return date_utils.get_month(fields.Date.context_today(self))[0] - relativedelta(days=1)
 
     company_id = fields.Many2one('res.company', default=_get_default_company)
     journal_id = fields.Many2one(
         comodel_name='account.journal',
-        compute='_compute_journal_id',
+        compute='_compute_journal_id', store=True, readonly=False, precompute=True,
         domain="[('type', '=', 'general'), ('company_id', '=', company_id)]",
-        readonly=False,
         required=True,
         default=_get_default_journal,
         check_company=True,

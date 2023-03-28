@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
 from contextlib import closing
 from datetime import datetime, timedelta
 from unittest.mock import patch
@@ -410,15 +409,15 @@ class StockQuant(TransactionCase):
         })
         self.assertEqual(self.env['stock.quant']._get_available_quantity(self.product, self.stock_location), 0.0)
         self.assertEqual(len(self.gather_relevant(self.product, self.stock_location)), 2)
-        with self.assertRaises(UserError):
-            self.env['stock.quant']._update_reserved_quantity(self.product, self.stock_location, 10.0)
+        reserved_quants = self.env['stock.quant']._update_reserved_quantity(self.product, self.stock_location, 10.0)
+        self.assertFalse(reserved_quants)
         self.assertEqual(self.env['stock.quant']._get_available_quantity(self.product, self.stock_location), 0.0)
 
     def test_increase_reserved_quantity_5(self):
         """ Decrease the available quantity when no quant are in a location.
         """
-        with self.assertRaises(UserError):
-            self.env['stock.quant']._update_reserved_quantity(self.product, self.stock_location, 1.0)
+        reserved_quants = self.env['stock.quant']._update_reserved_quantity(self.product, self.stock_location, 1.0)
+        self.assertFalse(reserved_quants)
         self.assertEqual(self.env['stock.quant']._get_available_quantity(self.product, self.stock_location), 0.0)
 
     def test_decrease_reserved_quantity_1(self):
@@ -437,8 +436,7 @@ class StockQuant(TransactionCase):
     def test_increase_decrease_reserved_quantity_1(self):
         """ Decrease then increase reserved quantity when no quant are in a location.
         """
-        with self.assertRaises(UserError):
-            self.env['stock.quant']._update_reserved_quantity(self.product, self.stock_location, 1.0)
+        self.env['stock.quant']._update_reserved_quantity(self.product, self.stock_location, 1.0)
         self.assertEqual(self.env['stock.quant']._get_available_quantity(self.product, self.stock_location), 0.0)
         with self.assertRaises(UserError):
             self.env['stock.quant']._update_reserved_quantity(self.product, self.stock_location, -1.0, strict=True)
@@ -796,3 +794,235 @@ class StockQuant(TransactionCase):
         # cache to ensure that the value will be the newest
         quant.invalidate_recordset(['quantity'])
         self.assertEqual(quant.quantity, 11)
+
+class StockQuantRemovalStrategy(TransactionCase):
+    def setUp(self):
+        super().setUp()
+        self.least_package_strategy = self.env['product.removal'].search(
+            [('method', '=', 'least_packages')])
+        self.product = self.env['product.product'].create({
+            'name': 'Product',
+            'type': 'product',
+        })
+        self.product.categ_id.removal_strategy_id = self.least_package_strategy.id
+        self.stock_location = self.env['stock.location'].create({
+            'name': 'stock_location',
+            'usage': 'internal',
+        })
+
+    def _generate_data(self, packages_data):
+        move = self.env['stock.move'].create({
+            'name': 'Test Least Package',
+            'product_id': self.product.id,
+            'product_uom': self.product.uom_id.id,
+            'location_id': self.ref('stock.stock_location_suppliers'),
+            'location_dest_id': self.stock_location.id,
+        })
+        move._action_confirm()
+
+        ml_vals_list = []
+        ml_common_vals = {
+            'move_id': move.id,
+            'product_id': self.product.id,
+            'product_uom_id': self.product.uom_id.id,
+            'location_id': self.ref('stock.stock_location_suppliers'),
+            'location_dest_id': self.stock_location.id,
+        }
+
+        packages = self.env['stock.quant.package'].create(
+            [{}] * sum(p[1] for p in packages_data if p[0]))
+        for package_size, number_of_packages in packages_data:
+            if not package_size:
+                ml_vals_list.append(dict(**ml_common_vals, **{
+                    'qty_done': number_of_packages,
+                }))
+                continue
+            for dummy in range(number_of_packages):
+                package = packages[0]
+                packages = packages[1:]
+                ml_vals_list.append(dict(**ml_common_vals, **{
+                    'qty_done': package_size,
+                    'result_package_id': package.id,
+                }))
+        self.env['stock.move.line'].create(ml_vals_list)
+        move._action_done()
+
+    def test_least_package_removal_strategy_priority_to_package(self):
+        """
+        Tests the least package removal strategy in a use case where only one package needs to be selected.
+        It should only return the quantity of a single size 1000 package.
+        """
+        packages_data = [
+            (False, 2000),
+            (5, 10),
+            (50, 10),
+            (1000, 2),
+        ]
+        self._generate_data(packages_data)
+
+        # Out 1000 should selecte a package with 1000 units inside
+        move = self.env['stock.move'].create({
+            'name': 'Test Least Package',
+            'product_id': self.product.id,
+            'product_uom': self.product.uom_id.id,
+            'location_id': self.stock_location.id,
+            'location_dest_id': self.ref('stock.stock_location_customers'),
+            'product_uom_qty': 1000,
+        })
+        move._action_confirm()
+        move._action_assign()
+        self.assertEqual(len(move.move_line_ids), 1, 'Only one pack could be use')
+        self.assertTrue(
+            move.move_line_ids.package_id,
+            'A package should be selected, priority to package even if there is enough quantity without package'
+        )
+
+    def test_least_package_removal_strategy_simple_usecase(self):
+        """
+         Tests the least package removal strategy in a simple "typical" use case.
+         It should return a minimal exact matching for the requested quantity.
+        """
+        packages_data = [
+            (5, 10),
+            (50, 10),
+            (1000, 2),
+        ]
+        self._generate_data(packages_data)
+
+        # Out 1000 should select a package with 1000 units inside
+        move = self.env['stock.move'].create({
+            'name': 'Test Least Package',
+            'product_id': self.product.id,
+            'product_uom': self.product.uom_id.id,
+            'location_id': self.stock_location.id,
+            'location_dest_id': self.ref('stock.stock_location_customers'),
+            'product_uom_qty': 1280,
+        })
+        move._action_confirm()
+        move._action_assign()
+        self.assertEqual(len(move.move_line_ids), 12)
+        self.assertRecordValues(
+            move.move_line_ids,
+            [{'reserved_qty': 1000}] +
+            [{'reserved_qty': 50}] * 5 +
+            [{'reserved_qty': 5}] * 6
+        )
+
+    def test_least_package_removal_strategy_not_possible(self):
+        """
+        Tests the least package removal strategy in the case where an exact matching
+        of packages is not possible for the requested amount.
+        It should return the best leaf from the A* search.
+        """
+        packages_data = [
+            (False, 2),
+            (5, 2),
+            (10, 5),
+        ]
+        self._generate_data(packages_data)
+
+        move = self.env['stock.move'].create({
+            'name': 'Test Least Package',
+            'product_id': self.product.id,
+            'product_uom': self.product.uom_id.id,
+            'location_id': self.stock_location.id,
+            'location_dest_id': self.ref('stock.stock_location_customers'),
+            'product_uom_qty': 13,
+        })
+        move._action_confirm()
+        move._action_assign()
+        self.assertEqual(len(move.move_line_ids), 2)
+        self.assertRecordValues(
+            move.move_line_ids,
+            [{'reserved_qty': 10}] + [{'reserved_qty': 3}]
+        )
+        # Make sure it selects the smallest possible package as best leaf.
+        self.assertEqual(
+            move.move_line_ids[1].package_id.quant_ids.quantity,
+            5
+        )
+
+    def test_least_package_removal_strategy_not_enough(self):
+        """
+        Tests the least package removal strategy in the case where not enough quantity
+        is available to fill the requested amount.
+        It should just return all the quantities in the domain.
+        """
+        packages_data = [
+            (False, 2),
+            (5, 2),
+            (10, 5),
+        ]
+        self._generate_data(packages_data)
+
+        move = self.env['stock.move'].create({
+            'name': 'Test Least Package',
+            'product_id': self.product.id,
+            'product_uom': self.product.uom_id.id,
+            'location_id': self.stock_location.id,
+            'location_dest_id': self.ref('stock.stock_location_customers'),
+            'product_uom_qty': 90,
+        })
+        move._action_confirm()
+        move._action_assign()
+        self.assertEqual(len(move.move_line_ids), 8)
+        self.assertRecordValues(
+            move.move_line_ids,
+            [{'reserved_qty': 2}] +
+            [{'reserved_qty': 10}] * 5 +
+            [{'reserved_qty': 5}] * 2
+        )
+
+    def test_quant_reserve(self):
+        """ Tests the reserve stock wizard which allows to choose a specific quant to reserve from
+            also checks if editing the reserved_uom_qty on stock.move.line updates the quants
+        """
+        customer_location = self.env.ref('stock.stock_location_customers')
+        self.env['stock.quant'].create({
+            'product_id': self.product.id,
+            'quantity': 2,
+            'location_id': self.stock_location.id
+        })
+        move_id = self.env['stock.move'].create({
+            'name': 'move out',
+            'location_id': self.stock_location.id,
+            'location_dest_id': customer_location.id,
+            'product_id': self.product.id,
+            'product_uom': self.product.uom_id.id,
+            'product_uom_qty': 2.0,
+        })
+        move_id._action_confirm()
+        move_id._action_assign()
+        self.assertEqual(move_id.state, 'assigned')
+        self.assertEqual(len(move_id.move_line_ids), 1)
+        self.assertEqual(move_id.move_line_ids.reserved_uom_qty, 2)
+        # available should be 0
+        available_qty = self.env['stock.quant']._get_available_quantity(self.product, self.stock_location)
+        self.assertEqual(available_qty, 0)
+        # unreserve, qty available should be 2 and move state back to confirmed
+        move_id.move_line_ids.reserved_uom_qty = 0
+        available_qty = self.env['stock.quant']._get_available_quantity(self.product, self.stock_location)
+        self.assertEqual(available_qty, 2)
+        self.assertEqual(move_id.state, 'confirmed')
+        # reserve qty again, checks to be able to reserve from confirmed state, and only reserve what's available
+        move_id.move_line_ids.reserved_uom_qty = 4
+        self.assertEqual(move_id.state, 'assigned')
+        self.assertEqual(move_id.move_line_ids.reserved_uom_qty, 2)
+        # unreserve and try to reserve from wizard
+        move_id.move_line_ids.unlink()
+        wiz_action = self.env['stock.move.line'].with_context(default_move_id=move_id.id).action_open_reserve_stock()
+        wiz = self.env[wiz_action['res_model']].with_context(wiz_action['context']).create({})
+        self.assertEqual(wiz.move_id.id, move_id.id)
+        self.assertEqual(wiz.demand_qty, move_id.product_qty)
+        self.assertEqual(len(wiz.quant_line_ids), 1)
+        wiz.quant_line_ids.qty_to_reserve = 4
+        with self.assertRaises(UserError):
+            wiz.reserve_stock()
+        wiz.quant_line_ids.qty_to_reserve = 2
+        wiz.reserve_stock()
+        self.assertEqual(len(move_id.move_line_ids), 1)
+        self.assertEqual(move_id.state, 'assigned')
+        self.assertEqual(move_id.move_line_ids.reserved_uom_qty, 2)
+        move_id._set_quantities_to_reservation()
+        move_id._action_done()
+        self.assertEqual(move_id.state, 'done')

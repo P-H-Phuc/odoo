@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+<<<<<<< HEAD
 import datetime
 from lxml import etree
 
+=======
+from lxml import etree
+
+from odoo import Command
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 from odoo.tests import tagged
 from odoo.addons.l10n_it_edi.tests.common import TestItEdi
 from odoo.exceptions import UserError
@@ -16,6 +22,7 @@ class TestItEdiExport(TestItEdi):
     def setUpClass(cls):
         super().setUpClass()
 
+<<<<<<< HEAD
         cls.price_included_tax = cls.env['account.tax'].create({
             'name': '22% price included tax',
             'amount': 22.0,
@@ -55,6 +62,8 @@ class TestItEdiExport(TestItEdi):
             ],
         })
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         cls.italian_partner_b = cls.env['res.partner'].create({
             'name': 'pa partner',
             'vat': 'IT06655971007',
@@ -86,190 +95,257 @@ class TestItEdiExport(TestItEdi):
             'is_company': True,
         })
 
-        cls.standard_line_below_400 = {
-            'name': 'cheap_line',
-            'quantity': 1,
-            'price_unit': 100.00,
-            'tax_ids': [(6, 0, [cls.company.account_sale_tax_id.id])]
-        }
+    def test_export_invoice_price_included_taxes(self):
+        """ When the tax is price included, there should be a rounding value added to the xml, if the
+        sum(subtotals) * tax_rate is not equal to taxable base * tax rate (there is a constraint in the edi where
+        taxable base * tax rate = tax amount, but also taxable base = sum(subtotals) + rounding amount).
+        """
+        tax_included = self.env['account.tax'].with_company(self.company).create({
+            'name': "22% price included tax",
+            'amount': 22.0,
+            'amount_type': 'percent',
+            'price_include': True,
+        })
 
-        cls.standard_line_400 = {
-            'name': '400_line',
-            'quantity': 1,
-            'price_unit': 327.87,
-            'tax_ids': [(6, 0, [cls.company.account_sale_tax_id.id])]
-        }
-
-        cls.price_included_invoice = cls.env['account.move'].with_company(cls.company).create({
+        invoice = self.env['account.move'].with_company(self.company).create({
             'move_type': 'out_invoice',
-            'invoice_date': datetime.date(2022, 3, 24),
-            'invoice_date_due': datetime.date(2022, 3, 24),
-            'partner_id': cls.italian_partner_a.id,
-            'partner_bank_id': cls.test_bank.id,
+            'invoice_date': '2022-03-24',
+            'invoice_date_due': '2022-03-24',
+            'partner_id': self.italian_partner_a.id,
             'invoice_line_ids': [
-                (0, 0, {
-                    **cls.standard_line,
-                    'name': 'something price included',
-                    'tax_ids': [(6, 0, [cls.price_included_tax.id])]
+                Command.create({
+                    'name': "something price included",
+                    'price_unit': 800.40,
+                    'tax_ids': [Command.set(tax_included.ids)],
                 }),
-                (0, 0, {
-                    **cls.standard_line,
-                    'name': 'something else price included',
-                    'tax_ids': [(6, 0, [cls.price_included_tax.id])]
+                Command.create({
+                    'name': "something else price included",
+                    'price_unit': 800.40,
+                    'tax_ids': [Command.set(tax_included.ids)],
                 }),
-                (0, 0, {
-                    **cls.standard_line,
-                    'name': 'something not price included',
+                Command.create({
+                    'name': "something not price included",
+                    'price_unit': 800.40,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
                 }),
             ],
         })
+        invoice.action_post()
+        self._assert_export_invoice(invoice, 'invoice_price_included_taxes.xml')
 
-        cls.partial_discount_invoice = cls.env['account.move'].with_company(cls.company).create({
+    def test_export_invoice_partially_discounted(self):
+        invoice = self.env['account.move'].with_company(self.company).create({
             'move_type': 'out_invoice',
-            'invoice_date': datetime.date(2022, 3, 24),
-            'invoice_date_due': datetime.date(2022, 3, 24),
-            'partner_id': cls.italian_partner_a.id,
-            'partner_bank_id': cls.test_bank.id,
+            'invoice_date': '2022-03-24',
+            'invoice_date_due': '2022-03-24',
+            'partner_id': self.italian_partner_a.id,
             'invoice_line_ids': [
-                (0, 0, {
-                    **cls.standard_line,
+                Command.create({
                     'name': 'no discount',
+                    'price_unit': 800.40,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
                 }),
-                (0, 0, {
-                    **cls.standard_line,
+                Command.create({
                     'name': 'special discount',
+                    'price_unit': 800.40,
                     'discount': 50,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
                 }),
-                (0, 0, {
-                    **cls.standard_line,
+                Command.create({
                     'name': "an offer you can't refuse",
+                    'price_unit': 800.40,
                     'discount': 100,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
                 }),
             ],
         })
+        invoice.action_post()
+        self._assert_export_invoice(invoice, 'invoice_partially_discounted.xml')
 
-        cls.full_discount_invoice = cls.env['account.move'].with_company(cls.company).create({
+    def test_invoice_fully_discounted(self):
+        invoice = self.env['account.move'].with_company(self.company).create({
             'move_type': 'out_invoice',
-            'invoice_date': datetime.date(2022, 3, 24),
-            'invoice_date_due': datetime.date(2022, 3, 24),
-            'partner_id': cls.italian_partner_a.id,
-            'partner_bank_id': cls.test_bank.id,
+            'invoice_date': '2022-03-24',
+            'invoice_date_due': '2022-03-24',
+            'partner_id': self.italian_partner_a.id,
             'invoice_line_ids': [
-                (0, 0, {
-                    **cls.standard_line,
+                Command.create({
                     'name': 'nothing shady just a gift for my friend',
+                    'price_unit': 800.40,
                     'discount': 100,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
                 }),
             ],
         })
+        invoice.action_post()
+        self._assert_export_invoice(invoice, 'invoice_fully_discounted.xml')
 
-        cls.non_latin_and_latin_invoice = cls.env['account.move'].with_company(cls.company).create({
+    def test_invoice_non_latin_and_latin(self):
+        invoice = self.env['account.move'].with_company(self.company).create({
             'move_type': 'out_invoice',
-            'invoice_date': datetime.date(2022, 3, 24),
-            'invoice_date_due': datetime.date(2022, 3, 24),
-            'partner_id': cls.italian_partner_a.id,
-            'partner_bank_id': cls.test_bank.id,
+            'invoice_date': '2022-03-24',
+            'invoice_date_due': '2022-03-24',
+            'partner_id': self.italian_partner_a.id,
             'invoice_line_ids': [
-                (0, 0, {
-                    **cls.standard_line,
+                Command.create({
                     'name': 'ʢ◉ᴥ◉ʡ',
-                    }),
-                (0, 0, {
-                    **cls.standard_line,
+                    'price_unit': 800.40,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
+                }),
+                Command.create({
                     'name': '–-',
-                    }),
-                (0, 0, {
-                    **cls.standard_line,
+                    'price_unit': 800.40,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
+                }),
+                Command.create({
                     'name': 'this should be the same as it was',
-                    }),
-                ],
-            })
+                    'price_unit': 800.40,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
+                }),
+            ],
+        })
+        invoice.action_post()
+        self._assert_export_invoice(invoice, 'invoice_non_latin_and_latin.xml')
 
-        cls.below_400_codice_simplified_invoice = cls.env['account.move'].with_company(cls.company).create({
+    def test_invoice_below_400_codice_simplified(self):
+        invoice = self.env['account.move'].with_company(self.company).create({
             'move_type': 'out_invoice',
-            'invoice_date': datetime.date(2022, 3, 24),
-            'invoice_date_due': datetime.date(2022, 3, 24),
-            'partner_id': cls.italian_partner_no_address_codice.id,
+            'invoice_date': '2022-03-24',
+            'invoice_date_due': '2022-03-24',
+            'partner_id': self.italian_partner_no_address_codice.id,
             'invoice_line_ids': [
-                (0, 0, {
-                    **cls.standard_line_below_400,
-                    }),
-                (0, 0, {
-                    **cls.standard_line_below_400,
+                Command.create({
+                    'name': 'cheap_line',
+                    'price_unit': 100.00,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
+                }),
+                Command.create({
                     'name': 'cheap_line_2',
                     'quantity': 2,
                     'price_unit': 10.0,
-                    }),
-                ],
-            })
+                    'tax_ids': [Command.set(self.default_tax.ids)],
+                }),
+            ],
+        })
+        invoice.action_post()
+        self._assert_export_invoice(invoice, 'invoice_below_400_codice_simplified.xml')
 
-        cls.total_400_VAT_simplified_invoice = cls.env['account.move'].with_company(cls.company).create({
+    def test_invoice_total_400_VAT_simplified(self):
+        invoice = self.env['account.move'].with_company(self.company).create({
             'move_type': 'out_invoice',
-            'invoice_date': datetime.date(2022, 3, 24),
-            'invoice_date_due': datetime.date(2022, 3, 24),
-            'partner_id': cls.italian_partner_no_address_VAT.id,
+            'invoice_date': '2022-03-24',
+            'invoice_date_due': '2022-03-24',
+            'partner_id': self.italian_partner_no_address_VAT.id,
             'invoice_line_ids': [
-                (0, 0, {
-                    **cls.standard_line_400,
-                    }),
-                ],
-            })
+                Command.create({
+                    'name': '400_line',
+                    'price_unit': 327.87,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
+                }),
+            ],
+        })
+        invoice.action_post()
+        self._assert_export_invoice(invoice, 'invoice_total_400_VAT_simplified.xml')
 
-        cls.more_400_simplified_invoice = cls.env['account.move'].with_company(cls.company).create({
+    def test_invoice_more_400_simplified(self):
+        invoice = self.env['account.move'].with_company(self.company).create({
             'move_type': 'out_invoice',
-            'invoice_date': datetime.date(2022, 3, 24),
-            'invoice_date_due': datetime.date(2022, 3, 24),
-            'partner_id': cls.italian_partner_no_address_codice.id,
+            'invoice_date': '2022-03-24',
+            'invoice_date_due': '2022-03-24',
+            'partner_id': self.italian_partner_no_address_codice.id,
             'invoice_line_ids': [
-                (0, 0, {
-                    **cls.standard_line,
-                    }),
-                ],
-            })
-
-        cls.non_domestic_simplified_invoice = cls.env['account.move'].with_company(cls.company).create({
-            'move_type': 'out_invoice',
-            'invoice_date': datetime.date(2022, 3, 24),
-            'invoice_date_due': datetime.date(2022, 3, 24),
-            'partner_id': cls.american_partner.id,
-            'invoice_line_ids': [
-                (0, 0, {
-                    **cls.standard_line_below_400,
-                    }),
-                ],
-            })
-
-        cls.pa_partner_invoice = cls.env['account.move'].with_company(cls.company).create({
-            'move_type': 'out_invoice',
-            'invoice_date': datetime.date(2022, 3, 24),
-            'invoice_date_due': datetime.date(2022, 3, 24),
-            'partner_id': cls.italian_partner_b.id,
-            'partner_bank_id': cls.test_bank.id,
-            'invoice_line_ids': [
-                (0, 0, cls.standard_line),
+                Command.create({
+                    'name': 'standard_line',
+                    'price_unit': 800.40,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
+                }),
             ],
         })
 
-        cls.zero_tax_invoice = cls.env['account.move'].with_company(cls.company).create({
+        with self.assertRaises(UserError):
+            invoice.action_post()
+
+    def test_invoice_non_domestic_simplified(self):
+        invoice = self.env['account.move'].with_company(self.company).create({
             'move_type': 'out_invoice',
-            'invoice_date': datetime.date(2022, 3, 24),
-            'invoice_date_due': datetime.date(2022, 3, 24),
-            'partner_id': cls.italian_partner_a.id,
-            'partner_bank_id': cls.test_bank.id,
+            'invoice_date': '2022-03-24',
+            'invoice_date_due': '2022-03-24',
+            'partner_id': self.american_partner.id,
             'invoice_line_ids': [
-                (0, 0, {
-                    **cls.standard_line,
+                Command.create({
+                    'name': 'cheap_line',
+                    'price_unit': 100.00,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
+                }),
+            ],
+        })
+
+        with self.assertRaises(UserError):
+            invoice.action_post()
+
+    def test_invoice_send_pa_partner(self):
+        invoice = self.env['account.move'].with_company(self.company).create({
+            'move_type': 'out_invoice',
+            'invoice_date': '2022-03-24',
+            'invoice_date_due': '2022-03-24',
+            'partner_id': self.italian_partner_b.id,
+            'partner_bank_id': self.test_bank.id,
+            'invoice_line_ids': [
+                Command.create({
+                    'name': 'standard_line',
+                    'price_unit': 800.40,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
+                }),
+            ],
+        })
+
+        res = self.edi_format._l10n_it_post_invoices_step_1(invoice)
+        self.assertEqual(res[invoice], {'attachment': invoice.l10n_it_edi_attachment_id, 'success': True})
+
+    def test_invoice_zero_percent_taxes(self):
+        tax_zero_percent_hundred_percent_repartition = self.env['account.tax'].with_company(self.company).create({
+            'name': 'all of nothing',
+            'amount': 0.0,
+            'amount_type': 'percent',
+        })
+
+        tax_zero_percent_zero_percent_repartition = self.env['account.tax'].with_company(self.company).create({
+            'name': 'none of nothing',
+            'amount': 0,
+            'amount_type': 'percent',
+            'invoice_repartition_line_ids': [
+                Command.create({'factor_percent': 100, 'repartition_type': 'base'}),
+                Command.create({'factor_percent': 0, 'repartition_type': 'tax'}),
+            ],
+            'refund_repartition_line_ids': [
+                Command.create({'factor_percent': 100, 'repartition_type': 'base'}),
+                Command.create({'factor_percent': 0, 'repartition_type': 'tax'}),
+            ],
+        })
+
+        invoice = self.env['account.move'].with_company(self.company).create({
+            'move_type': 'out_invoice',
+            'invoice_date': '2022-03-24',
+            'invoice_date_due': '2022-03-24',
+            'partner_id': self.italian_partner_a.id,
+            'partner_bank_id': self.test_bank.id,
+            'invoice_line_ids': [
+                Command.create({
                     'name': 'line with tax of 0% with repartition line of 100% ',
-                    'tax_ids': [(6, 0, [cls.tax_zero_percent_hundred_percent_repartition.id])],
+                    'price_unit': 800.40,
+                    'tax_ids': [Command.set(tax_zero_percent_hundred_percent_repartition.ids)],
                 }),
-                (0, 0, {
-                    **cls.standard_line,
+                Command.create({
                     'name': 'line with tax of 0% with repartition line of 0% ',
-                    'tax_ids': [(6, 0, [cls.tax_zero_percent_zero_percent_repartition.id])],
+                    'price_unit': 800.40,
+                    'tax_ids': [Command.set(tax_zero_percent_zero_percent_repartition.ids)],
                 }),
             ],
         })
+        invoice.action_post()
+        self._assert_export_invoice(invoice, 'invoice_zero_percent_taxes.xml')
 
+<<<<<<< HEAD
         cls.negative_price_invoice = cls.env['account.move'].with_company(cls.company).create({
             'move_type': 'out_invoice',
             'invoice_date': datetime.date(2022, 3, 24),
@@ -679,3 +755,27 @@ class TestItEdiExport(TestItEdi):
             ''')
         invoice_etree = self.with_applied_xpath(invoice_etree, "<xpath expr='.//Allegati' position='replace'/>")
         self.assertXmlTreeEqual(invoice_etree, expected_etree)
+=======
+    def test_invoice_negative_price(self):
+        invoice = self.env['account.move'].with_company(self.company).create({
+            'move_type': 'out_invoice',
+            'invoice_date': '2022-03-24',
+            'invoice_date_due': '2022-03-24',
+            'partner_id': self.italian_partner_a.id,
+            'partner_bank_id': self.test_bank.id,
+            'invoice_line_ids': [
+                Command.create({
+                    'name': 'standard_line',
+                    'price_unit': 800.40,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
+                }),
+                Command.create({
+                    'name': 'negative_line',
+                    'price_unit': -100.0,
+                    'tax_ids': [Command.set(self.default_tax.ids)],
+                }),
+            ],
+        })
+        invoice.action_post()
+        self._assert_export_invoice(invoice, 'invoice_negative_price.xml')
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

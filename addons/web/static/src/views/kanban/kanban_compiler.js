@@ -21,12 +21,12 @@ import { toInterpolatedStringExpression, ViewCompiler } from "@web/views/view_co
 const ACTION_TYPES = ["action", "object"];
 const SPECIAL_TYPES = [...ACTION_TYPES, "edit", "open", "delete", "url", "set_cover"];
 
-let currentDropdownId = 1;
 export class KanbanCompiler extends ViewCompiler {
     setup() {
         this.ctx.readonly = "read_only_mode";
         this.compilers.push(
             { selector: ".oe_kanban_colorpicker", fn: this.compileColorPicker },
+<<<<<<< HEAD
             {
                 selector: ".dropdown:not(.kanban_ignore_dropdown),.o_kanban_manage_button_section",
                 fn: this.compileDropdown,
@@ -93,6 +93,10 @@ export class KanbanCompiler extends ViewCompiler {
             dropdown.inserted = true;
         }
         return dropdown;
+=======
+            { selector: "t[t-call]", fn: this.compileTCall }
+        );
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 
     //-----------------------------------------------------------------------------
@@ -145,7 +149,7 @@ export class KanbanCompiler extends ViewCompiler {
         const strParams = Object.entries(nodeParams)
             .map(([k, v]) => [k, toStringExpression(v)].join(":"))
             .join(",");
-        el.setAttribute("t-on-click", `()=>this.triggerAction({${strParams}})`);
+        el.setAttribute("t-on-click", `()=>__comp__.triggerAction({${strParams}})`);
 
         const compiled = createElement(el.nodeName);
         for (const { name, value } of el.attributes) {
@@ -165,66 +169,10 @@ export class KanbanCompiler extends ViewCompiler {
      * @returns {Element}
      */
     compileColorPicker() {
-        return createElement("t", { "t-call": "web.KanbanColorPicker" });
-    }
-
-    /**
-     * @param {Element} el
-     * @param {Object} params
-     * @returns {Element | null}
-     */
-    compileDropdown(el, params) {
-        const { shouldInsert, el: dropdownEl } = this.renderDropdown("dropdown");
-        const classes = [...el.classList].filter((cls) => cls && cls !== "dropdown").join(" ");
-
-        combineAttributes(dropdownEl, "class", toStringExpression(classes), "+' '+");
-
-        for (const child of el.childNodes) {
-            append(dropdownEl, this.compileNode(child, params));
-        }
-
-        return shouldInsert && dropdownEl;
-    }
-
-    /**
-     * @param {Element} el
-     * @param {Object} params
-     * @returns {Element | null}
-     */
-    compileDropdownMenu(el, params) {
-        const { shouldInsert, el: dropdownEl } = this.renderDropdown("menu");
-        const cls = el.getAttribute("class") || "";
-
-        combineAttributes(dropdownEl, "menuClass", toStringExpression(cls), "+' '+");
-        const wrapper = createElement("KanbanDropdownMenuWrapper");
-
-        for (const child of el.childNodes) {
-            append(wrapper, this.compileNode(child, params));
-        }
-
-        append(dropdownEl, wrapper);
-
-        return shouldInsert && dropdownEl;
-    }
-
-    /**
-     * @param {Element} el
-     * @param {Object} params
-     * @returns {Element | null}
-     */
-    compileDropdownToggler(el, params) {
-        const { shouldInsert, el: dropdownEl } = this.renderDropdown("toggler");
-        const classes = ["btn", ...el.classList].filter(Boolean).join(" ");
-        const togglerSlot = createElement("t", { "t-set-slot": "toggler" });
-
-        combineAttributes(dropdownEl, "togglerClass", toStringExpression(classes), "+' '+");
-
-        for (const child of el.childNodes) {
-            append(togglerSlot, this.compileNode(child, params));
-        }
-        append(dropdownEl, togglerSlot);
-
-        return shouldInsert && dropdownEl;
+        return createElement("t", {
+            "t-call": "web.KanbanColorPicker",
+            "t-call-context": "__comp__",
+        });
     }
 
     /**
@@ -241,7 +189,7 @@ export class KanbanCompiler extends ViewCompiler {
         } else {
             compiled = super.compileField(el, params);
             const fieldId = el.getAttribute("field_id") || el.getAttribute("name");
-            compiled.setAttribute("id", `'${fieldId}_' + props.record.id`);
+            compiled.setAttribute("id", `'${fieldId}_' + __comp__.props.record.id`);
         }
 
         const { bold, display } = extractAttributes(el, ["bold", "display"]);
@@ -301,7 +249,7 @@ export class KanbanCompiler extends ViewCompiler {
         const compiled = this.compileGenericNode(el, params);
         const tname = el.getAttribute("t-call");
         if (tname in this.templates) {
-            compiled.setAttribute("t-call", `{{templates[${toStringExpression(tname)}]}}`);
+            compiled.setAttribute("t-call", `{{__comp__.templates[${toStringExpression(tname)}]}}`);
         }
         return compiled;
     }

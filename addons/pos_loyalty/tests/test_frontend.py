@@ -629,7 +629,21 @@ class TestUi(TestPointOfSaleHttpCommon):
             ]
         })
 
+<<<<<<< HEAD
         self.main_pos_config2 = self.main_pos_config.copy()
+=======
+        self.cash_journal = self.env['account.journal'].create(
+            {'name': 'CASH journal', 'type': 'cash', 'code': 'CSH00'})
+        self.cash_payment_method = self.env['pos.payment.method'].create({
+            'name': 'Cash Test',
+            'journal_id': self.cash_journal.id,
+            'receivable_account_id': self.main_pos_config.payment_method_ids.filtered(lambda s: s.is_cash_count).receivable_account_id.id
+        })
+
+        self.main_pos_config2 = self.main_pos_config.copy({
+            'payment_method_ids': self.cash_payment_method
+        })
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         loyalty_program = self.env['loyalty.program'].create({
             'name': 'Coupon Program - Pricelist',
@@ -681,10 +695,19 @@ class TestUi(TestPointOfSaleHttpCommon):
 
         if not self.env["ir.module.module"].search([("name", "=", "pos_discount"), ("state", "=", "installed")]):
             self.skipTest("pos_discount module is required for this test")
+<<<<<<< HEAD
 
         tax01 = self.env["account.tax"].create({
             "name": "C01 Tax",
             "amount": "0.00"
+=======
+        LoyaltyProgram = self.env['loyalty.program']
+        (LoyaltyProgram.search([])).write({'pos_ok': False})
+
+        tax = self.env["account.tax"].create({
+            "name": "C01 Tax",
+            "amount": "0.00",
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         })
 
         self.discount_product = self.env["product.product"].create(
@@ -693,6 +716,7 @@ class TestUi(TestPointOfSaleHttpCommon):
                 "type": "service",
                 "list_price": 0,
                 "available_in_pos": True,
+<<<<<<< HEAD
                 "taxes_id": [(6, 0, tax01.ids)],
             }
         )
@@ -700,6 +724,26 @@ class TestUi(TestPointOfSaleHttpCommon):
         self.main_pos_config2 = self.main_pos_config.copy()
         self.main_pos_config2.write({
             'module_pos_discount': True,
+=======
+                "taxes_id": [(6, 0, [tax.id])],
+            }
+        )
+
+        self.cash_journal = self.env['account.journal'].create(
+            {'name': 'CASH journal', 'type': 'cash', 'code': 'CSHDI'})
+        self.cash_payment_method = self.env['pos.payment.method'].create({
+            'name': 'Cash Test',
+            'journal_id': self.cash_journal.id,
+            'receivable_account_id': self.main_pos_config.payment_method_ids.filtered(
+                lambda s: s.is_cash_count).receivable_account_id.id
+        })
+
+        self.main_pos_config2 = self.main_pos_config.copy({
+            'payment_method_ids': self.cash_payment_method
+        })
+        self.main_pos_config2.write({
+            'module_pos_discount' : True,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'discount_product_id': self.discount_product.id,
             'discount_pc': 20,
         })
@@ -710,7 +754,11 @@ class TestUi(TestPointOfSaleHttpCommon):
             'trigger': 'with_code',
             'applies_on': 'current',
             'pos_ok': True,
+<<<<<<< HEAD
             'pos_config_ids': [Command.link(self.main_pos_config2.id)],
+=======
+            'pos_config_ids': [Command.link(self.main_pos_config.id)],
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'rule_ids': [(0, 0, {
                 'reward_point_mode': 'order',
                 'reward_point_amount': 1,
@@ -725,6 +773,10 @@ class TestUi(TestPointOfSaleHttpCommon):
             })],
         })
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         self.product = self.env["product.product"].create(
             {
                 "name": "Test Product 1",
@@ -738,7 +790,11 @@ class TestUi(TestPointOfSaleHttpCommon):
 
         self.start_tour(
             "/pos/web?config_id=%d" % self.main_pos_config2.id,
+<<<<<<< HEAD
             "PosLoyaltyTour5",
+=======
+            "PosCouponTour5",
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             login="accountman",
         )
 
@@ -791,6 +847,7 @@ class TestUi(TestPointOfSaleHttpCommon):
             "PosLoyaltyFreeProductTour2",
             login="accountman",
         )
+<<<<<<< HEAD
 
     def test_gift_card_value_with_discount(self):
         """When selling a gift card with a discount, the value of the gift card
@@ -814,3 +871,5 @@ class TestUi(TestPointOfSaleHttpCommon):
         # Check the created gift cards.
         self.assertEqual(len(programs['gift_card_1'].coupon_ids), 1)
         self.assertEqual(programs['gift_card_1'].coupon_ids.points, 50)
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

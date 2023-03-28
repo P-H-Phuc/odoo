@@ -7,14 +7,22 @@ import { deserializeDate, deserializeDateTime } from "@web/core/l10n/dates";
 import { KeepLast } from "@web/core/utils/concurrency";
 import { escape } from "@web/core/utils/strings";
 import { mapDoActionOptionAPI } from "@web/legacy/backend_utils";
+import {
+    mapActiveFieldsToFieldsInfo,
+    mapViews,
+    mapWowlValueToLegacy,
+} from "@web/views/legacy_utils";
 import { Model } from "@web/views/model";
 import { evalDomain } from "@web/views/utils";
+<<<<<<< HEAD
 import {
     mapWowlValueToLegacy,
     mapViews,
     mapActiveFieldsToFieldsInfo,
 } from "@web/views/legacy_utils";
 import { localization } from "@web/core/l10n/localization";
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import BasicModel from "web.BasicModel";
 import Context from "web.Context";
 
@@ -71,6 +79,11 @@ class DataPoint {
         return this.model.__bm__._getLazyEvalContext(datapoint);
     }
 
+    getEvalContext(forDomain) {
+        const datapoint = this.model.__bm__.localData[this.__bm_handle__];
+        return this.model.__bm__._getEvalContext(datapoint, forDomain, false, true);
+    }
+
     get fieldNames() {
         return Object.keys(this.activeFields);
     }
@@ -95,6 +108,9 @@ export class Record extends DataPoint {
         this._savePromise = Promise.resolve();
         this._domains = {};
         this._closeInvalidFieldsNotification = () => {};
+
+        this.onWillSaveRecord = params.onWillSaveRecord || (() => {});
+        this.onRecordSaved = params.onRecordSaved || (() => {});
 
         this._requiredFields = {};
         for (const [fieldName, activeField] of Object.entries(this.activeFields)) {
@@ -147,38 +163,16 @@ export class Record extends DataPoint {
         return this.model.__bm__.isDirty(this.__bm_handle__);
     }
 
-    get dirtyFields() {
-        const changes = this.model.__bm__.localData[this.__bm_handle__]._changes;
-        if (!changes) {
-            return [];
-        }
-        return Object.keys(changes).map((change) => this.activeFields[change]);
-    }
-
-    get translatableFields() {
-        if (!localization.multiLang) {
-            return [];
-        }
-        return Object.values(this.fields)
-            .filter((f) => f.translate)
-            .map((f) => this.activeFields[f.name]);
-    }
-
-    get dirtyTranslatableFields() {
-        return this.translatableFields.filter((f) => this.dirtyFields.includes(f));
-    }
-
     get isInEdition() {
         return this.mode === "edit";
     }
 
     get isNew() {
-        return this.model.__bm__.isNew(this.__bm_handle__);
+        return !this.resId;
     }
 
-    get isVirtual() {
-        // FIXME: not sure about this virtual thing
-        return !this.resId;
+    get isValid() {
+        return !this._invalidFields.size;
     }
 
     get isValid() {
@@ -204,7 +198,7 @@ export class Record extends DataPoint {
 
     async askChanges() {
         const proms = [];
-        this.model.env.bus.trigger("RELATIONAL_MODEL:NEED_LOCAL_CHANGES", { proms });
+        this.model.bus.trigger("NEED_LOCAL_CHANGES", { proms });
         return Promise.all([...proms, this._updatePromise]);
     }
 
@@ -229,10 +223,9 @@ export class Record extends DataPoint {
                 }
             }
 
-            const isSet =
-                activeField && activeField.FieldComponent && activeField.FieldComponent.isSet;
+            const isSet = activeField && activeField.field && activeField.field.isSet;
 
-            if (this.isRequired(fieldName) && isSet && !isSet(this.data[fieldName])) {
+            if (this._isRequired(fieldName) && isSet && !isSet(this.data[fieldName])) {
                 this.setInvalidField(fieldName);
                 continue;
             }
@@ -255,7 +248,7 @@ export class Record extends DataPoint {
                     }
                     break;
                 default:
-                    if (!isSet && this.isRequired(fieldName) && !this.data[fieldName]) {
+                    if (!isSet && this._isRequired(fieldName) && !this.data[fieldName]) {
                         this._setInvalidField(fieldName);
                     }
             }
@@ -293,12 +286,17 @@ export class Record extends DataPoint {
         return true;
     }
 
+    isFieldDirty(fieldName) {
+        const changes = this.model.__bm__.localData[this.__bm_handle__]._changes;
+        return changes && changes[fieldName];
+    }
+
     /**
      * FIXME: memoize this at some point?
      * @param {string} fieldName
      * @returns {boolean}
      */
-    isReadonly(fieldName) {
+    _isReadonly(fieldName) {
         const { readonly } = this.activeFields[fieldName].modifiers || {};
         return evalDomain(readonly, this.evalContext);
     }
@@ -308,7 +306,7 @@ export class Record extends DataPoint {
      * @param {string} fieldName
      * @returns {boolean}
      */
-    isRequired(fieldName) {
+    _isRequired(fieldName) {
         const { required } = this.activeFields[fieldName].modifiers || {};
         return evalDomain(required, this.evalContext);
     }
@@ -449,6 +447,7 @@ export class Record extends DataPoint {
                         : false;
                     break;
                 }
+                case "text":
                 case "char": {
                     data[fieldName] = data[fieldName] || "";
                     break;
@@ -465,19 +464,16 @@ export class Record extends DataPoint {
         this.data = data;
     }
 
-    getFieldContext(fieldName) {
+    getFieldDomain(fieldName) {
+        const { domain } = this.fields[fieldName];
+        return domain ? new Domain(domain).toList(this.getEvalContext(true)) : [];
+    }
+
+    _getFieldContext(fieldName) {
         return this.model.__bm__.localData[this.__bm_handle__].getContext({
             fieldName,
             viewType: this.__viewType,
         });
-    }
-
-    getFieldDomain(fieldName) {
-        const domain = this.model.__bm__.localData[this.__bm_handle__].getDomain({
-            fieldName,
-            viewType: this.__viewType,
-        });
-        return new Domain(JSON.parse(JSON.stringify(domain))); // legacy pyjs inserts weird structures
     }
 
     async update(changes) {
@@ -588,6 +584,7 @@ export class Record extends DataPoint {
      * @param {boolean} [options.useSaveErrorDialog=false] displays a custom
      *  dialog and await the response from this dialog when an error is
      *  returned by the server.
+<<<<<<< HEAD
      * @returns {Promise<boolean>}
      */
     async save(
@@ -598,6 +595,23 @@ export class Record extends DataPoint {
             useSaveErrorDialog: false,
         }
     ) {
+=======
+     * @param {boolean} [options.throwOnError=false] throws the saving error if
+     *  applicable, allowing to catch it.
+     * @returns {Promise<boolean>}
+     */
+    async save(options = {}) {
+        options = Object.assign(
+            {
+                stayInEdition: true,
+                noReload: false,
+                savePoint: false,
+                useSaveErrorDialog: false,
+                throwOnError: false,
+            },
+            options
+        );
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         const shouldSwitchToReadonly = !options.stayInEdition && this.isInEdition;
         let resolveSavePromise;
         this._savePromise = new Promise((r) => {
@@ -616,6 +630,9 @@ export class Record extends DataPoint {
                 }
             );
             resolveSavePromise();
+            return false;
+        }
+        if ((await this.onWillSaveRecord(this)) === false) {
             return false;
         }
         const saveOptions = {
@@ -642,6 +659,12 @@ export class Record extends DataPoint {
                 await this.load();
                 this.model.notify();
             }
+<<<<<<< HEAD
+=======
+            if (options.throwOnError) {
+                throw _e;
+            }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             return canProceed;
         }
         this.__syncData(true);
@@ -650,6 +673,8 @@ export class Record extends DataPoint {
         }
         this.model.notify();
         resolveSavePromise();
+
+        await this.onRecordSaved(this);
         return true;
     }
 
@@ -680,7 +705,7 @@ export class Record extends DataPoint {
     async urgentSave() {
         this.model.__bm__.bypassMutex = true;
         this._urgentSave = true;
-        this.model.env.bus.trigger("RELATIONAL_MODEL:WILL_SAVE_URGENTLY");
+        this.model.bus.trigger("WILL_SAVE_URGENTLY");
         await Promise.resolve();
         this.__syncData();
         let isValid = true;
@@ -1149,6 +1174,9 @@ export class RelationalModel extends Model {
         };
 
         this.initialMode = params.mode;
+
+        this.onWillSaveRecord = params.onWillSaveRecord || (() => {});
+        this.onRecordSaved = params.onRecordSaved || (() => {});
     }
 
     async duplicateDatapoint(record, params) {
@@ -1331,6 +1359,8 @@ export class RelationalModel extends Model {
             {
                 __bm_load_params__: loadParams,
                 mode: this.initialMode,
+                onWillSaveRecord: this.onWillSaveRecord,
+                onRecordSaved: this.onRecordSaved,
             },
             state
         );

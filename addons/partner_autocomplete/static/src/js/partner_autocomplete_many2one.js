@@ -1,7 +1,11 @@
 /** @odoo-module **/
 
 import { Many2XAutocomplete } from '@web/views/fields/relational_utils';
+<<<<<<< HEAD
 import { Many2OneField } from '@web/views/fields/many2one/many2one_field';
+=======
+import { Many2OneField, many2OneField } from '@web/views/fields/many2one/many2one_field';
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { _t } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
 
@@ -68,4 +72,13 @@ PartnerAutoCompleteMany2one.components = {
     Many2XAutocomplete: PartnerMany2XAutocomplete,
 }
 
+<<<<<<< HEAD
 registry.category("fields").add("res_partner_many2one", PartnerAutoCompleteMany2one);
+=======
+export const partnerAutoCompleteMany2one = {
+    ...many2OneField,
+    component: PartnerAutoCompleteMany2one,
+};
+
+registry.category("fields").add("res_partner_many2one", partnerAutoCompleteMany2one);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

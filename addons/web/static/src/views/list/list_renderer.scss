@@ -5,6 +5,28 @@
     --ListRenderer-thead-padding-v: #{$table-cell-padding-y * 1.25};
     --ListRenderer-thead-bg-color: #{$gray-200};
     --ListRenderer-thead-border-end-color: #{$border-color};
+    --ListRenderer-thead-shadow: linear-gradient(180deg, rgba(0, 0, 0, 0.08), transparent);
+
+    // sticky header on desktop
+    @include media-breakpoint-up(md) {
+        height: 100%;
+
+        .o_list_table thead {
+            @include o-position-sticky(0);
+            z-index: 1;
+
+            &:after {
+                @include o-position-absolute($left: 0, $right: 0);
+                height: map-get($spacers, 3);
+                border-top: $border-width solid $border-color;
+                background-image: var(--ListRenderer-thead-shadow);
+                transform: translateY(-#{$border-width}); // Compensate rendering misplacement
+                -moz-transform: translateY(0); // Firefox doesn't need rendering adjustments
+                pointer-events: none;
+                content: '';
+            }
+        }
+    }
 
     .o_list_view &  {
         --ListRenderer-table-padding-h: #{$o-horizontal-padding};
@@ -41,10 +63,6 @@
         thead {
             background-color: var(--ListRenderer-thead-bg-color);
             color: $headings-color;
-
-            th:not(.o_list_record_selector) {
-                border-left: $border-width solid var(--ListRenderer-thead-border-end-color);
-            }
         }
 
         // Override BS default
@@ -413,6 +431,13 @@
             flex-shrink: 0;
         }
     }
+<<<<<<< HEAD
+=======
+
+    .o_optional_columns_dropdown .dropdown-item .o-checkbox .text-truncate {
+        max-width: 30em;
+    }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 }
 
 @include media-breakpoint-down(md) {
@@ -444,4 +469,15 @@
     thead .o_list_record_selector {
         @include o-sample-data-disabled;
     }
+<<<<<<< HEAD
+=======
+}
+
+.o_list_view .o_list_buttons {
+    gap: 0.5rem;
+
+    > * {
+        margin: auto 0;
+    }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 }

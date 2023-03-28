@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-10 10:23+0000\n"
 "PO-Revision-Date: 2022-10-10 10:23+0000\n"
+=======
+"Project-Id-Version: Odoo Server saas~16.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-17 08:01+0000\n"
+"PO-Revision-Date: 2023-01-17 08:01+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -444,13 +451,6 @@ msgid "Is Follower"
 msgstr ""
 
 #. module: event_booth
-#: model:ir.model.fields,field_description:event_booth.field_event_booth____last_update
-#: model:ir.model.fields,field_description:event_booth.field_event_booth_category____last_update
-#: model:ir.model.fields,field_description:event_booth.field_event_type_booth____last_update
-msgid "Last Modified on"
-msgstr ""
-
-#. module: event_booth
 #: model:ir.model.fields,field_description:event_booth.field_event_booth__write_uid
 #: model:ir.model.fields,field_description:event_booth.field_event_booth_category__write_uid
 #: model:ir.model.fields,field_description:event_booth.field_event_type_booth__write_uid
@@ -535,6 +535,7 @@ msgid "Number of messages with delivery error"
 msgstr ""
 
 #. module: event_booth
+<<<<<<< HEAD
 #: model:event.booth,name:event_booth.event_booth_10_event_7
 msgid "OpenWood Demonstrator 1"
 msgstr ""
@@ -550,6 +551,8 @@ msgid "OpenWood Demonstrator 3"
 msgstr ""
 
 #. module: event_booth
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model_terms:ir.ui.view,arch_db:event_booth.event_booth_view_form_from_event
 #: model_terms:ir.ui.view,arch_db:event_booth.event_booth_view_form_quick_create
 #: model_terms:ir.ui.view,arch_db:event_booth.event_type_booth_view_form_from_type

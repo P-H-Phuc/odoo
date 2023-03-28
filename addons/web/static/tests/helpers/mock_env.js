@@ -2,7 +2,10 @@
 
 import { registry } from "@web/core/registry";
 import { makeEnv, startServices } from "@web/env";
+<<<<<<< HEAD
 import FormController from "web.FormController";
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { SERVICES_METADATA } from "../../src/env";
 import { registerCleanup } from "./cleanup";
 import { makeMockServer } from "./mock_server";
@@ -48,19 +51,24 @@ export function clearServicesMetadataWithCleanup() {
     });
 }
 
+export const registryNamesToCloneWithCleanup = [
+    "actions",
+    "command_provider",
+    "command_setup",
+    "error_handlers",
+    "fields",
+    "fields",
+    "main_components",
+    "view_widgets",
+    "views",
+    "wowlToLegacyServiceMappers",
+];
+
 function prepareRegistriesWithCleanup() {
     // Clone registries
-    cloneRegistryWithCleanup(registry.category("actions"));
-    cloneRegistryWithCleanup(registry.category("views"));
-    cloneRegistryWithCleanup(registry.category("error_handlers"));
-    cloneRegistryWithCleanup(registry.category("command_provider"));
-    cloneRegistryWithCleanup(registry.category("command_setup"));
-    cloneRegistryWithCleanup(registry.category("view_widgets"));
-    cloneRegistryWithCleanup(registry.category("fields"));
-    cloneRegistryWithCleanup(registry.category("wowlToLegacyServiceMappers"));
-
-    cloneRegistryWithCleanup(registry.category("main_components"));
-    cloneRegistryWithCleanup(registry.category("fields"));
+    registryNamesToCloneWithCleanup.forEach((registryName) =>
+        cloneRegistryWithCleanup(registry.category(registryName))
+    );
 
     // Clear registries
     clearRegistryWithCleanup(registry.category("command_categories"));
@@ -68,6 +76,7 @@ function prepareRegistriesWithCleanup() {
     clearRegistryWithCleanup(registry.category("error_dialogs"));
     clearRegistryWithCleanup(registry.category("favoriteMenu"));
     clearRegistryWithCleanup(registry.category("ir.actions.report handlers"));
+    clearRegistryWithCleanup(registry.category("main_components"));
     clearRegistryWithCleanup(registry.category("wowlToLegacyServiceMappers"));
 
     clearRegistryWithCleanup(registry.category("services"));
@@ -77,7 +86,6 @@ function prepareRegistriesWithCleanup() {
     clearRegistryWithCleanup(registry.category("user_menuitems"));
     clearRegistryWithCleanup(registry.category("kanban_examples"));
     clearRegistryWithCleanup(registry.category("__processed_archs__"));
-    clearRegistryWithCleanup(registry.category("action_menus"));
     // fun fact: at least one registry is missing... this shows that we need a
     // better design for the way we clear these registries...
 }
@@ -117,14 +125,6 @@ export async function makeTestEnv(config = {}) {
     if (config.serverData || config.mockRPC || config.activateMockServer) {
         await makeMockServer(config.serverData, config.mockRPC);
     }
-
-    // remove the multi-click delay for the quick edit in form views
-    // todo: move this elsewhere (setup?)
-    const initialQuickEditDelay = FormController.prototype.multiClickTime;
-    FormController.prototype.multiClickTime = 0;
-    registerCleanup(() => {
-        FormController.prototype.multiClickTime = initialQuickEditDelay;
-    });
 
     let env = makeEnv();
     await startServices(env);

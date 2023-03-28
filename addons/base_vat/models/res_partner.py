@@ -63,7 +63,11 @@ _ref_vat = {
     'no': 'NO123456785',
     'nz': '49-098-576 or 49098576',
     'pe': '10XXXXXXXXY or 20XXXXXXXXY or 15XXXXXXXXY or 16XXXXXXXXY or 17XXXXXXXXY',
+<<<<<<< HEAD
     'ph': '123-456-789-123',
+=======
+    'ph': '123-456-789-01234',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     'pl': 'PL1234567883',
     'pt': 'PT123456789',
     'ro': 'RO1234567897',

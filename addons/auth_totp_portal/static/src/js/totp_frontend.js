@@ -48,7 +48,7 @@ function fromField(f, record) {
         copyButton.setAttribute('class', 'btn btn-sm btn-primary o_clipboard_button o_btn_char_copy py-0 px-2');
         copyButton.onclick = function(event) {
             event.preventDefault();
-            $(copyButton).tooltip({title: _t("Copied !"), trigger: "manual", placement: "bottom"});
+            $(copyButton).tooltip({title: _t("Copied!"), trigger: "manual", placement: "bottom"});
             var clipboard = new ClipboardJS('.o_clipboard_button', {
                 target: function () {
                     return $(secretSpan)[0];
@@ -278,7 +278,7 @@ publicWidget.registry.RevokeTrustedDeviceButton = publicWidget.Widget.extend({
             this._rpc({
                 model: 'auth_totp.device',
                 method: 'remove',
-                args: [parseInt(this.target.id)]
+                args: [parseInt(this.el.id)]
             })
         );
         window.location = window.location;

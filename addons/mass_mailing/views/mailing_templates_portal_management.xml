@@ -25,7 +25,11 @@
     </template>
 
     <!-- Dummy layout to "view" a template content (html) -->
+<<<<<<< HEAD
     <template id="view" name="Browser View">
+=======
+    <template id="mailing_view" name="Browser View">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 &lt;!DOCTYPE html&gt;
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>

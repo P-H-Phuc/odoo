@@ -1158,4 +1158,40 @@ QUnit.module("Components", ({ beforeEach }) => {
             assert.notOk(target.querySelector(".o_datepicker_input").value === "");
         }
     );
+
+    QUnit.test("onOpened callback props called after the menu has been mounted", async (assert) => {
+        const beforeOpenProm = makeDeferred();
+        class Parent extends Component {
+            beforeOpenCallback() {
+                assert.step("beforeOpened");
+                return beforeOpenProm;
+            }
+            onOpenedCallback() {
+                assert.step("onOpened");
+            }
+        }
+        Parent.template = xml`
+            <Dropdown onOpened.bind="onOpenedCallback" beforeOpen.bind="beforeOpenCallback" />
+        `;
+        Parent.components = { Dropdown, DropdownItem };
+        env = await makeTestEnv();
+        await mount(Parent, target, { env });
+        await click(target, "button.dropdown-toggle");
+        assert.verifySteps(["beforeOpened"]);
+        beforeOpenProm.resolve();
+        await nextTick();
+        assert.verifySteps(["onOpened"]);
+    });
+
+    QUnit.test("dropdown button can be disabled", async (assert) => {
+        class Parent extends Component {}
+        Parent.template = xml`<Dropdown disabled="true"/>`;
+        Parent.components = { Dropdown };
+        env = await makeTestEnv();
+        await mount(Parent, target, { env });
+        assert.strictEqual(
+            target.querySelector(".dropdown").outerHTML,
+            '<div class="o-dropdown dropdown o-dropdown--no-caret"><button class="dropdown-toggle" disabled="" tabindex="0" aria-expanded="false"></button></div>'
+        );
+    });
 });

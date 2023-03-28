@@ -6,6 +6,7 @@ from lxml.html import builder as html
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import is_html_empty
 
 
 class Invite(models.TransientModel):
@@ -39,10 +40,9 @@ class Invite(models.TransientModel):
 
     res_model = fields.Char('Related Document Model', required=True, help='Model of the followed resource')
     res_id = fields.Integer('Related Document ID', help='Id of the followed resource')
-    partner_ids = fields.Many2many('res.partner', string='Recipients', help="List of partners that will be added as follower of the current document.",
-                                   domain=[('type', '!=', 'private')])
+    partner_ids = fields.Many2many('res.partner', string='Recipients', domain=[('type', '!=', 'private')])
     message = fields.Html('Message')
-    send_mail = fields.Boolean('Send Email', default=True, help="If checked, the partners will receive an email warning they have been added in the document's followers.")
+    notify = fields.Boolean('Send Notification', default=True)
 
     def add_followers(self):
         if not self.env.user.email:
@@ -57,6 +57,7 @@ class Invite(models.TransientModel):
             document.message_subscribe(partner_ids=new_partners.ids)
 
             model_name = self.env['ir.model']._get(wizard.res_model).display_name
+<<<<<<< HEAD
             # send an email if option checked and if a message exists (do not send void emails)
             if wizard.send_mail and wizard.message and not wizard.message == '<br>':  # when deleting the message, cleditor keeps a <br>
                 message = self.env['mail.message'].create(
@@ -76,6 +77,13 @@ class Invite(models.TransientModel):
                 # deleted to discard the related failure notification
                 self.env['bus.bus']._sendone(self.env.user.partner_id, 'mail.message/delete', {'message_ids': message.ids})
                 message.unlink()
+=======
+            # send a notification if option checked and if a message exists (do not send void notifications)
+            if wizard.notify and wizard.message and not is_html_empty(wizard.message):
+                message_values = wizard._prepare_message_values(document, model_name, email_from)
+                message_values['partner_ids'] = new_partners.ids
+                document.message_notify(**message_values)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return {'type': 'ir.actions.act_window_close'}
 
     def _prepare_message_values(self, document, model_name, email_from):

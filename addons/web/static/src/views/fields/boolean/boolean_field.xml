@@ -2,7 +2,11 @@
 <templates xml:space="preserve">
 
     <t t-name="web.BooleanField" owl="1">
+<<<<<<< HEAD
         <CheckBox id="props.id" value="props.value or false" className="'d-inline-block'" disabled="isReadonly" onChange.bind="onChange" />
+=======
+        <CheckBox id="props.id" value="props.record.data[props.name] or false" className="'d-inline-block'" disabled="props.readonly" onChange.bind="onChange" />
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     </t>
 
 </templates>

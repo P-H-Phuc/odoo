@@ -118,7 +118,7 @@ class Message(models.Model):
     subtype_id = fields.Many2one('mail.message.subtype', 'Subtype', ondelete='set null', index=True)
     mail_activity_type_id = fields.Many2one(
         'mail.activity.type', 'Mail Activity Type',
-        index=True, ondelete='set null')
+        index='btree_not_null', ondelete='set null')
     is_internal = fields.Boolean('Employee Only', help='Hide to public / portal users, independently from subtype configuration.')
     # origin
     email_from = fields.Char('From', help="Email address of the sender. This field is set when no matching partner is found and replaces the author_id field in the chatter.")
@@ -256,7 +256,7 @@ class Message(models.Model):
         self._cr.execute("""CREATE INDEX IF NOT EXISTS mail_message_model_res_id_id_idx ON mail_message (model, res_id, id)""")
 
     @api.model
-    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+    def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
         """ Override that adds specific access rights of mail.message, to remove
         ids uid could not see according to our custom rules. Please refer to
         check_access_rule for more details about those rules.
@@ -273,28 +273,51 @@ class Message(models.Model):
         """
         # Rules do not apply to administrator
         if self.env.is_superuser():
-            return super(Message, self)._search(
-                args, offset=offset, limit=limit, order=order,
-                count=count, access_rights_uid=access_rights_uid)
+            return super()._search(domain, offset, limit, order, access_rights_uid)
+
         # Non-employee see only messages with a subtype and not internal
         if not self.env['res.users'].has_group('base.group_user'):
-            args = expression.AND([self._get_search_domain_share(), args])
-        # Perform a super with count as False, to have the ids, not a counter
-        ids = super(Message, self)._search(
-            args, offset=offset, limit=limit, order=order,
-            count=False, access_rights_uid=access_rights_uid)
-        if not ids and count:
-            return 0
-        elif not ids:
-            return ids
+            domain = self._get_search_domain_share() + domain
+
+        # make the search query with the default rules
+        query = super()._search(domain, offset, limit, order, access_rights_uid)
+
+        # retrieve matching records and determine which ones are truly accessible
+        self.flush_model(['model', 'res_id', 'author_id', 'message_type', 'partner_ids'])
+        self.env['mail.notification'].flush_model(['mail_message_id', 'res_partner_id'])
 
         pid = self.env.user.partner_id.id
-        author_ids, partner_ids, allowed_ids = set([]), set([]), set([])
-        model_ids = {}
+        ids = []
+        allowed_ids = set()
+        model_ids = defaultdict(lambda: defaultdict(set))
 
-        # check read access rights before checking the actual rules on the given ids
-        super(Message, self.with_user(access_rights_uid or self._uid)).check_access_rights('read')
+        rel_alias = query.left_join(
+            self._table, 'id', 'mail_message_res_partner_rel', 'mail_message_id', 'partner_ids',
+            '{rhs}.res_partner_id = %s', [pid],
+        )
+        notif_alias = query.left_join(
+            self._table, 'id', 'mail_notification', 'mail_message_id', 'notification_ids',
+            '{rhs}.res_partner_id = %s', [pid],
+        )
+        query_str, params = query.select(
+            f'"{self._table}"."id"',
+            f'"{self._table}"."model"',
+            f'"{self._table}"."res_id"',
+            f'"{self._table}"."author_id"',
+            f'"{self._table}"."message_type"',
+            f'COALESCE("{rel_alias}"."res_partner_id", "{notif_alias}"."res_partner_id")',
+        )
+        self.env.cr.execute(query_str, params)
+        for id_, model, res_id, author_id, message_type, partner_id in self.env.cr.fetchall():
+            ids.append(id_)
+            if author_id == pid:
+                allowed_ids.add(id_)
+            elif partner_id == pid:
+                allowed_ids.add(id_)
+            elif model and res_id and message_type != 'user_notification':
+                model_ids[model][res_id].add(id_)
 
+<<<<<<< HEAD
         self.flush_model(['model', 'res_id', 'author_id', 'message_type', 'partner_ids'])
         self.env['mail.notification'].flush_model(['mail_message_id', 'res_partner_id'])
         for sub_ids in self._cr.split_for_in_conditions(ids):
@@ -325,6 +348,11 @@ class Message(models.Model):
             # re-construct a list based on ids, because set did not keep the original order
             id_list = [id for id in ids if id in final_ids]
             return id_list
+=======
+        allowed_ids.update(self._find_allowed_doc_ids(model_ids))
+        allowed = self.browse(id_ for id_ in ids if id_ in allowed_ids)
+        return allowed._as_query(order)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     @api.model
     def _find_allowed_model_wise(self, doc_model, doc_dict):
@@ -346,6 +374,7 @@ class Message(models.Model):
         """ Access rules of mail.message:
             - read: if
                 - author_id == pid, uid is the author OR
+                - create_uid == uid, uid is the creator OR
                 - uid is in the recipients (partner_ids) OR
                 - uid has been notified (needaction) OR
                 - uid have read access to the related document if model, res_id
@@ -381,6 +410,10 @@ class Message(models.Model):
 
         if self.env.is_superuser():
             return
+
+        # just in case there are ir.rules
+        super().check_access_rule(operation)
+
         # Non employees see only messages with a subtype (aka, not internal logs)
         if not self.env['res.users'].has_group('base.group_user'):
             self._cr.execute('''SELECT DISTINCT message.id, message.subtype_id, subtype.internal
@@ -399,12 +432,13 @@ class Message(models.Model):
         # Read mail_message.ids to have their values
         message_values = dict((message_id, {}) for message_id in self.ids)
 
-        self.flush_recordset(['model', 'res_id', 'author_id', 'parent_id', 'message_type', 'partner_ids'])
+        self.flush_recordset(['model', 'res_id', 'author_id', 'create_uid', 'parent_id', 'message_type', 'partner_ids'])
         self.env['mail.notification'].flush_model(['mail_message_id', 'res_partner_id'])
 
         if operation == 'read':
             self._cr.execute("""
-                SELECT DISTINCT m.id, m.model, m.res_id, m.author_id, m.parent_id,
+                SELECT DISTINCT m.id, m.model, m.res_id, m.author_id, m.create_uid,
+                                m.parent_id,
                                 COALESCE(partner_rel.res_partner_id, needaction_rel.res_partner_id),
                                 m.message_type as message_type
                 FROM "%s" m
@@ -413,11 +447,12 @@ class Message(models.Model):
                 LEFT JOIN "mail_notification" needaction_rel
                 ON needaction_rel.mail_message_id = m.id AND needaction_rel.res_partner_id = %%(pid)s
                 WHERE m.id = ANY (%%(ids)s)""" % self._table, dict(pid=self.env.user.partner_id.id, ids=self.ids))
-            for mid, rmod, rid, author_id, parent_id, partner_id, message_type in self._cr.fetchall():
+            for mid, rmod, rid, author_id, create_uid, parent_id, partner_id, message_type in self._cr.fetchall():
                 message_values[mid] = {
                     'model': rmod,
                     'res_id': rid,
                     'author_id': author_id,
+                    'create_uid': create_uid,
                     'parent_id': parent_id,
                     'notified': any((message_values[mid].get('notified'), partner_id)),
                     'message_type': message_type,
@@ -459,7 +494,14 @@ class Message(models.Model):
         author_ids = []
         if operation == 'read':
             author_ids = [mid for mid, message in message_values.items()
-                          if message.get('author_id') and message.get('author_id') == self.env.user.partner_id.id]
+                          if (
+                                message.get('author_id') and
+                                message.get('author_id') == self.env.user.partner_id.id
+                            ) or (
+                                message.get('create_uid') and
+                                message.get('create_uid') == self.env.uid
+                            )
+                         ]
         elif operation == 'write':
             author_ids = [mid for mid, message in message_values.items() if message.get('author_id') == self.env.user.partner_id.id]
         elif operation == 'create':
@@ -571,7 +613,7 @@ class Message(models.Model):
             if 'record_name' not in values and 'default_record_name' not in self.env.context:
                 values['record_name'] = self._get_record_name(values)
 
-            if 'attachment_ids' not in values:
+            if not values.get('attachment_ids'):
                 values['attachment_ids'] = []
             # extract base64 images
             if 'body' in values:
@@ -610,10 +652,17 @@ class Message(models.Model):
         doc_to_attachment_ids = defaultdict(set)
         if all(isinstance(command, int) or command[0] in (4, 6)
                for values in values_list
+<<<<<<< HEAD
                for command in values.get('attachment_ids') or []):
             for values in values_list:
                 message_attachment_ids = set()
                 for command in values.get('attachment_ids') or []:
+=======
+               for command in values['attachment_ids']):
+            for values in values_list:
+                message_attachment_ids = set()
+                for command in values['attachment_ids']:
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     if isinstance(command, int):
                         message_attachment_ids.add(command)
                     elif command[0] == 6:
@@ -661,6 +710,15 @@ class Message(models.Model):
         self.check_access_rule('read')
         return super(Message, self).read(fields=fields, load=load)
 
+    def fetch(self, field_names):
+        # This freaky hack is aimed at reading data without the overhead of
+        # checking that "self" is accessible, which is already done above in
+        # methods read() and _search(). It reproduces the existing behavior
+        # before the introduction of method fetch(), where the low-lever
+        # reading method _read() did not enforce any actual permission.
+        self = self.sudo()
+        return super().fetch(field_names)
+
     def write(self, vals):
         record_changed = 'model' in vals or 'res_id' in vals
         if record_changed or 'message_type' in vals:
@@ -684,6 +742,22 @@ class Message(models.Model):
         self.mapped('attachment_ids').filtered(
             lambda attach: attach.res_model == self._name and (attach.res_id in self.ids or attach.res_id == 0)
         ).unlink()
+<<<<<<< HEAD
+=======
+        messages_by_partner = defaultdict(lambda: self.env['mail.message'])
+        partners_with_user = self.partner_ids.filtered('user_ids')
+        for elem in self:
+            for partner in elem.partner_ids & partners_with_user:
+                messages_by_partner[partner] |= elem
+
+        # Notify front-end of messages deletion for partners having a user
+        if messages_by_partner:
+            self.env['bus.bus']._sendmany([
+                (partner, 'mail.message/delete', {'message_ids': messages.ids})
+                for partner, messages in messages_by_partner.items()
+            ])
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return super(Message, self).unlink()
 
     @api.model
@@ -734,26 +808,23 @@ class Message(models.Model):
             messages.set_message_done()
             return messages.ids
 
-        notifications = self.env['mail.notification'].sudo().search(notif_domain)
+        notifications = self.env['mail.notification'].sudo().search_fetch(notif_domain, ['mail_message_id'])
         notifications.write({'is_read': True})
 
-        ids = [n['mail_message_id'] for n in notifications.read(['mail_message_id'])]
-
         self.env['bus.bus']._sendone(self.env.user.partner_id, 'mail.message/mark_as_read', {
-            'message_ids': [id[0] for id in ids],
+            'message_ids': notifications.mail_message_id.ids,
             'needaction_inbox_counter': self.env.user.partner_id._get_needaction_count(),
         })
-
-        return ids
 
     def set_message_done(self):
         """ Remove the needaction from messages for the current partner. """
         partner_id = self.env.user.partner_id
 
-        notifications = self.env['mail.notification'].sudo().search([
+        notifications = self.env['mail.notification'].sudo().search_fetch([
             ('mail_message_id', 'in', self.ids),
             ('res_partner_id', '=', partner_id.id),
-            ('is_read', '=', False)])
+            ('is_read', '=', False),
+        ], ['mail_message_id'])
 
         if not notifications:
             return
@@ -774,9 +845,8 @@ class Message(models.Model):
         starred_messages = self.search([('starred_partner_ids', 'in', partner_id)])
         starred_messages.write({'starred_partner_ids': [Command.unlink(partner_id)]})
 
-        ids = [m.id for m in starred_messages]
         self.env['bus.bus']._sendone(self.env.user.partner_id, 'mail.message/toggle_star', {
-            'message_ids': ids,
+            'message_ids': starred_messages.ids,
             'starred': False,
         })
 
@@ -837,7 +907,6 @@ class Message(models.Model):
 
     def _message_format(self, fnames, format_reply=True, legacy=False):
         """Reads values from messages and formats them for the web client."""
-        self.check_access_rule('read')
         vals_list = self._read_format(fnames)
 
         thread_ids_by_model_name = defaultdict(set)
@@ -856,13 +925,12 @@ class Message(models.Model):
                 'name': message_sudo.author_guest_id.name,
             } if message_sudo.author_guest_id else [('clear',)]
             if message_sudo.model and message_sudo.res_id:
-                record_name = self.env[message_sudo.model] \
-                    .browse(message_sudo.res_id) \
-                    .sudo() \
-                    .with_prefetch(thread_ids_by_model_name[message_sudo.model]) \
-                    .display_name
+                record_sudo = self.env[message_sudo.model].browse(message_sudo.res_id).sudo()
+                record_name = record_sudo.with_prefetch(thread_ids_by_model_name[message_sudo.model]).display_name
+                default_subject = record_sudo._message_compute_subject()
             else:
                 record_name = False
+                default_subject = False
             reactions_per_content = defaultdict(lambda: self.env['mail.message.reaction'])
             for reaction in message_sudo.reaction_ids:
                 reactions_per_content[reaction.content] |= reaction
@@ -878,6 +946,7 @@ class Message(models.Model):
             allowed_tracking_ids = message_sudo.tracking_value_ids.filtered(lambda tracking: not tracking.field_groups or self.env.is_superuser() or self.user_has_groups(tracking.field_groups))
             vals.update({
                 'author': author,
+                'default_subject': default_subject,
                 'guestAuthor': guestAuthor,
                 'notifications': message_sudo.notification_ids._filtered_for_web_client()._notification_format(),
                 'attachment_ids': message_sudo.attachment_ids._attachment_format() if not legacy else message_sudo.attachment_ids._attachment_format(legacy=True),
@@ -904,10 +973,17 @@ class Message(models.Model):
             domain = expression.AND([domain, [('id', '>', min_id)]])
         return self.search(domain, limit=limit)
 
-    def message_format(self, format_reply=True):
-        """ Get the message values in the format for web client. Since message values can be broadcasted,
-            computed fields MUST NOT BE READ and broadcasted.
-            :returns list(dict).
+    def message_format(self, format_reply=True, msg_vals=None):
+        """ Get the message values in the format for web client. Since message
+        values can be broadcasted, computed fields MUST NOT BE READ and
+        broadcasted.
+
+        :param msg_vals: dictionary of values used to create the message. If
+          given it may be used to access values related to ``message`` without
+          accessing it directly. It lessens query count in some optimized use
+          cases by avoiding access message content in db;
+
+        :returns list(dict).
              Example :
                 {
                     'body': HTML content of the message
@@ -949,14 +1025,27 @@ class Message(models.Model):
                     'subject': False
                     'is_note': True # only if the message is a note (subtype == note)
                     'is_discussion': False # only if the message is a discussion (subtype == discussion)
-                    'is_notification': False # only if the message is a note but is a notification aka not linked to a document like assignation
                     'parentMessage': {...}, # formatted message that this message is a reply to. Only present if format_reply is True
                 }
         """
+        self.check_access_rule('read')
         vals_list = self._message_format(self._get_message_format_fields(), format_reply=format_reply)
 
         com_id = self.env['ir.model.data']._xmlid_to_res_id('mail.mt_comment')
         note_id = self.env['ir.model.data']._xmlid_to_res_id('mail.mt_note')
+
+
+        # fetch scheduled notifications once, only if msg_vals is not given to
+        # avoid useless queries when notifying Inbox right after a message_post
+        scheduled_dt_by_msg_id = {}
+        if msg_vals:
+            scheduled_dt_by_msg_id = {msg.id: msg_vals.get('scheduled_date') for msg in self}
+        elif self:
+            schedulers = self.env['mail.message.schedule'].sudo().search([
+                ('mail_message_id', 'in', self.ids)
+            ])
+            for scheduler in schedulers:
+                scheduled_dt_by_msg_id[scheduler.mail_message_id.id] = scheduler.scheduled_datetime
 
         for vals in vals_list:
             message_sudo = self.browse(vals['id']).sudo().with_prefetch(self.ids)
@@ -967,8 +1056,8 @@ class Message(models.Model):
                 'is_note': message_sudo.subtype_id.id == note_id,
                 'is_discussion': message_sudo.subtype_id.id == com_id,
                 'subtype_description': message_sudo.subtype_id.description,
-                'is_notification': vals['message_type'] == 'user_notification',
                 'recipients': [{'id': p.id, 'name': p.name} for p in message_sudo.partner_ids],
+                'scheduledDatetime': scheduled_dt_by_msg_id.get(vals['id'], False),
             })
             if vals['model'] and self.env[vals['model']]._original_module:
                 vals['module_icon'] = modules.module.get_module_icon(self.env[vals['model']]._original_module)
@@ -996,6 +1085,7 @@ class Message(models.Model):
             'res_model_name': message.env['ir.model']._get(message.model).display_name,
             'date': message.date,
             'message_type': message.message_type,
+            'body': message.body,
             'notifications': message.notification_ids._filtered_for_web_client()._notification_format(),
         } for message in self]
 

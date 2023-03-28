@@ -17,6 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
+<<<<<<< HEAD
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
@@ -146,6 +147,13 @@ msgstr ""
 #: model:account.tax,name:l10n_be.2_attn_VAT-IN-V82-00-CC
 #: model:account.tax.template,name:l10n_be.attn_VAT-IN-V82-00-CC
 msgid "0% S.Cocont"
+=======
+"Plural-Forms: \n"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_00
+msgid "00"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: l10n_be
@@ -169,6 +177,7 @@ msgid "03 - Operations subject to 21% VAT"
 msgstr "03 - Umsätze, die 21 % MwSt. unterliegen "
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.tax,description:l10n_be.1_attn_VAT-IN-V81-12
 #: model:account.tax,description:l10n_be.1_attn_VAT-IN-V81-12-CC
 #: model:account.tax,description:l10n_be.1_attn_VAT-IN-V81-12-EU
@@ -504,6 +513,11 @@ msgstr ""
 #: model:account.report.line,name:l10n_be.tax_report_line_44
 msgid "44 - Intra-Community services"
 msgstr "44 - Innergemeinschaftliche Dienstleistungen"
+=======
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_44
+msgid "44"
+msgstr ""
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_line_45
@@ -586,6 +600,7 @@ msgid "59 - Deductible VAT"
 msgstr "59 - Abzugsfähige MwSt."
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_be.1_attn_VAT-IN-V82-06-EU-G
 #: model:account.tax,name:l10n_be.2_attn_VAT-IN-V82-06-EU-G
 #: model:account.tax.template,name:l10n_be.attn_VAT-IN-V82-06-EU-G
@@ -684,6 +699,80 @@ msgstr ""
 #: model:account.tax,name:l10n_be.2_attn_VAT-IN-V82-06-CC
 #: model:account.tax.template,name:l10n_be.attn_VAT-IN-V82-06-CC
 msgid "6% S.Cocont"
+=======
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_48s46T
+msgid "48s46T"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,name:l10n_be.tax_report_line_48s46T
+msgid "48s46T - Notes de crédit aux opérations grilles [46T]"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_49
+msgid "49"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,name:l10n_be.tax_report_line_49
+msgid "49 - Notes de crédit aux opérations du point II"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_54
+msgid "54"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,name:l10n_be.tax_report_line_54
+msgid "54 - TVA sur opérations des grilles [01], [02], [03]"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_55
+msgid "55"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,name:l10n_be.tax_report_line_55
+msgid "55 - TVA sur opérations des grilles [86] et [88]"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_56
+msgid "56"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,name:l10n_be.tax_report_line_56
+msgid "56 - TVA sur opérations de la grille [87]"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_57
+msgid "57"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,name:l10n_be.tax_report_line_57
+msgid "57 - TVA relatives aux importations"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_59
+msgid "59"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,name:l10n_be.tax_report_line_59
+msgid "59 - TVA déductible"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_61
+msgid "61"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: l10n_be
@@ -766,6 +855,7 @@ msgid "Account Chart Template"
 msgstr "Kontenplanvorlage"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a052
 #: model:account.account,name:l10n_be.2_a052
 #: model:account.account.template,name:l10n_be.a052
@@ -1671,12 +1761,15 @@ msgstr ""
 "gezahlte Steuern und Steuervorhabzuge"
 
 #. module: l10n_be
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields.selection,name:l10n_be.selection__account_journal__invoice_reference_model__be
 #: model:ir.ui.menu,name:l10n_be.account_reports_be_statements_menu
 msgid "Belgium"
 msgstr "Belgien"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.group,name:l10n_be.1_be_group_07
 #: model:account.group,name:l10n_be.2_be_group_07
 #: model:account.group.template,name:l10n_be.be_group_07
@@ -2085,11 +2178,14 @@ msgid "Commettants et déposants de biens et de valeurs"
 msgstr ""
 
 #. module: l10n_be
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_be.field_account_journal__invoice_reference_model
 msgid "Communication Standard"
 msgstr "Kommunikationsstandard"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a020
 #: model:account.account,name:l10n_be.2_a020
 #: model:account.account.template,name:l10n_be.a020
@@ -3510,6 +3606,11 @@ msgstr ""
 #: model:account.report.line,name:l10n_be.tax_report_title_operations_sortie
 msgid "II Outgoing"
 msgstr "II Ausgänge"
+=======
+#: model:account.tax.report.line,name:l10n_be.tax_report_title_operations_sortie
+msgid "II A la sortie"
+msgstr ""
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_title_operations_entree
@@ -3522,266 +3623,6 @@ msgid "IV Due"
 msgstr "IV Geschuldet"
 
 #. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_35
-#: model:account.group,name:l10n_be.2_be_group_35
-#: model:account.group.template,name:l10n_be.be_group_35
-msgid "Immeubles destinés à la vente"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_21
-#: model:account.group,name:l10n_be.2_be_group_21
-#: model:account.group.template,name:l10n_be.be_group_21
-msgid "Immobilisation incorporelles"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_27
-#: model:account.group,name:l10n_be.2_be_group_27
-#: model:account.group.template,name:l10n_be.be_group_27
-msgid "Immobilisations corporelles en cours et acomptes versés"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_25
-#: model:account.group,name:l10n_be.2_be_group_25
-#: model:account.group.template,name:l10n_be.be_group_25
-msgid "Immobilisations détenues en location-financement et droits similaires"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_28
-#: model:account.group,name:l10n_be.2_be_group_28
-#: model:account.group.template,name:l10n_be.be_group_28
-msgid "Immobilisations financières"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a350
-#: model:account.account,name:l10n_be.2_a350
-#: model:account.account.template,name:l10n_be.a350
-msgid "Immovable property intended for sale - Acquisition value"
-msgstr "Zum Verkauf bestimmte unbewegliche Gegenstände - Anschaffungswert"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a359
-#: model:account.account,name:l10n_be.2_a359
-#: model:account.account.template,name:l10n_be.a359
-msgid "Immovable property intended for sale - amounts written down"
-msgstr ""
-"Zum Verkauf bestimmte unbewegliche Gegenstände - Gebuchte Wertminderungen"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_771
-#: model:account.group,name:l10n_be.2_be_group_771
-#: model:account.group.template,name:l10n_be.be_group_771
-msgid "Impôts belges sur le résultat"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_671
-#: model:account.group,name:l10n_be.2_be_group_671
-#: model:account.group.template,name:l10n_be.be_group_671
-msgid "Impôts belges sur le résultat d'exercices antérieurs"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_670
-#: model:account.group,name:l10n_be.2_be_group_670
-#: model:account.group.template,name:l10n_be.be_group_670
-msgid "Impôts belges sur le résultat de l'exercice"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_168
-#: model:account.group,name:l10n_be.2_be_group_168
-#: model:account.group.template,name:l10n_be.be_group_168
-msgid "Impôts différés"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_412
-#: model:account.group,name:l10n_be.2_be_group_412
-#: model:account.group.template,name:l10n_be.be_group_412
-msgid "Impôts et précomptes à récupérer"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_452
-#: model:account.group,name:l10n_be.2_be_group_452
-#: model:account.group.template,name:l10n_be.be_group_452
-msgid "Impôts et taxes à payer"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_67
-#: model:account.group,name:l10n_be.2_be_group_67
-#: model:account.group.template,name:l10n_be.be_group_67
-msgid "Impôts sur le résultat"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_773
-#: model:account.group,name:l10n_be.2_be_group_773
-#: model:account.group.template,name:l10n_be.be_group_773
-msgid "Impôts étrangers sur le résultat"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_673
-#: model:account.group,name:l10n_be.2_be_group_673
-#: model:account.group.template,name:l10n_be.be_group_673
-msgid "Impôts étrangers sur le résultat d'exercices antérieurs"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_672
-#: model:account.group,name:l10n_be.2_be_group_672
-#: model:account.group.template,name:l10n_be.be_group_672
-msgid "Impôts étrangers sur le résultat de l'exercice"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a751
-#: model:account.account,name:l10n_be.2_a751
-#: model:account.account.template,name:l10n_be.a751
-msgid "Income from current assets"
-msgstr "Erträge aus Gegenständen des Umlaufvermögens"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a750
-#: model:account.account,name:l10n_be.2_a750
-#: model:account.account.template,name:l10n_be.a750
-msgid "Income from financial fixed assets"
-msgstr "Erträge aus Finanzanlagen"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7170
-#: model:account.account,name:l10n_be.2_a7170
-#: model:account.account.template,name:l10n_be.a7170
-msgid "Increase (decrease) in contracts in progress - Acquisition value"
-msgstr ""
-"Zunahme (Abnahme) der in Ausführung befindlichen Bestellungen - "
-"Anschaffungswert"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7171
-#: model:account.account,name:l10n_be.2_a7171
-#: model:account.account.template,name:l10n_be.a7171
-msgid "Increase (decrease) in contracts in progress - Profit recognized"
-msgstr ""
-"Zunahme (Abnahme) der in Ausführung befindlichen Bestellungen - Aktivierte "
-"Gewinnanteile"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a713
-#: model:account.account,name:l10n_be.2_a713
-#: model:account.account.template,name:l10n_be.a713
-msgid "Increase (decrease) in stocks of finished goods"
-msgstr "Zunahme (Abnahme) des Bestandes an fertigen Erzeugnisse"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a71
-#: model:account.account,name:l10n_be.2_a71
-#: model:account.account.template,name:l10n_be.a71
-msgid ""
-"Increase (decrease) in stocks of finished goods and work and contracts in "
-"progress"
-msgstr ""
-"Zunahme (Abnahme) des Bestandes an fertigen und unfertigen Erzeugnissen und "
-"an in Ausführung befindlichen Bestellungen"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a715
-#: model:account.account,name:l10n_be.2_a715
-#: model:account.account.template,name:l10n_be.a715
-msgid ""
-"Increase (decrease) in stocks of immovable property constructed for resale"
-msgstr ""
-"Zunahme (Abnahme) des Bestandes an zum Verkauf bestimmten, hergestellten "
-"unbeweglichen Gegenstände"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a712
-#: model:account.account,name:l10n_be.2_a712
-#: model:account.account.template,name:l10n_be.a712
-msgid "Increase (decrease) in work in progress"
-msgstr "Zunahme (Abnahme) des Bestandes an unfertigen Erzeugnisse"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_23
-#: model:account.group,name:l10n_be.1_be_group_251
-#: model:account.group,name:l10n_be.2_be_group_23
-#: model:account.group,name:l10n_be.2_be_group_251
-#: model:account.group.template,name:l10n_be.be_group_23
-#: model:account.group.template,name:l10n_be.be_group_251
-msgid "Installations, machines et outillage"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a213
-#: model:account.account,name:l10n_be.2_a213
-#: model:account.account.template,name:l10n_be.a213
-msgid "Intangible fixed assets - Advance payments"
-msgstr "Immaterielle Anlagewerte - Geleistete Anzahlungen"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6500
-#: model:account.account,name:l10n_be.2_a6500
-#: model:account.account.template,name:l10n_be.a6500
-msgid "Interests, commissions and other charges relating to debts"
-msgstr "Zinsen, Provisionen und Kosten der Verbindlichkeiten"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_794
-#: model:account.group,name:l10n_be.2_be_group_794
-#: model:account.group.template,name:l10n_be.be_group_794
-msgid "Intervention d'associés (ou du propriétaire) dans la perte"
-msgstr ""
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a15
-#: model:account.account,name:l10n_be.2_a15
-#: model:account.account.template,name:l10n_be.a15
-msgid "Investment grants"
-msgstr "Kapitalsubventionen"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a753
-#: model:account.account,name:l10n_be.2_a753
-#: model:account.account.template,name:l10n_be.a753
-msgid "Investment grants and interest subsidies"
-msgstr "Kapital- und Zinssubventionen"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a151
-#: model:account.account,name:l10n_be.2_a151
-#: model:account.account.template,name:l10n_be.a151
-msgid "Investment grants received in cash"
-msgstr "In Barmitteln erhaltene Kapitalsubventionen"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a152
-#: model:account.account,name:l10n_be.2_a152
-#: model:account.account.template,name:l10n_be.a152
-msgid "Investment grants received in kind"
-msgstr "In Naturalien erhaltene Kapitalsubventionen"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a444
-#: model:account.account,name:l10n_be.2_a444
-#: model:account.account.template,name:l10n_be.a444
-msgid "Invoices to be received payable within one year"
-msgstr "Zu erhaltende Rechnungen mit einer Restlaufzeit bis zu einem Jahr"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a100
-#: model:account.account,name:l10n_be.2_a100
-#: model:account.account.template,name:l10n_be.a100
-msgid "Issued capital"
-msgstr "Gezeichnetes Kapital"
-
-#. module: l10n_be
 #: model:ir.model,name:l10n_be.model_account_journal
 msgid "Journal"
 msgstr "Journal"
@@ -3792,6 +3633,7 @@ msgid "Journal Entry"
 msgstr "Buchungssatz"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a220
 #: model:account.account,name:l10n_be.2_a220
 #: model:account.account.template,name:l10n_be.a220
@@ -6008,10 +5850,19 @@ msgstr ""
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_title_taxes
+=======
+#: model:account.tax.report.line,name:l10n_be.tax_report_title_operations
+msgid "Opérations"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,name:l10n_be.tax_report_title_taxes
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Taxes"
 msgstr "Steuern"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a412
 #: model:account.account,name:l10n_be.2_a412
 #: model:account.account.template,name:l10n_be.a412
@@ -6567,11 +6418,24 @@ msgstr ""
 "Aufwendungen"
 
 #. module: l10n_be
+=======
+#: model:account.tax.report.line,name:l10n_be.tax_report_title_taxes_deductibles
+msgid "V Déductibles"
+msgstr ""
+
+#. module: l10n_be
+#: model:account.tax.report.line,name:l10n_be.tax_report_title_taxes_soldes
+msgid "VI Soldes"
+msgstr ""
+
+#. module: l10n_be
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,help:l10n_be.field_account_journal__invoice_reference_model
 msgid ""
 "You can choose different models for each type of reference. The default one "
 "is the Odoo reference."
 msgstr ""
+<<<<<<< HEAD
 "Sie können für jede Art von Referenz verschiedene Modelle auswählen. Die "
 "Standardeinstellung ist die Odoo-Referenz."
 
@@ -6581,3 +6445,5 @@ msgstr ""
 #: model:account.group.template,name:l10n_be.be_group_755
 msgid "Écart de conversion des devises"
 msgstr ""
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

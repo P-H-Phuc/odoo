@@ -1,12 +1,19 @@
 /** @odoo-module **/
 
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
+<<<<<<< HEAD
 import { Dropdown } from "@web/core/dropdown/dropdown";
 import { DropdownItem } from "@web/core/dropdown/dropdown_item";
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { _lt, _t } from "@web/core/l10n/translation";
 import { useOwnedDialogs, useService } from "@web/core/utils/hooks";
 import { Layout } from "@web/search/layout";
 import { useModel } from "@web/views/model";
+<<<<<<< HEAD
+=======
+import { ViewScaleSelector } from "@web/views/view_components/view_scale_selector";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { FormViewDialog } from "@web/views/view_dialogs/form_view_dialog";
 import { useSetupView } from "@web/views/view_hook";
 import { CalendarDatePicker } from "./date_picker/calendar_date_picker";
@@ -89,8 +96,15 @@ export class CalendarController extends Component {
             toggleSideBar: () => (this.state.showSideBar = !this.state.showSideBar),
         };
     }
+<<<<<<< HEAD
     get scaleLabels() {
         return SCALE_LABELS;
+=======
+    get scales() {
+        return Object.fromEntries(
+            this.model.scales.map((s) => [s, { description: SCALE_LABELS[s] }])
+        );
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
     get showCalendar() {
         return !this.env.isSmall || !this.state.showSideBar;
@@ -198,7 +212,11 @@ export class CalendarController extends Component {
     deleteRecord(record) {
         this.displayDialog(ConfirmationDialog, {
             title: this.env._t("Confirmation"),
+<<<<<<< HEAD
             body: this.env._t("Are you sure you want to delete this record ?"),
+=======
+            body: this.env._t("Are you sure you want to delete this record?"),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             confirm: () => {
                 this.model.unlinkRecord(record.id);
             },
@@ -215,7 +233,11 @@ CalendarController.components = {
     MobileFilterPanel: CalendarMobileFilterPanel,
     QuickCreate: CalendarQuickCreate,
     Layout,
+<<<<<<< HEAD
     Dropdown,
     DropdownItem,
+=======
+    ViewScaleSelector,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 };
 CalendarController.template = "web.CalendarController";

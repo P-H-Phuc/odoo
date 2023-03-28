@@ -47,23 +47,22 @@ class TestFrontend(odoo.tests.HttpCase):
             'printer_ids': [(4, printer.id)],
             'iface_start_categ_id': drinks_category.id,
             'start_category': True,
-            'pricelist_id': self.env.ref('product.list0').id,
         })
 
         main_floor = self.env['restaurant.floor'].create({
             'name': 'Main Floor',
-            'pos_config_id': pos_config.id,
+            'pos_config_ids': [(4, pos_config.id)],
         })
 
         table_05 = self.env['restaurant.table'].create({
-            'name': 'T5',
+            'name': '5',
             'floor_id': main_floor.id,
             'seats': 4,
             'position_h': 100,
             'position_v': 100,
         })
         table_04 = self.env['restaurant.table'].create({
-            'name': 'T4',
+            'name': '4',
             'floor_id': main_floor.id,
             'seats': 4,
             'shape': 'square',
@@ -71,7 +70,7 @@ class TestFrontend(odoo.tests.HttpCase):
             'position_v': 100,
         })
         table_02 = self.env['restaurant.table'].create({
-            'name': 'T2',
+            'name': '2',
             'floor_id': main_floor.id,
             'seats': 4,
             'position_h': 250,
@@ -80,11 +79,11 @@ class TestFrontend(odoo.tests.HttpCase):
 
         second_floor = self.env['restaurant.floor'].create({
             'name': 'Second Floor',
-            'pos_config_id': pos_config.id,
+            'pos_config_ids': [(4, pos_config.id)],
         })
 
         table_01 = self.env['restaurant.table'].create({
-            'name': 'T1',
+            'name': '1',
             'floor_id': second_floor.id,
             'seats': 4,
             'shape': 'square',
@@ -92,7 +91,7 @@ class TestFrontend(odoo.tests.HttpCase):
             'position_v': 150,
         })
         table_03 = self.env['restaurant.table'].create({
-            'name': 'T3',
+            'name': '3',
             'floor_id': second_floor.id,
             'seats': 4,
             'position_h': 100,
@@ -124,8 +123,8 @@ class TestFrontend(odoo.tests.HttpCase):
             'journal_id': test_sale_journal.id,
             'invoice_journal_id': test_sale_journal.id,
             'payment_method_ids': [(0, 0, {
-                'name': 'Cash restaurant',
-                'split_transactions': True,
+                'name': 'Cash',
+                'split_transactions': False,
                 'receivable_account_id': account_receivable.id,
                 'journal_id': cash_journal.id,
             })],

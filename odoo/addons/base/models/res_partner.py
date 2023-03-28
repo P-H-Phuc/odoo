@@ -131,14 +131,7 @@ class PartnerCategory(models.Model):
     def name_get(self):
         """ Return the categories' display name, including their direct
             parent by default.
-
-            If ``context['partner_category_display']`` is ``'short'``, the short
-            version of the category name (without the direct parent) is used.
-            The default is the long version.
         """
-        if self._context.get('partner_category_display') == 'short':
-            return super(PartnerCategory, self).name_get()
-
         res = []
         for category in self:
             names = []
@@ -150,13 +143,13 @@ class PartnerCategory(models.Model):
         return res
 
     @api.model
-    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
-        args = args or []
+    def _name_search(self, name, domain=None, operator='ilike', limit=None, order=None, name_get_uid=None):
+        domain = domain or []
         if name:
             # Be sure name_search is symetric to name_get
             name = name.split(' / ')[-1]
-            args = [('name', operator, name)] + args
-        return self._search(args, limit=limit, access_rights_uid=name_get_uid)
+            domain = [('name', operator, name)] + domain
+        return self._search(domain, limit=limit, order=order, access_rights_uid=name_get_uid)
 
 
 class PartnerTitle(models.Model):
@@ -241,8 +234,8 @@ class Partner(models.Model):
         ], string='Address Type',
         default='contact',
         help="- Contact: Use this to organize the contact details of employees of a given company (e.g. CEO, CFO, ...).\n"
-             "- Invoice Address : Preferred address for all invoices. Selected by default when you invoice an order that belongs to this company.\n"
-             "- Delivery Address : Preferred address for all deliveries. Selected by default when you deliver an order that belongs to this company.\n"
+             "- Invoice Address: Preferred address for all invoices. Selected by default when you invoice an order that belongs to this company.\n"
+             "- Delivery Address: Preferred address for all deliveries. Selected by default when you deliver an order that belongs to this company.\n"
              "- Private: Private addresses are only visible by authorized users and contain sensitive data (employee home addresses, ...).\n"
              "- Other: Other address for the company (e.g. subsidiary, ...)")
     # address fields
@@ -483,7 +476,7 @@ class Partner(models.Model):
 
     @api.onchange('state_id')
     def _onchange_state(self):
-        if self.state_id.country_id:
+        if self.state_id.country_id and self.country_id != self.state_id.country_id:
             self.country_id = self.state_id.country_id
 
     @api.onchange('email')
@@ -818,8 +811,6 @@ class Partner(models.Model):
                 name = dict(self.fields_get(['type'])['type']['selection'])[partner.type]
             if not partner.is_company:
                 name = self._get_contact_name(partner, name)
-        if self._context.get('show_address_only'):
-            name = partner._display_address(without_company=True)
         if self._context.get('show_address'):
             name = name + "\n" + partner._display_address(without_company=True)
         name = re.sub(r'\s+\n', '\n', name)
@@ -830,8 +821,6 @@ class Partner(models.Model):
             name = ", ".join([n for n in splitted_names if n.strip()])
         if self._context.get('show_email') and partner.email:
             name = "%s <%s>" % (name, partner.email)
-        if self._context.get('html_format'):
-            name = name.replace('\n', '<br/>')
         if self._context.get('show_vat') and partner.vat:
             name = "%s ‒ %s" % (name, partner.vat)
         return name.strip()
@@ -853,7 +842,11 @@ class Partner(models.Model):
 
         Otherwise: default, everything is set as the name. Starting from 13.3
         returned email will be normalized to have a coherent encoding.
-         """
+
+        :return: name, email (normalized if possible)
+        """
+        if not text or not text.strip():
+            return '', ''
         name, email = '', ''
         split_results = tools.email_split_tuples(text)
         if split_results:
@@ -896,15 +889,14 @@ class Partner(models.Model):
         return partner.name_get()[0]
 
     @api.model
-    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+    def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
         """ Override search() to always show inactive children when searching via ``child_of`` operator. The ORM will
         always call search() with a simple domain of the form [('parent_id', 'in', [ids])]. """
         # a special ``domain`` is set on the ``child_ids`` o2m to bypass this logic, as it uses similar domain expressions
-        if len(args) == 1 and len(args[0]) == 3 and args[0][:2] == ('parent_id','in') \
-                and args[0][2] != [False]:
+        if len(domain) == 1 and len(domain[0]) == 3 and domain[0][:2] == ('parent_id', 'in') \
+                and domain[0][2] != [False]:
             self = self.with_context(active_test=False)
-        return super(Partner, self)._search(args, offset=offset, limit=limit, order=order,
-                                            count=count, access_rights_uid=access_rights_uid)
+        return super()._search(domain, offset, limit, order, access_rights_uid)
 
     @api.model
     @api.returns('self', lambda value: value.id)
@@ -1066,7 +1058,7 @@ class Partner(models.Model):
         """
         States = self.env['res.country.state']
         states_ids = {vals['state_id'] for vals in vals_list if vals.get('state_id')}
-        state_to_country = States.search([('id', 'in', list(states_ids))]).read(['country_id'])
+        state_to_country = States.search_read([('id', 'in', list(states_ids))], ['country_id'])
         for vals in vals_list:
             if vals.get('state_id'):
                 country_id = next(c['country_id'][0] for c in state_to_country if c['id'] == vals.get('state_id'))

@@ -2,7 +2,11 @@
 
 import { registry } from "@web/core/registry";
 import { ListRenderer } from "@web/views/list/list_renderer";
+<<<<<<< HEAD
 import { X2ManyField } from "@web/views/fields/x2many/x2many_field";
+=======
+import { X2ManyField, x2ManyField } from "@web/views/fields/x2many/x2many_field";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { TextField, ListTextField } from "@web/views/fields/text/text_field";
 import { CharField } from "@web/views/fields/char/char_field";
 
@@ -25,7 +29,7 @@ export class SectionAndNoteListRenderer extends ListRenderer {
     }
 
     focusToName(editRec) {
-        if (editRec && editRec.isVirtual && this.isSectionOrNote(editRec)) {
+        if (editRec && editRec.isNew && this.isSectionOrNote(editRec)) {
             const col = this.state.columns.find((c) => c.name === this.titleField);
             this.focusCell(col, null);
         }
@@ -92,6 +96,35 @@ export class ListSectionAndNoteText extends SectionAndNoteText {
     }
 }
 
+<<<<<<< HEAD
 registry.category("fields").add("section_and_note_one2many", SectionAndNoteFieldOne2Many);
 registry.category("fields").add("section_and_note_text", SectionAndNoteText);
 registry.category("fields").add("list.section_and_note_text", ListSectionAndNoteText);
+=======
+export class ListSectionAndNoteText extends SectionAndNoteText {
+    get componentToUse() {
+        return this.props.record.data.display_type !== "line_section"
+            ? ListTextField
+            : super.componentToUse;
+    }
+}
+
+export const sectionAndNoteFieldOne2Many = {
+    ...x2ManyField,
+    component: SectionAndNoteFieldOne2Many,
+};
+
+export const sectionAndNoteText = {
+    component: SectionAndNoteText,
+    additionalClasses: ["o_field_text"],
+};
+
+export const listSectionAndNoteText = {
+    ...sectionAndNoteText,
+    component: ListSectionAndNoteText,
+};
+
+registry.category("fields").add("section_and_note_one2many", sectionAndNoteFieldOne2Many);
+registry.category("fields").add("section_and_note_text", sectionAndNoteText);
+registry.category("fields").add("list.section_and_note_text", listSectionAndNoteText);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

@@ -79,7 +79,10 @@ class TestSaleOrder(SaleCommon):
         # send quotation
         email_act = self.sale_order.action_quotation_send()
         email_ctx = email_act.get('context', {})
-        self.sale_order.with_context(**email_ctx).message_post_with_template(email_ctx.get('default_template_id'))
+        self.sale_order.with_context(**email_ctx).message_post_with_source(
+            self.env['mail.template'].browse(email_ctx.get('default_template_id')),
+            subtype_xmlid='mail.mt_comment',
+        )
         self.assertTrue(self.sale_order.state == 'sent', 'Sale: state after sending is wrong')
         self.sale_order.order_line._compute_product_updatable()
         self.assertTrue(self.sale_order.order_line[0].product_updatable)
@@ -101,7 +104,10 @@ class TestSaleOrder(SaleCommon):
         # sent to to author or not (in case author is present in 'Recipients' of composer).
         mail_template = self.env['mail.template'].browse(email_ctx.get('default_template_id')).copy({'auto_delete': False})
         # send the mail with same user as customer
-        sale_order.with_context(**email_ctx).with_user(self.sale_user).message_post_with_template(mail_template.id)
+        sale_order.with_context(**email_ctx).with_user(self.sale_user).message_post_with_source(
+            mail_template,
+            subtype_xmlid='mail.mt_comment',
+        )
         self.assertTrue(sale_order.state == 'sent', 'Sale : state should be changed to sent')
         mail_message = sale_order.message_ids[0]
         self.assertEqual(mail_message.author_id, sale_order.partner_id, 'Sale: author should be same as customer')
@@ -271,7 +277,6 @@ class TestSaleOrder(SaleCommon):
         self.assertTrue(sale_order.note.startswith("<p>Terms &amp; Conditions: "))
 
     def test_validity_days(self):
-        self.env['ir.config_parameter'].sudo().set_param('sale.use_quotation_validity_days', True)
         self.env.company.quotation_validity_days = 5
         with freeze_time("2020-05-02"):
             sale_order = self._create_sale_order()
@@ -521,16 +526,32 @@ class TestSalesTeam(SaleCommon):
         """ Test that sol cannot have assigned tax belonging to a different company from that of the sale order. """
         company_a = self.env['res.company'].create({'name': 'A'})
         company_b = self.env['res.company'].create({'name': 'B'})
+<<<<<<< HEAD
+=======
+        tax_group_a = self.env['account.tax.group'].create({'name': 'A', 'company_id': company_a.id})
+        tax_group_b = self.env['account.tax.group'].create({'name': 'B', 'company_id': company_b.id})
+        country = self.env['res.country'].search([])[0]
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         tax_a = self.env['account.tax'].create({
             'name': 'A',
             'amount': 10,
             'company_id': company_a.id,
+<<<<<<< HEAD
+=======
+            'tax_group_id': tax_group_a.id,
+            'country_id': country.id,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         })
         tax_b = self.env['account.tax'].create({
             'name': 'B',
             'amount': 10,
             'company_id': company_b.id,
+<<<<<<< HEAD
+=======
+            'tax_group_id': tax_group_b.id,
+            'country_id': country.id,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         })
 
         sale_order = self.env['sale.order'].create({

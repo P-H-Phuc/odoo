@@ -1,12 +1,13 @@
 /** @odoo-module **/
 
-import { sortBy } from "@web/core/utils/arrays";
+import { sortBy, groupBy } from "@web/core/utils/arrays";
 import { KeepLast, Race } from "@web/core/utils/concurrency";
 import { rankInterval } from "@web/search/utils/dates";
 import { getGroupBy } from "@web/search/utils/group_by";
 import { GROUPABLE_TYPES } from "@web/search/utils/misc";
 import { Model } from "@web/views/model";
 import { computeReportMeasures, processMeasure } from "@web/views/utils";
+import { sprintf } from "@web/core/utils/strings";
 
 export const SEP = " / ";
 
@@ -98,6 +99,8 @@ export class GraphModel extends Model {
         this.metaData = params;
         this.data = null;
         this.searchParams = null;
+        // This dataset will be added as a line plot on top of stacked bar chart.
+        this.lineOverlayDataset = null;
     }
 
     //--------------------------------------------------------------------------
@@ -165,9 +168,17 @@ export class GraphModel extends Model {
         metaData.groupBy = groupBy.length ? groupBy : this.initialGroupBy;
         if (metaData.mode !== "pie") {
             metaData.order = "graph_order" in context ? context.graph_order : metaData.order;
+<<<<<<< HEAD
             metaData.stacked = "graph_stacked" in context ? context.graph_stacked : metaData.stacked;
             if (metaData.mode === "line") {
                 metaData.cumulated = "graph_cumulated" in context ? context.graph_cumulated : metaData.cumulated;
+=======
+            metaData.stacked =
+                "graph_stacked" in context ? context.graph_stacked : metaData.stacked;
+            if (metaData.mode === "line") {
+                metaData.cumulated =
+                    "graph_cumulated" in context ? context.graph_cumulated : metaData.cumulated;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
         }
 
@@ -283,6 +294,40 @@ export class GraphModel extends Model {
         return { datasets, labels };
     }
 
+    _getLabel(description) {
+        if (!description) {
+            return this.env._t("Sum");
+        } else {
+            return sprintf(this.env._t("Sum (%s)"), description);
+        }
+    }
+
+    _getLineOverlayDataset() {
+        const { domains, stacked } = this.metaData;
+        const data = this.data;
+        let lineOverlayDataset = null;
+        if (stacked) {
+            const stacks = groupBy(data.datasets, (dataset) => dataset.originIndex);
+            if (Object.keys(stacks).length == 1) {
+                const [[originIndex, datasets]] = Object.entries(stacks);
+                if (datasets.length > 1) {
+                    const data = [];
+                    for (const dataset of datasets) {
+                        for (let i = 0; i < dataset.data.length; i++) {
+                            data[i] = (data[i] || 0) + dataset.data[i];
+                        }
+                    }
+                    lineOverlayDataset = {
+                        label: this._getLabel(domains[originIndex].description),
+                        data,
+                        trueLabels: datasets[0].trueLabels,
+                    };
+                }
+            }
+        }
+        return lineOverlayDataset;
+    }
+
     /**
      * Determines the dataset to which the data point belongs.
      * @protected
@@ -333,6 +378,10 @@ export class GraphModel extends Model {
             processedDataPoints = this.dataPoints.filter(
                 (dataPoint) => dataPoint.labels[0] !== this.env._t("Undefined")
             );
+        } else if (mode === "pie") {
+            processedDataPoints = this.dataPoints.filter(
+                (dataPoint) => dataPoint.value > 0 && dataPoint.count !== 0
+            );
         } else {
             processedDataPoints = this.dataPoints.filter((dataPoint) => dataPoint.count !== 0);
         }
@@ -357,6 +406,7 @@ export class GraphModel extends Model {
     }
 
     /**
+<<<<<<< HEAD
      * Determines whether the set of data points is good. If not, this.data will be (re)set to null
      * @protected
      * @param {Object[]}
@@ -377,6 +427,8 @@ export class GraphModel extends Model {
     }
 
     /**
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
      * Fetch and process graph data.  It is basically a(some) read_group(s)
      * with correct fields for each domain.  We have to do some light processing
      * to separate date groups in the field list, because they can be defined
@@ -531,6 +583,7 @@ export class GraphModel extends Model {
      * @protected
      */
     async _prepareData() {
+<<<<<<< HEAD
         let processedDataPoints = this._getProcessedDataPoints();
         this.data = null;
         if (this._isValidData(processedDataPoints) && this.metaData.mode === 'pie') {
@@ -543,6 +596,13 @@ export class GraphModel extends Model {
             processedDataPoints = positiveValues;
         } else if(this.metaData.mode === 'pie') {
             processedDataPoints = [];
+=======
+        const processedDataPoints = this._getProcessedDataPoints();
+        this.data = this._getData(processedDataPoints);
+        this.lineOverlayDataset = null;
+        if (this.metaData.mode === "bar") {
+            this.lineOverlayDataset = this._getLineOverlayDataset();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
         this.data = this._getData(processedDataPoints);
     }

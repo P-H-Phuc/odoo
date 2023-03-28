@@ -74,7 +74,7 @@ class IrUiView(models.Model):
         vals = {
             'inherit_id': self.id,
             'name': '%s (%s)' % (self.name, el.get('id')),
-            'arch': self._pretty_arch(arch),
+            'arch': etree.tostring(arch, encoding='unicode'),
             'key': '%s_%s' % (self.key, el.get('id')),
             'type': 'qweb',
             'mode': 'extension',
@@ -89,11 +89,14 @@ class IrUiView(models.Model):
         return {}
 
     @api.model
+<<<<<<< HEAD
     def _pretty_arch(self, arch):
         # TODO: Remove this method in 16.3.
         return etree.tostring(arch, encoding='unicode')
 
     @api.model
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def _are_archs_equal(self, arch1, arch2):
         # Note that comparing the strings would not be ok as attributes order
         # must not be relevant
@@ -199,7 +202,7 @@ class IrUiView(models.Model):
         old_arch = etree.fromstring(self.arch.encode('utf-8'))
         if not self._are_archs_equal(old_arch, new_arch):
             self._set_noupdate()
-            self.write({'arch': self._pretty_arch(new_arch)})
+            self.write({'arch': etree.tostring(new_arch, encoding='unicode')})
 
     @api.model
     def _view_get_inherited_children(self, view):

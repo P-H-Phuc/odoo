@@ -1,13 +1,12 @@
 odoo.define('test_website.error_views', function (require) {
 'use strict';
 
-var tour = require('web_tour.tour');
+const { registry } = require("@web/core/registry");
 
-tour.register('test_error_website', {
+registry.category("web_tour.tours").add('test_error_website', {
     test: true,
     url: '/test_error_view',
-},
-[
+    steps: [
     // RPC ERROR
     {
         content: "trigger rpc user error",
@@ -49,7 +48,7 @@ tour.register('test_error_website', {
         trigger: 'a[href="/test_internal_error_json"]',
     }, {
         content: "rpc error 500 modal is an ErrorDialog",
-        extra_trigger: 'div.o_dialog_error.modal-content div.alert.alert-warning',
+        extra_trigger: 'div.o_error_dialog.modal-content',
         trigger: '.modal-footer button.btn.btn-primary',
     },
     // HTTP ERROR
@@ -148,5 +147,5 @@ tour.register('test_error_website', {
         trigger: 'body:has(div#error_traceback.collapse.show pre#exception_traceback)',
         run: function () {},
     },
-]);
+]});
 });

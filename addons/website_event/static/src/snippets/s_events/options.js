@@ -10,6 +10,7 @@ const dynamicSnippetEventOptions = dynamicSnippetOptions.extend({
     init() {
         this._super.apply(this, arguments);
         this.modelNameFilter = 'event.event';
+<<<<<<< HEAD
         this.tagIDs = [];
     },
     /**
@@ -51,6 +52,8 @@ const dynamicSnippetEventOptions = dynamicSnippetOptions.extend({
             return JSON.stringify(this.tagIDs.map(id => this.allTagsByID[id]));
         }
         return this._super(...arguments);
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
 
     _setOptionsDefaultValues() {

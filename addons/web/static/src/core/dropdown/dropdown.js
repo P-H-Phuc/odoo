@@ -46,6 +46,7 @@ export class Dropdown extends Component {
         this.state = useState({
             open: this.props.startOpen,
             groupIsOpen: this.props.startOpen,
+            directionCaretClass: null,
         });
         this.rootRef = useRef("root");
 
@@ -106,6 +107,7 @@ export class Dropdown extends Component {
             popper: "menuRef",
             position,
             onPositioned: (el, { direction, variant }) => {
+                this.state.directionCaretClass = DIRECTION_CARET_CLASS[direction];
                 if (this.parentDropdown && ["right", "left"].includes(direction)) {
                     // Correctly align sub dropdowns items with its parent's
                     if (variant === "start") {
@@ -116,7 +118,13 @@ export class Dropdown extends Component {
                 }
             },
         };
-        this.directionCaretClass = DIRECTION_CARET_CLASS[direction];
+        if (this.props.container) {
+            positioningOptions.container = () =>
+                typeof this.props.container === "function"
+                    ? this.props.container()
+                    : this.props.container;
+        }
+        this.state.directionCaretClass = DIRECTION_CARET_CLASS[direction];
         this.togglerRef = useRef("togglerRef");
         if (this.props.toggler === "parent") {
             // Add parent click listener to handle toggling
@@ -157,6 +165,15 @@ export class Dropdown extends Component {
             const togglerRef = useRef("togglerRef");
             usePosition(() => togglerRef.el, positioningOptions);
         }
+
+        useEffect(
+            (isOpen) => {
+                if (isOpen) {
+                    this.props.onOpened();
+                }
+            },
+            () => [this.state.open]
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -189,6 +206,7 @@ export class Dropdown extends Component {
             newState: { ...this.state },
         };
         Dropdown.bus.trigger("state-changed", stateChangedPayload);
+        this.props.onStateChanged({ ...this.state });
     }
 
     /**
@@ -308,9 +326,19 @@ export class Dropdown extends Component {
     }
 }
 Dropdown.bus = new EventBus();
+Dropdown.defaultProps = {
+    menuDisplay: "d-block",
+    onOpened: () => {},
+    onStateChanged: () => {},
+    onScroll: () => {},
+};
 Dropdown.props = {
     class: {
         type: String,
+        optional: true,
+    },
+    disabled: {
+        type: Boolean,
         optional: true,
     },
     toggler: {
@@ -334,7 +362,23 @@ Dropdown.props = {
         type: String,
         optional: true,
     },
+    menuDisplay: {
+        type: String,
+        optional: true,
+    },
     beforeOpen: {
+        type: Function,
+        optional: true,
+    },
+    onOpened: {
+        type: Function,
+        optional: true,
+    },
+    onScroll: {
+        type: Function,
+        optional: true,
+    },
+    onStateChanged: {
         type: Function,
         optional: true,
     },
@@ -364,6 +408,10 @@ Dropdown.props = {
     },
     showCaret: {
         type: Boolean,
+        optional: true,
+    },
+    container: {
+        type: [Element, Function],
         optional: true,
     },
 };

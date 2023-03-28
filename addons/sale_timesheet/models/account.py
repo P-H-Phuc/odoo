@@ -35,11 +35,12 @@ class AccountAnalyticLine(models.Model):
     # we needed to store it only in order to be able to groupby in the portal
     order_id = fields.Many2one(related='so_line.order_id', store=True, readonly=True, index=True)
     is_so_line_edited = fields.Boolean("Is Sales Order Item Manually Edited")
+    allow_billable = fields.Boolean(related="project_id.allow_billable")
 
-    @api.depends('project_id.commercial_partner_id', 'task_id.commercial_partner_id')
+    @api.depends('project_id.partner_id.commercial_partner_id', 'task_id.partner_id.commercial_partner_id')
     def _compute_commercial_partner(self):
         for timesheet in self:
-            timesheet.commercial_partner_id = timesheet.task_id.commercial_partner_id or timesheet.project_id.commercial_partner_id
+            timesheet.commercial_partner_id = timesheet.task_id.partner_id.commercial_partner_id or timesheet.project_id.partner_id.commercial_partner_id
 
     @api.depends('so_line.product_id', 'project_id', 'amount')
     def _compute_timesheet_invoice_type(self):
@@ -85,16 +86,12 @@ class AccountAnalyticLine(models.Model):
     def _check_timesheet_can_be_billed(self):
         return self.so_line in self.project_id.mapped('sale_line_employee_ids.sale_line_id') | self.task_id.sale_line_id | self.project_id.sale_line_id
 
-    def write(self, values):
-        # prevent to update invoiced timesheets if one line is of type delivery
-        self._check_can_write(values)
-        result = super(AccountAnalyticLine, self).write(values)
-        return result
-
     def _check_can_write(self, values):
+        # prevent to update invoiced timesheets if one line is of type delivery
         if self.sudo().filtered(lambda aal: aal.so_line.product_id.invoice_policy == "delivery") and self.filtered(lambda t: t.timesheet_invoice_id and t.timesheet_invoice_id.state != 'cancel'):
             if any(field_name in values for field_name in ['unit_amount', 'employee_id', 'project_id', 'task_id', 'so_line', 'amount', 'date']):
                 raise UserError(_('You cannot modify timesheets that are already invoiced.'))
+        return super()._check_can_write(values)
 
     def _timesheet_determine_sale_line(self):
         """ Deduce the SO line associated to the timesheet line:
@@ -118,7 +115,7 @@ class AccountAnalyticLine(models.Model):
                 map_entry = self.project_id.sale_line_employee_ids.filtered(
                     lambda map_entry:
                         map_entry.employee_id == self.employee_id
-                        and map_entry.sale_line_id.order_partner_id.commercial_partner_id == self.task_id.commercial_partner_id
+                        and map_entry.sale_line_id.order_partner_id.commercial_partner_id == self.task_id.partner_id.commercial_partner_id
                 )
                 if map_entry:
                     return map_entry.sale_line_id

@@ -6,13 +6,13 @@ from unittest.mock import patch
 from lxml import objectify
 
 from odoo.fields import Command
-from odoo.tests.common import TransactionCase
+from odoo.addons.base.tests.common import BaseCommon
 from odoo.tools.misc import hmac as hmac_tool
 
 _logger = logging.getLogger(__name__)
 
 
-class PaymentCommon(TransactionCase):
+class PaymentCommon(BaseCommon):
 
     @classmethod
     def setUpClass(cls):
@@ -79,6 +79,9 @@ class PaymentCommon(TransactionCase):
             'is_published': True,
             'allow_tokenization': True,
             'redirect_form_view_id': redirect_form.id,
+            'available_currency_ids': [Command.set(
+                (cls.currency_euro + cls.currency_usd + cls.env.company.currency_id).ids
+            )],
         })
 
         cls.provider = cls.dummy_provider

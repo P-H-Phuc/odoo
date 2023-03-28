@@ -1,11 +1,11 @@
-odoo.define('pos_hr.LoginScreen', function (require) {
-    'use strict';
+/** @odoo-module */
 
-    const PosComponent = require('point_of_sale.PosComponent');
-    const Registries = require('point_of_sale.Registries');
-    const SelectCashierMixin = require('pos_hr.SelectCashierMixin');
-    const { useBarcodeReader } = require('point_of_sale.custom_hooks');
+import { useCashierSelector } from "@pos_hr/js/SelectCashierMixin";
+import { registry } from "@web/core/registry";
+import { usePos } from "@point_of_sale/app/pos_hook";
+import { Component } from "@odoo/owl";
 
+<<<<<<< HEAD
     class LoginScreen extends SelectCashierMixin(PosComponent) {
         setup() {
             super.setup();
@@ -34,10 +34,29 @@ odoo.define('pos_hr.LoginScreen', function (require) {
         get shopName() {
             return this.env.pos.config.name;
         }
+=======
+export class LoginScreen extends Component {
+    static template = "LoginScreen";
+    setup() {
+        super.setup(...arguments);
+        this.selectCashier = useCashierSelector({
+            onCashierChanged: () => this.back(),
+            exclusive: true, // takes exclusive control on the barcode reader
+        });
+        this.pos = usePos();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
-    LoginScreen.template = 'LoginScreen';
 
-    Registries.Component.add(LoginScreen);
+    back() {
+        this.props.resolve({ confirmed: false, payload: false });
+        this.pos.closeTempScreen();
+        this.env.pos.hasLoggedIn = true;
+        this.pos.openCashControl();
+    }
 
-    return LoginScreen;
-});
+    get shopName() {
+        return this.env.pos.config.name;
+    }
+}
+
+registry.category("pos_screens").add("LoginScreen", LoginScreen);

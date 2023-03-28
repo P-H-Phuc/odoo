@@ -4,7 +4,7 @@ import { formatFloat, formatMonetary } from "@web/views/fields/formatters";
 import { parseFloat } from "@web/views/fields/parsers";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 import { registry } from "@web/core/registry";
-import { session } from "@web/session";
+import { getCurrency } from "@web/core/currency";
 
 const { Component, onPatched, onWillUpdateProps, useRef, useState } = owl;
 
@@ -68,7 +68,7 @@ class TaxGroupComponent extends Component {
         let newValue;
         try {
             newValue = parseFloat(this.inputTax.el.value); // Get the new value
-        } catch (_err) {
+        } catch {
             this.inputTax.el.value = oldValue;
             this.setState("edit");
             return;
@@ -107,11 +107,11 @@ TaxGroupComponent.template = "account.TaxGroupComponent";
 export class TaxTotalsComponent extends Component {
     setup() {
         super.setup();
-        this.totals = this.props.value;
+        this.totals = this.props.record.data[this.props.name];
         this.readonly = this.props.readonly;
         onWillUpdateProps((nextProps) => {
             // We only reformat tax groups if there are changed
-            this.totals = nextProps.value;
+            this.totals = nextProps.record.data[nextProps.name];
             this.readonly = nextProps.readonly;
             this._computeTotalsFormat();
         });
@@ -123,7 +123,7 @@ export class TaxTotalsComponent extends Component {
     }
 
     get currency() {
-        return session.currencies[this.currencyId];
+        return getCurrency(this.currencyId);
     }
 
     invalidate() {
@@ -141,7 +141,7 @@ export class TaxTotalsComponent extends Component {
     _onChangeTaxValueByTaxGroup({ oldValue, newValue, taxGroupId }) {
         if (oldValue === newValue) return;
         this.totals.amount_total = this.totals.amount_untaxed + newValue;
-        this.props.update(this.totals);
+        this.props.record.update({ [this.props.name]: this.totals });
     }
 
     _format(amount) {
@@ -186,4 +186,8 @@ TaxTotalsComponent.props = {
     ...standardFieldProps,
 };
 
-registry.category("fields").add("account-tax-totals-field", TaxTotalsComponent);
+export const taxTotalsComponent = {
+    component: TaxTotalsComponent,
+};
+
+registry.category("fields").add("account-tax-totals-field", taxTotalsComponent);

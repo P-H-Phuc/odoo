@@ -256,7 +256,7 @@ class CrmLead(models.Model):
         fields = ['partner_name', 'phone', 'mobile', 'email_from', 'street', 'street2',
             'city', 'zip', 'state_id', 'country_id']
         if any([key not in fields for key in values]):
-            raise UserError(_("Not allowed to update the following field(s) : %s.") % ", ".join([key for key in values if not key in fields]))
+            raise UserError(_("Not allowed to update the following field(s): %s.") % ", ".join([key for key in values if not key in fields]))
         return self.sudo().write(values)
 
     @api.model
@@ -267,7 +267,7 @@ class CrmLead(models.Model):
         self = self.sudo()
         if not (values['contact_name'] and values['description'] and values['title']):
             return {
-                'errors': _('All fields are required !')
+                'errors': _('All fields are required!')
             }
         tag_own = self.env.ref('website_crm_partner_assign.tag_portal_lead_own_opp', False)
         values = {

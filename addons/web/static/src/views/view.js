@@ -5,14 +5,24 @@ import { registry } from "@web/core/registry";
 import { KeepLast } from "@web/core/utils/concurrency";
 import { useService } from "@web/core/utils/hooks";
 import { deepCopy, pick } from "@web/core/utils/objects";
-import { ControlPanel } from "@web/search/control_panel/control_panel";
 import { extractLayoutComponents } from "@web/search/layout";
-import { SearchPanel } from "@web/search/search_panel/search_panel";
 import { WithSearch } from "@web/search/with_search/with_search";
 import { OnboardingBanner } from "@web/views/onboarding_banner";
 import { useActionLinks } from "@web/views/view_hook";
 
+<<<<<<< HEAD
 import { Component, markRaw, onWillUpdateProps, onWillStart, toRaw, useSubEnv, reactive } from "@odoo/owl";
+=======
+import {
+    Component,
+    markRaw,
+    onWillUpdateProps,
+    onWillStart,
+    toRaw,
+    useSubEnv,
+    reactive,
+} from "@odoo/owl";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 const viewRegistry = registry.category("views");
 
 /** @typedef {Object} Config
@@ -25,8 +35,6 @@ const viewRegistry = registry.category("views");
  *  @property {() => Object} getPagerProps
  *  @property {Object[]} viewSwitcherEntry
  *  @property {Object[]} viewSwitcherEntry
- *  @property {Component} ControlPanel
- *  @property {Component} SearchPanel
  *  @property {Component} Banner
  */
 
@@ -60,8 +68,6 @@ export function getDefaultConfig() {
         },
         viewSwitcherEntries: [],
         views: [],
-        ControlPanel: ControlPanel,
-        SearchPanel: SearchPanel,
         Banner: OnboardingBanner,
     };
     return config;
@@ -266,11 +272,18 @@ export class View extends Component {
         let subType = rootNode.getAttribute("js_class");
         const bannerRoute = rootNode.getAttribute("banner_route");
         const sample = rootNode.getAttribute("sample");
+        const classList = [
+            "o_view_controller",
+            `o_${type}_view`,
+            ...(props.className || "").split(" "),
+            ...(rootNode.getAttribute("class") || "").split(" "),
+        ];
 
         // determine ViewClass to instantiate (if not already done)
         if (subType) {
             if (viewRegistry.contains(subType)) {
                 descr = viewRegistry.get(subType);
+                classList.push(`o_${subType}_view`);
             } else {
                 subType = null;
             }
@@ -302,7 +315,7 @@ export class View extends Component {
             relatedModels,
             resModel,
             useSampleModel: false,
-            className: `${props.className} o_view_controller o_${this.env.config.viewType}_view`,
+            className: [...new Set(classList)].filter((c) => c).join(" "),
         };
         if (viewDescription.custom_view_id) {
             // for dashboard
@@ -402,5 +415,7 @@ View.defaultProps = {
     loadIrFilters: false,
     className: "",
 };
-
+View.props = {
+    "*": true,
+};
 View.searchMenuTypes = ["filter", "groupBy", "favorite"];

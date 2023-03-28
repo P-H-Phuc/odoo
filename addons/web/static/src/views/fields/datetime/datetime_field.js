@@ -9,6 +9,22 @@ import { standardFieldProps } from "../standard_field_props";
 import { Component } from "@odoo/owl";
 
 export class DateTimeField extends Component {
+<<<<<<< HEAD
+=======
+    static template = "web.DateTimeField";
+    static components = {
+        DateTimePicker,
+    };
+    static props = {
+        ...standardFieldProps,
+        pickerOptions: { type: Object, optional: true },
+        placeholder: { type: String, optional: true },
+    };
+    static defaultProps = {
+        pickerOptions: {},
+    };
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     setup() {
         /**
          * The last value that has been commited to the model.
@@ -16,45 +32,46 @@ export class DateTimeField extends Component {
          */
         this.lastSetValue = null;
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     get formattedValue() {
-        return formatDateTime(this.props.value);
+        return formatDateTime(this.props.record.data[this.props.name]);
     }
 
     onDateTimeChanged(date) {
-        if (!areDateEquals(this.props.value || "", date)) {
-            this.props.update(date);
+        if (!areDateEquals(this.props.record.data[this.props.name] || "", date)) {
+            this.props.record.update({ [this.props.name]: date });
         }
     }
     onDatePickerInput(ev) {
+<<<<<<< HEAD
         this.props.setDirty(ev.target.value !== this.lastSetValue);
     }
     onUpdateInput(date) {
         this.props.setDirty(false);
+=======
+        this.props.record.model.bus.trigger(
+            "FIELD_IS_DIRTY",
+            ev.target.value !== this.lastSetValue
+        );
+    }
+    onUpdateInput(date) {
+        this.props.record.model.bus.trigger("FIELD_IS_DIRTY", false);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.lastSetValue = date;
     }
 }
 
-DateTimeField.template = "web.DateTimeField";
-DateTimeField.components = {
-    DateTimePicker,
-};
-DateTimeField.props = {
-    ...standardFieldProps,
-    pickerOptions: { type: Object, optional: true },
-    placeholder: { type: String, optional: true },
-};
-DateTimeField.defaultProps = {
-    pickerOptions: {},
-};
-
-DateTimeField.displayName = _lt("Date & Time");
-DateTimeField.supportedTypes = ["datetime"];
-
-DateTimeField.extractProps = ({ attrs }) => {
-    return {
-        pickerOptions: attrs.options.datepicker,
+export const dateTimeField = {
+    component: DateTimeField,
+    displayName: _lt("Date & Time"),
+    supportedTypes: ["datetime"],
+    extractProps: ({ attrs, options }) => ({
+        pickerOptions: options.datepicker,
         placeholder: attrs.placeholder,
-    };
+    }),
 };
 
-registry.category("fields").add("datetime", DateTimeField);
+registry.category("fields").add("datetime", dateTimeField);

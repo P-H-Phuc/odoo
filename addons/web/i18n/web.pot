@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-02 10:35+0000\n"
 "PO-Revision-Date: 2023-02-02 10:35+0000\n"
+=======
+"Project-Id-Version: Odoo Server saas~16.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-17 08:01+0000\n"
+"PO-Revision-Date: 2023-01-17 08:01+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -451,6 +458,16 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
+=======
+#: code:addons/web/static/src/webclient/user_menu/user_menu_items.xml:0
+#, python-format
+msgid "ALT"
+msgstr ""
+
+#. module: web
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/legacy/xml/base.xml:0
 #, python-format
 msgid "ANY"
@@ -502,11 +519,14 @@ msgid "Action ID:"
 msgstr ""
 
 #. module: web
+<<<<<<< HEAD
 #: model:ir.model,name:web.model_ir_actions_act_window_view
 msgid "Action Window View"
 msgstr ""
 
 #. module: web
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/web/static/src/core/debug/debug_menu_items.js:0
 #, python-format
@@ -1574,12 +1594,13 @@ msgstr ""
 #: code:addons/web/static/src/views/calendar/quick_create/calendar_quick_create.xml:0
 #: code:addons/web/static/src/views/fields/many2one/many2one_field.xml:0
 #: code:addons/web/static/src/views/fields/many2one/many2one_field.xml:0
+<<<<<<< HEAD
 #: code:addons/web/static/src/views/form/form_controller.xml:0
 #: code:addons/web/static/src/views/form/form_controller.xml:0
 #: code:addons/web/static/src/views/kanban/kanban_controller.xml:0
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/views/kanban/kanban_renderer.js:0
-#: code:addons/web/static/src/views/list/list_controller.xml:0
-#: code:addons/web/static/src/views/view_dialogs/select_create_dialog.xml:0
 #, python-format
 msgid "Create"
 msgstr ""
@@ -1957,6 +1978,10 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
+=======
+#: code:addons/web/static/src/webclient/settings_form_view/settings/setting.xml:0
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/webclient/user_menu/user_menu_items.js:0
 #, python-format
 msgid "Documentation"
@@ -2261,8 +2286,13 @@ msgid "Exporting grouped data to csv is not supported."
 msgstr ""
 
 #. module: web
+<<<<<<< HEAD
 #. odoo-javascript
 #. odoo-python
+=======
+#. odoo-python
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/controllers/export.py:0
 #: code:addons/web/controllers/export.py:0
 #: code:addons/web/static/src/legacy/js/widgets/data_export.js:0
@@ -2451,13 +2481,18 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
 #: code:addons/web/static/src/legacy/js/views/qweb/qweb_view.js:0
+=======
+#: code:addons/web/static/src/views/widgets/week_days/week_days.js:0
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #, python-format
-msgid "Freedom View"
+msgid "Fri"
 msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
 #: code:addons/web/static/src/views/widgets/week_days/week_days.js:0
 #, python-format
 msgid "Fri"
@@ -2465,6 +2500,8 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/core/colorlist/colorlist.js:0
 #, python-format
 msgid "Fuchsia"
@@ -2827,15 +2864,22 @@ msgid "Label Selection"
 msgstr ""
 
 #. module: web
+<<<<<<< HEAD
+#. odoo-python
+#: code:addons/web/controllers/session.py:0
+=======
+#. odoo-javascript
+#: code:addons/web/static/src/views/fields/field_tooltip.xml:0
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
+#, python-format
+msgid "Label:"
+msgstr ""
+
+#. module: web
 #. odoo-python
 #: code:addons/web/controllers/session.py:0
 #, python-format
 msgid "Languages"
-msgstr ""
-
-#. module: web
-#: model:ir.model.fields,field_description:web.field_base_document_layout____last_update
-msgid "Last Modified on"
 msgstr ""
 
 #. module: web
@@ -3242,6 +3286,16 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
+=======
+#: code:addons/web/static/src/views/fields/statusbar/statusbar_field.js:0
+#, python-format
+msgid "Move to next %s"
+msgstr ""
+
+#. module: web
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/legacy/js/fields/basic_fields.js:0
 #: code:addons/web/static/src/views/fields/text/text_field.js:0
 #, python-format
@@ -3266,6 +3320,14 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/web/static/src/legacy/js/views/basic/basic_model.js:0
 #: code:addons/web/static/src/views/form/form_controller.js:0
+<<<<<<< HEAD
+=======
+#: code:addons/web/static/src/views/form/form_controller.xml:0
+#: code:addons/web/static/src/views/form/form_controller.xml:0
+#: code:addons/web/static/src/views/kanban/kanban_controller.xml:0
+#: code:addons/web/static/src/views/list/list_controller.xml:0
+#: code:addons/web/static/src/views/view_dialogs/select_create_dialog.xml:0
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #, python-format
 msgid "New"
 msgstr ""
@@ -3435,6 +3497,16 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
+=======
+#: code:addons/web/static/src/search/search_panel/search_panel.xml:0
+#, python-format
+msgid "No quick filter available."
+msgstr ""
+
+#. module: web
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/core/model_selector/model_selector.js:0
 #: code:addons/web/static/src/legacy/js/fields/field_utils.js:0
 #: code:addons/web/static/src/legacy/js/fields/relational_fields.js:0
@@ -3462,6 +3534,7 @@ msgstr ""
 #. module: web
 #. odoo-javascript
 #: code:addons/web/static/src/core/commands/command_palette.js:0
+#: code:addons/web/static/src/core/select_menu/select_menu.xml:0
 #, python-format
 msgid "No result found"
 msgstr ""
@@ -3544,6 +3617,7 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
 #: code:addons/web/static/src/legacy/js/apps.js:0
 #, python-format
 msgid "Odoo Apps will be available soon"
@@ -3551,6 +3625,8 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/core/errors/error_dialogs.js:0
 #: code:addons/web/static/src/core/errors/error_dialogs.js:0
 #, python-format
@@ -3574,6 +3650,18 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
+=======
+#: code:addons/web/static/src/views/widgets/notification_alert/notification_alert.xml:0
+#, python-format
+msgid ""
+"Odoo Push notifications have been blocked. Go to your browser settings to "
+"allow them."
+msgstr ""
+
+#. module: web
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/webclient/settings_form_view/widgets/res_config_edition.xml:0
 #, python-format
 msgid "Odoo S.A."
@@ -4198,11 +4286,14 @@ msgid "Q4"
 msgstr ""
 
 #. module: web
+<<<<<<< HEAD
 #: model:ir.model.fields.selection,name:web.selection__ir_actions_act_window_view__view_mode__qweb
 msgid "QWeb"
 msgstr ""
 
 #. module: web
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/web/static/src/legacy/js/control_panel/search_utils.js:0
 #: code:addons/web/static/src/search/utils/dates.js:0
@@ -4222,6 +4313,17 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
+=======
+#: code:addons/web/static/src/search/search_panel/search_panel.xml:0
+#, python-format
+msgid ""
+"Quick filters will become available if the records shown can be filtered."
+msgstr ""
+
+#. module: web
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/legacy/js/fields/relational_fields.js:0
 #: code:addons/web/static/src/views/calendar/filter_panel/calendar_filter_panel.js:0
 #: code:addons/web/static/src/views/fields/relational_utils.js:0
@@ -4663,6 +4765,7 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/web/static/src/core/commands/command_palette.js:0
 #: code:addons/web/static/src/core/model_field_selector/model_field_selector_popover.xml:0
+#: code:addons/web/static/src/core/select_menu/select_menu.js:0
 #: code:addons/web/static/src/legacy/xml/base.xml:0
 #: code:addons/web/static/src/legacy/xml/base.xml:0
 #: code:addons/web/static/src/legacy/xml/base.xml:0
@@ -4854,8 +4957,18 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
 #: code:addons/web/static/src/legacy/js/fields/basic_fields.js:0
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/views/fields/state_selection/state_selection_field.js:0
+#, python-format
+msgid "Set kanban state as %s"
+msgstr ""
+
+#. module: web
+#. odoo-javascript
+#: code:addons/web/static/src/legacy/js/fields/basic_fields.js:0
 #, python-format
 msgid "Set kanban state..."
 msgstr ""
@@ -4898,6 +5011,7 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
 #: code:addons/web/static/src/legacy/js/apps.js:0
 #, python-format
 msgid "Showing locally available modules"
@@ -4905,6 +5019,8 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/legacy/js/fields/signature.js:0
 #, python-format
 msgid "Signature"
@@ -5021,6 +5137,16 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
+=======
+#: code:addons/web/static/src/core/errors/scss_error_dialog.js:0
+#, python-format
+msgid "Style error"
+msgstr ""
+
+#. module: web
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/legacy/xml/base.xml:0
 #: code:addons/web/static/src/legacy/xml/name_and_signature.xml:0
 #, python-format
@@ -5145,6 +5271,19 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
+=======
+#: code:addons/web/static/src/core/errors/error_dialogs.xml:0
+#, python-format
+msgid ""
+"The style compilation failed, see the error below. This is an administrator "
+"or developer error that must be fixed for the entire database before "
+"continuing working."
+msgstr ""
+
+#. module: web
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/legacy/js/fields/relational_fields.js:0
 #, python-format
 msgid ""
@@ -5460,8 +5599,13 @@ msgid "Uncaught Promise"
 msgstr ""
 
 #. module: web
+<<<<<<< HEAD
 #. odoo-javascript
 #. odoo-python
+=======
+#. odoo-python
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/controllers/export.py:0
 #: code:addons/web/static/src/views/calendar/calendar_model.js:0
 #: code:addons/web/static/src/views/graph/graph_model.js:0
@@ -5528,6 +5672,16 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
+=======
+#: code:addons/web/static/src/views/list/list_controller.xml:0
+#, python-format
+msgid "Unselect all"
+msgstr ""
+
+#. module: web
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/views/graph/graph_view.js:0
 #: code:addons/web/static/src/views/pivot/pivot_view.js:0
 #, python-format
@@ -5536,6 +5690,16 @@ msgstr ""
 
 #. module: web
 #. odoo-javascript
+<<<<<<< HEAD
+=======
+#: code:addons/web/static/src/search/search_panel/search_panel.xml:0
+#, python-format
+msgid "Update the filters in the search bar to display more records."
+msgstr ""
+
+#. module: web
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/web/static/src/legacy/xml/base.xml:0
 #: code:addons/web/static/src/views/list/list_confirmation_dialog.xml:0
 #, python-format
@@ -5678,6 +5842,7 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/web/static/src/legacy/js/views/basic/basic_renderer.js:0
 #: code:addons/web/static/src/views/form/form_label.js:0
+#: code:addons/web/static/src/webclient/settings_form_view/settings/setting.xml:0
 #, python-format
 msgid "Values set here are company-specific."
 msgstr ""
@@ -5735,11 +5900,14 @@ msgid "View Record Rules"
 msgstr ""
 
 #. module: web
+<<<<<<< HEAD
 #: model:ir.model.fields,field_description:web.field_ir_actions_act_window_view__view_mode
 msgid "View Type"
 msgstr ""
 
 #. module: web
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/web/static/src/legacy/xml/base.xml:0
 #, python-format

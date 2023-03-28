@@ -3,16 +3,17 @@ odoo.define('hr_recruitment.tour', function(require) {
 
 const {_t} = require('web.core');
 const {Markup} = require('web.utils');
-var tour = require('web_tour.tour');
+const { registry } = require("@web/core/registry");
+const { stepUtils } = require('@web_tour/tour_service/tour_utils');
 
 const { markup } = owl;
 
-tour.register('hr_recruitment_tour',{
+registry.category("web_tour.tours").add('hr_recruitment_tour',{
     url: "/web",
     rainbowManMessage: markup(_t("<div>Great job! You hired a new colleague!</div><div>Try the Website app to publish job offers online.</div>")),
     fadeout: 'very_slow',
     sequence: 230,
-}, [tour.stepUtils.showAppsMenuItem(), {
+    steps: [stepUtils.showAppsMenuItem(), {
     trigger: '.o_app[data-menu-xmlid="hr_recruitment.menu_hr_recruitment_root"]',
     content: Markup(_t("Let's have a look at how to <b>improve</b> your <b>hiring process</b>.")),
     position: 'right',
@@ -78,17 +79,17 @@ tour.register('hr_recruitment_tour',{
     position: "bottom",
     width: 195
 }, {
-    trigger: ".o_Chatter .o_ChatterTopbar_buttonSendMessage",
+    trigger: "button:contains(Send message)",
     extra_trigger: '.o_applicant_form',
     content: Markup(_t("<div><b>Try to send an email</b> to the applicant.</div><div><i>Tips: All emails sent or received are saved in the history here</i>")),
     position: "bottom"
 }, {
-    trigger: ".o_Chatter .o_Composer_buttonSend",
+    trigger: ".o-mail-Chatter .o-mail-Composer button[aria-label='Send']",
     extra_trigger: '.o_applicant_form',
     content: _t("Send your email. Followers will get a copy of the communication."),
     position: "bottom"
 }, {
-    trigger: ".o_Chatter .o_ChatterTopbar_buttonLogNote",
+    trigger: "button:contains(Log note)",
     extra_trigger: '.o_applicant_form',
     content: _t("Or talk about this applicant privately with your colleagues."),
     position: "bottom"
@@ -101,9 +102,9 @@ tour.register('hr_recruitment_tour',{
 }, {
     trigger: ".o_form_button_save",
     extra_trigger: ".o_employee_form",
-    content: _t("Save it !"),
+    content: _t("Save it!"),
     position: "bottom",
     width: 80
-}]);
+}]});
 
 });

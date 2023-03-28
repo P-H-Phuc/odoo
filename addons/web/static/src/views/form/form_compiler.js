@@ -57,6 +57,7 @@ export class FormCompiler extends ViewCompiler {
             { selector: "header", fn: this.compileHeader },
             { selector: "label", fn: this.compileLabel, doNotCopyAttributes: true },
             { selector: "notebook", fn: this.compileNotebook },
+            { selector: "setting", fn: this.compileSetting },
             { selector: "separator", fn: this.compileSeparator },
             { selector: "sheet", fn: this.compileSheet }
         );
@@ -75,13 +76,18 @@ export class FormCompiler extends ViewCompiler {
         } else {
             labelText = labelText
                 ? toStringExpression(labelText)
-                : `props.record.fields['${fieldName}'].string`;
+                : `__comp__.props.record.fields['${fieldName}'].string`;
         }
         const formLabel = createElement("FormLabel", {
             id: `'${fieldId}'`,
             fieldName: `'${fieldName}'`,
+<<<<<<< HEAD
             record: `props.record`,
             fieldInfo: `props.archInfo.fieldNodes['${fieldId}']`,
+=======
+            record: `__comp__.props.record`,
+            fieldInfo: `__comp__.props.archInfo.fieldNodes['${fieldId}']`,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             className: `"${label.className}"`,
             string: labelText,
         });
@@ -139,7 +145,13 @@ export class FormCompiler extends ViewCompiler {
             if (typeof invisible === "boolean") {
                 isVisibleExpr = `${invisible ? false : true}`;
             } else {
+<<<<<<< HEAD
                 isVisibleExpr = `!evalDomainFromRecord(props.record,${JSON.stringify(invisible)})`;
+=======
+                isVisibleExpr = `!__comp__.evalDomainFromRecord(__comp__.props.record,${JSON.stringify(
+                    invisible
+                )})`;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
             const mainSlot = createElement("t", {
                 "t-set-slot": `slot_${slotId++}`,
@@ -173,8 +185,13 @@ export class FormCompiler extends ViewCompiler {
 
     compileButton(el, params) {
         const compiled = super.compileButton(el, params);
+<<<<<<< HEAD
         compiled.setAttribute("disable", "props.disableViewButtons");
         compiled.setAttribute("enable", "props.enableViewButtons");
+=======
+        compiled.setAttribute("disable", "__comp__.props.disableViewButtons");
+        compiled.setAttribute("enable", "__comp__.props.enableViewButtons");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return compiled;
     }
 
@@ -217,13 +234,20 @@ export class FormCompiler extends ViewCompiler {
     compileForm(el, params) {
         const sheetNode = el.querySelector("sheet");
         const displayClasses = sheetNode
-            ? `d-flex {{ uiService.size < ${SIZES.XXL} ? "flex-column" : "flex-nowrap h-100" }}`
+            ? `d-flex {{ __comp__.uiService.size < ${SIZES.XXL} ? "flex-column" : "flex-nowrap h-100" }}`
             : "d-block";
         const stateClasses =
+<<<<<<< HEAD
             "{{ props.record.isDirty ? 'o_form_dirty' : !props.record.isVirtual ? 'o_form_saved' : '' }}";
         const form = createElement("div", {
             "t-att-class": "props.class",
             "t-attf-class": `{{props.record.isInEdition ? 'o_form_editable' : 'o_form_readonly'}} ${displayClasses} ${stateClasses}`,
+=======
+            "{{ __comp__.props.record.isDirty ? 'o_form_dirty' : !__comp__.props.record.isNew ? 'o_form_saved' : '' }}";
+        const form = createElement("div", {
+            "t-att-class": "__comp__.props.class",
+            "t-attf-class": `{{__comp__.props.record.isInEdition ? 'o_form_editable' : 'o_form_readonly'}} ${displayClasses} ${stateClasses}`,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         });
         if (!sheetNode) {
             for (const child of el.childNodes) {
@@ -316,14 +340,14 @@ export class FormCompiler extends ViewCompiler {
                     const props = {
                         id: `${fieldId}`,
                         fieldName: `'${fieldName}'`,
-                        record: `props.record`,
+                        record: `__comp__.props.record`,
                         string: child.hasAttribute("string")
                             ? toStringExpression(child.getAttribute("string"))
-                            : `props.record.fields.${fieldName}.string`,
-                        fieldInfo: `props.archInfo.fieldNodes[${fieldId}]`,
+                            : `__comp__.props.record.fields.${fieldName}.string`,
+                        fieldInfo: `__comp__.props.archInfo.fieldNodes[${fieldId}]`,
                     };
                     mainSlot.setAttribute("props", objectToString(props));
-                    mainSlot.setAttribute("Component", "constructor.components.FormLabel");
+                    mainSlot.setAttribute("Component", "__comp__.constructor.components.FormLabel");
                     mainSlot.setAttribute("subType", "'item_component'");
                 }
             } else {
@@ -344,7 +368,11 @@ export class FormCompiler extends ViewCompiler {
                 if (typeof invisible === "boolean") {
                     isVisibleExpr = `${invisible ? false : true}`;
                 } else {
+<<<<<<< HEAD
                     isVisibleExpr = `!evalDomainFromRecord(props.record,${JSON.stringify(
+=======
+                    isVisibleExpr = `!__comp__.evalDomainFromRecord(__comp__.props.record,${JSON.stringify(
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         invisible
                     )})`;
                 }
@@ -424,7 +452,6 @@ export class FormCompiler extends ViewCompiler {
         }
         let slotId = 0;
         const statusBarButtons = createElement("StatusBarButtons");
-        statusBarButtons.setAttribute("readonly", "!props.record.isInEdition");
         for (const button of buttons) {
             const slot = createElement("t", {
                 "t-set-slot": `button_${slotId++}`,
@@ -489,11 +516,19 @@ export class FormCompiler extends ViewCompiler {
 
         noteBook.setAttribute(
             "defaultPage",
+<<<<<<< HEAD
             `props.record.isNew ? undefined : props.activeNotebookPages[${noteBookId}]`
         );
         noteBook.setAttribute(
             "onPageUpdate",
             `(page) => this.props.onNotebookPageChange(${noteBookId}, page)`
+=======
+            `__comp__.props.record.isNew ? undefined : __comp__.props.activeNotebookPages[${noteBookId}]`
+        );
+        noteBook.setAttribute(
+            "onPageUpdate",
+            `(page) => __comp__.props.onNotebookPageChange(${noteBookId}, page)`
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         );
 
         for (const child of el.children) {
@@ -524,7 +559,11 @@ export class FormCompiler extends ViewCompiler {
             if (child.getAttribute("autofocus") === "autofocus") {
                 noteBook.setAttribute(
                     "defaultPage",
+<<<<<<< HEAD
                     `props.record.isNew ? "${pageId}" : (props.activeNotebookPages[${noteBookId}] || "${pageId}")`
+=======
+                    `__comp__.props.record.isNew ? "${pageId}" : (__comp__.props.activeNotebookPages[${noteBookId}] || "${pageId}")`
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 );
             }
 
@@ -543,7 +582,9 @@ export class FormCompiler extends ViewCompiler {
             if (typeof invisible === "boolean") {
                 isVisible = `${!invisible}`;
             } else {
-                isVisible = `!evalDomainFromRecord(props.record,${JSON.stringify(invisible)})`;
+                isVisible = `!__comp__.evalDomainFromRecord(__comp__.props.record,${JSON.stringify(
+                    invisible
+                )})`;
             }
             pageSlot.setAttribute("isVisible", isVisible);
 
@@ -571,6 +612,52 @@ export class FormCompiler extends ViewCompiler {
         }
 
         return noteBook;
+    }
+
+    /**
+     * @param {Element} el
+     * @param {Record<string, any>} params
+     * @returns {Element}
+     */
+    compileSetting(el, params) {
+        const setting = createElement(params.componentName || "Setting", {
+            title: toStringExpression(el.getAttribute("title") || ""),
+            help: toStringExpression(el.getAttribute("help") || ""),
+            companyDependent: el.getAttribute("company_dependent") === "1" || "false",
+            documentation: toStringExpression(el.getAttribute("documentation") || ""),
+            record: `__comp__.props.record`,
+        });
+        let string = toStringExpression(el.getAttribute("string") || "");
+        let addLabel = true;
+        Array.from(el.children).forEach((child, index) => {
+            if (getTag(child, true) === "field" && index === 0) {
+                const fieldSlot = createElement("t", { "t-set-slot": "fieldSlot" });
+                const field = this.compileNode(child, params);
+                if (field) {
+                    append(fieldSlot, field);
+                    setting.setAttribute("fieldInfo", field.getAttribute("fieldInfo"));
+
+                    addLabel = child.hasAttribute("nolabel")
+                        ? child.getAttribute("nolabel") !== "1"
+                        : true;
+                    const fieldName = child.getAttribute("name");
+                    string = child.hasAttribute("string")
+                        ? toStringExpression(child.getAttribute("string"))
+                        : string;
+                    setting.setAttribute("fieldName", toStringExpression(fieldName));
+                    setting.setAttribute(
+                        "fieldId",
+                        toStringExpression(child.getAttribute("field_id") || fieldName)
+                    );
+                }
+                append(setting, fieldSlot);
+            } else {
+                append(setting, this.compileNode(child, params));
+            }
+        });
+        setting.setAttribute("string", string);
+        setting.setAttribute("addLabel", addLabel);
+        return setting;
     }
 
     /**
@@ -608,14 +695,5 @@ export class FormCompiler extends ViewCompiler {
             append(sheetFG, compiled);
         }
         return sheetBG;
-    }
-
-    /**
-     * @override
-     */
-    compileWidget(el) {
-        const widget = super.compileWidget(el);
-        widget.setAttribute("readonly", `!props.record.isInEdition`);
-        return widget;
     }
 }

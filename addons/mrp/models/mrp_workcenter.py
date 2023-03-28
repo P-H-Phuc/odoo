@@ -9,7 +9,7 @@ from random import randint
 
 from odoo import api, exceptions, fields, models, _
 from odoo.exceptions import UserError, ValidationError
-from odoo.addons.resource.models.resource import make_aware, Intervals
+from odoo.addons.resource.models.utils import make_aware, Intervals
 from odoo.tools.float_utils import float_compare
 
 
@@ -40,6 +40,7 @@ class MrpWorkcenter(models.Model):
     time_start = fields.Float('Setup Time')
     time_stop = fields.Float('Cleanup Time')
     routing_line_ids = fields.One2many('mrp.routing.workcenter', 'workcenter_id', "Routing Lines")
+    has_routing_lines = fields.Boolean(compute='_compute_has_routing_lines', help='Technical field for workcenter views')
     order_ids = fields.One2many('mrp.workorder', 'workcenter_id', "Orders")
     workorder_count = fields.Integer('# Work Orders', compute='_compute_workorder_count')
     workorder_ready_count = fields.Integer('# Read Work Orders', compute='_compute_workorder_count')
@@ -81,14 +82,18 @@ class MrpWorkcenter(models.Model):
             if workcenter in workcenter.alternative_workcenter_ids:
                 raise ValidationError(_("Workcenter %s cannot be an alternative of itself.", workcenter.name))
 
-    @api.depends('order_ids.duration_expected', 'order_ids.workcenter_id', 'order_ids.state', 'order_ids.date_planned_start')
+    @api.depends('order_ids.duration_expected', 'order_ids.workcenter_id', 'order_ids.state', 'order_ids.date_start')
     def _compute_workorder_count(self):
         MrpWorkorder = self.env['mrp.workorder']
         result = {wid: {} for wid in self._ids}
         result_duration_expected = {wid: 0 for wid in self._ids}
         # Count Late Workorder
         data = MrpWorkorder._read_group(
+<<<<<<< HEAD
             [('workcenter_id', 'in', self.ids), ('state', 'in', ('pending', 'waiting', 'ready')), ('date_planned_start', '<', datetime.now().strftime('%Y-%m-%d'))],
+=======
+            [('workcenter_id', 'in', self.ids), ('state', 'in', ('pending', 'waiting', 'ready')), ('date_start', '<', datetime.now().strftime('%Y-%m-%d'))],
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             ['workcenter_id'], ['workcenter_id'])
         count_data = dict((item['workcenter_id'][0], item['workcenter_id_count']) for item in data)
         # Count All, Pending, Ready, Progress Workorder
@@ -172,6 +177,11 @@ class MrpWorkcenter(models.Model):
                 workcenter.performance = 100 * duration_expected.get(workcenter.id, 0.0) / duration[workcenter.id]
             else:
                 workcenter.performance = 0.0
+
+    @api.depends('routing_line_ids')
+    def _compute_has_routing_lines(self):
+        for workcenter in self:
+            workcenter.has_routing_lines = self.env['mrp.routing.workcenter'].search_count([('workcenter_id', '=', workcenter.id)], limit=1)
 
     @api.constrains('default_capacity')
     def _check_capacity(self):
@@ -347,7 +357,7 @@ class MrpWorkcenterProductivityLoss(models.Model):
     _description = "Workcenter Productivity Losses"
     _order = "sequence, id"
 
-    name = fields.Char('Blocking Reason', required=True)
+    name = fields.Char('Blocking Reason', required=True, translate=True)
     sequence = fields.Integer('Sequence', default=1)
     manual = fields.Boolean('Is a Blocking Reason', default=True)
     loss_id = fields.Many2one('mrp.workcenter.productivity.loss.type', domain=([('loss_type', 'in', ['quality', 'availability'])]), string='Category')
@@ -413,6 +423,21 @@ class MrpWorkcenterProductivity(models.Model):
             else:
                 blocktime.duration = 0.0
 
+    @api.onchange('duration')
+    def _duration_changed(self):
+        self.date_end = self.date_start + timedelta(minutes=self.duration)
+        self._loss_type_change()
+
+    @api.onchange('date_start')
+    def _date_start_changed(self):
+        self.date_end = self.date_start + timedelta(minutes=self.duration)
+        self._loss_type_change()
+
+    @api.onchange('date_end')
+    def _date_end_changed(self):
+        self.date_start = self.date_end - timedelta(minutes=self.duration)
+        self._loss_type_change()
+
     @api.constrains('workorder_id')
     def _check_open_time_ids(self):
         for workorder in self.workorder_id:
@@ -423,6 +448,13 @@ class MrpWorkcenterProductivity(models.Model):
     def button_block(self):
         self.ensure_one()
         self.workcenter_id.order_ids.end_all()
+
+    def _loss_type_change(self):
+        self.ensure_one()
+        if self.workorder_id.duration > self.workorder_id.duration_expected:
+            self.loss_id = self.env.ref("mrp.block_reason4").id
+        else:
+            self.loss_id = self.env.ref("mrp.block_reason7").id
 
     def _close(self):
         underperformance_timers = self.env['mrp.workcenter.productivity']

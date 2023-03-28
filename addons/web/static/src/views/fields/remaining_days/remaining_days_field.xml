@@ -25,7 +25,11 @@
         </t>
         <t t-else="">
             <div>
+<<<<<<< HEAD
                 <t t-component="pickerComponent" date="props.value or false" onDateTimeChanged.bind="onDateTimeChanged" />
+=======
+                <t t-component="pickerComponent" date="props.record.data[props.name] or false" onDateTimeChanged.bind="onDateTimeChanged" />
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             </div>
         </t>
     </t>

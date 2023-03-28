@@ -26,6 +26,7 @@ const MassMailingWysiwyg = Wysiwyg.extend({
     toggleLinkTools(options = {}) {
         this._super({
             ...options,
+<<<<<<< HEAD
             // Always open the dialog when the sidebar is folded.
             forceDialog: options.forceDialog || this.snippetsMenu.folded
         });
@@ -85,6 +86,11 @@ const MassMailingWysiwyg = Wysiwyg.extend({
         if (this.snippetsMenu.folded) {
             this.odooEditor.toolbarHide();
         }
+=======
+            // Always open the dialog for the basic theme as it has no sidebar.
+            forceDialog: options.forceDialog || this.$iframeBody.find('.o_basic_theme').length
+        });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
 
     //--------------------------------------------------------------------------

@@ -1,17 +1,14 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
-# Copyright (c) 2011 Cubic ERP - Teradata SAC. (https://cubicerp.com).
-
 {
-    "name": "Bolivia - Accounting",
-    "version": "2.0",
-    "description": """
+    'name': 'Bolivia - Accounting',
+    'version': '2.0',
+    'description': """
 Bolivian accounting chart and tax localization.
 
 Plan contable boliviano e impuestos de acuerdo a disposiciones vigentes
 
     """,
+<<<<<<< HEAD
     "author": "Odoo / Cubic ERP",
     'category': 'Accounting/Localizations/Account Charts',
     "depends": ['l10n_multilang'],
@@ -25,6 +22,15 @@ Plan contable boliviano e impuestos de acuerdo a disposiciones vigentes
         "data/account_tax_template_data.xml",
         "data/account_fiscal_position_template_data.xml",
         "data/account_chart_template_data.xml",
+=======
+    'author': 'Odoo / Cubic ERP',
+    'category': 'Accounting/Localizations/Account Charts',
+    'depends': [
+        'account',
+    ],
+    'data': [
+        'data/account_tax_report_data.xml',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     ],
     'demo': [
         'demo/demo_company.xml',

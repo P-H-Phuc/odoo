@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-15 09:41+0000\n"
 "PO-Revision-Date: 2023-02-15 09:41+0000\n"
+=======
+"Project-Id-Version: Odoo Server 16.2alpha1+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-07 13:59+0000\n"
+"PO-Revision-Date: 2023-02-07 13:59+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,6 +23,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_jp
+<<<<<<< HEAD
 #: model:account.account,name:l10n_jp.1_l10n_jp_220700
 #: model:account.account,name:l10n_jp.2_l10n_jp_220700
 #: model:account.account,name:l10n_jp.3_l10n_jp_220700
@@ -149,10 +157,16 @@ msgstr "創立費償却"
 #: model:account.account.template,name:l10n_jp.l10n_jp_123300
 msgid "Bad Debt Allowance"
 msgstr "貸倒引当金"
+=======
+#: model:account.report.line,name:l10n_jp.tax_report_to_pay
+msgid "Amount of tax due"
+msgstr "支払対象税額"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 #. module: l10n_jp
 #: model:account.report.column,name:l10n_jp.tax_report_balance
 msgid "Balance"
+<<<<<<< HEAD
 msgstr "総合計"
 
 #. module: l10n_jp
@@ -1378,10 +1392,56 @@ msgstr "租税公課"
 #: model:account.fiscal.position.template,name:l10n_jp.l10n_jp_fiscal_position_tax_inclusive
 msgid "Tax Inclusive"
 msgstr "内税"
+=======
+msgstr "バランス"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_comp_basis
+msgid "Base amount for tax calculation"
+msgstr "税計算基準額"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_comp_basis_sales
+msgid "Base sales amount"
+msgstr "販売基準額"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_comp_basis_sales_duty_free
+#: model:account.report.line,name:l10n_jp.tax_report_to_pay_temp_tx_duty_free
+msgid "Duty free tax"
+msgstr "免税売上"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_comp_basis_purchases_import
+#: model:account.report.line,name:l10n_jp.tax_report_to_pay_temp_pmt_import_8
+msgid "Import"
+msgstr "輸入仕入"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_comp_basis_purchases_tax_free
+msgid "Nontaxable purchases"
+msgstr "不課税仕入"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_comp_basis_sales_tax_free
+msgid "Nontaxable sales"
+msgstr "不課税売上"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_comp_basis_purchases
+msgid "Purchase base amount"
+msgstr "購買基準額"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_to_pay_temp_pmt
+msgid "Suspense payment"
+msgstr "仮払税額"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 #. module: l10n_jp
 #: model:account.report,name:l10n_jp.tax_report
 msgid "Tax Report"
+<<<<<<< HEAD
 msgstr "税レポート"
 
 #. module: l10n_jp
@@ -1510,3 +1570,57 @@ msgstr "不課税"
 #: model:account.report.line,name:l10n_jp.l10n_jp_tax_report_comp_basis_sales_tax_free
 msgid "Zero-rated Tax Amount"
 msgstr "不課税売上"
+=======
+msgstr "税金レポート"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_to_pay_temp_pmt_tax_free
+#: model:account.report.line,name:l10n_jp.tax_report_to_pay_temp_tx_tax_free
+msgid "Tax exemption"
+msgstr "不課税"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_comp_basis_purchases_taxable_10
+msgid "Taxable purchases (10%)"
+msgstr "課税対象仕入(10%)"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_comp_basis_purchases_taxable_8
+msgid "Taxable purchases (8%)"
+msgstr "課税対象仕入(8%)"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_comp_basis_sales_taxable_10
+msgid "Taxable sales (10%)"
+msgstr "課税対象売上(10%)"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_comp_basis_sales_taxable_8
+msgid "Taxable sales (8%)"
+msgstr "課税対象売上(8%)"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_to_pay_temp_pmt_susp_cons_10
+msgid "Temporary consumption tax (10%)"
+msgstr "仮払消費税(10%)"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_to_pay_temp_pmt_susp_cons_8
+msgid "Temporary consumption tax (8%)"
+msgstr "仮払消費税(8%)"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_to_pay_temp_tx_output_8
+msgid "Temporary consumption tax received (8%)"
+msgstr "仮受消費税(8%)"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_to_pay_temp_tx_output_10
+msgid "Temporary consumption tax received(10%)"
+msgstr "仮受消費税(10%)"
+
+#. module: l10n_jp
+#: model:account.report.line,name:l10n_jp.tax_report_to_pay_temp_tx
+msgid "Temporary income tax"
+msgstr "仮受税額"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

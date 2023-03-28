@@ -1,7 +1,15 @@
 /** @odoo-module */
 import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
+<<<<<<< HEAD
 import { PopoverComponent, PopoverWidgetField } from '@stock/widgets/popover_widget';
+=======
+import {
+    PopoverComponent,
+    PopoverWidgetField,
+    popoverWidgetField,
+} from "@stock/widgets/popover_widget";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 /**
  * Link to a Char field representing a JSON:
@@ -36,4 +44,11 @@ WorkOrderPopoverField.components = {
     Popover: WorkOrderPopover
 };
 
+<<<<<<< HEAD
 registry.category("fields").add("mrp_workorder_popover", WorkOrderPopoverField);
+=======
+registry.category("fields").add("mrp_workorder_popover", {
+    ...popoverWidgetField,
+    component: WorkOrderPopoverField,
+});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

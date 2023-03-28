@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="mail.CallParticipantVideo" owl="1">
+<<<<<<< HEAD:addons/mail/static/src/components/call_participant_video/call_participant_video.xml
+        <t t-if="callParticipantVideoView">
+            <video class="o_CallParticipantVideo w-100 h-100 rounded-1 cursor-pointer"
+=======
+            <video class="w-100 h-100 rounded-1 cursor-pointer"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6:addons/mail/static/src/rtc/call_participant_video.xml
+                t-attf-class="{{ className }}"
+                playsinline="true"
+                autoplay="true"
+                muted="true"
+                t-on-loadedmetadata="onVideoLoadedMetaData"
+                t-ref="root"
+            />
+    </t>
+
+</templates>

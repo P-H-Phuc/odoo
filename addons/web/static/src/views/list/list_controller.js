@@ -3,21 +3,28 @@
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { download } from "@web/core/network/download";
 import { evaluateExpr } from "@web/core/py_js/py";
+<<<<<<< HEAD
 import { DynamicRecordList } from "@web/views/relational_model";
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { unique } from "@web/core/utils/arrays";
 import { useService } from "@web/core/utils/hooks";
+import { omit } from "@web/core/utils/objects";
 import { sprintf } from "@web/core/utils/strings";
 import { ActionMenus } from "@web/search/action_menus/action_menus";
 import { Layout } from "@web/search/layout";
 import { usePager } from "@web/search/pager_hook";
 import { session } from "@web/session";
 import { useModel } from "@web/views/model";
+import { DynamicRecordList } from "@web/views/relational_model";
 import { standardViewProps } from "@web/views/standard_view_props";
-import { useSetupView } from "@web/views/view_hook";
+import { MultiRecordViewButton } from "@web/views/view_button/multi_record_view_button";
 import { ViewButton } from "@web/views/view_button/view_button";
 import { useViewButtons } from "@web/views/view_button/view_button_hook";
 import { ExportDataDialog } from "@web/views/view_dialogs/export_data_dialog";
+import { useSetupView } from "@web/views/view_hook";
 
+<<<<<<< HEAD
 import { Component, onWillStart, useSubEnv, useEffect, useRef } from "@odoo/owl";
 
 export class ListViewHeaderButton extends ViewButton {
@@ -43,6 +50,9 @@ export class ListViewHeaderButton extends ViewButton {
     }
 }
 ListViewHeaderButton.props = [...ViewButton.props, "list", "domain"];
+=======
+import { Component, onMounted, onWillStart, useEffect, useRef, useSubEnv } from "@odoo/owl";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 // -----------------------------------------------------------------------------
 
@@ -59,9 +69,13 @@ export class ListController extends Component {
         this.editable = this.props.editable ? this.archInfo.editable : false;
         this.multiEdit = this.archInfo.multiEdit;
         this.activeActions = this.archInfo.activeActions;
-        const fields = this.props.fields;
+        const fields = { ...this.props.fields };
         const { rootState } = this.props.state || {};
+<<<<<<< HEAD
         const { rawExpand } = this.archInfo;
+=======
+        const { defaultGroupBy, rawExpand } = this.archInfo;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.model = useModel(this.props.Model, {
             resModel: this.props.resModel,
             fields,
@@ -73,14 +87,29 @@ export class ListController extends Component {
             limit: this.archInfo.limit || this.props.limit,
             countLimit: this.archInfo.countLimit,
             defaultOrder: this.archInfo.defaultOrder,
+<<<<<<< HEAD
+=======
+            defaultGroupBy: this.props.searchMenuTypes.includes("groupBy") ? defaultGroupBy : false,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             expand: rawExpand ? evaluateExpr(rawExpand, this.props.context) : false,
             groupsLimit: this.archInfo.groupsLimit,
             multiEdit: this.multiEdit,
             rootState,
+            onRecordSaved: this.onRecordSaved.bind(this),
+            onWillSaveRecord: this.onWillSaveRecord.bind(this),
         });
 
         onWillStart(async () => {
             this.isExportEnable = await this.userService.hasGroup("base.group_allow_export");
+        });
+
+        onMounted(() => {
+            const { rendererScrollPositions } = this.props.state || {};
+            if (rendererScrollPositions) {
+                const renderer = this.rootRef.el.querySelector(".o_list_renderer");
+                renderer.scrollLeft = rendererScrollPositions.left;
+                renderer.scrollTop = rendererScrollPositions.top;
+            }
         });
 
         this.archiveEnabled =
@@ -116,8 +145,10 @@ export class ListController extends Component {
                 }
             },
             getLocalState: () => {
+                const renderer = this.rootRef.el.querySelector(".o_list_renderer");
                 return {
                     rootState: this.model.root.exportState(),
+                    rendererScrollPositions: { left: renderer.scrollLeft, top: renderer.scrollTop },
                 };
             },
             getOrderBy: () => {
@@ -158,6 +189,22 @@ export class ListController extends Component {
             () => [this.model.root.selection.length]
         );
     }
+
+    /**
+     * onRecordSaved is a callBack that will be executed after the save
+     * if it was done. It will therefore not be executed if the record
+     * is invalid or if a server error is thrown.
+     * @param {Record} record
+     */
+    async onRecordSaved(record) {}
+
+    /**
+     * onWillSaveRecord is a callBack that will be executed before the
+     * record save if the record is valid if the record is valid.
+     * If it returns false, it will prevent the save.
+     * @param {Record} record
+     */
+    async onWillSaveRecord(record) {}
 
     async createRecord({ group } = {}) {
         const list = (group && group.list) || this.model.root;
@@ -203,7 +250,7 @@ export class ListController extends Component {
 
     onClickDiscard() {
         const editedRecord = this.model.root.editedRecord;
-        if (editedRecord.isVirtual) {
+        if (editedRecord.isNew) {
             this.model.root.removeRecord(editedRecord);
         } else {
             editedRecord.discard();
@@ -239,19 +286,18 @@ export class ListController extends Component {
         return this.model.root.getResIds(true);
     }
 
-    getActionMenuItems() {
+    getStaticActionMenuItems() {
         const isM2MGrouped = this.model.root.isM2MGrouped;
-        const otherActionItems = [];
-        if (this.isExportEnable) {
-            otherActionItems.push({
-                key: "export",
+        return {
+            export: {
+                isAvailable: () => this.isExportEnable,
+                sequence: 10,
                 description: this.env._t("Export"),
                 callback: () => this.onExportData(),
-            });
-        }
-        if (this.archiveEnabled && !isM2MGrouped) {
-            otherActionItems.push({
-                key: "archive",
+            },
+            archive: {
+                isAvailable: () => this.archiveEnabled && !isM2MGrouped,
+                sequence: 20,
                 description: this.env._t("Archive"),
                 callback: () => {
                     const dialogProps = {
@@ -265,21 +311,33 @@ export class ListController extends Component {
                     };
                     this.dialogService.add(ConfirmationDialog, dialogProps);
                 },
-            });
-            otherActionItems.push({
-                key: "unarchive",
+            },
+            unarchive: {
+                isAvailable: () => this.archiveEnabled && !isM2MGrouped,
+                sequence: 30,
                 description: this.env._t("Unarchive"),
                 callback: () => this.toggleArchiveState(false),
-            });
-        }
-        if (this.activeActions.delete && !isM2MGrouped) {
-            otherActionItems.push({
-                key: "delete",
+            },
+            delete: {
+                isAvailable: () => this.activeActions.delete && !isM2MGrouped,
+                sequence: 40,
                 description: this.env._t("Delete"),
                 callback: () => this.onDeleteSelectedRecords(),
-            });
-        }
-        return Object.assign({}, this.props.info.actionMenus, { other: otherActionItems });
+            },
+        };
+    }
+
+    get actionMenuItems() {
+        const { actionMenus } = this.props.info;
+        const staticActionItems = Object.entries(this.getStaticActionMenuItems())
+            .filter(([key, item]) => item.isAvailable === undefined || item.isAvailable())
+            .sort(([k1, item1], [k2, item2]) => (item1.sequence || 0) - (item2.sequence || 0))
+            .map(([key, item]) => Object.assign({ key }, omit(item, "isAvailable", "sequence")));
+
+        return {
+            action: [...staticActionItems, ...(actionMenus.action || [])],
+            print: actionMenus.print,
+        };
     }
 
     async onSelectDomain() {
@@ -288,6 +346,13 @@ export class ListController extends Component {
             const resIds = await this.model.root.getResIds(true);
             this.props.onSelectionChanged(resIds);
         }
+    }
+
+    onUnselectAll() {
+        this.model.root.selection.forEach((record) => {
+            record.toggleSelection(false);
+        });
+        this.model.root.selectDomain(false);
     }
 
     get className() {
@@ -481,7 +546,7 @@ export class ListController extends Component {
 }
 
 ListController.template = `web.ListView`;
-ListController.components = { ActionMenus, ListViewHeaderButton, Layout, ViewButton };
+ListController.components = { ActionMenus, Layout, ViewButton, MultiRecordViewButton };
 ListController.props = {
     ...standardViewProps,
     allowSelectors: { type: Boolean, optional: true },

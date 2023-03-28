@@ -49,6 +49,7 @@ QUnit.module("Mobile SettingsFormView", (hooks) => {
             serverData,
             arch: `
                 <form string="Settings" class="oe_form_configuration o_base_settings" js_class="base_settings">
+<<<<<<< HEAD
                     <div class="o_setting_container">
                         <div class="settings">
                             <div class="app_settings_block" string="CRM" data-key="crm">
@@ -79,6 +80,22 @@ QUnit.module("Mobile SettingsFormView", (hooks) => {
                             </div>
                         </div>
                     </div>
+=======
+                    <app string="CRM" name="crm">
+                        <block>
+                            <setting help="this is bar">
+                                <field name="bar"/>
+                            </setting>
+                        </block>
+                    </app>
+                    <app string="Project" name="project">
+                        <block>
+                            <setting help="this is foo">
+                                <field name="foo"/>
+                            </setting>
+                        </block>
+                    </app>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 </form>`,
         });
 
@@ -125,6 +142,7 @@ QUnit.module("Mobile SettingsFormView", (hooks) => {
                 serverData,
                 arch: `
                 <form string="Settings" class="oe_form_configuration o_base_settings" js_class="base_settings">
+<<<<<<< HEAD
                     <div class="o_setting_container">
                         <div class="settings">
                             <div class="app_settings_block" string="CRM" data-key="crm">
@@ -155,6 +173,22 @@ QUnit.module("Mobile SettingsFormView", (hooks) => {
                             </div>
                         </div>
                     </div>
+=======
+                    <app string="CRM" name="crm">
+                        <block>
+                            <setting help="this is bar">
+                                <field name="bar"/>
+                            </setting>
+                        </block>
+                    </app>
+                    <app string="Project" name="project">
+                        <block>
+                            <setting help="this is foo">
+                                <field name="foo"/>
+                            </setting>
+                        </block>
+                    </app>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 </form>`,
             });
 

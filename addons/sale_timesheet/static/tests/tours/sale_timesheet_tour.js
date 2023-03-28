@@ -2,12 +2,13 @@ odoo.define('sale_timesheet.tour', function (require) {
 "use strict";
 
 const {Markup} = require('web.utils');
-const tour = require('web_tour.tour');
+const { registry } = require("@web/core/registry");
+const { stepUtils } = require('@web_tour/tour_service/tour_utils');
 
-tour.register('sale_timesheet_tour', {
+registry.category("web_tour.tours").add('sale_timesheet_tour', {
     test: true,
     url: '/web',
-}, [...tour.stepUtils.goToAppSteps("sale.sale_menu_root", 'Go to the Sales App'),
+    steps: [...stepUtils.goToAppSteps("sale.sale_menu_root", 'Go to the Sales App'),
 {
     trigger: 'button.o_list_button_add',
     content: 'Click on CREATE button to create a quotation with service products.',
@@ -34,10 +35,22 @@ tour.register('sale_timesheet_tour', {
     content: "Add 10 hours as ordered quantity for this product.",
     run: 'text 10',
 }, {
+    trigger: '.o_field_widget[name=price_subtotal]:contains(2,500.00)',
+    run() {},
+}, {
     trigger: 'button[name="action_confirm"]',
     content: 'Click on Confirm button to create a sale order with this quotation.',
+<<<<<<< HEAD
 }, tour.stepUtils.toggleHomeMenu(),
 ...tour.stepUtils.goToAppSteps("project.menu_main_pm", 'Go to the Project app.'),
+=======
+}, {
+    content: 'Wait for the confirmation to finish. State should be "Sales Order"',
+    trigger: '.o_field_widget[name=state] .o_arrow_button_current:contains("Sales Order")',
+    isCheck: true,
+}, stepUtils.toggleHomeMenu(),
+...stepUtils.goToAppSteps("project.menu_main_pm", 'Go to the Project app.'),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 {
     trigger: 'button.o-kanban-button-new',
     content: 'Add a new project.',
@@ -59,7 +72,7 @@ tour.register('sale_timesheet_tour', {
     trigger: 'button.o-kanban-button-new',
     content: 'Click on Create button to create a task into your project.',
 }, {
-    trigger: 'div[name="name"] > input',
+    trigger: 'div[name="display_name"] > input',
     content: 'Select the name of the task (e.g. Onboarding)',
     run: 'text Onboarding',
 }, {
@@ -145,16 +158,16 @@ tour.register('sale_timesheet_tour', {
     trigger: 'div[name="partner_id"] ul > li:first-child > a:contains(Freeman)',
     content: 'Select the customer in the autocomplete dropdown',
 }, {
-    trigger: 'a.nav-link[name="billing_employee_rate"]',
-    extra_trigger: 'div.o_notebook_headers',
-    content: 'Click on Invoicing tab to configure the invoicing of this project.',
-}, {
     trigger: 'div[name="sale_line_id"] input',
     content: 'Select a Sales Order Item as Default Sales Order Item for each task in this project.',
     run: 'text S',
 }, {
     trigger: '[name="sale_line_id"] ul.ui-autocomplete > li:first-child > a:not(:has(i.fa))',
     content: 'Select the Sales Order Item in the autocomplete dropdown.',
+}, {
+    trigger: 'a.nav-link[name="billing_employee_rate"]',
+    extra_trigger: 'div.o_notebook_headers',
+    content: 'Click on Invoicing tab to configure the invoicing of this project.',
 }, {
     trigger: 'div[name="sale_line_employee_ids"] td.o_field_x2many_list_row_add > a[role="button"]',
     content: 'Click on Add a line on the mapping list view.',
@@ -181,7 +194,7 @@ tour.register('sale_timesheet_tour', {
     trigger: '.dropdown-item[data-menu-xmlid="project.menu_main_pm"]',
     content: 'Select Project main menu',
 }, {
-    trigger: '.oe_kanban_global_click :contains("Project for Freeman") button.o_dropdown_kanban',
+    trigger: '.o_kanban_record:contains("Project for Freeman") .o_dropdown_kanban .dropdown-toggle',
     content: 'Open the project dropdown',
 }, {
     trigger: '.o_kanban_record:contains("Project for Freeman") .dropdown-menu a:contains("Settings")',
@@ -195,9 +208,9 @@ tour.register('sale_timesheet_tour', {
     trigger: 'div[name="partner_id"] ul > li:first-child > a:contains(Freeman)',
     content: 'Select the customer in the autocomplete dropdown',
 }, {
-    trigger: 'a.nav-link[name="billing_employee_rate"]',
+    trigger: 'a.nav-link[name="settings"]',
     extra_trigger: 'div.o_notebook_headers',
-    content: 'Click on Invoicing tab to configure the invoicing of this project.',
+    content: 'Click on Settings tab to configure this project.',
 }, {
     trigger: 'div[name="sale_line_id"] input',
     content: 'Select the first sale order of the list',
@@ -217,32 +230,32 @@ tour.register('sale_timesheet_tour', {
 }, {
     trigger: ".o_rightpanel_section[name='sales'] .o_rightpanel_title:contains('Sales')",
     content: 'Check the user sees Sales section',
-    run: function () {},
+    isCheck: true,
 }, {
     trigger: ".o_rightpanel_section[name='sales'] .o_rightpanel_data:contains('Prepaid Hours')",
     content: 'Check the user sees a line in the Sales section',
     // timer: 300,
-    run: function () {},
+    isCheck: true,
 }, {
     trigger: ".o_rightpanel_section .oe_button_box .o_stat_text:contains('Sales Orders')",
     content: 'Check the user sees Sales Orders Stat Button',
-    run: function () {},
+    isCheck: true,
 }, {
     trigger: ".o_rightpanel_section[name='profitability'] .o_rightpanel_title:contains('Profitability')",
     content: 'Check the user sees Profitability section',
-    run: function () {},
+    isCheck: true,
 }, {
     trigger: ".o_rightpanel_section[name='profitability'] .o_rightpanel_data > .o_rightpanel_subsection:eq(0) > table > thead > tr > th:eq(0):contains('Revenues')",
     content: 'Check the user sees Profitability subsection row',
-    run: function () {},
+    isCheck: true,
 }, {
     trigger: ".o_rightpanel_section[name='profitability'] .o_rightpanel_data > .o_rightpanel_subsection:eq(1) > table > thead > tr > th:eq(0):contains('Costs')",
     content: 'Check the user sees Profitability subsection row',
-    run: function () {},
+    isCheck: true,
 }, {
     trigger: ".o_rightpanel_section[name='profitability'] .o_rightpanel_data > .o_rightpanel_subsection:eq(2) > table > thead > tr > th:eq(0):contains('Margin')",
     content: 'Check the user sees Profitability subsection row',
-    run: function () {},
+    isCheck: true,
 }, {
     trigger: ".o_rightpanel_section[name='milestones'] .o_rightpanel_title:contains('Milestones')",
     content: 'Check the user sees Milestones section',
@@ -268,21 +281,27 @@ tour.register('sale_timesheet_tour', {
     content: "Give a name to Project Update",
     run: 'text New update',
 }, {
+<<<<<<< HEAD
     trigger: ".o_field_widget[name=description] h3:contains('Sold')",
     content: "Sold title must be in description in description",
     run: function () {},
+=======
+    trigger: ".o_field_widget[name=description] h3:contains('Sales')",
+    content: "Sales title must be in description in description",
+    isCheck: true,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }, {
     trigger: ".o_field_widget[name=description] td:contains('Prepaid Hours')",
     content: "Prepaid Hours title must be in description",
-    run: function () {},
+    isCheck: true,
 }, {
     trigger: ".o_field_widget[name=description] h3:contains('Profitability')",
     content: "Profitability title must be in description",
-    run: function () {},
+    isCheck: true,
 }, {
     trigger: ".o_field_widget[name=description] h3:contains('Milestones')",
     content: "Milestones title must be in description",
-    run: function () {},
+    isCheck: true,
 },
 // Those steps are currently needed in order to prevent the following issue:
 // "Form views in edition mode are automatically saved when the page is closed, which leads to stray network requests and inconsistencies."
@@ -294,7 +313,13 @@ tour.register('sale_timesheet_tour', {
     content: 'Check the kanban view of project update is rendered to be sure the user leaves the form view and the project update is created',
     run: function() {},
 },
+<<<<<<< HEAD
 tour.stepUtils.toggleHomeMenu(),
 ...tour.stepUtils.goToAppSteps("project.menu_main_pm", 'Go to the Project app.'),
 ]);
+=======
+stepUtils.toggleHomeMenu(),
+...stepUtils.goToAppSteps("project.menu_main_pm", 'Go to the Project app.'),
+]});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 });

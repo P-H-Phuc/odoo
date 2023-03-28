@@ -5,14 +5,10 @@ from . import models
 from . import report
 from . import wizard
 
-from odoo import api, SUPERUSER_ID, _, tools
 
-def _configure_journals(cr, registry):
-    """Setting journal and property field (if needed)"""
-
-    env = api.Environment(cr, SUPERUSER_ID, {})
-
+def _configure_journals(env):
     # if we already have a coa installed, create journal and set property field
+<<<<<<< HEAD
     company_ids = env['res.company'].search([('chart_template_id', '!=', False)])
     todo_list = [
         'property_stock_account_input_categ_id',
@@ -64,3 +60,25 @@ def _configure_journals(cr, registry):
             {category.id: False for category in env['product.category'].search([])},
             True
         )
+=======
+    for company in env['res.company'].search([('chart_template', '!=', False)]):
+        ChartTemplate = env['account.chart.template'].with_company(company)
+        template_code = company.chart_template
+        full_data = ChartTemplate._get_chart_template_data(template_code)
+        data = {
+            'account.journal': ChartTemplate._get_stock_account_journal(template_code),
+            'template_data': {
+                fname: value
+                for fname, value in full_data['template_data'].items()
+                if fname in [
+                    'property_stock_journal',
+                    'property_stock_account_input_categ_id',
+                    'property_stock_account_output_categ_id',
+                    'property_stock_valuation_account_id',
+                ]
+            }
+        }
+        template_data = data.pop('template_data')
+        ChartTemplate._load_data(data)
+        ChartTemplate._post_load_data(template_code, company, template_data)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

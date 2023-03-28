@@ -4,8 +4,12 @@ import { useService } from '@web/core/utils/hooks';
 import { TextField } from '@web/views/fields/text/text_field';
 import { PortalAttachDocument } from '../portal_attach_document/portal_attach_document';
 import { ChatterAttachmentsViewer } from './chatter_attachments_viewer';
+<<<<<<< HEAD
 
 const { Component, useState, onWillUpdateProps } = owl;
+=======
+import { Component, useState, onWillUpdateProps, useRef } from "@odoo/owl";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 export class ChatterComposer extends Component {
     setup() {
@@ -16,6 +20,10 @@ export class ChatterComposer extends Component {
             message: '',
             loading: false,
         });
+<<<<<<< HEAD
+=======
+        this.inputRef = useRef("textarea");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         onWillUpdateProps(this.onWillUpdateProps);
     }
@@ -23,6 +31,10 @@ export class ChatterComposer extends Component {
     onWillUpdateProps(nextProps) {
         this.clearErrors();
         this.state.message = '';
+<<<<<<< HEAD
+=======
+        this.inputRef.el.value = "";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.state.attachments = nextProps.attachments.map(file => file.state === 'done');
     }
 
@@ -30,9 +42,15 @@ export class ChatterComposer extends Component {
         return `${window.location.href.split('#')[0]}#discussion`;
     }
 
+<<<<<<< HEAD
     update(change) {
         this.clearErrors();
         this.state.message = change;
+=======
+    update() {
+        this.clearErrors();
+        this.state.message = this.inputRef.el.value;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 
     prepareMessageData() {

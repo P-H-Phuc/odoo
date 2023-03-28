@@ -39,7 +39,11 @@
 </t>
 
 <t t-name="web.Form.InnerGroup.ItemComponent" owl="1">
+<<<<<<< HEAD
     <t t-if="cell.props.fieldInfo.FieldComponent.name !== 'BooleanField'">
+=======
+    <t t-if="cell.props.fieldInfo.field.component.name !== 'BooleanField'">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         <div class="o_cell o_wrap_label flex-grow-1 flex-sm-grow-0 w-100 text-break text-900">
             <t t-component="cell.Component" t-if="cell.isVisible" t-props="cell.props"/>
         </div>

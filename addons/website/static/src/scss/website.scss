@@ -206,6 +206,18 @@ $-seen-urls: ();
     }
 }
 
+// We don't want the area to be visible in edit mode when we edit the popup that
+// is shared on all pages, otherwise the .o_editable area has a minimum height
+// when it is focused.
+#o_shared_blocks {
+    min-height: 0px;
+    height: 0px;
+
+    &:empty {
+        display: none;
+    }
+}
+
 .navbar {
 
     .navbar-collapse {
@@ -990,7 +1002,11 @@ header {
                     // Prevent #top_menu from overflowing the page below the
                     // maximum width. (e.g. if contains an inline language
                     // switcher with many elements.)
+<<<<<<< HEAD
                     @media(max-width: 560px) {
+=======
+                    @media (max-width: 560px) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         max-width: 100%;
                     }
                 }
@@ -1092,12 +1108,24 @@ header {
 } @else if o-website-value('header-template') == 'sidebar' {
     @include media-breakpoint-up(lg) {
         #wrapwrap {
+<<<<<<< HEAD
             // Hack: padding is also used by layout option (boxed, etc), need to
             // combine both options/effects...
+=======
+            // Two different website options might add padding:
+            // - The sidebar header template
+            // - The website layout template when different than 'full'
+            // We need to combine both using `calc`. The `border` solution does
+            // not work on Safari.
+            $padding-size: o-website-value('sidebar-width');
+            @if o-website-value('layout') != 'full' {
+                $padding-size: calc(#{$grid-gutter-width} * 2 + #{$padding-size});
+            }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             @if $-hamburger-right {
-                border-right: o-website-value('sidebar-width') solid transparent;
+                padding-right: $padding-size;
             } @else {
-                border-left: o-website-value('sidebar-width') solid transparent;
+                padding-left: $padding-size;
             }
             // ... but don't use it on Safari, it doesn't work, the menu is
             // somehow broken and not visible.

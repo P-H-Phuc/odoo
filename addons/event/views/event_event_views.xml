@@ -47,12 +47,12 @@
                                 <field name="date_end" widget="daterange" nolabel="1" class="oe_inline" options="{'related_start_date': 'date_begin'}"/>
                             </div>
                             <field name="date_tz"/>
-                            <field name="event_type_id" string="Template" options="{'no_create':True}"/>
+                            <field name="event_type_id" string="Template"/>
                             <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_quick_create': True}"/>
                         </group>
                         <group name="right_event_details">
                             <field name="organizer_id"/>
-                            <field name="user_id" domain="[('share', '=', False)]"/>
+                            <field name="user_id" widget="many2one_avatar_user" domain="[('share', '=', False)]"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                             <field name="address_id"
                                 context="{'show_address': 1}"
@@ -94,11 +94,11 @@
                             <group>
                                 <label for="note" string="Note" />
                                 <br />
-                                <field nolabel="1" colspan="2" name="note" 
+                                <field nolabel="1" colspan="2" name="note"
                                     placeholder="Add some internal notes (to do lists, contact info, ...)" />
                                 <label for="ticket_instructions" string="Ticket Instructions" />
                                 <br />
-                                <field nolabel="1" colspan="2" name="ticket_instructions" 
+                                <field nolabel="1" colspan="2" name="ticket_instructions"
                                     placeholder="e.g. How to get to your event, door closing time, ..." />
                             </group>
                         </page>
@@ -293,7 +293,6 @@
 
     <record model="ir.actions.act_window" id="action_event_view">
        <field name="name">Events</field>
-       <field name="type">ir.actions.act_window</field>
        <field name="res_model">event.event</field>
        <field name="view_mode">kanban,calendar,tree,form,pivot,graph</field>
        <field name="search_view_id" ref="view_event_search"/>

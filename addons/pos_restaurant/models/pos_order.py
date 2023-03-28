@@ -12,7 +12,7 @@ from odoo import api, fields, models
 class PosOrderLine(models.Model):
     _inherit = 'pos.order.line'
 
-    note = fields.Char('Internal Note added by the waiter.')
+    note = fields.Char('Kitchen Note added by the waiter.')
     uuid = fields.Char(string='Uuid', readonly=True, copy=False)
     mp_skip = fields.Boolean('Skip line when sending ticket to kitchen printers.')
 
@@ -20,10 +20,11 @@ class PosOrderLine(models.Model):
 class PosOrder(models.Model):
     _inherit = 'pos.order'
 
-    table_id = fields.Many2one('restaurant.table', string='Table', help='The table where this order was served', index='btree_not_null')
-    customer_count = fields.Integer(string='Guests', help='The amount of customers that have been served by this order.')
+    table_id = fields.Many2one('restaurant.table', string='Table', help='The table where this order was served', index='btree_not_null', readonly=True)
+    customer_count = fields.Integer(string='Guests', help='The amount of customers that have been served by this order.', readonly=True)
     multiprint_resume = fields.Char(string='Multiprint Resume', help="Last printed state of the order")
 
+<<<<<<< HEAD
     def _get_pack_lot_lines(self, order_lines):
         """Add pack_lot_lines to the order_lines.
 
@@ -49,24 +50,18 @@ class PosOrder(models.Model):
         for order_line_id, pack_lot_ids in groupby(pack_lots, key=lambda x:x['order_line']):
             next(order_line for order_line in order_lines if order_line['id'] == order_line_id)['pack_lot_ids'] = list(pack_lot_ids)
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def _get_fields_for_order_line(self):
         fields = super(PosOrder, self)._get_fields_for_order_line()
         fields.extend([
-            'id',
-            'discount',
-            'product_id',
-            'price_unit',
-            'order_id',
-            'qty',
             'note',
             'uuid',
             'mp_skip',
-            'full_product_name',
-            'customer_note',
-            'price_extra',
         ])
         return fields
 
+<<<<<<< HEAD
     def _prepare_order_line(self, order_line):
         """Method that will allow the cleaning of values to send the correct information.
         :param order_line: order_line that will be cleaned.
@@ -144,23 +139,29 @@ class PosOrder(models.Model):
         for order_id, payment_lines in groupby(extended_payment_lines, key=lambda x:x[2]['pos_order_id']):
             next(order for order in orders if order['id'] == order_id[0])['statement_ids'] = list(payment_lines)
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def _get_fields_for_draft_order(self):
-        return [
-            'id',
-            'pricelist_id',
-            'partner_id',
-            'sequence_number',
-            'session_id',
-            'pos_reference',
-            'create_uid',
-            'create_date',
-            'customer_count',
-            'fiscal_position_id',
+        fields = super()._get_fields_for_draft_order()
+        fields.extend([
             'table_id',
-            'to_invoice',
+            'customer_count',
             'multiprint_resume',
+<<<<<<< HEAD
             'access_token',
         ]
+=======
+        ])
+        return fields
+
+    def _get_domain_for_draft_orders(self, table_ids):
+        """ Get the domain to search for draft orders on a table.
+        :param table_ids: Ids of the selected tables.
+        :type table_ids: list of int.
+        "returns: list -- list of tuples that represents a domain.
+        """
+        return [('state', '=', 'draft'), ('table_id', 'in', table_ids)]
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     def _get_domain_for_draft_orders(self, table_ids):
         """ Get the domain to search for draft orders on a table.
@@ -192,48 +193,16 @@ class PosOrder(models.Model):
         self._get_order_lines(table_orders)
         self._get_payment_lines(table_orders)
 
-        for order in table_orders:
-            order['pos_session_id'] = order['session_id'][0]
-            order['uid'] = search(r"\d{5,}-\d{3,}-\d{4,}", order['pos_reference']).group(0)
-            order['name'] = order['pos_reference']
-            order['creation_date'] = order['create_date']
-            order['server_id'] = order['id']
-            if order['fiscal_position_id']:
-                order['fiscal_position_id'] = order['fiscal_position_id'][0]
-            if order['pricelist_id']:
-                order['pricelist_id'] = order['pricelist_id'][0]
-            if order['partner_id']:
-                order['partner_id'] = order['partner_id'][0]
-            if order['table_id']:
-                order['table_id'] = order['table_id'][0]
-
-            if not 'lines' in order:
-                order['lines'] = []
-            if not 'statement_ids' in order:
-                order['statement_ids'] = []
-
-            del order['id']
-            del order['session_id']
-            del order['pos_reference']
-            del order['create_date']
+        self._prepare_order(table_orders)
 
         return self._add_activated_coupon_to_draft_orders(table_orders)
 
     @api.model
-    def remove_from_ui(self, server_ids):
-        """ Remove orders from the frontend PoS application
-
-        Remove orders from the server by id.
-        :param server_ids: list of the id's of orders to remove from the server.
-        :type server_ids: list.
-        :returns: list -- list of db-ids for the removed orders.
-        """
-        orders = self.search([('id', 'in', server_ids), ('state', '=', 'draft')])
-        orders.write({'state': 'cancel'})
-        # TODO Looks like delete cascade is a better solution.
-        orders.mapped('payment_ids').sudo().unlink()
-        orders.sudo().unlink()
-        return orders.ids
+    def _prepare_order(self, orders):
+        super(PosOrder, self)._prepare_order(orders)
+        for order in orders:
+            if order['table_id']:
+                order['table_id'] = order['table_id'][0]
 
     def set_tip(self, tip_line_vals):
         """Set tip to `self` based on values in `tip_line_vals`."""

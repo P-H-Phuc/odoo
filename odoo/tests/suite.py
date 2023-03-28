@@ -53,7 +53,11 @@ class TestSuite(BaseTestSuite):
             return
         if result._moduleSetUpFailed:
             return
+<<<<<<< HEAD
         if getattr(currentClass, "__unittest_skip__", False):
+=======
+        if currentClass.__unittest_skip__:
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             return
 
         currentClass._classSetupFailed = False
@@ -96,7 +100,11 @@ class TestSuite(BaseTestSuite):
             return
         if previousClass._classSetupFailed:
             return
+<<<<<<< HEAD
         if getattr(previousClass, "__unittest_skip__", False):
+=======
+        if previousClass.__unittest_skip__:
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             return
         try:
             previousClass.tearDownClass()

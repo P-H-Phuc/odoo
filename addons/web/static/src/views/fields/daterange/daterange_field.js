@@ -11,6 +11,15 @@ const formatters = registry.category("formatters");
 const parsers = registry.category("parsers");
 
 export class DateRangeField extends Component {
+    static template = "web.DateRangeField";
+    static props = {
+        ...standardFieldProps,
+        relatedEndDateField: { type: String, optional: true },
+        relatedStartDateField: { type: String, optional: true },
+        formatType: { type: String, optional: true },
+        placeholder: { type: String, optional: true },
+    };
+
     setup() {
         this.notification = useService("notification");
         this.root = useRef("root");
@@ -50,21 +59,28 @@ export class DateRangeField extends Component {
                     }
                 };
             },
+<<<<<<< HEAD
             () => [this.root.el, this.props.value]
+=======
+            () => [this.root.el, this.props.record.data[this.props.name]]
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         );
     }
 
+    get formatType() {
+        return this.props.formatType || this.props.record.fields[this.props.name].type;
+    }
     get isDateTime() {
-        return this.props.formatType === "datetime";
+        return this.formatType === "datetime";
     }
     get formattedValue() {
-        return this.formatValue(this.props.formatType, this.props.value);
+        return this.formatValue(this.formatType, this.props.record.data[this.props.name]);
     }
     get formattedEndDate() {
-        return this.formatValue(this.props.formatType, this.endDate);
+        return this.formatValue(this.formatType, this.endDate);
     }
     get formattedStartDate() {
-        return this.formatValue(this.props.formatType, this.startDate);
+        return this.formatValue(this.formatType, this.startDate);
     }
     get startDate() {
         return this.props.record.data[this.props.relatedStartDateField || this.props.name];
@@ -97,7 +113,7 @@ export class DateRangeField extends Component {
     }
 
     onChangeInput(ev) {
-        const parse = parsers.get(this.props.formatType);
+        const parse = parsers.get(this.formatType);
         let value;
         try {
             value = parse(ev.target.value);
@@ -105,7 +121,7 @@ export class DateRangeField extends Component {
             this.props.record.setInvalidField(this.props.name);
             return;
         }
-        this.props.update(value);
+        this.props.record.update({ [this.props.name]: value });
     }
 
     onWindowScroll(ev) {
@@ -142,24 +158,16 @@ export class DateRangeField extends Component {
         this.isPickerShown = false;
     }
 }
-DateRangeField.template = "web.DateRangeField";
-DateRangeField.props = {
-    ...standardFieldProps,
-    relatedEndDateField: { type: String, optional: true },
-    relatedStartDateField: { type: String, optional: true },
-    formatType: { type: String, optional: true },
-    placeholder: { type: String, optional: true },
-};
 
-DateRangeField.supportedTypes = ["date", "datetime"];
-
-DateRangeField.extractProps = ({ attrs, field }) => {
-    return {
-        relatedEndDateField: attrs.options.related_end_date,
-        relatedStartDateField: attrs.options.related_start_date,
-        formatType: attrs.options.format_type || field.type,
+export const dateRangeField = {
+    component: DateRangeField,
+    supportedTypes: ["date", "datetime"],
+    extractProps: ({ attrs, options }) => ({
+        relatedEndDateField: options.related_end_date,
+        relatedStartDateField: options.related_start_date,
+        formatType: options.format_type,
         placeholder: attrs.placeholder,
-    };
+    }),
 };
 
-registry.category("fields").add("daterange", DateRangeField);
+registry.category("fields").add("daterange", dateRangeField);

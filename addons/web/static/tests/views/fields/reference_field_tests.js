@@ -13,7 +13,7 @@ import {
     triggerHotkey,
     nextTick,
 } from "@web/../tests/helpers/utils";
-import { makeView, setupViewRegistries } from "@web/../tests/views/helpers";
+import { makeView, makeViewInDialog, setupViewRegistries } from "@web/../tests/views/helpers";
 
 let target;
 let serverData;
@@ -399,7 +399,7 @@ QUnit.module("Fields", (hooks) => {
             },
         });
 
-        await makeView({
+        await makeViewInDialog({
             type: "form",
             resModel: "partner",
             resId: 1,
@@ -408,7 +408,11 @@ QUnit.module("Fields", (hooks) => {
                 <form>
                     <sheet>
                         <group>
+<<<<<<< HEAD
                             <field name="reference" string="custom label" open_target="new" />
+=======
+                            <field name="reference" string="custom label"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         </group>
                     </sheet>
                 </form>`,
@@ -479,11 +483,13 @@ QUnit.module("Fields", (hooks) => {
         await click(target, ".o_external_button");
 
         assert.strictEqual(
-            target.querySelector(".modal .modal-title").textContent.trim(),
+            target
+                .querySelector(".o_dialog:not(.o_inactive_modal) .modal-title")
+                .textContent.trim(),
             "Open: custom label",
             "dialog title should display the custom string label"
         );
-        await click(target, ".modal .o_form_button_cancel");
+        await click(target, ".o_dialog:not(.o_inactive_modal) .o_form_button_cancel");
 
         await editSelect(target, ".o_field_widget select", "partner_type");
         assert.strictEqual(
@@ -503,6 +509,7 @@ QUnit.module("Fields", (hooks) => {
         );
     });
 
+<<<<<<< HEAD
     QUnit.test("computed reference field changed by onchange to 'False,0' value", async function (assert) {
         assert.expect(1);
 
@@ -518,10 +525,30 @@ QUnit.module("Fields", (hooks) => {
             resModel: "partner",
             serverData,
             arch: `
+=======
+    QUnit.test(
+        "computed reference field changed by onchange to 'False,0' value",
+        async function (assert) {
+            assert.expect(1);
+
+            serverData.models.partner.onchanges = {
+                bar(obj) {
+                    if (!obj.bar) {
+                        obj.reference_char = "False,0";
+                    }
+                },
+            };
+            await makeView({
+                type: "form",
+                resModel: "partner",
+                serverData,
+                arch: `
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 <form>
                     <field name="bar"/>
                     <field name="reference_char" widget="reference"/>
                 </form>`,
+<<<<<<< HEAD
             mockRPC(route, { args, method }) {
                 if (method === "create") {
                     assert.deepEqual(args[0], {
@@ -538,6 +565,25 @@ QUnit.module("Fields", (hooks) => {
         // save
         await clickSave(target);
     });
+=======
+                mockRPC(route, { args, method }) {
+                    if (method === "create") {
+                        assert.deepEqual(args[0], {
+                            bar: false,
+                            reference_char: "False,0",
+                        });
+                    }
+                },
+            });
+
+            // trigger the onchange to set a value for the reference field
+            await click(target, ".o_field_boolean input");
+
+            // save
+            await clickSave(target);
+        }
+    );
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     QUnit.test("interact with reference field changed by onchange", async function (assert) {
         assert.expect(2);
@@ -864,7 +910,11 @@ QUnit.module("Fields", (hooks) => {
                     };
                 } else if (method === "create") {
                     assert.strictEqual(args.length, 1);
+<<<<<<< HEAD
                     assert.strictEqual(args[0].reference, "partner,2");
+=======
+                    assert.strictEqual(args[0][0].reference, "partner,2");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 }
             },
         });

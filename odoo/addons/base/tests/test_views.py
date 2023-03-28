@@ -3,6 +3,7 @@
 import ast
 import json
 import logging
+import re
 import time
 
 from functools import partial
@@ -13,10 +14,10 @@ from psycopg2 import IntegrityError
 from psycopg2.extras import Json
 
 from odoo.exceptions import AccessError, ValidationError
-from odoo.tests import common
-from odoo.tools import mute_logger, view_validation
+from odoo.tests import common, tagged
+from odoo.tools import get_cache_key_counter, mute_logger, view_validation
 from odoo.addons.base.models.ir_ui_view import (
-    transfer_field_to_modifiers, transfer_node_to_modifiers, simplify_modifiers,
+    transfer_field_to_modifiers, transfer_node_to_modifiers, simplify_modifiers, COMP_REGEX
 )
 
 _logger = logging.getLogger(__name__)
@@ -314,6 +315,55 @@ class TestViewInheritance(ViewCase):
             # 2: _get_inheriting_views: id, inherit_id, mode, groups
             # 3: _combine: arch_db
             self.view_ids['A'].get_combined_arch()
+
+    def test_view_validate_button_action_query_count(self):
+        _, _, counter = get_cache_key_counter(self.env['ir.model.data']._xmlid_lookup, 'base.action_ui_view')
+        hit, miss = counter.hit, counter.miss
+
+        with self.assertQueryCount(8):
+            base_view = self.assertValid("""
+                <form string="View">
+                    <header>
+                        <button type="action" name="base.action_ui_view"/>
+                        <button type="action" name="base.action_ui_view_custom"/>
+                        <button type="action" name="base.action_ui_view"/>
+                    </header>
+                    <field name="name"/>
+                </form>
+            """)
+        self.assertEqual(counter.hit, hit)
+        self.assertEqual(counter.miss, miss + 2)
+
+        with self.assertQueryCount(9):
+            self.assertValid("""
+                <field name="name" position="replace"/>
+            """, inherit_id=base_view.id)
+        self.assertEqual(counter.hit, hit)
+        self.assertEqual(counter.miss, miss + 4)
+
+    def test_view_validate_attrs_groups_query_count(self):
+        _, _, counter = get_cache_key_counter(self.env['ir.model.data']._xmlid_lookup, 'base.group_system')
+        hit, miss = counter.hit, counter.miss
+
+        with self.assertQueryCount(5):
+            base_view = self.assertValid("""
+                <form string="View">
+                    <field name="name" groups="base.group_system"/>
+                    <field name="priority" groups="base.group_system"/>
+                    <field name="inherit_id" groups="base.group_system"/>
+                </form>
+            """)
+        self.assertEqual(counter.hit, hit)
+        self.assertEqual(counter.miss, miss + 1)
+
+        with self.assertQueryCount(6):
+            self.assertValid("""
+                <field name="name" position="replace">
+                    <field name="key" groups="base.group_system"/>
+                </field>
+            """, inherit_id=base_view.id)
+        self.assertEqual(counter.hit, hit)
+        self.assertEqual(counter.miss, miss + 2)
 
 
 class TestApplyInheritanceSpecs(ViewCase):
@@ -1499,6 +1549,11 @@ class TestViews(ViewCase):
         kw.setdefault('active', True)
         if 'arch_db' in kw:
             arch_db = kw['arch_db']
+            if kw.get('inherit_id'):
+                self.cr.execute('SELECT type FROM ir_ui_view WHERE id = %s', [kw['inherit_id']])
+                kw['type'] = self.cr.fetchone()[0]
+            else:
+                kw['type'] = etree.fromstring(arch_db).tag
             kw['arch_db'] = Json({'en_US': arch_db}) if self.env.lang == 'en_US' else Json({'en_US': arch_db, self.env.lang: arch_db})
 
         keys = sorted(kw)
@@ -1508,6 +1563,32 @@ class TestViews(ViewCase):
         query = 'INSERT INTO ir_ui_view(%s) VALUES(%s) RETURNING id' % (fields, params)
         self.cr.execute(query, kw)
         return self.cr.fetchone()[0]
+
+    def test_view_root_node_matches_view_type(self):
+        view = self.View.create({
+            'name': 'foo',
+            'model': 'ir.ui.view',
+            'arch': """
+                <form>
+                </form>
+            """,
+        })
+        self.assertEqual(view.type, 'form')
+
+        with self.assertRaises(ValidationError):
+            self.View.create({
+                'name': 'foo',
+                'model': 'ir.ui.view',
+                'type': 'form',
+                'arch': """
+                    <data>
+                        <div>
+                        </div>
+                        <form>
+                        </form>
+                    </data>
+                """,
+            })
 
     def test_custom_view_validation(self):
         model = 'ir.actions.act_url'
@@ -3250,6 +3331,116 @@ class TestViews(ViewCase):
             "The view test_views_test_view_ref should not be in the views of the many2many field groups_id"
         )
 
+    @mute_logger('odoo.addons.base.models.ir_ui_view')
+    def test_forbidden_owl_directives_in_form(self):
+        arch = "<form>%s</form>"
+
+        self.assertInvalid(
+            arch % ('<span t-esc="x"/>'),
+            """Error while validating view near:
+
+<form __validate__="1"><span t-esc="x"/></form>
+Forbidden owl directive used in arch (t-esc).""",
+        )
+
+        self.assertInvalid(
+            arch % ('<span t-on-click="x.doIt()"/>'),
+            """Error while validating view near:
+
+<form __validate__="1"><span t-on-click="x.doIt()"/></form>
+Forbidden owl directive used in arch (t-on-click).""",
+        )
+
+    @mute_logger('odoo.addons.base.models.ir_ui_view')
+    def test_forbidden_owl_directives_in_kanban(self):
+        arch = "<kanban><templates><t t-name='kanban-box'>%s</t></templates></kanban>"
+
+        self.assertValid(arch % ('<span t-esc="record.resId"/>'))
+        self.assertValid(arch % ('<t t-debug=""/>'))
+
+        self.assertInvalid(
+            arch % ('<span t-on-click="x.doIt()"/>'),
+            """Error while validating view near:
+
+<kanban __validate__="1"><templates><t t-name="kanban-box"><span t-on-click="x.doIt()"/></t></templates></kanban>
+Forbidden owl directive used in arch (t-on-click).""",
+        )
+
+    @mute_logger('odoo.addons.base.models.ir_ui_view')
+    def test_forbidden_data_tooltip_attributes_in_form(self):
+        arch = "<form>%s</form>"
+
+        self.assertInvalid(
+            arch % ('<span data-tooltip="Test"/>'),
+            """Error while validating view near:
+
+<form __validate__="1"><span data-tooltip="Test"/></form>
+Forbidden attribute used in arch (data-tooltip)."""
+        )
+
+        self.assertInvalid(
+            arch % ('<span data-tooltip-template="test"/>'),
+            """Error while validating view near:
+
+<form __validate__="1"><span data-tooltip-template="test"/></form>
+Forbidden attribute used in arch (data-tooltip-template)."""
+        )
+
+    @mute_logger('odoo.addons.base.models.ir_ui_view')
+    def test_forbidden_data_tooltip_attributes_in_kanban(self):
+        arch = "<kanban><templates><t t-name='kanban-box'>%s</t></templates></kanban>"
+
+        self.assertInvalid(
+            arch % ('<span data-tooltip="Test"/>'),
+            """Error while validating view near:
+
+<kanban __validate__="1"><templates><t t-name="kanban-box"><span data-tooltip="Test"/></t></templates></kanban>
+Forbidden attribute used in arch (data-tooltip)."""
+        )
+
+        self.assertInvalid(
+            arch % ('<span data-tooltip-template="test"/>'),
+            """Error while validating view near:
+
+<kanban __validate__="1"><templates><t t-name="kanban-box"><span data-tooltip-template="test"/></t></templates></kanban>
+Forbidden attribute used in arch (data-tooltip-template)."""
+        )
+
+        self.assertInvalid(
+            arch % ('<span t-att-data-tooltip="test"/>'),
+            """Error while validating view near:
+
+<kanban __validate__="1"><templates><t t-name="kanban-box"><span t-att-data-tooltip="test"/></t></templates></kanban>
+Forbidden attribute used in arch (t-att-data-tooltip)."""
+        )
+
+        self.assertInvalid(
+            arch % ('<span t-attf-data-tooltip-template="{{ test }}"/>'),
+            """Error while validating view near:
+
+<kanban __validate__="1"><templates><t t-name="kanban-box"><span t-attf-data-tooltip-template="{{ test }}"/></t></templates></kanban>
+Forbidden attribute used in arch (t-attf-data-tooltip-template)."""
+        )
+
+    @mute_logger('odoo.addons.base.models.ir_ui_view')
+    def test_forbidden_use_of___comp___in_kanban(self):
+        arch = "<kanban><templates><t t-name='kanban-box'>%s</t></templates></kanban>"
+        self.assertInvalid(
+            arch % '<t t-esc="__comp__.props.resId"/>',
+            """Error while validating view near:
+
+<kanban __validate__="1"><templates><t t-name="kanban-box"><t t-esc="__comp__.props.resId"/></t></templates></kanban>
+Forbidden use of `__comp__` in arch."""
+        )
+
+
+@tagged('post_install', '-at_install')
+class TestDebugger(common.TransactionCase):
+    def test_t_debug_in_qweb_based_views(self):
+        View = self.env['ir.ui.view']
+        views_with_t_debug = View.search([["arch_db", "like", "t-debug="]])
+        self.assertEqual([v.xml_id for v in views_with_t_debug], [])
+
 
 class TestViewTranslations(common.TransactionCase):
     # these tests are essentially the same as in test_translate.py, but they use
@@ -3988,3 +4179,25 @@ class TestRenderAllViews(common.TransactionCase):
 
         _logger.info('Rendered %d views as %s using (best of 5) %ss',
             count, self.env.user.name, elapsed)
+
+
+class CompRegexTest(common.TransactionCase):
+    def test_comp_regex(self):
+        self.assertIsNone(re.search(COMP_REGEX, ""))
+        self.assertIsNone(re.search(COMP_REGEX, "__comp__2"))
+        self.assertIsNone(re.search(COMP_REGEX, "__comp___that"))
+        self.assertIsNone(re.search(COMP_REGEX, "a__comp__"))
+
+        self.assertIsNotNone(re.search(COMP_REGEX, "__comp__"))
+        self.assertIsNotNone(re.search(COMP_REGEX, "__comp__ "))
+        self.assertIsNotNone(re.search(COMP_REGEX, " __comp__ "))
+        self.assertIsNotNone(re.search(COMP_REGEX, "__comp__.props"))
+        self.assertIsNotNone(re.search(COMP_REGEX, "__comp__ .props"))
+        self.assertIsNotNone(re.search(COMP_REGEX, "__comp__['props']"))
+        self.assertIsNotNone(re.search(COMP_REGEX, "__comp__ ['props']"))
+        self.assertIsNotNone(re.search(COMP_REGEX, "__comp__[\"props\"]"))
+        self.assertIsNotNone(re.search(COMP_REGEX, "__comp__ [\"props\"]"))
+        self.assertIsNotNone(re.search(COMP_REGEX, "    __comp__     [\"props\"]    "))
+        self.assertIsNotNone(re.search(COMP_REGEX, "record ? __comp__ : false"))
+        self.assertIsNotNone(re.search(COMP_REGEX, "!__comp__.props.resId"))
+        self.assertIsNotNone(re.search(COMP_REGEX, "{{ __comp__ }}"))

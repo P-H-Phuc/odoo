@@ -11,6 +11,17 @@ const formatters = registry.category("formatters");
 const parsers = registry.category("parsers");
 
 export class ProgressBarField extends Component {
+    static template = "web.ProgressBarField";
+    static props = {
+        ...standardFieldProps,
+        maxValueField: { type: [String, Number], optional: true },
+        currentValueField: { type: String, optional: true },
+        isEditable: { type: Boolean, optional: true },
+        isCurrentValueEditable: { type: Boolean, optional: true },
+        isMaxValueEditable: { type: Boolean, optional: true },
+        title: { type: String, optional: true },
+    };
+
     setup() {
         useNumpadDecimal();
         this.root = useRef("numpadDecimal");
@@ -133,6 +144,7 @@ export class ProgressBarField extends Component {
     }
 }
 
+<<<<<<< HEAD
 ProgressBarField.template = "web.ProgressBarField";
 ProgressBarField.props = {
     ...standardFieldProps,
@@ -154,8 +166,20 @@ ProgressBarField.extractProps = ({ attrs }) => {
         isEditable: !attrs.options.readonly && attrs.options.editable,
         isCurrentValueEditable: attrs.options.editable && !attrs.options.edit_max_value,
         isMaxValueEditable: attrs.options.editable && attrs.options.edit_max_value,
+=======
+export const progressBarField = {
+    component: ProgressBarField,
+    displayName: _lt("Progress Bar"),
+    supportedTypes: ["integer", "float"],
+    extractProps: ({ attrs, options }) => ({
+        maxValueField: options.max_value,
+        currentValueField: options.current_value,
+        isEditable: !options.readonly && options.editable,
+        isCurrentValueEditable: options.editable && !options.edit_max_value,
+        isMaxValueEditable: options.editable && options.edit_max_value,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         title: attrs.title,
-    };
+    }),
 };
 
-registry.category("fields").add("progressbar", ProgressBarField);
+registry.category("fields").add("progressbar", progressBarField);

@@ -88,13 +88,13 @@ var concurrency = require('web.concurrency');
 var Context = require('web.Context');
 var core = require('web.core');
 var Domain = require('web.Domain');
-const pyUtils = require('web.py_utils');
 var session = require('web.session');
 var utils = require('web.utils');
 var viewUtils = require('web.viewUtils');
-var localStorage = require('web.local_storage');
 
 var _t = core._t;
+
+const SENTINEL = null;
 
 // field types that can be aggregated in grouped views
 const AGGREGATABLE_TYPES = ['float', 'integer', 'monetary'];
@@ -142,15 +142,6 @@ var x2ManyCommands = {
 var BasicModel = AbstractModel.extend({
     // constants
     OPEN_GROUP_LIMIT: 10, // after this limit, groups are automatically folded
-
-    // list of models for which the DataManager's cache should be cleared on
-    // create, update and delete operations
-    noCacheModels: [
-        'ir.actions.act_window',
-        'ir.filters',
-        'ir.ui.view',
-        'res.currency',
-    ],
 
     /**
      * @override
@@ -397,8 +388,6 @@ var BasicModel = AbstractModel.extend({
                         record.count--;
                     }
                 });
-                // optionally clear the DataManager's cache
-                self._invalidateCache(records[0]);
             });
     },
     /**
@@ -1191,21 +1180,22 @@ var BasicModel = AbstractModel.extend({
                             // Erase changes as they have been applied
                             record._changes = {};
 
-                            // Optionally clear the DataManager's cache
-                            self._invalidateCache(record);
-
                             self.unfreezeOrder(record.id);
 
                             // Update the data directly or reload them
                             if (shouldReload) {
-                                self._fetchRecord(record).then(function () {
-                                    resolve(changedFields);
-                                });
+                                self._fetchRecord(record).then(
+                                    function () {
+                                        resolve(changedFields);
+                                    },
+                                    reject,
+                                );
                             } else {
                                 _.extend(record.data, _changes);
                                 resolve(changedFields);
                             }
                         }).guardedCatch(reject);
+                        
                 } else {
                     resolve(changedFields);
                 }
@@ -1294,39 +1284,6 @@ var BasicModel = AbstractModel.extend({
         return has_x_active?'x_active':undefined
     },
     /**
-     * Toggle the active value of given records (to archive/unarchive them)
-     *
-     * @param {Array} recordIDs local ids of the records to (un)archive
-     * @param {boolean} value false to archive, true to unarchive (value of the active field)
-     * @param {string} parentID id of the parent resource to reload
-     * @returns {Promise<string>} resolves to the parent id
-     */
-    toggleActive: function (recordIDs, parentID) {
-        var self = this;
-        var parent = this.localData[parentID];
-        var resIDs = _.map(recordIDs, function (recordID) {
-            return self.localData[recordID].res_id;
-        });
-        return this._rpc({
-                model: parent.model,
-                method: 'toggle_active',
-                args: [resIDs],
-            })
-            .then(function (action) {
-                // optionally clear the DataManager's cache
-                self._invalidateCache(parent);
-                if (!_.isEmpty(action)) {
-                    return self.do_action(action, {
-                        on_close: function () {
-                            return self.trigger_up('reload');
-                        }
-                    });
-                } else {
-                    return self.reload(parentID);
-                }
-            });
-    },
-    /**
      * Archive the given records
      *
      * @param {integer[]} resIDs ids of the records to archive
@@ -1342,8 +1299,6 @@ var BasicModel = AbstractModel.extend({
                 args: [resIDs],
             })
             .then(function (action) {
-                // optionally clear the DataManager's cache
-                self._invalidateCache(parent);
                 if (!_.isEmpty(action)) {
                     return new Promise(function (resolve, reject) {
                         self.do_action(action, {
@@ -1385,7 +1340,6 @@ var BasicModel = AbstractModel.extend({
             })
             .then(function (action) {
                 // optionally clear the DataManager's cache
-                self._invalidateCache(parent);
                 if (!_.isEmpty(action)) {
                     return new Promise(function (resolve, reject) {
                         self.do_action(action, {
@@ -2667,7 +2621,7 @@ var BasicModel = AbstractModel.extend({
             model: model,
             method: 'name_get',
             args: [ids],
-            context: self.localData[parent].getContext({fieldName: fieldName}),
+            context: self.localData[parent].getContext({fieldName: fieldName, withoutRecordData: true}),
         }).then(function (result) {
             _.each(result, function (el) {
                 var parentIDs = datapoints[el[0]];
@@ -2828,7 +2782,7 @@ var BasicModel = AbstractModel.extend({
                 model: field.relation,
                 method: 'read',
                 args: [ids, fieldNames],
-                context: list.getContext() || {},
+                context: list.getContext({withoutRecordData: true}) || {},
             });
         } else {
             def = Promise.resolve(_.map(ids, function (id) {
@@ -3125,7 +3079,7 @@ var BasicModel = AbstractModel.extend({
                 });
                 record.data[fieldName] = list.id;
                 if (!fieldInfo.__no_fetch) {
-                    var def = self._readUngroupedList(list).then(function () {
+                    var def = self._readUngroupedList(list, { withoutRecordData: true }).then(function () {
                         return Promise.all([
                             self._fetchX2ManysBatched(list),
                             self._fetchReferencesBatched(list)
@@ -3480,6 +3434,10 @@ var BasicModel = AbstractModel.extend({
      * @param {boolean} [options.full=false]
      *        if true or nor fieldName or additionalContext given in options,
      *        the element's context is added to the context
+     * @param {boolean} [options.withoutRecordData=false]
+     *        if true the record data will be replaced by a sentinel in the eval
+     *        context (useful for read rpcs, where we don't want the context to
+     *        depend on data)
      * @returns {Object} the evaluated context
      */
     _getContext: function (element, options) {
@@ -3510,7 +3468,7 @@ var BasicModel = AbstractModel.extend({
         }
         if (element.rawContext) {
             var rawContext = new Context(element.rawContext);
-            var evalContext = this._getEvalContext(this.localData[element.parentID]);
+            var evalContext = this._getEvalContext(this.localData[element.parentID], false, options.withoutRecordData);
             evalContext.id = evalContext.id || false;
             rawContext.set_eval_context(evalContext);
             context.add(rawContext);
@@ -3520,8 +3478,23 @@ var BasicModel = AbstractModel.extend({
         }
 
         if (context.__contexts.length > 1) {
-            context.set_eval_context(this._getEvalContext(element));
-            return context.eval();
+            context.set_eval_context(this._getEvalContext(element, false, options.withoutRecordData));
+            const evaluatedContext = context.eval();
+            if (options.withoutRecordData) {
+                for (const key in evaluatedContext) {
+                    if (evaluatedContext[key] === SENTINEL) {
+                        delete evaluatedContext[key];
+                    }
+                }
+                if (evaluatedContext.parent) {
+                    for (const key in evaluatedContext.parent) {
+                        if (evaluatedContext.parent[key] === SENTINEL) {
+                            delete evaluatedContext.parent[key];
+                        }
+                    }
+                }
+            }
+            return evaluatedContext;
         } else {
             return Object.assign({}, session.user_context);
         }
@@ -3696,11 +3669,16 @@ var BasicModel = AbstractModel.extend({
      * @param {Object} element - an element from the localData
      * @param {boolean} [forDomain=false] if true, evaluates x2manys as a list of
      *   ids instead of a list of commands
+     * @param {boolean} [withoutRecordData=false] if true, replaces the record
+     *   values by null (same inside the parent key)
      * @returns {Object}
      */
-    _getEvalContext: function (element, forDomain) {
+    _getEvalContext: function (element, forDomain, withoutRecordData) {
         var evalContext = element.type === 'record' ? this._getRecordEvalContext(element, forDomain) : {};
-
+        if (withoutRecordData) {
+            const entries = Object.keys(evalContext).map((key) => [key, SENTINEL]);
+            evalContext = Object.fromEntries(entries);
+        }
         if (element.parentID) {
             var parent = this.localData[element.parentID];
             if (parent.type === 'list' && parent.parentID) {
@@ -3708,6 +3686,10 @@ var BasicModel = AbstractModel.extend({
             }
             if (parent.type === 'record') {
                 evalContext.parent = this._getRecordEvalContext(parent, forDomain);
+                if (withoutRecordData) {
+                    const entries = Object.keys(evalContext.parent).map((key) => [key, SENTINEL]);
+                    evalContext.parent = Object.fromEntries(entries);
+                }
             }
         }
         // Uses "current_company_id" because "company_id" would conflict with all the company_id fields
@@ -3728,7 +3710,6 @@ var BasicModel = AbstractModel.extend({
                 current_company_id,
                 id: evalContext.id || false,
             },
-            pyUtils.context(),
             session.user_context,
             element.context,
             evalContext,
@@ -3765,7 +3746,6 @@ var BasicModel = AbstractModel.extend({
                 current_company_id,
                 id: evalContext.id || false,
             },
-            pyUtils.context(),
             session.user_context,
             element.context,
         );
@@ -4012,31 +3992,6 @@ var BasicModel = AbstractModel.extend({
      */
     _getUngroupedListDomain(list) {
         return list.domain || [];
-    },
-    /**
-     * Invalidates the DataManager's cache if the main model (i.e. the model of
-     * its root parent) of the given dataPoint is a model in 'noCacheModels'.
-     *
-     * Reloads the currencies if the main model is 'res.currency'.
-     * Reloads the webclient if we modify a res.company, to (un)activate the
-     * multi-company environment if we are not in a tour test.
-     *
-     * @private
-     * @param {Object} dataPoint
-     */
-    _invalidateCache: function (dataPoint) {
-        while (dataPoint.parentID) {
-            dataPoint = this.localData[dataPoint.parentID];
-        }
-        if (dataPoint.model === 'res.currency') {
-            session.reloadCurrencies();
-        }
-        if (dataPoint.model === 'res.company' && !localStorage.getItem('running_tour')) {
-            this.do_action('reload_context');
-        }
-        if (_.contains(this.noCacheModels, dataPoint.model)) {
-            core.bus.trigger('clear_cache');
-        }
     },
     /**
      * Returns true if the field is protected against changes, looking for a
@@ -4569,7 +4524,7 @@ var BasicModel = AbstractModel.extend({
                             model: field.relation,
                             method: 'name_get',
                             args: [relRecord.data.id],
-                            context: self._getContext(record, {fieldName: name, viewType: viewType}),
+                            context: self._getContext(record, {fieldName: name, viewType: viewType, withoutRecordData: true}),
                         })
                         .then(function (result) {
                             relRecord.data.display_name = result[0][1];
@@ -4736,7 +4691,7 @@ var BasicModel = AbstractModel.extend({
      * @param {string[]} fieldNames to check and read if missing
      * @returns {Promise<Object>}
      */
-    _readMissingFields: function (list, resIDs, fieldNames) {
+    _readMissingFields: function (list, resIDs, fieldNames, withoutRecordData) {
         var self = this;
 
         var missingIDs = [];
@@ -4757,7 +4712,7 @@ var BasicModel = AbstractModel.extend({
         var def;
         if (missingIDs.length && fieldNames.length) {
             def = self._performRPC({
-                context: list.getContext(),
+                context: list.getContext({ withoutRecordData: !!withoutRecordData }),
                 fieldNames: fieldNames,
                 ids: missingIDs,
                 method: 'read',
@@ -4963,7 +4918,8 @@ var BasicModel = AbstractModel.extend({
      * @param {Object} list a valid resource object
      * @returns {Promise<Object>} resolves to the fetched list object
      */
-    _readUngroupedList: function (list) {
+    _readUngroupedList: function (list, options) {
+        options = options || {};
         var self = this;
         var def = Promise.resolve();
 
@@ -4975,7 +4931,7 @@ var BasicModel = AbstractModel.extend({
         if (list.res_ids.length > list.limit && list.orderedBy.length) {
             if (!list.orderedResIDs) {
                 var fieldNames = _.pluck(list.orderedBy, 'name');
-                def = this._readMissingFields(list, _.filter(list.res_ids, _.isNumber), fieldNames);
+                def = this._readMissingFields(list, _.filter(list.res_ids, _.isNumber), fieldNames, options.withoutRecordData);
             }
             def.then(function () {
                 self._sortList(list);
@@ -5008,7 +4964,7 @@ var BasicModel = AbstractModel.extend({
                     resIDs.push(resId);
                 }
             }
-            return self._readMissingFields(list, resIDs, fieldNames).then(function () {
+            return self._readMissingFields(list, resIDs, fieldNames, options.withoutRecordData).then(function () {
                 if (list.res_ids.length <= list.limit) {
                     self._sortList(list);
                 } else {

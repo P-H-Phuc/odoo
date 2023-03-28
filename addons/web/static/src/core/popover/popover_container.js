@@ -2,7 +2,11 @@
 
 import { Popover } from "./popover";
 
+<<<<<<< HEAD
 import { Component, onWillDestroy, useExternalListener, useState, xml } from "@odoo/owl";
+=======
+import { EventBus, Component, onWillDestroy, useExternalListener, useState, xml } from "@odoo/owl";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 class PopoverController extends Component {
     setup() {
@@ -83,6 +87,10 @@ export class PopoverContainer extends Component {
     }
 }
 PopoverContainer.components = { PopoverController };
+PopoverContainer.props = {
+    popovers: Object,
+    bus: EventBus,
+};
 PopoverContainer.template = xml`
     <div class="o_popover_container">
         <t t-foreach="Object.values(props.popovers)" t-as="popover" t-key="popover.id">

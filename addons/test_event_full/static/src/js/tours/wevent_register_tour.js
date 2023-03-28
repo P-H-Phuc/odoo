@@ -1,7 +1,7 @@
 odoo.define('test_event_full.tour.register', function (require) {
 "use strict";
 
-var tour = require('web_tour.tour');
+const { registry } = require("@web/core/registry");
 
 /**
  * TALKS STEPS
@@ -154,21 +154,21 @@ var browseMeetSteps = [{
 }];
 
 
-tour.register('wevent_register', {
+registry.category("web_tour.tours").add('wevent_register', {
     url: '/event',
-    test: true
-}, [].concat(
+    test: true,
+    steps: [].concat(
         initTourSteps('Online Reveal'),
         browseTalksSteps,
         discoverTalkSteps('What This Event Is All About', true, true),
         browseTalksSteps,
         discoverTalkSteps('Live Testimonial', false, false, false),
         browseTalksSteps,
-        discoverTalkSteps('Our Last Day Together !', true, false, true),
+        discoverTalkSteps('Our Last Day Together!', true, false, true),
         browseMeetSteps,
         discoverRoomSteps('Best wood for furniture'),
         registerSteps,
     )
-);
+});
 
 });

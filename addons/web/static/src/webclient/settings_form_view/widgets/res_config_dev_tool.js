@@ -2,10 +2,14 @@
 
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
-import { SettingsContainer } from "../settings/settings_container";
-import { Setting } from "../settings/setting";
+import { SettingsBlock } from "../settings/settings_block";
+import { Setting } from "../../../views/form/setting/setting";
 
 import { Component, onWillStart } from "@odoo/owl";
+<<<<<<< HEAD
+=======
+import { standardWidgetProps } from "@web/views/widgets/standard_widget_props";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 /**
  * Widget in the settings that handles the "Developer Tools" section.
@@ -13,6 +17,15 @@ import { Component, onWillStart } from "@odoo/owl";
  * Can be used to load the demo data.
  */
 class ResConfigDevTool extends Component {
+    static template = "res_config_dev_tool";
+    static components = {
+        SettingsBlock,
+        Setting,
+    };
+    static props = {
+        ...standardWidgetProps,
+    };
+
     setup() {
         this.isDebug = Boolean(odoo.debug);
         this.isAssets = odoo.debug.includes("assets");
@@ -34,10 +47,8 @@ class ResConfigDevTool extends Component {
     }
 }
 
-ResConfigDevTool.template = "res_config_dev_tool";
-ResConfigDevTool.components = {
-    SettingsContainer,
-    Setting,
+export const resConfigDevTool = {
+    component: ResConfigDevTool,
 };
 
-registry.category("view_widgets").add("res_config_dev_tool", ResConfigDevTool);
+registry.category("view_widgets").add("res_config_dev_tool", resConfigDevTool);

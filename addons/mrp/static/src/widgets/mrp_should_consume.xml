@@ -2,8 +2,13 @@
 <templates xml:space="preserve">
     <t t-name="mrp.ShouldConsume" owl="1">
         <t t-if="displayShouldConsume">
+<<<<<<< HEAD
             <span t-attf-class="o_should_consume ps-1 {{props.readonly ? 'o_row' : ''}}"> 
                 <span><t t-esc="shouldConsumeQty"/> / </span>
+=======
+            <span t-attf-class="o_should_consume"> 
+                <span t-if="props.readonly"><t t-esc="shouldConsumeQty"/> / </span>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 <t t-call="web.FloatField"/>
             </span>
         </t>

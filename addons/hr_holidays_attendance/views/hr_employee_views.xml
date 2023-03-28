@@ -19,6 +19,7 @@
         </field>
     </record>
 
+<<<<<<< HEAD
     <!-- TODO: remove in master -->
     <record id="hr_employee_view_form" model="ir.ui.view">
         <field name="name">hr.employee.holidays.attendance.inherit</field>
@@ -34,4 +35,6 @@
         </field>
     </record>
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 </odoo>

@@ -16,6 +16,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_rs
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_rs.1_rs_purchase_import_vat_0
 #: model:account.tax,name:l10n_rs.2_rs_purchase_import_vat_0
 #: model:account.tax.template,name:l10n_rs.rs_purchase_import_vat_0
@@ -37,6 +38,8 @@ msgid "0% - prev. tax not deductible"
 msgstr ""
 
 #. module: l10n_rs
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.expression,report_line_name:l10n_rs.tax_report_line_001_tag
 #: model:account.report.line,name:l10n_rs.tax_report_line_001
 msgid ""
@@ -95,6 +98,7 @@ msgid "009 - Total (006 + 007 + 008)"
 msgstr ""
 
 #. module: l10n_rs
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_rs.1_rs_purchase_vat_10
 #: model:account.tax,name:l10n_rs.1_rs_sale_vat_10
 #: model:account.tax,name:l10n_rs.2_rs_purchase_vat_10
@@ -112,6 +116,8 @@ msgid "10% - import"
 msgstr ""
 
 #. module: l10n_rs
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.expression,report_line_name:l10n_rs.tax_report_line_103_tag
 #: model:account.report.line,name:l10n_rs.tax_report_line_103
 msgid "103 - Turnover of goods and services at the general rate"
@@ -160,6 +166,7 @@ msgid "110 - Amount of VAT in tax period (105 - 109)"
 msgstr ""
 
 #. module: l10n_rs
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_rs.1_rs_purchase_vat_20
 #: model:account.tax,name:l10n_rs.1_rs_sale_vat_20
 #: model:account.tax,name:l10n_rs.2_rs_purchase_vat_20
@@ -296,11 +303,14 @@ msgid "Agricultural and other land"
 msgstr ""
 
 #. module: l10n_rs
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_rs.tax_report_title_operations
 msgid "Amount of fee without VAT"
 msgstr ""
 
 #. module: l10n_rs
+<<<<<<< HEAD
 #: model:account.group,name:l10n_rs.1_rs_group_14
 #: model:account.group,name:l10n_rs.2_rs_group_14
 #: model:account.group.template,name:l10n_rs.rs_group_14
@@ -329,11 +339,14 @@ msgid "Assigned warranties, guarantees and other rights"
 msgstr ""
 
 #. module: l10n_rs
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.column,name:l10n_rs.tax_report_vat_balance
 msgid "Balance"
 msgstr ""
 
 #. module: l10n_rs
+<<<<<<< HEAD
 #: model:account.group,name:l10n_rs.1_rs_group_30
 #: model:account.group,name:l10n_rs.2_rs_group_30
 #: model:account.group.template,name:l10n_rs.rs_group_30
@@ -454,11 +467,14 @@ msgid "Collected written-off receivables"
 msgstr ""
 
 #. module: l10n_rs
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model_terms:ir.ui.view,arch_db:l10n_rs.report_invoice_document_inherit
 msgid "Company ID:"
 msgstr ""
 
 #. module: l10n_rs
+<<<<<<< HEAD
 #: model:account.tax.group,name:l10n_rs.tax_group_vat_compensation
 msgid "Compensation"
 msgstr ""
@@ -1425,6 +1441,8 @@ msgid "Group free for use"
 msgstr ""
 
 #. module: l10n_rs
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_rs.tax_report_title_VAT_turnover
 #: model:account.report.line,name:l10n_rs.tax_report_title_operations_turnover
 msgid "I. Trade of goods and services"
@@ -1442,6 +1460,7 @@ msgid "III. Tax liability"
 msgstr ""
 
 #. module: l10n_rs
+<<<<<<< HEAD
 #: model:account.group,name:l10n_rs.1_rs_group_58
 #: model:account.group,name:l10n_rs.2_rs_group_58
 #: model:account.group.template,name:l10n_rs.rs_group_58
@@ -1802,11 +1821,14 @@ msgid ""
 msgstr ""
 
 #. module: l10n_rs
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model,name:l10n_rs.model_account_move
 msgid "Journal Entry"
 msgstr ""
 
 #. module: l10n_rs
+<<<<<<< HEAD
 #: model:account.account,name:l10n_rs.1_rs_141
 #: model:account.account,name:l10n_rs.2_rs_141
 #: model:account.account.template,name:l10n_rs.rs_141
@@ -3329,11 +3351,14 @@ msgid "Semi-finished products of own production"
 msgstr ""
 
 #. module: l10n_rs
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.ui.menu,name:l10n_rs.account_reports_rs_statements_menu
 msgid "Serbia"
 msgstr ""
 
 #. module: l10n_rs
+<<<<<<< HEAD
 #: model:account.chart.template,name:l10n_rs.l10n_rs_chart_template
 msgid "Serbia - Chart of Accounts"
 msgstr ""
@@ -3654,6 +3679,8 @@ msgid "Transport services costs"
 msgstr ""
 
 #. module: l10n_rs
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_rs.field_account_bank_statement_line__l10n_rs_turnover_date
 #: model:ir.model.fields,field_description:l10n_rs.field_account_move__l10n_rs_turnover_date
 #: model:ir.model.fields,field_description:l10n_rs.field_account_payment__l10n_rs_turnover_date
@@ -3666,6 +3693,7 @@ msgid "VAT"
 msgstr ""
 
 #. module: l10n_rs
+<<<<<<< HEAD
 #: model:account.tax,description:l10n_rs.1_rs_purchase_vat_0
 #: model:account.tax,description:l10n_rs.1_rs_sale_vat_0
 #: model:account.tax,description:l10n_rs.2_rs_purchase_vat_0
@@ -3869,3 +3897,8 @@ msgstr ""
 #: model:account.account.template,name:l10n_rs.rs_576
 msgid "Writing-offs of receivables"
 msgstr ""
+=======
+#: model:account.report,name:l10n_rs.tax_report_vat
+msgid "VAT Report"
+msgstr ""
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

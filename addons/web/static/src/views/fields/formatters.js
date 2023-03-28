@@ -6,7 +6,13 @@ import { _t } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
 import { escape, intersperse, nbsp, sprintf } from "@web/core/utils/strings";
 import { isBinarySize } from "@web/core/utils/binary";
+<<<<<<< HEAD
 import { session } from "@web/session";
+=======
+
+import { markup } from "@odoo/owl";
+import { getCurrency } from "@web/core/currency";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 import { markup } from "@odoo/owl";
 
@@ -366,7 +372,11 @@ export function formatMonetary(value, options = {}) {
         const dataValue = options.data[currencyField];
         currencyId = Array.isArray(dataValue) ? dataValue[0] : dataValue;
     }
+<<<<<<< HEAD
     const currency = session.currencies[currencyId];
+=======
+    const currency = getCurrency(currencyId);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     const digits = options.digits || (currency && currency.digits);
 
     let formattedValue;

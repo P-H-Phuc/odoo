@@ -16,8 +16,19 @@ class AccountAnalyticApplicability(models.Model):
         ondelete={'expense': 'cascade'},
     )
 
+<<<<<<< HEAD
 
 class AnalyticAccount(models.Model):
+=======
+    @api.depends('business_domain')
+    def _compute_display_account_prefix(self):
+        super()._compute_display_account_prefix()
+        for applicability in self.filtered(lambda rec: rec.business_domain == 'expense'):
+            applicability.display_account_prefix = True
+
+
+class AccountAnalyticAccount(models.Model):
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     _inherit = 'account.analytic.account'
 
     @api.ondelete(at_uninstall=False)

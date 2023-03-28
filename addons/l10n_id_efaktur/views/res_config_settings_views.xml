@@ -6,6 +6,7 @@
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="account.res_config_settings_view_form"/>
         <field name="arch" type="xml">
+<<<<<<< HEAD
             <xpath expr="//div[@id='invoicing_settings']" position="after">
                 <div attrs="{'invisible': [('country_code', '!=', 'ID')]}">
                     <div id="l10n_cl_title">
@@ -26,10 +27,23 @@
                                         <field name="l10n_id_tax_name"/>
                                     </div>
                                 </div>
+=======
+            <xpath expr="//block[@id='invoicing_settings']" position="after">
+                <block title="Indonesian Localization" id="l10n_cl_section" attrs="{'invisible': [('country_code', '!=', 'ID')]}">
+                    <setting company_dependent="1">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="l10n_id_tax_address" class="col-lg-3"/>
+                                <field name="l10n_id_tax_address"/>
+                            </div>
+                            <div class="row mt16">
+                                <label for="l10n_id_tax_name" class="col-lg-3"/>
+                                <field name="l10n_id_tax_name"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </setting>
+                </block>
             </xpath>
         </field>
     </record>

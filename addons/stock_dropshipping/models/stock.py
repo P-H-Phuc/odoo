@@ -42,8 +42,24 @@ class StockPicking(models.Model):
 class StockPickingType(models.Model):
     _inherit = 'stock.picking.type'
 
+<<<<<<< HEAD
+=======
+    code = fields.Selection(
+        selection_add=[('dropship', 'Dropship')], ondelete={'dropship': 'cascade'})
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     @api.depends('default_location_src_id', 'default_location_dest_id')
     def _compute_warehouse_id(self):
         super()._compute_warehouse_id()
         if self.default_location_src_id.usage == 'supplier' and self.default_location_dest_id.usage == 'customer':
             self.warehouse_id = False
+<<<<<<< HEAD
+=======
+
+    @api.depends('code')
+    def _compute_show_picking_type(self):
+        super()._compute_show_picking_type()
+        for record in self:
+            if record.code == "dropship":
+                record.show_picking_type = True
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

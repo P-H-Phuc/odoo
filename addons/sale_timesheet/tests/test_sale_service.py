@@ -39,7 +39,6 @@ class TestSaleService(TestCommonSaleTimesheet):
         task = project.task_ids.filtered(lambda t: t.name == '%s - %s' % (self.sale_order.name, self.product_delivery_timesheet2.name))
         self.assertTrue(task, 'Sale Service: task is not created, or it badly named')
         self.assertEqual(task.partner_id, self.sale_order.partner_id, 'Sale Service: customer should be the same on task and on SO')
-        self.assertEqual(task.email_from, self.sale_order.partner_id.email, 'Sale Service: Task Email should be the same as the SO customer Email')
 
         # log timesheet on task
         self.env['account.analytic.line'].create({
@@ -479,7 +478,7 @@ class TestSaleService(TestCommonSaleTimesheet):
         self.assertEqual(task2.partner_id, so_line_deliver_new_task_project.order_partner_id, "A new task in a billable project should have the same SO line as its project")
 
         # moving subtask in another project
-        subtask.write({'display_project_id': self.project_global.id})
+        subtask.write({'project_id': self.project_global.id})
 
         self.assertEqual(subtask.sale_line_id, task.sale_line_id, "A child task should always have the same SO line as its mother, even when changing project")
         self.assertEqual(subtask.sale_line_id, so_line_deliver_new_task_project)

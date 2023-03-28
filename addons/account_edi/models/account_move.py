@@ -18,7 +18,7 @@ class AccountMove(models.Model):
         help='The aggregated state of all the EDIs with web-service of this move')
     edi_error_count = fields.Integer(
         compute='_compute_edi_error_count',
-        help='How many EDIs are in error for this move ?')
+        help='How many EDIs are in error for this move?')
     edi_blocking_level = fields.Selection(
         selection=[('info', 'Info'), ('warning', 'Warning'), ('error', 'Error')],
         compute='_compute_edi_error_message')
@@ -396,6 +396,7 @@ class AccountMove(models.Model):
 
     def _get_edi_attachment(self, edi_format):
         return self._get_edi_document(edi_format).sudo().attachment_id
+<<<<<<< HEAD
 
     ####################################################
     # Import Electronic Document
@@ -412,6 +413,8 @@ class AccountMove(models.Model):
         res = super()._get_update_invoice_from_attachment_decoders(invoice)
         res.append((10, self.env['account.edi.format'].search([])._update_invoice_from_attachment))
         return res
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     ####################################################
     # Business operations
@@ -434,6 +437,21 @@ class AccountMove(models.Model):
         self._retry_edi_documents_error_hook()
         self.edi_document_ids.write({'error': False, 'blocking_level': False})
         self.action_process_edi_web_services()
+
+    ####################################################
+    # Mailing
+    ####################################################
+
+    def _process_attachments_for_template_post(self, mail_template):
+        """ Add Edi attachments to templates. """
+        result = super()._process_attachments_for_template_post(mail_template)
+        for move in self.filtered('edi_document_ids'):
+            move_result = result.setdefault(move.id, {})
+            for edi_doc in move.edi_document_ids:
+                edi_attachments = edi_doc._filter_edi_attachments_for_mailing()
+                move_result.setdefault('attachment_ids', []).extend(edi_attachments.get('attachment_ids', []))
+                move_result.setdefault('attachments', []).extend(edi_attachments.get('attachments', []))
+        return result
 
 
 class AccountMoveLine(models.Model):
@@ -472,16 +490,26 @@ class AccountMoveLine(models.Model):
         }
         return res
 
-    def reconcile(self):
-        # OVERRIDE
+    def _reconcile_pre_hook(self):
+        # EXTENDS 'account'
         # In some countries, the payments must be sent to the government under some condition. One of them could be
         # there is at least one reconciled invoice to the payment. Then, we need to update the state of the edi
         # documents during the reconciliation.
+        results = super()._reconcile_pre_hook()
         all_lines = self + self.matched_debit_ids.debit_move_id + self.matched_credit_ids.credit_move_id
-        payments = all_lines.move_id.filtered(lambda move: move.payment_id or move.statement_line_id)
+        results['edi_payments'] = all_lines.move_id\
+            .filtered(lambda move: move.payment_id or move.statement_line_id)
+        results['edi_invoices_per_payment_before'] = {
+            pay: pay._get_reconciled_invoices()
+            for pay in results['edi_payments']
+        }
+        return results
 
-        invoices_per_payment_before = {pay: pay._get_reconciled_invoices() for pay in payments}
-        res = super().reconcile()
+    def _reconcile_post_hook(self, data):
+        # EXTENDS 'account'
+        super()._reconcile_post_hook(data)
+        payments = data['edi_payments']
+        invoices_per_payment_before = data['edi_invoices_per_payment_before']
         invoices_per_payment_after = {pay: pay._get_reconciled_invoices() for pay in payments}
 
         changed_payments = self.env['account.move']
@@ -491,8 +519,6 @@ class AccountMoveLine(models.Model):
             if set(invoices_after.ids) != set(invoices_before.ids):
                 changed_payments |= payment
         changed_payments._update_payments_edi_documents()
-
-        return res
 
     def remove_move_reconcile(self):
         # OVERRIDE

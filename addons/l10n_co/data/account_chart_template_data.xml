@@ -3,6 +3,7 @@
     <menuitem id="account_reports_co_statements_menu" name="Colombia" parent="account.menu_finance_reports" sequence="5" groups="account.group_account_readonly"/>
 
         <!-- Chart Template -->
+<<<<<<< HEAD
         <record id="l10n_co_chart_template_generic" model="account.chart.template">
             <field name="property_account_receivable_id" ref="co_puc_130505"/>
             <field name="property_account_payable_id" ref="co_puc_220505"/>
@@ -15,3 +16,6 @@
             <field name="account_journal_early_pay_discount_gain_account_id" ref="co_puc_421040"/>
         </record>
 </odoo>
+=======
+        </odoo>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

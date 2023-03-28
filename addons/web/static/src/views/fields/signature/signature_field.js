@@ -13,6 +13,19 @@ import { Component, onWillUpdateProps, useState } from "@odoo/owl";
 const placeholder = "/web/static/img/placeholder.png";
 
 export class SignatureField extends Component {
+<<<<<<< HEAD
+=======
+    static template = "web.SignatureField";
+    static props = {
+        ...standardFieldProps,
+        defaultFont: { type: String },
+        fullName: { type: String, optional: true },
+        height: { type: Number, optional: true },
+        previewImage: { type: String, optional: true },
+        width: { type: Number, optional: true },
+    };
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     setup() {
         this.displaySignatureRatio = 3;
 
@@ -21,12 +34,20 @@ export class SignatureField extends Component {
             isValid: true,
         });
 
+<<<<<<< HEAD
         this.rawCacheKey = this.props.record.data.__last_update;
+=======
+        this.rawCacheKey = this.props.record.data.write_date;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         onWillUpdateProps((nextProps) => {
             const { record } = this.props;
             const { record: nextRecord } = nextProps;
             if (record.resId !== nextRecord.resId || nextRecord.mode === "readonly") {
+<<<<<<< HEAD
                 this.rawCacheKey = nextRecord.data.__last_update;
+=======
+                this.rawCacheKey = nextRecord.data.write_date;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
         });
     }
@@ -43,8 +64,14 @@ export class SignatureField extends Component {
                 });
             } else {
                 // Use magic-word technique for detecting image type
+<<<<<<< HEAD
                 const magic = fileTypeMagicWordMap[this.props.value[0]] || "png";
                 return `data:image/${magic};base64,${this.props.value}`;
+=======
+                const magic =
+                    fileTypeMagicWordMap[this.props.record.data[this.props.name][0]] || "png";
+                return `data:image/${magic};base64,${this.props.record.data[this.props.name]}`;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
         }
         return placeholder;
@@ -120,6 +147,7 @@ export class SignatureField extends Component {
      * @private
      */
     uploadSignature({ signatureImage }) {
+<<<<<<< HEAD
         return this.props.update(signatureImage[1] || false);
     }
 }
@@ -145,3 +173,21 @@ SignatureField.extractProps = ({ attrs }) => {
 };
 
 registry.category("fields").add("signature", SignatureField);
+=======
+        return this.props.record.update({ [this.props.name]: signatureImage[1] || false });
+    }
+}
+
+export const signatureField = {
+    component: SignatureField,
+    extractProps: ({ attrs, options }) => ({
+        defaultFont: options.default_font || "",
+        fullName: options.full_name,
+        height: options.size ? options.size[1] || undefined : attrs.height,
+        previewImage: options.preview_image,
+        width: options.size ? options.size[0] || undefined : attrs.width,
+    }),
+};
+
+registry.category("fields").add("signature", signatureField);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

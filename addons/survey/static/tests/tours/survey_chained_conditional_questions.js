@@ -1,12 +1,21 @@
 odoo.define('survey.tour_test_survey_chained_conditional_questions', function (require) {
 'use strict';
 
+<<<<<<< HEAD
 const tour = require('web_tour.tour');
 
 tour.register('test_survey_chained_conditional_questions', {
     test: true,
     url: '/survey/start/3cfadce3-3f7e-41da-920d-10fa0eb19527',
 }, [
+=======
+const { registry } = require("@web/core/registry");
+
+registry.category("web_tour.tours").add('test_survey_chained_conditional_questions', {
+    test: true,
+    url: '/survey/start/3cfadce3-3f7e-41da-920d-10fa0eb19527',
+    steps: [
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     {
         content: 'Click on Start',
         trigger: 'button.btn:contains("Start")',
@@ -41,6 +50,10 @@ tour.register('test_survey_chained_conditional_questions', {
         trigger: 'h1:contains("Thank you!")',
     }
 
+<<<<<<< HEAD
 ]);
+=======
+]});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 });

@@ -4,11 +4,18 @@
     <t t-inherit="web.FormView" t-inherit-mode="extension">
         <xpath expr="//div[hasclass('o_form_view_container')]" position="after">
             <t t-if="mailTemplate">
+<<<<<<< HEAD
                 <t t-call="{{ mailTemplate }}" />
             </t>
         </xpath>
         <xpath expr="//Layout/t[@t-component='props.Renderer']" position="attributes">
             <attribute name="chatter">chatter</attribute>
+=======
+                <t t-call="{{ mailTemplate }}" t-call-context="{ __comp__: Object.assign(Object.create(this), { this: this }) }"/>
+            </t>
+        </xpath>
+        <xpath expr="//Layout/t[@t-component='props.Renderer']" position="attributes">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             <attribute name="hasAttachmentViewerInArch">hasAttachmentViewerInArch</attribute>
             <attribute name="hasAttachmentViewer">hasAttachmentViewer()</attribute>
             <attribute name="saveButtonClicked">() => this.saveButtonClicked()</attribute>

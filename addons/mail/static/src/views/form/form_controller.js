@@ -1,8 +1,13 @@
 /** @odoo-module */
 
+<<<<<<< HEAD
 import { useModels } from "@mail/component_hooks/use_models";
 import { ChatterContainer, getChatterNextTemporaryId } from "@mail/components/chatter_container/chatter_container";
 import { WebClientViewAttachmentViewContainer } from "@mail/components/web_client_view_attachment_view_container/web_client_view_attachment_view_container";
+=======
+import { AttachmentView } from "@mail/attachments/attachment_view";
+import { Chatter } from "@mail/web/chatter";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 import { browser } from "@web/core/browser/browser";
 import { useService } from "@web/core/utils/hooks";
@@ -16,11 +21,16 @@ import { evalDomain } from "@web/views/utils";
 
 import { MailFormCompiler } from "./form_compiler";
 
+<<<<<<< HEAD
 const { onMounted, onWillDestroy, onWillUnmount } = owl;
+=======
+import { onMounted, onWillUnmount, useState } from "@odoo/owl";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 patch(FormController.prototype, "mail", {
     setup() {
         this._super();
+<<<<<<< HEAD
         this.uiService = useService("ui");
         this.hasAttachmentViewerInArch = false;
         this.chatter = undefined;
@@ -38,6 +48,17 @@ patch(FormController.prototype, "mail", {
                 }
             });
         }
+=======
+        this.messagingState = useState({
+            /** @type {import("@mail/core/thread_model").Thread} */
+            thread: undefined,
+        });
+        if (this.env.services["mail.thread"]) {
+            this.threadService = useService("mail.thread");
+        }
+        this.uiService = useService("ui");
+        this.hasAttachmentViewerInArch = false;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         const { archInfo } = this.props;
 
@@ -55,12 +76,22 @@ patch(FormController.prototype, "mail", {
             template.appendChild(xmlDocChatter.cloneNode(true));
         }
 
+<<<<<<< HEAD
         const mailTemplates = useViewCompiler(MailFormCompiler, archInfo.arch, { Mail: template }, {});
+=======
+        const mailTemplates = useViewCompiler(
+            MailFormCompiler,
+            archInfo.arch,
+            { Mail: template },
+            {}
+        );
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.mailTemplate = mailTemplates.Mail;
 
         this.onResize = useDebounced(this.render, 200);
         onMounted(() => browser.addEventListener("resize", this.onResize));
         onWillUnmount(() => browser.removeEventListener("resize", this.onResize));
+<<<<<<< HEAD
         onWillDestroy(() => {
             if (this.chatter && this.chatter.exists()) {
                 this.chatter.delete();
@@ -72,24 +103,41 @@ patch(FormController.prototype, "mail", {
      */
     getMessaging() {
         return this.env.services.messaging && this.env.services.messaging.modelManager.messaging;
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
     /**
      * @returns {boolean}
      */
     hasAttachmentViewer() {
         if (
+<<<<<<< HEAD
             this.uiService.size < SIZES.XXL ||
             !this.hasAttachmentViewerInArch ||
             !this.getMessaging() ||
+=======
+            !this.threadService ||
+            this.uiService.size < SIZES.XXL ||
+            !this.hasAttachmentViewerInArch ||
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             !this.model.root.resId
         ) {
             return false;
         }
+<<<<<<< HEAD
         const thread = this.getMessaging().models['Thread'].insert({
             id: this.model.root.resId,
             model: this.model.root.resModel,
         });
         return thread.attachmentsInWebClientView.length > 0;
+=======
+        this.messagingState.thread = this.threadService.insert({
+            id: this.model.root.resId,
+            model: this.model.root.resModel,
+            type: "chatter",
+        });
+        return this.messagingState.thread.attachmentsInWebClientView.length > 0;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
     evalDomainFromRecord(record, expr) {
         return evalDomain(expr, record.evalContext);
@@ -97,6 +145,11 @@ patch(FormController.prototype, "mail", {
 });
 
 Object.assign(FormController.components, {
+<<<<<<< HEAD
     ChatterContainer,
     WebClientViewAttachmentViewContainer,
+=======
+    AttachmentView,
+    Chatter,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 });

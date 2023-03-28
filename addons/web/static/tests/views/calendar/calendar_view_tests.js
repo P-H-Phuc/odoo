@@ -104,6 +104,10 @@ QUnit.module("Views", ({ beforeEach }) => {
                         start: { string: "start datetime", type: "datetime" },
                         stop: { string: "stop datetime", type: "datetime" },
                         delay: { string: "delay", type: "float" },
+<<<<<<< HEAD
+=======
+                        duration: { string: "Duration", type: "float", default: 1 },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         allday: { string: "allday", type: "boolean" },
                         partner_ids: {
                             string: "attendees",
@@ -306,6 +310,7 @@ QUnit.module("Views", ({ beforeEach }) => {
     QUnit.module("CalendarView");
 
     QUnit.test(`simple calendar rendering`, async (assert) => {
+<<<<<<< HEAD
         assert.expect(24);
 
         serverData.models.event.records.push({
@@ -319,16 +324,53 @@ QUnit.module("Views", ({ beforeEach }) => {
             partner_ids: [2],
             type: 1,
         });
+=======
+        assert.expect(25);
+
+        serverData.models.event.records.push(
+            {
+                id: 8,
+                user_id: uid,
+                partner_id: false,
+                name: "event 7",
+                start: "2016-12-18 09:00:00",
+                stop: "2016-12-18 10:00:00",
+                allday: false,
+                partner_ids: [2],
+                type: 1,
+            },
+            {
+                id: 9,
+                user_id: uid,
+                partner_id: false,
+                name: "event 8",
+                start: "2016-12-11 05:15:00",
+                stop: "2016-12-11 05:30:00",
+                allday: false,
+                partner_ids: [1, 2, 3],
+                duration: 0.25,
+                type: 1,
+            }
+        );
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         await makeView({
             type: "calendar",
             resModel: "event",
             serverData,
             arch: `
+<<<<<<< HEAD
                 <calendar event_open_popup="1" date_start="start" date_stop="stop" all_day="allday" mode="week" attendee="partner_ids" color="partner_id">
                     <filter name="user_id" avatar_field="image" />
                     <field name="partner_ids" write_model="filter_partner" write_field="partner_id" />
                     <field name="partner_id" filters="1" invisible="1" />
+=======
+                <calendar event_open_popup="1" date_start="start" date_stop="stop" all_day="allday" mode="week" attendee="partner_ids" color="partner_id" date_delay="duration">
+                    <filter name="user_id" avatar_field="image" />
+                    <field name="partner_ids" write_model="filter_partner" write_field="partner_id" />
+                    <field name="partner_id" filters="1" invisible="1" />
+                    <field name="duration" invisible="1"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 </calendar>
             `,
         });
@@ -350,8 +392,13 @@ QUnit.module("Views", ({ beforeEach }) => {
         assert.containsN(
             target,
             ".fc-event",
+<<<<<<< HEAD
             9,
             "should display 9 events on the week (4 event + 5 days event)"
+=======
+            6,
+            "should display 6 events on the week (4 event + 1 allday + 1 >24h allday)"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         );
         assert.containsN(
             target,
@@ -359,8 +406,20 @@ QUnit.module("Views", ({ beforeEach }) => {
             7,
             "week scale should highlight 7 days in mini calendar"
         );
+<<<<<<< HEAD
         await click(target, ".scale_button_selection");
         await click(target, ".o_calendar_button_day"); // display only one day
+=======
+
+        assert.containsOnce(
+            target,
+            ".o_event_oneliner",
+            "should contain 1 oneliner event (the one we add)"
+        );
+
+        await click(target, ".scale_button_selection");
+        await click(target, ".o_scale_button_day"); // display only one day
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         assert.containsN(target, ".fc-event", 2, "should display 2 events on the day");
         assert.containsOnce(
             target,
@@ -368,7 +427,11 @@ QUnit.module("Views", ({ beforeEach }) => {
             "should highlight the target day in mini calendar"
         );
         await click(target, ".scale_button_selection");
+<<<<<<< HEAD
         await click(target, ".o_calendar_button_month"); // display all the month
+=======
+        await click(target, ".o_scale_button_month"); // display all the month
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         // We display the events or partner 1 2 and 4. Partner 2 has nothing and Event 6 is for partner 6 (not displayed)
         await click(target, ".o_calendar_filter_item[data-value='all'] input");
         await click(
@@ -378,8 +441,13 @@ QUnit.module("Views", ({ beforeEach }) => {
         assert.containsN(
             target,
             ".fc-event",
+<<<<<<< HEAD
             7,
             "should display 7 events on the month (5 events + 2 week event - 1 'event 6' is filtered + 1 'Undefined event')"
+=======
+            8,
+            "should display 7 events on the month (6 events + 2 week event - 1 'event 6' is filtered + 1 'Undefined event')"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         );
         assert.containsN(
             target,
@@ -439,11 +507,19 @@ QUnit.module("Views", ({ beforeEach }) => {
         assert.containsN(
             target,
             ".fc-event",
+<<<<<<< HEAD
             7,
             "should display 7 events ('event 5' counts for 2 because it spans two weeks and thus generate two fc-event elements)"
         );
         await click(target.querySelectorAll(".o_calendar_filter input[type=checkbox]")[1]); // click on partner 2
         assert.containsN(target, ".fc-event", 4, "should now only display 4 event");
+=======
+            8,
+            "should display 7 events ('event 5' counts for 2 because it spans two weeks and thus generate two fc-event elements)"
+        );
+        await click(target.querySelectorAll(".o_calendar_filter input[type=checkbox]")[1]); // click on partner 2
+        assert.containsN(target, ".fc-event", 5, "should now only display 5 event");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         await click(target.querySelectorAll(".o_calendar_filter input[type=checkbox]")[2]);
         assert.containsNone(target, ".fc-event", "should not display any event anymore");
         // test search bar in filter
@@ -1010,10 +1086,19 @@ QUnit.module("Views", ({ beforeEach }) => {
                 if (method === "create") {
                     assert.deepEqual(
                         args[0],
+<<<<<<< HEAD
                         {
                             x_name: "custom event in quick create",
                             x_start_date: "2016-12-13",
                         },
+=======
+                        [
+                            {
+                                x_name: "custom event in quick create",
+                                x_start_date: "2016-12-13",
+                            },
+                        ],
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         "the custom create_name_field should be used instead of `name`"
                     );
                 }
@@ -1141,7 +1226,11 @@ QUnit.module("Views", ({ beforeEach }) => {
             mockRPC(route, { method, args }) {
                 if (method === "create") {
                     assert.deepEqual(
+<<<<<<< HEAD
                         args,
+=======
+                        args[0],
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         [
                             {
                                 allday: false,
@@ -1401,7 +1490,11 @@ QUnit.module("Views", ({ beforeEach }) => {
     QUnit.test(`render popover with widget which has specialData attribute`, async (assert) => {
         assert.expect(3);
 
+<<<<<<< HEAD
         fieldRegistry.add("specialWidget", CharField);
+=======
+        fieldRegistry.add("specialWidget", { component: CharField });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         preloadedDataRegistry.add("specialWidget", {
             loadOnTypes: ["char"],
             preload: () => {
@@ -1859,12 +1952,23 @@ QUnit.module("Views", ({ beforeEach }) => {
             `,
             mockRPC(route, { args, method }) {
                 if (method === "create") {
+<<<<<<< HEAD
                     assert.deepEqual(args[0], {
                         name: "new event",
                         start: "2016-12-14",
                         stop: "2016-12-15",
                         allday: true,
                     });
+=======
+                    assert.deepEqual(args[0], [
+                        {
+                            name: "new event",
+                            start: "2016-12-14",
+                            stop: "2016-12-15",
+                            allday: true,
+                        },
+                    ]);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 }
             },
         });
@@ -1898,12 +2002,23 @@ QUnit.module("Views", ({ beforeEach }) => {
             `,
             mockRPC(route, { args, method }) {
                 if (method === "create") {
+<<<<<<< HEAD
                     assert.deepEqual(args[0], {
                         name: "new event",
                         start: "2016-12-14",
                         stop: "2016-12-14",
                         allday: true,
                     });
+=======
+                    assert.deepEqual(args[0], [
+                        {
+                            name: "new event",
+                            start: "2016-12-14",
+                            stop: "2016-12-14",
+                            allday: true,
+                        },
+                    ]);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 }
             },
         });
@@ -1947,12 +2062,23 @@ QUnit.module("Views", ({ beforeEach }) => {
             `,
             mockRPC(route, { args, method }) {
                 if (method === "create") {
+<<<<<<< HEAD
                     assert.deepEqual(args[0], {
                         name: "new event",
                         start: "2016-12-14",
                         stop: "2016-12-14",
                         allday: true,
                     });
+=======
+                    assert.deepEqual(args[0], [
+                        {
+                            name: "new event",
+                            start: "2016-12-14",
+                            stop: "2016-12-14",
+                            allday: true,
+                        },
+                    ]);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 }
             },
         });
@@ -2091,11 +2217,21 @@ QUnit.module("Views", ({ beforeEach }) => {
                 if (method === "create") {
                     assert.deepEqual(
                         args[0],
+<<<<<<< HEAD
                         {
                             name: "new event",
                             start: "2016-12-14 05:00:00",
                             stop: "2016-12-15 17:00:00",
                         },
+=======
+                        [
+                            {
+                                name: "new event",
+                                start: "2016-12-14 05:00:00",
+                                stop: "2016-12-15 17:00:00",
+                            },
+                        ],
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         "should send the correct data to create events"
                     );
                 }
@@ -2131,8 +2267,13 @@ QUnit.module("Views", ({ beforeEach }) => {
         assert.containsN(
             target,
             ".fc-event",
+<<<<<<< HEAD
             9,
             "should display 9 events on the week (4 event + 5 days event)"
+=======
+            5,
+            "should display 5 events on the week (4 event + 1 >24h event)"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         );
 
         await pickDate(target, "2016-12-19");
@@ -2141,8 +2282,13 @@ QUnit.module("Views", ({ beforeEach }) => {
         assert.containsN(
             target,
             ".fc-event",
+<<<<<<< HEAD
             4,
             "should display 4 events on the week (1 event + 3 days event)"
+=======
+            2,
+            "should display 4 events on the week (1 event + 1 >24h event)"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         );
 
         // Clicking on a day in the same week should switch to that particular day view
@@ -2165,8 +2311,13 @@ QUnit.module("Views", ({ beforeEach }) => {
         assert.containsN(
             target,
             ".fc-event",
+<<<<<<< HEAD
             4,
             "should display 4 events on the week (1 event + 3 days event)"
+=======
+            2,
+            "should display 4 events on the week (1 event + 1 >24h event)"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         );
 
         await pickDate(target, "2016-12-18");
@@ -2566,11 +2717,19 @@ QUnit.module("Views", ({ beforeEach }) => {
         assert.containsN(target, ".fc-event", 4, "should display 4 events on the week");
 
         await toggleFilter(target, "partner_ids", 2);
+<<<<<<< HEAD
         assert.containsN(target, ".fc-event", 9, "should display 9 events on the week");
 
         // Click on the "all" filter to reload all events
         await toggleFilter(target, "partner_ids", "all");
         assert.containsN(target, ".fc-event", 9, "should display 9 events on the week");
+=======
+        assert.containsN(target, ".fc-event", 5, "should display 5 events on the week");
+
+        // Click on the "all" filter to reload all events
+        await toggleFilter(target, "partner_ids", "all");
+        assert.containsN(target, ".fc-event", 5, "should display 5 events on the week");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     });
 
     QUnit.test("Colors: cycling through available colors", async (assert) => {
@@ -2759,7 +2918,10 @@ QUnit.module("Views", ({ beforeEach }) => {
         assert.hasClass(findEvent(target, 2), "o_calendar_color_0");
         assert.hasClass(findEvent(target, 3), "o_calendar_color_0");
         assert.hasClass(findEvent(target, 4), "o_calendar_color_0");
+<<<<<<< HEAD
         assert.hasClass(findEvent(target, 5), "o_calendar_color_0");
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         assert.containsOnce(target, ".o_calendar_filter[data-name=user_id]");
         assert.containsNone(
             findFilterPanelSection(target, "user_id"),
@@ -2858,7 +3020,10 @@ QUnit.module("Views", ({ beforeEach }) => {
         assert.hasClass(findEvent(target, 2), "o_calendar_color_-1"); // uid = -1 ...
         assert.hasClass(findEvent(target, 3), "o_calendar_color_4");
         assert.hasClass(findEvent(target, 4), "o_calendar_color_-1"); // uid = -1 ...
+<<<<<<< HEAD
         assert.hasClass(findEvent(target, 5), "o_calendar_color_4");
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         assert.containsNone(
             findFilterPanelSection(target, "partner_id"),
             "[class*='o_cw_filter_color_']"
@@ -3111,7 +3276,11 @@ QUnit.module("Views", ({ beforeEach }) => {
 
         await toggleFilter(target, "partner_id", 4);
         await toggleFilter(target, "partner_ids", 2);
+<<<<<<< HEAD
         assert.containsN(target, ".fc-event", 11, "should display all records");
+=======
+        assert.containsN(target, ".fc-event", 7, "should display all records");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     });
 
     QUnit.test(`create event with filters (no quickCreate)`, async (assert) => {
@@ -3602,7 +3771,12 @@ QUnit.module("Views", ({ beforeEach }) => {
             `,
             mockRPC(route, { method, args }) {
                 if (method === "create") {
+<<<<<<< HEAD
                     assert.strictEqual(args[0].start_date, "2016-12-20");
+=======
+                    const [values] = args[0];
+                    assert.strictEqual(values.start_date, "2016-12-20");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 }
                 if (method === "write") {
                     assert.step(args[1].start_date);
@@ -4338,7 +4512,11 @@ QUnit.module("Views", ({ beforeEach }) => {
         await resizeEventToTime(target, 8, "2016-12-14 08:00:00");
         const event = findEvent(target, 8);
         assert.strictEqual(event.textContent, "foobar");
+<<<<<<< HEAD
         assert.notOk(event.closest(".fc-day-grid"), "event should not be in the all day slots");
+=======
+        assert.ok(event.closest(".fc-day-grid"), "event should be in the all day slots");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     });
 
     QUnit.test(`correctly display year view`, async (assert) => {
@@ -4481,11 +4659,19 @@ QUnit.module("Views", ({ beforeEach }) => {
             `,
         });
 
+<<<<<<< HEAD
         await click(target, ".o_calendar_scale_buttons .scale_button_selection");
         assert.containsOnce(target, ".o_calendar_scale_buttons .o_calendar_button_day");
         assert.containsOnce(target, ".o_calendar_scale_buttons .o_calendar_button_week");
         assert.containsNone(target, ".o_calendar_scale_buttons .o_calendar_button_month");
         assert.containsNone(target, ".o_calendar_scale_buttons .o_calendar_button_year");
+=======
+        await click(target, ".o_view_scale_selector .scale_button_selection");
+        assert.containsOnce(target, ".o_view_scale_selector .o_scale_button_day");
+        assert.containsOnce(target, ".o_view_scale_selector .o_scale_button_week");
+        assert.containsNone(target, ".o_view_scale_selector .o_scale_button_month");
+        assert.containsNone(target, ".o_view_scale_selector .o_scale_button_year");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     });
 
     QUnit.test(`click outside the popup should close it`, async (assert) => {
@@ -4518,7 +4704,11 @@ QUnit.module("Views", ({ beforeEach }) => {
             }
         }
         DeferredWidget.template = owl.xml``;
+<<<<<<< HEAD
         fieldRegistry.add("deferred_widget", DeferredWidget);
+=======
+        fieldRegistry.add("deferred_widget", { component: DeferredWidget });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         registerCleanup(() => fieldRegistry.remove("deferred_widget"));
 
         await makeView({
@@ -4587,7 +4777,12 @@ QUnit.module("Views", ({ beforeEach }) => {
             `,
             mockRPC(route, { method, args }) {
                 if (method === "create") {
+<<<<<<< HEAD
                     assert.deepEqual(args[0], expectedEvent);
+=======
+                    const [values] = args[0];
+                    assert.deepEqual(values, expectedEvent);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 }
             },
         });

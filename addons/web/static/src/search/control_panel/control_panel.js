@@ -10,6 +10,11 @@ import { FilterMenu } from "../filter_menu/filter_menu";
 import { GroupByMenu } from "../group_by_menu/group_by_menu";
 import { SearchBar } from "../search_bar/search_bar";
 import { Dropdown } from "@web/core/dropdown/dropdown";
+<<<<<<< HEAD
+=======
+import { useCommand } from "@web/core/commands/command_hook";
+import { sprintf } from "@web/core/utils/strings";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 import { Component, useState, onMounted, useExternalListener, useRef, useEffect } from "@odoo/owl";
 
@@ -40,6 +45,21 @@ export class ControlPanel extends Component {
 
         this.onScrollThrottledBound = this.onScrollThrottled.bind(this);
 
+<<<<<<< HEAD
+=======
+        const { viewSwitcherEntries, viewType } = this.env.config;
+        for (const view of viewSwitcherEntries || []) {
+            useCommand(
+                sprintf(this.env._t("Show %s view"), view.name),
+                () => this.onViewClicked(view.type),
+                {
+                    category: "view_switcher",
+                    isAvailable: () => view.type !== viewType,
+                }
+            );
+        }
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         useExternalListener(window, "click", this.onWindowClick);
         useEffect(() => {
             if (
@@ -208,3 +228,7 @@ ControlPanel.components = {
     Dropdown,
 };
 ControlPanel.template = "web.ControlPanel";
+ControlPanel.props = {
+    display: { type: Object, optional: true },
+    slots: { type: Object, optional: true },
+};

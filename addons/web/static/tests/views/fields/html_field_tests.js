@@ -3,7 +3,11 @@
 import { click, editInput, getFixture, patchWithCleanup } from "@web/../tests/helpers/utils";
 import { makeView, setupViewRegistries } from "@web/../tests/views/helpers";
 import { registry } from "@web/core/registry";
+<<<<<<< HEAD
 import { HtmlField } from "@web/views/fields/html/html_field";
+=======
+import { htmlField } from "@web/views/fields/html/html_field";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { makeFakeLocalizationService } from "@web/../tests/helpers/mock_services";
 import { session } from "@web/session";
 
@@ -32,7 +36,7 @@ QUnit.module("Fields", ({ beforeEach }) => {
         setupViewRegistries();
 
         // Explicitly removed by web_editor, we need to add it back
-        registry.category("fields").add("html", HtmlField, { force: true });
+        registry.category("fields").add("html", htmlField, { force: true });
     });
 
     QUnit.module("HtmlField");
@@ -262,5 +266,36 @@ QUnit.module("Fields", ({ beforeEach }) => {
         await editInput(frField2, null, "deuxième paragraphe modifié");
 
         await click(target, ".modal button.btn-primary"); // save
+<<<<<<< HEAD
+=======
+    });
+
+    QUnit.test("html fields: spellcheck is disabled on blur", async (assert) => {
+        await makeView({
+            type: "form",
+            resModel: "partner",
+            resId: 1,
+            serverData,
+            arch: /* xml */ `<form><field name="txt" /></form>`,
+        });
+
+        const textarea = target.querySelector(".o_field_html textarea");
+        assert.strictEqual(textarea.spellcheck, true, "by default, spellcheck is enabled");
+        textarea.focus();
+
+        await editInput(textarea, null, "nev walue");
+        textarea.blur();
+        assert.strictEqual(
+            textarea.spellcheck,
+            false,
+            "spellcheck is disabled once the field has lost its focus"
+        );
+        textarea.focus();
+        assert.strictEqual(
+            textarea.spellcheck,
+            true,
+            "spellcheck is re-enabled once the field is focused"
+        );
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     });
 });

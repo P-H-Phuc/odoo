@@ -7,8 +7,6 @@ import { createBasicChart } from "@spreadsheet/../tests/utils/commands";
 import { registry } from "@web/core/registry";
 import { menuService } from "@web/webclient/menus/menu_service";
 import { actionService } from "@web/webclient/actions/action_service";
-import { ormService } from "@web/core/orm_service";
-import { viewService } from "@web/views/view_service";
 import { mountSpreadsheet } from "@spreadsheet/../tests/utils/ui";
 import { createModelWithDataSource } from "@spreadsheet/../tests/utils/model";
 
@@ -20,7 +18,7 @@ const chartId = "uuid1";
  * able to interact with it.
  */
 async function showChartMenu(fixture) {
-    const chartMenu = fixture.querySelector(".o-chart-menu");
+    const chartMenu = fixture.querySelector(".o-figure-menu");
     chartMenu.style.display = "flex";
     await nextTick();
 }
@@ -28,7 +26,7 @@ async function showChartMenu(fixture) {
 /** Click on external link of the first chart found in the page*/
 async function clickChartExternalLink(fixture) {
     await showChartMenu(fixture);
-    const chartMenuItem = fixture.querySelector(".o-chart-menu-item.o-chart-external-link");
+    const chartMenuItem = fixture.querySelector(".o-figure-menu-item.o-chart-external-link");
     await click(chartMenuItem);
 }
 
@@ -155,8 +153,6 @@ QUnit.module(
             };
             patchWithCleanup(session, { uid: 1 });
             registry.category("services").add("menu", menuService).add("action", actionService);
-            registry.category("services").add("view", viewService, { force: true }); // #action-serv-leg-compat-js-class
-            registry.category("services").add("orm", ormService, { force: true }); // #action-serv-leg-compat-js-class
         },
     },
 

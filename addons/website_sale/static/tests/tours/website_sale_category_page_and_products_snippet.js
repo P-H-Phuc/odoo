@@ -1,7 +1,12 @@
 /** @odoo-modules */
 
+<<<<<<< HEAD
 import tour from 'web_tour.tour';
 import wTourUtils from 'website.tour_utils';
+=======
+import wTourUtils from 'website.tour_utils';
+import { registry } from "@web/core/registry";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 const PRODUCT_CATEGORY_ID = 2;
 
@@ -29,10 +34,17 @@ wTourUtils.registerWebsitePreviewTour('category_page_and_products_snippet_editio
     ...wTourUtils.clickOnSave(),
 ]);
 
+<<<<<<< HEAD
 tour.register('category_page_and_products_snippet_use', {
     test: true,
     url: `/shop/category/${PRODUCT_CATEGORY_ID}`,
 }, [
+=======
+registry.category("web_tour.tours").add('category_page_and_products_snippet_use', {
+    test: true,
+    url: `/shop/category/${PRODUCT_CATEGORY_ID}`,
+    steps: [
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     {
         content: "Check that the snippet displays the right products",
         // Wait for at least one shown product
@@ -56,4 +68,8 @@ tour.register('category_page_and_products_snippet_use', {
             }
         },
     },
+<<<<<<< HEAD
 ]);
+=======
+]});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

@@ -4,7 +4,11 @@
         <xpath expr="//h6[@name='product_variants']" position="after">
             <h6 t-if="() => env.user.has_group('stock.group_stock_manager')">
                 Value On Hand:
+<<<<<<< HEAD
                 <a href="#" class="o_report_open_valuation_report"
+=======
+                <a href="#"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                    t-out="props.docs.value"
                    t-on-click.prevent="_onClickValuation"/>
             </h6>

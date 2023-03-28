@@ -14,7 +14,11 @@
                 <group string="Send to:">
                     <field colspan="2" name="user_ids" widget="many2many_tags" nolabel="1"/>
                 </group>
+<<<<<<< HEAD
                 <group string="Why do you need this module ?">
+=======
+                <group string="Why do you need this module?">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     <field colspan="2" name="body_html" widget="html" nolabel="1" placeholder="e.g. I'd like to use the SMS Marketing module to organize the promotion of our internal events, and exhibitions. I need access for 3 people of my team."/>
                 </group>
                 <footer>

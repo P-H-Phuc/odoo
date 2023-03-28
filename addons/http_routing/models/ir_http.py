@@ -29,10 +29,6 @@ from odoo.tools import config, ustr, pycompat
 
 _logger = logging.getLogger(__name__)
 
-# global resolver (GeoIP API is thread-safe, for multithreaded workers)
-# This avoids blowing up open files limit
-odoo._geoip_resolver = None
-
 # ------------------------------------------------------------
 # Slug API
 # ------------------------------------------------------------
@@ -104,13 +100,18 @@ def slug(value):
 
 
 # NOTE: the second pattern is used for the ModelConverter, do not use nor flags nor groups
+<<<<<<< HEAD
 _UNSLUG_RE = re.compile(r'(?:(\w{1,2}|\w[A-Za-z0-9-_]+?\w)-)?(-?\d+)(?=$|/)')
 _UNSLUG_ROUTE_PATTERN = r'(?:(?:\w{1,2}|\w[A-Za-z0-9-_]+?\w)-)?(?:-?\d+)(?=$|/)'
+=======
+_UNSLUG_RE = re.compile(r'(?:(\w{1,2}|\w[A-Za-z0-9-_]+?\w)-)?(-?\d+)(?=$|\/|#|\?)')
+_UNSLUG_ROUTE_PATTERN = r'(?:(?:\w{1,2}|\w[A-Za-z0-9-_]+?\w)-)?(?:-?\d+)(?=$|\/|#|\?)'
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 
 def unslug(s):
-    """Extract slug and id from a string.
-        Always return un 2-tuple (str|None, int|None)
+    """ Extract slug and id from a string.
+        Always return a 2-tuple (str|None, int|None)
     """
     m = _UNSLUG_RE.match(s)
     if not m:
@@ -172,6 +173,9 @@ def url_lang(path_or_uri, lang_code=None):
             # Insert the context language or the provided language
             elif lang_url_code != default_lg.url_code or force_lang:
                 ps.insert(1, lang_url_code)
+                # Remove the last empty string to avoid trailing / after joining
+                if ps[-1] == '':
+                    ps.pop(-1)
 
             location = u'/'.join(ps) + sep + qs
     return location

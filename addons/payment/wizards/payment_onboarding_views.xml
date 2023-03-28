@@ -17,11 +17,17 @@
                                     <field name="paypal_email_account" attrs="{'required': [('payment_method', '=', 'paypal')]}" string="Email"/>
                                     <field name="paypal_pdt_token" password="True" attrs="{'required': [('payment_method', '=', 'paypal')]}" />
                                 </group>
+<<<<<<< HEAD
                                 <p>
                                     <a href="https://www.odoo.com/documentation/16.0/applications/finance/payment_providers/paypal.html" target="_blank">
                                         <span><i class="fa fa-arrow-right"/> How to configure your PayPal account</span>
                                     </a>
                                 </p>
+=======
+                                <a href="https://www.odoo.com/documentation/master/applications/finance/payment_providers/paypal.html" target="_blank">
+                                    <span><i class="fa fa-arrow-right"/> How to configure your PayPal account</span>
+                                </a>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                             </div>
 
                             <div attrs="{'invisible': [('payment_method', '!=', 'manual')]}">

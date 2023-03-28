@@ -1,11 +1,11 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import base64
+import fnmatch
 import hashlib
 import inspect
 import json
 import logging
-import operator
 import re
 import requests
 
@@ -29,7 +29,7 @@ from odoo.http import request
 from odoo.modules.module import get_resource_path, get_manifest
 from odoo.osv.expression import AND, OR, FALSE_DOMAIN, get_unaccent_wrapper
 from odoo.tools.translate import _
-from odoo.tools import escape_psql, OrderedSet, pycompat
+from odoo.tools import escape_psql, pycompat
 
 logger = logging.getLogger(__name__)
 
@@ -46,10 +46,13 @@ DEFAULT_CDN_FILTERS = [
 
 DEFAULT_ENDPOINT = 'https://website.api.odoo.com'
 
+<<<<<<< HEAD
 # TODO: Remove in master.
 SEARCH_TYPE_MODELS = defaultdict(OrderedSet)
 #: DO NOT USE: this breaks multitenancy, extend '_search_get_details' instead
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 class Website(models.Model):
 
@@ -290,10 +293,14 @@ class Website(models.Model):
 
     # TODO: rename in master
     @api.ondelete(at_uninstall=False)
+<<<<<<< HEAD
     def _unlink_except_last_remaining_website(self):
         website = self.search([('id', 'not in', self.ids)], limit=1)
         if not website:
             raise UserError(_('You must keep at least one website.'))
+=======
+    def _unlink_except_default_website(self):
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         default_website = self.env.ref('website.default_website', raise_if_not_found=False)
         if default_website and default_website in self:
             raise UserError(_("You cannot delete default website %s. Try to change its settings instead", default_website.name))
@@ -396,6 +403,16 @@ class Website(models.Model):
     def configurator_skip(self):
         website = self.get_current_website()
         website.configurator_done = True
+
+    @api.model
+    def configurator_missing_industry(self, unknown_industry):
+        self._website_api_rpc(
+            '/api/website/unknown_industry',
+            {
+                'unknown_industry': unknown_industry,
+                'lang': self.env.context.get('lang'),
+            }
+        )
 
     @api.model
     def configurator_apply(self, **kwargs):
@@ -688,12 +705,12 @@ class Website(models.Model):
     @api.model
     def new_page(self, name=False, add_menu=False, template='website.default_page', ispage=True, namespace=None, page_values=None, menu_values=None):
         """ Create a new website page, and assign it a xmlid based on the given one
-            :param name : the name of the page
-            :param add_menu : if True, add a menu for that page
-            :param template : potential xml_id of the page to create
-            :param namespace : module part of the xml_id if none, the template module name is used
-            :param page_values : default values for the page to be created
-            :param menu_values : default values for the menu to be created
+            :param name: the name of the page
+            :param add_menu: if True, add a menu for that page
+            :param template: potential xml_id of the page to create
+            :param namespace: module part of the xml_id if none, the template module name is used
+            :param page_values: default values for the page to be created
+            :param menu_values: default values for the menu to be created
         """
         if namespace:
             template_module = namespace
@@ -1161,7 +1178,8 @@ class Website(models.Model):
 
             for value in values:
                 domain_part, url = rule.build(value, append_unknown=False)
-                if not query_string or query_string.lower() in url.lower():
+                pattern = query_string and '*%s*' % "*".join(query_string.split('/'))
+                if not query_string or fnmatch.fnmatch(url.lower(), pattern):
                     page = {'loc': url}
                     if url in url_set:
                         continue
@@ -1224,7 +1242,7 @@ class Website(models.Model):
     def image_url(self, record, field, size=None):
         """ Returns a local url that points to the image field of a given browse record. """
         sudo_record = record.sudo()
-        sha = hashlib.sha512(str(getattr(sudo_record, '__last_update')).encode('utf-8')).hexdigest()[:7]
+        sha = hashlib.sha512(str(sudo_record.write_date).encode('utf-8')).hexdigest()[:7]
         size = '' if size is None else '/%s' % size
         return '/web/image/%s/%s/%s%s?unique=%s' % (record._name, record.id, field, size, sha)
 
@@ -1495,6 +1513,7 @@ class Website(models.Model):
 
         :return: list of search details obtained from the `website.searchable.mixin`'s `_search_get_detail()`
         """
+<<<<<<< HEAD
         if SEARCH_TYPE_MODELS:
             # TODO: Remove in master.
             if search_type == 'all':
@@ -1510,6 +1529,9 @@ class Website(models.Model):
         else:
             result = []
 
+=======
+        result = []
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         if search_type in ['pages', 'all']:
             result.append(self.env['website.page']._search_get_detail(self, order, options))
         return result

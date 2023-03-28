@@ -28,7 +28,12 @@
     </function>
 
     <function model="account.chart.template" name="try_loading">
+<<<<<<< HEAD
         <value eval="[ref('l10n_mz.l10n_mz_chart_template')]"/>
+=======
+        <value eval="[]"/>
+        <value>mz</value>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         <value model="res.company" eval="obj().env.ref('l10n_mz.demo_company_mz')"/>
     </function>
 </odoo>

@@ -16,6 +16,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.tax,description:l10n_bg.1_l10n_bg_sale_vat_0_140
 #: model:account.tax,description:l10n_bg.2_l10n_bg_sale_vat_0_140
 #: model:account.tax,name:l10n_bg.1_l10n_bg_sale_vat_0_140
@@ -120,6 +121,9 @@ msgstr "0% ДДС"
 
 #. module: l10n_bg
 #: model:account.report.line,tag_name:l10n_bg.l10n_bg_tax_report_11
+=======
+#: model:account.tax.report.line,tag_name:l10n_bg.l10n_bg_tax_report_11
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "11"
 msgstr "11"
 
@@ -169,6 +173,7 @@ msgid "19"
 msgstr "19"
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_bg.1_l10n_bg_purchase_vat_20_ftc
 #: model:account.tax,name:l10n_bg.2_l10n_bg_purchase_vat_20_ftc
 #: model:account.tax.template,name:l10n_bg.l10n_bg_purchase_vat_20_ftc
@@ -327,6 +332,9 @@ msgstr "20% ДДС"
 
 #. module: l10n_bg
 #: model:account.report.line,tag_name:l10n_bg.l10n_bg_tax_report_21
+=======
+#: model:account.tax.report.line,tag_name:l10n_bg.l10n_bg_tax_report_21
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "21"
 msgstr "21"
 
@@ -371,221 +379,12 @@ msgid "42"
 msgstr "42"
 
 #. module: l10n_bg
-#: model:account.tax,name:l10n_bg.1_l10n_bg_purchase_vat_9_ftc
-#: model:account.tax,name:l10n_bg.2_l10n_bg_purchase_vat_9_ftc
-#: model:account.tax.template,name:l10n_bg.l10n_bg_purchase_vat_9_ftc
-msgid "9% FTC"
-msgstr "9% ПДК"
-
-#. module: l10n_bg
-#: model:account.tax,description:l10n_bg.1_l10n_bg_purchase_vat_9_ftc
-#: model:account.tax,description:l10n_bg.2_l10n_bg_purchase_vat_9_ftc
-#: model:account.tax.template,description:l10n_bg.l10n_bg_purchase_vat_9_ftc
-msgid "9% Foreign Tax Credit"
-msgstr "9% чуждестранен данъчен кредит"
-
-#. module: l10n_bg
-#: model:account.tax,name:l10n_bg.1_l10n_bg_purchase_vat_9_otc
-#: model:account.tax,name:l10n_bg.2_l10n_bg_purchase_vat_9_otc
-#: model:account.tax.template,name:l10n_bg.l10n_bg_purchase_vat_9_otc
-msgid "9% OTC"
-msgstr "9% бДК"
-
-#. module: l10n_bg
-#: model:account.tax,description:l10n_bg.1_l10n_bg_purchase_vat_9_otc
-#: model:account.tax,description:l10n_bg.2_l10n_bg_purchase_vat_9_otc
-#: model:account.tax.template,description:l10n_bg.l10n_bg_purchase_vat_9_otc
-msgid "9% Other Tax Credit"
-msgstr "9% друг данъчен кредит"
-
-#. module: l10n_bg
-#: model:account.tax,description:l10n_bg.1_l10n_bg_sale_vat_9_personal
-#: model:account.tax,description:l10n_bg.2_l10n_bg_sale_vat_9_personal
-#: model:account.tax,name:l10n_bg.1_l10n_bg_sale_vat_9_personal
-#: model:account.tax,name:l10n_bg.2_l10n_bg_sale_vat_9_personal
-#: model:account.tax.template,description:l10n_bg.l10n_bg_sale_vat_9_personal
-#: model:account.tax.template,name:l10n_bg.l10n_bg_sale_vat_9_personal
-msgid "9% Personal use"
-msgstr "9% лични"
-
-#. module: l10n_bg
-#: model:account.tax,description:l10n_bg.1_l10n_bg_sale_vat_9
-#: model:account.tax,description:l10n_bg.2_l10n_bg_sale_vat_9
-#: model:account.tax,name:l10n_bg.1_l10n_bg_sale_vat_9
-#: model:account.tax,name:l10n_bg.2_l10n_bg_sale_vat_9
-#: model:account.tax.group,name:l10n_bg.tax_group_vat_9
-#: model:account.tax.template,description:l10n_bg.l10n_bg_sale_vat_9
-#: model:account.tax.template,name:l10n_bg.l10n_bg_sale_vat_9
-msgid "9% VAT"
-msgstr "9% ДДС"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_422
-#: model:account.account,name:l10n_bg.2_l10n_bg_422
-#: model:account.account.template,name:l10n_bg.l10n_bg_422
-msgid "Accountable persons"
-msgstr "Подотчетни лица"
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_5
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_5
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_5
-msgid "Accounts for financial resources"
-msgstr "Сметки за финансови средства"
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_2
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_2
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_2
-msgid "Accounts for fixed assets"
-msgstr "Сметки за дълготрайни активи"
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_3
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_3
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_3
-msgid "Accounts for inventories"
-msgstr "Сметки за стоково-материални запаси"
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_4
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_4
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_4
-msgid "Accounts for settlements"
-msgstr "Сметки за разчети"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_982
-#: model:account.account,name:l10n_bg.2_l10n_bg_982
-#: model:account.account.template,name:l10n_bg.l10n_bg_982
-msgid "Accounts receivable"
-msgstr "Сметки по изискуеми обезпечения"
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_68
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_68
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_68
-msgid "Active reinsurance expenses"
-msgstr "Разходи по активно презастраховане"
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_61
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_61
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_61
-msgid "Activity costs"
-msgstr "Разходи за дейността"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_614
-#: model:account.account,name:l10n_bg.2_l10n_bg_614
-#: model:account.account.template,name:l10n_bg.l10n_bg_614
-msgid "Administrative costs"
-msgstr "Административни разходи"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_402
-#: model:account.account,name:l10n_bg.2_l10n_bg_402
-#: model:account.account.template,name:l10n_bg.l10n_bg_402
-msgid "Advance providers"
-msgstr "Доставчици по аванси"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_242
-#: model:account.account,name:l10n_bg.2_l10n_bg_242
-#: model:account.account.template,name:l10n_bg.l10n_bg_242
-msgid "Amortization of intangible fixed assets"
-msgstr "Амортизация на дълготрайни нематериални активи"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_612
-#: model:account.account,name:l10n_bg.2_l10n_bg_612
-#: model:account.account.template,name:l10n_bg.l10n_bg_612
-msgid "Ancillary activity costs"
-msgstr "Разходи за спомагателна дейност"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_316
-#: model:account.account,name:l10n_bg.2_l10n_bg_316
-#: model:account.account.template,name:l10n_bg.l10n_bg_316
-msgid "Animals for experimental purposes"
-msgstr "Животни за експериментални цели"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_315
-#: model:account.account,name:l10n_bg.2_l10n_bg_315
-#: model:account.account.template,name:l10n_bg.l10n_bg_315
-msgid "Animals for fattening"
-msgstr "Животни за угояване"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_274
-#: model:account.account,name:l10n_bg.2_l10n_bg_274
-#: model:account.account.template,name:l10n_bg.l10n_bg_274
-msgid "Animals in major herds"
-msgstr "Животни в основни стада"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_962
-#: model:account.account,name:l10n_bg.2_l10n_bg_962
-#: model:account.account.template,name:l10n_bg.l10n_bg_962
-msgid "Assets in use, reported"
-msgstr "Активи в употреба, отчете"
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_16
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_16
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_16
-msgid "Attracted funds on deposit accounts"
-msgstr "Привлечени средства по депозитни сметки"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_445
-#: model:account.account,name:l10n_bg.2_l10n_bg_445
-#: model:account.account.template,name:l10n_bg.l10n_bg_445
-msgid "Awarded receivables"
-msgstr "Присъдени вземания"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_141
-#: model:account.account,name:l10n_bg.2_l10n_bg_141
-#: model:account.account.template,name:l10n_bg.l10n_bg_141
-msgid "Banknotes for circulation"
-msgstr "Банкноти за обращение"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_313
-#: model:account.account,name:l10n_bg.2_l10n_bg_313
-#: model:account.account.template,name:l10n_bg.l10n_bg_313
-msgid "Bee families"
-msgstr "Пчелни семейства"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_312
-#: model:account.account,name:l10n_bg.2_l10n_bg_312
-#: model:account.account.template,name:l10n_bg.l10n_bg_312
-msgid "Bird-main flocks"
-msgstr "Пптици-основни стада"
-
-#. module: l10n_bg
-#: model:account.group,name:l10n_bg.1_l10n_bg_group_17
-#: model:account.group,name:l10n_bg.2_l10n_bg_group_17
-#: model:account.group.template,name:l10n_bg.l10n_bg_group_17
-msgid "Borrowed funds on current and other accounts"
-msgstr "Привлечени средства по разплащателни и други сметки"
-
-#. module: l10n_bg
-#: model:account.account,name:l10n_bg.1_l10n_bg_203
-#: model:account.account,name:l10n_bg.2_l10n_bg_203
-#: model:account.account.template,name:l10n_bg.l10n_bg_203
-msgid "Buildings and structures"
-msgstr "Сгради и конструкции"
-
-#. module: l10n_bg
 #: model:ir.ui.menu,name:l10n_bg.bg_reports_menu
 msgid "Bulgaria"
 msgstr "България"
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.chart.template,name:l10n_bg.l10n_bg_chart_template
 msgid "Bulgaria - National Chart of Accounts"
 msgstr "България - Национален сметкоплан"
@@ -889,10 +688,14 @@ msgstr "Разчети по отсрочени данъци"
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_12_2
+=======
+#: model:account.tax.report.line,name:l10n_bg.l10n_bg_tax_report_12_2
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Deliveries under Art. 82, para. 2-6"
 msgstr "Доставки по чл. 82, ал. 2-6"
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.account,name:l10n_bg.1_l10n_bg_301
 #: model:account.account,name:l10n_bg.2_l10n_bg_301
 #: model:account.account.template,name:l10n_bg.l10n_bg_301
@@ -1799,10 +1602,14 @@ msgstr "Вътрешни разчети по вътрешнобанкови оп
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_12_1
+=======
+#: model:account.tax.report.line,name:l10n_bg.l10n_bg_tax_report_12_1
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Intra-community acquisitions"
 msgstr "Вътрешнообщностни придобивания"
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.account,name:l10n_bg.1_l10n_bg_224
 #: model:account.account,name:l10n_bg.2_l10n_bg_224
 #: model:account.account.template,name:l10n_bg.l10n_bg_224
@@ -2902,6 +2709,9 @@ msgstr "Приходи от продажби"
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_a
+=======
+#: model:account.tax.report.line,name:l10n_bg.l10n_bg_tax_report_a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Section A: Data on value added tax charged"
 msgstr "Раздел А: Данни за начислен данък върху добавената стойност"
 
@@ -2916,6 +2726,7 @@ msgid "Section C: Result for the period"
 msgstr "Раздел В: Резултат за периода"
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.account,name:l10n_bg.1_l10n_bg_431
 #: model:account.account,name:l10n_bg.2_l10n_bg_431
 #: model:account.account.template,name:l10n_bg.l10n_bg_431
@@ -3112,12 +2923,18 @@ msgstr "Дълготрайни материални активи"
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_b_2
+=======
+#: model:account.tax.report.line,name:l10n_bg.l10n_bg_tax_report_b_2
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid ""
 "Tax base of the received deliveries, VAT, the received deliveries under art."
 " 82, para 2-6 of the VAT Act, the import, as well as the tax base of the "
 "received deliveries, used for making deliveries under art. 69, para 2 of the"
 " VAT Act"
-msgstr "Данъчна основа на получените доставки, ВОП, получените доставки по чл.82, ал.2-6 от ЗДДС, вноса, както и данъчната основа на получени доставки, използвани за извършване на доставки по чл.69, ал.2 ЗДДС"
+msgstr ""
+"Данъчна основа на получените доставки, ВОП, получените доставки по чл.82, "
+"ал.2-6 от ЗДДС, вноса, както и данъчната основа на получени доставки, "
+"използвани за извършване на доставки по чл.69, ал.2 ЗДДС"
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_a_2
@@ -3130,6 +2947,7 @@ msgid "Tax base subject to taxation at a rate of 20%"
 msgstr "Данъчна основа, подлежаща на облагане със ставка 20%:"
 
 #. module: l10n_bg
+<<<<<<< HEAD
 #: model:account.account,name:l10n_bg.1_l10n_bg_403
 #: model:account.account,name:l10n_bg.2_l10n_bg_403
 #: model:account.account.template,name:l10n_bg.l10n_bg_403
@@ -3257,10 +3075,15 @@ msgstr "Млади животни"
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_01
+=======
+#: model:account.tax.report.line,name:l10n_bg.l10n_bg_tax_report_01
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid ""
 "[01] Total amount of the tax bases for VAT taxation (amount from class 11 to"
 " class 16)"
-msgstr "[01] Общ размер на данъчните основи за облагане с ДДС (сума от кл.11 до кл.16)"
+msgstr ""
+"[01] Общ размер на данъчните основи за облагане с ДДС (сума от кл.11 до "
+"кл.16)"
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_11
@@ -3268,14 +3091,18 @@ msgid ""
 "[11] - tax base of taxable supplies, incl. deliveries under the conditions "
 "of distance sales with a place of performance on the territory of the "
 "country"
-msgstr "[11] - данъчна основа на облагаемите доставки, вкл. доставките при условията на дистанционни продажби с място на изпълнение на територията на страната  "
+msgstr ""
+"[11] - данъчна основа на облагаемите доставки, вкл. доставките при условията"
+" на дистанционни продажби с място на изпълнение на територията на страната  "
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_12
 msgid ""
 "[12] - tax base of VAT and tax base of received supplies under Article 82, "
 "paragraphs 2-6 of the VAT Act"
-msgstr "[12] - данъчна основа на ВОП и данъчна основа на получени доставки по чл.82, ал.2-6 от ЗДДС"
+msgstr ""
+"[12] - данъчна основа на ВОП и данъчна основа на получени доставки по чл.82,"
+" ал.2-6 от ЗДДС"
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_13
@@ -3303,7 +3130,9 @@ msgstr "[16] - данъчна основа на доставки по чл.140, 
 msgid ""
 "[17] Tax base for supplies of services under Article 21, paragraph 2 with a "
 "place of performance on the territory of another member state"
-msgstr "[17] Данъчна основа на доставки на услуги по чл.21, ал.2 с място на изпълнение на територията на друга страна членка"
+msgstr ""
+"[17] Данъчна основа на доставки на услуги по чл.21, ал.2 с място на "
+"изпълнение на територията на друга страна членка"
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_18
@@ -3312,7 +3141,10 @@ msgid ""
 "incl. deliveries on the basis of distance selling with a place of "
 "performance in the territory of another Member State, as well as deliveries "
 "as an intermediary in a tripartite"
-msgstr "[18] Данъчна основа на доставки по чл.69, ал.2 ЗДДС, вкл. доставките при условията на дистанционни продажби с място на изпълнение на територията на друга държава членка, както и на доставки като посредник в тристранна"
+msgstr ""
+"[18] Данъчна основа на доставки по чл.69, ал.2 ЗДДС, вкл. доставките при "
+"условията на дистанционни продажби с място на изпълнение на територията на "
+"друга държава членка, както и на доставки като посредник в тристранна"
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_19
@@ -3351,7 +3183,9 @@ msgid ""
 "[30] Tax base and tax on the received deliveries, VAT, the received "
 "deliveries under art. 82, para. 2-6 of the VAT Act and imports without the "
 "right to a tax credit or without tax"
-msgstr "[30] Данъчна основа и данък на получените доставки, ВОП, получените доставки по чл.82, ал. 2-6 от ЗДДС и вноса без право на данъчен кредит или без данък"
+msgstr ""
+"[30] Данъчна основа и данък на получените доставки, ВОП, получените доставки"
+" по чл.82, ал. 2-6 от ЗДДС и вноса без право на данъчен кредит или без данък"
 
 #. module: l10n_bg
 #: model:account.report.line,name:l10n_bg.l10n_bg_tax_report_31

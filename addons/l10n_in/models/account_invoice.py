@@ -8,7 +8,6 @@ from odoo.exceptions import ValidationError, RedirectWarning
 class AccountMove(models.Model):
     _inherit = "account.move"
 
-    amount_total_words = fields.Char("Total (In Words)", compute="_compute_amount_total_words")
     l10n_in_gst_treatment = fields.Selection([
             ('regular', 'Registered Business - Regular'),
             ('composition', 'Registered Business - Composition'),
@@ -69,11 +68,17 @@ class AccountMove(models.Model):
         gst_treatment_name_mapping = {k: v for k, v in
                              self._fields['l10n_in_gst_treatment']._description_selection(self.env)}
         for move in posted.filtered(lambda m: m.country_code == 'IN'):
+<<<<<<< HEAD
             """Check state is set in company/sub-unit"""
             company_unit_partner = move.journal_id.l10n_in_gstin_partner_id or move.journal_id.company_id
             if not company_unit_partner.state_id:
                 msg = _("Your company %s needs to have a correct address in order to validate this invoice.\n"
                 "Set the address of your company (Don't forget the State field)") % (company_unit_partner.name)
+=======
+            if not move.company_id.state_id:
+                msg = _("Your company %s needs to have a correct address in order to validate this invoice.\n"
+                "Set the address of your company (Don't forget the State field)") % (move.company_id.name)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 action = {
                     "view_mode": "form",
                     "res_model": "res.company",
@@ -82,7 +87,10 @@ class AccountMove(models.Model):
                     "views": [[self.env.ref("base.view_company_form").id, "form"]],
                 }
                 raise RedirectWarning(msg, action, _('Go to Company configuration'))
+<<<<<<< HEAD
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             move.l10n_in_gstin = move.partner_id.vat
             if not move.l10n_in_gstin and move.l10n_in_gst_treatment in ['regular', 'composition', 'special_economic_zone', 'deemed_export']:
                 raise ValidationError(_(

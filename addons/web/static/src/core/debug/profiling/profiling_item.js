@@ -3,7 +3,11 @@
 import { DropdownItem } from "@web/core/dropdown/dropdown_item";
 import { useBus, useService } from "@web/core/utils/hooks";
 
+<<<<<<< HEAD
 import { Component } from "@odoo/owl";
+=======
+import { Component, EventBus } from "@odoo/owl";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 export class ProfilingItem extends Component {
     setup() {
@@ -30,3 +34,6 @@ export class ProfilingItem extends Component {
 }
 ProfilingItem.components = { DropdownItem };
 ProfilingItem.template = "web.DebugMenu.ProfilingItem";
+ProfilingItem.props = {
+    bus: { type: EventBus },
+};

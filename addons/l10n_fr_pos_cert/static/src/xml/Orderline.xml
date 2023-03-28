@@ -8,7 +8,11 @@
                     Old unit price:
                     <span class="oldPrice">
                         <s>
+<<<<<<< HEAD
                             <t t-esc="env.pos.format_currency(props.line.get_taxed_lst_unit_price(),'Product Price')" /> / Units
+=======
+                            <t t-out="env.pos.format_currency(props.line.get_fixed_lst_price(),'Product Price')" /> / Units
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         </s>
                     </span>
                 </li>

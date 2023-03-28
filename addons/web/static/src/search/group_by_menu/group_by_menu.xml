@@ -25,7 +25,11 @@
                             <t t-if="subGroup !== null and subGroup !== option.groupNumber">
                                 <div class="dropdown-divider" role="separator"/>
                             </t>
+<<<<<<< HEAD
                             <DropdownItem class="{ o_item_option: true, selected: option.isActive }"
+=======
+                            <SearchDropdownItem class="{ o_item_option: true, selected: option.isActive }"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                 checked="option.isActive ? true : false"
                                 parentClosingMode="'none'"
                                 t-esc="option.description"
@@ -36,7 +40,11 @@
                     </Dropdown>
                 </t>
                 <t t-else="">
+<<<<<<< HEAD
                     <DropdownItem class="{ o_menu_item: true, selected: item.isActive }"
+=======
+                    <SearchDropdownItem class="{ o_menu_item: true, selected: item.isActive }"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         checked="item.isActive"
                         parentClosingMode="'none'"
                         t-esc="item.description"

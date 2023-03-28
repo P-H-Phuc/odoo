@@ -19,13 +19,19 @@ import logging
 import uuid
 import warnings
 
-from markupsafe import Markup
 import psycopg2
+<<<<<<< HEAD
 from psycopg2.extras import Json as PsycopgJson
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import pytz
+from markupsafe import Markup
+from psycopg2.extras import Json as PsycopgJson, execute_values
+from psycopg2.sql import SQL, Identifier
 from difflib import get_close_matches
 from hashlib import sha256
 
+from .models import check_property_field_value_name
 from .tools import (
     float_repr, float_round, float_compare, float_is_zero, human_size,
     pg_varchar, ustr, OrderedSet, pycompat, sql, date_utils, unique,
@@ -629,6 +635,9 @@ class Field(MetaField('DummyField', (object,), {})):
             delegate_field = model._fields[self.related.split('.')[0]]
             self._modules = tuple({*self._modules, *delegate_field._modules, *field._modules})
 
+        if self.store and self.translate:
+            _logger.warning("Translated stored related field (%s) will not be computed correctly in all languages", self)
+
     def traverse_related(self, record):
         """ Traverse the fields of the related field `self` except for the last
         one, and return it as a pair `(last_record, last_field)`. """
@@ -880,10 +889,6 @@ class Field(MetaField('DummyField', (object,), {})):
     # Conversion of values
     #
 
-    def null(self, record):
-        """ Return the null value for this field in the record format. """
-        return False
-
     def convert_to_column(self, value, record, values=None, validate=True):
         """ Convert ``value`` from the ``write`` format to the SQL format. """
         if value is None or value is False:
@@ -1093,7 +1098,6 @@ class Field(MetaField('DummyField', (object,), {})):
 
         :param records:
         :param value: a value in any format
-        :return: the subset of `records` that have been modified
         """
         # discard recomputation of self on records
         records.env.remove_to_compute(self, records)
@@ -1103,13 +1107,11 @@ class Field(MetaField('DummyField', (object,), {})):
         cache_value = self.convert_to_cache(value, records)
         records = cache.get_records_different_from(records, self, cache_value)
         if not records:
-            return records
+            return
 
         # update the cache
         dirty = self.store and any(records._ids)
         cache.update(records, self, itertools.repeat(cache_value), dirty=dirty)
-
-        return records
 
     ############################################################################
     #
@@ -1164,6 +1166,8 @@ class Field(MetaField('DummyField', (object,), {})):
                 try:
                     recs._fetch_field(self)
                 except AccessError:
+                    if len(recs) == 1:
+                        raise
                     record._fetch_field(self)
                 if not env.cache.contains(record, self):
                     raise MissingError("\n".join([
@@ -1750,12 +1754,13 @@ class _String(Field):
 
     def write(self, records, value):
         if not self.translate or value is False or value is None:
-            return super().write(records, value)
+            super().write(records, value)
+            return
         cache = records.env.cache
         cache_value = self.convert_to_cache(value, records)
         records = cache.get_records_different_from(records, self, cache_value)
         if not records:
-            return records
+            return
 
         # flush dirty None values
         dirty_records = records & cache.get_dirty_records(records, self)
@@ -1768,7 +1773,7 @@ class _String(Field):
         # not dirty fields
         if not dirty:
             cache.update_raw(records, self, [{lang: cache_value} for _id in records._ids], dirty=False)
-            return records
+            return
 
         # model translation
         if not callable(self.translate):
@@ -1779,7 +1784,7 @@ class _String(Field):
             if lang != 'en_US' and not records.env['res.lang']._lang_get_id('en_US'):
                 # if 'en_US' is not active, we always write en_US to make sure value_en is meaningful
                 cache.update(records.with_context(lang='en_US'), self, itertools.repeat(cache_value), dirty=True)
-            return records
+            return
 
         # model term translation
         new_translations_list = []
@@ -1820,7 +1825,6 @@ class _String(Field):
             new_translations_list.append(new_translations)
         # Maybe we can use Cache.update(records.with_context(cache_update_raw=True), self, new_translations_list, dirty=True)
         cache.update_raw(records, self, new_translations_list, dirty=True)
-        return records
 
 
 class Char(_String):
@@ -2358,24 +2362,24 @@ class Binary(Field):
             return
         # create the attachments that store the values
         env = record_values[0][0].env
-        with env.norecompute():
-            env['ir.attachment'].sudo().with_context(
-                binary_field_real_user=env.user,
-            ).create([{
-                    'name': self.name,
-                    'res_model': self.model_name,
-                    'res_field': self.name,
-                    'res_id': record.id,
-                    'type': 'binary',
-                    'datas': value,
-                }
-                for record, value in record_values
-                if value
-            ])
+        env['ir.attachment'].sudo().with_context(
+            binary_field_real_user=env.user,
+        ).create([{
+                'name': self.name,
+                'res_model': self.model_name,
+                'res_field': self.name,
+                'res_id': record.id,
+                'type': 'binary',
+                'datas': value,
+            }
+            for record, value in record_values
+            if value
+        ])
 
     def write(self, records, value):
         if not self.attachment:
-            return super().write(records, value)
+            super().write(records, value)
+            return
 
         # discard recomputation of self on records
         records.env.remove_to_compute(self, records)
@@ -2385,7 +2389,7 @@ class Binary(Field):
         cache_value = self.convert_to_cache(value, records)
         records = cache.get_records_different_from(records, self, cache_value)
         if not records:
-            return records
+            return
         if self.store:
             # determine records that are known to be not null
             not_null = cache.get_records_different_from(records, self, None)
@@ -2422,8 +2426,6 @@ class Binary(Field):
             else:
                 atts.unlink()
 
-        return records
-
 
 class Image(Binary):
     """Encapsulates an image, extending :class:`Binary`.
@@ -2445,6 +2447,11 @@ class Image(Binary):
     max_width = 0
     max_height = 0
     verify_resolution = True
+
+    def setup(self, model):
+        super().setup(model)
+        if not model._abstract and not model._log_access:
+            warnings.warn(f"Image field {self} requires the model to have _log_access = True")
 
     def create(self, record_values):
         new_record_values = []
@@ -2711,11 +2718,9 @@ class Selection(Field):
     def convert_to_cache(self, value, record, validate=True):
         if not validate:
             return value or None
-        if value and self.column_type[0] == 'int4':
-            value = int(value)
         if value in self.get_values(record.env):
             return value
-        elif not value:
+        if not value:
             return None
         raise ValueError("Wrong value for %s: %r" % (self, value))
 
@@ -2835,9 +2840,6 @@ class _Relational(Field):
                 else:
                     return f"[('company_id', 'in', [{cid}, False])]"
         return self.domain(env[self.model_name]) if callable(self.domain) else self.domain
-
-    def null(self, record):
-        return record.env[self.comodel_name]
 
 
 class Many2one(_Relational):
@@ -3031,7 +3033,7 @@ class Many2one(_Relational):
         cache_value = self.convert_to_cache(value, records)
         records = cache.get_records_different_from(records, self, cache_value)
         if not records:
-            return records
+            return
 
         # remove records from the cache of one2many fields of old corecords
         self._remove_inverses(records, cache_value)
@@ -3042,8 +3044,6 @@ class Many2one(_Relational):
 
         # update the cache of one2many fields of new corecord
         self._update_inverses(records, cache_value)
-
-        return records
 
     def _remove_inverses(self, records, value):
         """ Remove `records` from the cached values of the inverse fields of `self`. """
@@ -3104,26 +3104,6 @@ class Many2oneReference(Integer):
         if isinstance(value, BaseModel):
             value = value._ids[0] if value._ids else None
         return super().convert_to_cache(value, record, validate)
-
-    def _remove_inverses(self, records, value):
-        # TODO: unused
-        # remove records from the cache of one2many fields of old corecords
-        cache = records.env.cache
-        record_ids = set(records._ids)
-        model_ids = self._record_ids_per_res_model(records)
-
-        for invf in records.pool.field_inverses[self]:
-            records = records.browse(model_ids[invf.model_name])
-            if not records:
-                continue
-            corecords = records.env[invf.model_name].browse(
-                id_ for id_ in cache.get_values(records, self)
-            )
-            for corecord in corecords:
-                ids0 = cache.get(corecord, invf, None)
-                if ids0 is not None:
-                    ids1 = tuple(id_ for id_ in ids0 if id_ not in record_ids)
-                    cache.set(corecord, invf, ids1)
 
     def _update_inverses(self, records, value):
         """ Add `records` to the cached values of the inverse fields of `self`. """
@@ -3218,6 +3198,7 @@ class Properties(Field):
     column_type = ('jsonb', 'jsonb')
     copy = False
     prefetch = False
+    unaccent = True
     write_sequence = 10              # because it must be written after the definition field
 
     # the field is computed editable by design (see the compute method below)
@@ -3312,7 +3293,6 @@ class Properties(Field):
 
         assert isinstance(value, dict), f"Wrong type {value!r}"
         value = self._dict_to_list(value, definition)
-        self._parse_json_types(value, record.env)
 
         return value
 
@@ -3334,10 +3314,22 @@ class Properties(Field):
     #       }]
     #
     def convert_to_read(self, value, record, use_name_get=True):
+        return self.convert_to_read_multi([value], record, use_name_get)[0]
+
+    def convert_to_read_multi(self, values, records, use_name_get=True):
+        assert len(values) == len(records)
+
+        res_ids_per_model = self._get_res_ids_per_model(records, values, use_name_get)
+
         # value is in record format
+        for value in values:
+            self._parse_json_types(value, records.env, res_ids_per_model)
+
         if use_name_get:
-            self._add_display_name(value, record.env)
-        return value
+            for value in values:
+                self._add_display_name(value, records.env)
+
+        return values
 
     def convert_to_write(self, value, record):
         """If we write a list on the child, update the definition record."""
@@ -3352,11 +3344,16 @@ class Properties(Field):
         self._add_display_name(value, record.env)
         return value
 
+<<<<<<< HEAD
     def read(self, records):
+=======
+    def _get_res_ids_per_model(self, records, values_list, use_name_get=True):
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         """Read everything needed in batch for the given records.
 
         To retrieve relational properties names, or to check their existence,
         we need to do some SQL queries. To reduce the number of queries when we read
+<<<<<<< HEAD
         in batch, we put in cache everything needed before calling
         convert_to_record / convert_to_read.
         """
@@ -3383,6 +3380,26 @@ class Properties(Field):
 
                 default = property_definition.get('default') or []
                 property_value = record_values[name] or []
+=======
+        in batch, we prefetch everything needed before calling
+        convert_to_record / convert_to_read.
+
+        Return a dict {model: record_ids} that contains
+        the existing ids for each needed models.
+        """
+        # ids per model we need to fetch in batch to put in cache
+        ids_per_model = defaultdict(OrderedSet)
+
+        for record, record_values in zip(records, values_list):
+            for property_definition in record_values:
+                comodel = property_definition.get('comodel')
+                type_ = property_definition.get('type')
+                property_value = property_definition.get('value') or []
+                default = property_definition.get('default') or []
+
+                if type_ not in ('many2one', 'many2many') or comodel not in records.env:
+                    continue
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
                 if type_ == 'many2one':
                     default = [default] if default else []
@@ -3392,6 +3409,7 @@ class Properties(Field):
                 ids_per_model[comodel].update(property_value)
 
         # check existence and pre-fetch in batch
+<<<<<<< HEAD
         existing_ids_per_model = {}
         for model, ids in ids_per_model.items():
             recs = records.env[model].browse(ids).exists()
@@ -3424,6 +3442,22 @@ class Properties(Field):
                     record_values[name] = [id_ for id_ in property_value if id_ in existing_ids_per_model[comodel]]
 
             records.env.cache.update(record, self, [record_values], check_dirty=False)
+=======
+        res_ids_per_model = {}
+        for model, ids in ids_per_model.items():
+            recs = records.env[model].browse(ids).exists()
+            res_ids_per_model[model] = set(recs.ids)
+
+            if use_name_get:
+                for record in recs:
+                    # read a field to pre-fetch the recordset
+                    try:
+                        record.display_name
+                    except AccessError:
+                        pass
+
+        return res_ids_per_model
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     def write(self, records, value):
         """Check if the properties definition has been changed.
@@ -3455,6 +3489,7 @@ class Properties(Field):
             ]
             for definition in value:
                 definition.pop('definition_changed', None)
+                check_property_field_value_name(definition.get('name', ''))
 
             # update the properties definition on the container
             container = records[self.definition_record]
@@ -3613,7 +3648,11 @@ class Properties(Field):
                 definition['name'] = str(uuid.uuid4()).replace('-', '')[:16]
 
     @classmethod
+<<<<<<< HEAD
     def _parse_json_types(cls, values_list, env):
+=======
+    def _parse_json_types(cls, values_list, env, res_ids_per_model):
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         """Parse the value stored in the JSON.
 
         Check for records existence, if we removed a selection option, ...
@@ -3655,6 +3694,12 @@ class Properties(Field):
                 if not isinstance(property_value, int):
                     raise ValueError(f'Wrong many2one value: {property_value!r}.')
 
+<<<<<<< HEAD
+=======
+                if property_value not in res_ids_per_model[res_model]:
+                    property_value = False
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             elif property_type == 'many2many' and property_value and res_model in env:
                 if not is_list_of(property_value, int):
                     raise ValueError(f'Wrong many2many value: {property_value!r}.')
@@ -3663,6 +3708,14 @@ class Properties(Field):
                     # remove duplicated value and preserve order
                     property_value = list(dict.fromkeys(property_value))
 
+<<<<<<< HEAD
+=======
+                property_value = [
+                    id_ for id_ in property_value
+                    if id_ in res_ids_per_model[res_model]
+                ]
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             property_definition['value'] = property_value
 
     @classmethod
@@ -4051,31 +4104,14 @@ class _RelationalMulti(_Relational):
     # convert_to_record(), depending on the context.
 
     def _update(self, records, value):
-        """ Update the cached value of ``self`` for ``records`` with ``value``,
-            and return whether everything is in cache.
-        """
-        if not isinstance(records, BaseModel):
-            # the inverse of self is a non-relational field; `value` is a
-            # corecord that refers to `records` by an integer field
-            model = value.env[self.model_name]
-            domain = self.domain(model) if callable(self.domain) else self.domain
-            if not value.filtered_domain(domain):
-                return
-            records = model.browse(records)
-
-        result = True
-
+        """ Update the cached value of ``self`` for ``records`` with ``value``. """
         if value:
             cache = records.env.cache
             for record in records:
                 if cache.contains(record, self):
                     val = self.convert_to_cache(record[self.name] | value, record, validate=False)
                     cache.set(record, self, val)
-                else:
-                    result = False
             records.modified([self.name])
-
-        return result
 
     def convert_to_cache(self, value, record, validate=True):
         # cache format: tuple(ids)
@@ -4227,11 +4263,11 @@ class _RelationalMulti(_Relational):
     def write(self, records, value):
         # discard recomputation of self on records
         records.env.remove_to_compute(self, records)
-        return self.write_batch([(records, value)])
+        self.write_batch([(records, value)])
 
     def write_batch(self, records_commands_list, create=False):
         if not records_commands_list:
-            return False
+            return
 
         for idx, (recs, value) in enumerate(records_commands_list):
             if isinstance(value, tuple):
@@ -4248,10 +4284,10 @@ class _RelationalMulti(_Relational):
 
         record_ids = {rid for recs, cs in records_commands_list for rid in recs._ids}
         if all(record_ids):
-            return self.write_real(records_commands_list, create)
+            self.write_real(records_commands_list, create)
         else:
-            assert not any(record_ids)
-            return self.write_new(records_commands_list)
+            assert not any(record_ids), f"{records_commands_list} contains a mix of real and new records. It is not supported."
+            self.write_new(records_commands_list)
 
 
 class One2many(_RelationalMulti):
@@ -4334,20 +4370,18 @@ class One2many(_RelationalMulti):
         comodel = records.env[self.comodel_name].with_context(**context)
         inverse = self.inverse_name
         inverse_field = comodel._fields[inverse]
-        domain = self.get_domain_list(records) + [(inverse, 'in', records.ids)]
-        lines = comodel.search(domain)
 
-        if len(records) == 1:
-            # optimization: all lines have the same value for 'inverse_field',
-            # so we don't need to fetch it from database
-            records.env.cache.insert_missing(records, self, [lines._ids])
-            records.env.cache.insert_missing(lines, inverse_field, itertools.repeat(records.id))
-            return
+        # optimization: fetch the inverse and active fields with search()
+        domain = self.get_domain_list(records) + [(inverse, 'in', records.ids)]
+        field_names = [inverse]
+        if comodel._active_name:
+            field_names.append(comodel._active_name)
+        lines = comodel.search_fetch(domain, field_names)
 
         # group lines by inverse field (without prefetching other fields)
         get_id = (lambda rec: rec.id) if inverse_field.type == 'many2one' else int
         group = defaultdict(list)
-        for line in lines.with_context(prefetch_fields=False):
+        for line in lines:
             # line[inverse] may be a record or an integer
             group[get_id(line[inverse])].append(line.id)
 
@@ -4364,9 +4398,12 @@ class One2many(_RelationalMulti):
         model = records_commands_list[0][0].browse()
         comodel = model.env[self.comodel_name].with_context(**self.context)
 
+<<<<<<< HEAD
         ids = OrderedSet(rid for recs, cs in records_commands_list for rid in recs.ids)
         records = records_commands_list[0][0].browse(ids)
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         if self.store:
             inverse = self.inverse_name
             to_create = []                      # line vals to create
@@ -4436,6 +4473,8 @@ class One2many(_RelationalMulti):
             flush()
 
         else:
+            ids = OrderedSet(rid for recs, cs in records_commands_list for rid in recs._ids)
+            records = records_commands_list[0][0].browse(ids)
             cache = records.env.cache
 
             def link(record, lines):
@@ -4464,8 +4503,6 @@ class One2many(_RelationalMulti):
                         cache.update(recs, self, itertools.repeat(()))
                         lines = comodel.browse(command[2] if command[0] == Command.SET else [])
                         cache.set(recs[-1], self, lines._ids)
-
-        return records
 
     def write_new(self, records_commands_list):
         if not records_commands_list:
@@ -4542,8 +4579,6 @@ class One2many(_RelationalMulti):
                         cache.update(recs, self, itertools.repeat(()))
                         lines = comodel.browse(command[2] if command[0] == Command.SET else [])
                         cache.set(recs[-1], self, lines._ids)
-
-        return records
 
 
 class Many2many(_RelationalMulti):
@@ -4674,13 +4709,13 @@ class Many2many(_RelationalMulti):
                                  model, self.relation, self._module)
         comodel = model.env[self.comodel_name]
         if not sql.table_exists(cr, self.relation):
-            query = """
+            query = psycopg2.sql.SQL("""
                 CREATE TABLE "{rel}" ("{id1}" INTEGER NOT NULL,
                                       "{id2}" INTEGER NOT NULL,
                                       PRIMARY KEY("{id1}","{id2}"));
                 COMMENT ON TABLE "{rel}" IS %s;
                 CREATE INDEX ON "{rel}" ("{id2}","{id1}");
-            """.format(rel=self.relation, id1=self.column1, id2=self.column2)
+            """).format(rel=psycopg2.sql.SQL(self.relation), id1=psycopg2.sql.SQL(self.column1), id2=psycopg2.sql.SQL(self.column2))
             cr.execute(query, ['RELATION BETWEEN %s AND %s' % (model._table, comodel._table)])
             _schema.debug("Create table %r: m2m relation between %r and %r", self.relation, model._table, comodel._table)
             model.pool.post_init(self.update_db_foreign_keys, model)
@@ -4711,7 +4746,7 @@ class Many2many(_RelationalMulti):
         context.update(self.context)
         comodel = records.env[self.comodel_name].with_context(**context)
         domain = self.get_domain_list(records)
-        comodel._flush_search(domain)
+        comodel._flush_search(domain, order=comodel._order)
         wquery = comodel._where_calc(domain)
         comodel._apply_ir_rules(wquery, 'read')
         order_by = comodel._generate_order_by(None, wquery)
@@ -4825,10 +4860,12 @@ class Many2many(_RelationalMulti):
         pairs = [(x, y) for x, ys in new_relation.items() for y in ys - old_relation[x]]
         if pairs:
             if self.store:
-                query = "INSERT INTO {} ({}, {}) VALUES {} ON CONFLICT DO NOTHING".format(
-                    self.relation, self.column1, self.column2, ", ".join(["%s"] * len(pairs)),
+                query = SQL("INSERT INTO {} ({}, {}) VALUES %s ON CONFLICT DO NOTHING").format(
+                    Identifier(self.relation),
+                    Identifier(self.column1),
+                    Identifier(self.column2),
                 )
-                cr.execute(query, pairs)
+                execute_values(cr._obj, query, pairs)
 
             # update the cache of inverse fields
             y_to_xs = defaultdict(set)
@@ -4866,9 +4903,13 @@ class Many2many(_RelationalMulti):
                 for y, xs in y_to_xs.items():
                     xs_to_ys[frozenset(xs)].add(y)
                 # delete the rows where (id1 IN xs AND id2 IN ys) OR ...
-                COND = "{} IN %s AND {} IN %s".format(self.column1, self.column2)
-                query = "DELETE FROM {} WHERE {}".format(
-                    self.relation, " OR ".join([COND] * len(xs_to_ys)),
+                COND = SQL("{} IN %s AND {} IN %s").format(
+                    Identifier(self.column1),
+                    Identifier(self.column2),
+                )
+                query = SQL("DELETE FROM {} WHERE {}").format(
+                    Identifier(self.relation),
+                    SQL(" OR ").join([COND] * len(xs_to_ys)),
                 )
                 params = [arg for xs, ys in xs_to_ys.items() for arg in [tuple(xs), tuple(ys)]]
                 cr.execute(query, params)
@@ -4893,10 +4934,13 @@ class Many2many(_RelationalMulti):
                 for invf in model.pool.field_inverses[self]
                 if invf.model_name == self.comodel_name
             ])
+<<<<<<< HEAD
 
         return records.filtered(
             lambda record: new_relation[record.id] != old_relation[record.id]
         )
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     def write_new(self, records_commands_list):
         """ Update self on new records. """
@@ -4911,9 +4955,6 @@ class Many2many(_RelationalMulti):
         set = OrderedSet
         old_relation = {record.id: set(record[self.name]._ids) for records, _ in records_commands_list for record in records}
         new_relation = {x: set(ys) for x, ys in old_relation.items()}
-        ids = set(old_relation.keys())
-
-        records = model.browse(ids)
 
         for recs, commands in records_commands_list:
             for command in commands:
@@ -4946,7 +4987,9 @@ class Many2many(_RelationalMulti):
                         new_relation[id_] = set(line_ids)
 
         if new_relation == old_relation:
-            return records.browse()
+            return
+
+        records = model.browse(old_relation)
 
         # update the cache of self
         cache = records.env.cache
@@ -5005,10 +5048,13 @@ class Many2many(_RelationalMulti):
                 for invf in model.pool.field_inverses[self]
                 if invf.model_name == self.comodel_name
             ])
+<<<<<<< HEAD
 
         return records.filtered(
             lambda record: new_relation[record.id] != old_relation[record.id]
         )
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 
 class Id(Field):

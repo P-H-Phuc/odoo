@@ -63,10 +63,15 @@
                         <group name="leave_validation" id="time_off_requests" string="Time Off Requests">
                             <field name="active" invisible="1"/>
                             <field name="leave_validation_type" string="Approval" widget="radio"/>
-                            <field name="responsible_id" domain="[('share', '=', False)]"
+                            <field name="responsible_ids"
+                                widget="many2many_tags"
                                 attrs="{
+<<<<<<< HEAD
                                 'invisible': [('leave_validation_type', 'in', ['no_validation', 'manager']), '|', ('requires_allocation', '=', 'no'), ('allocation_validation_type', '!=', 'officer')],
                                 'required': ['|',('leave_validation_type', 'in', ['both', 'hr']), ('requires_allocation', '=', 'yes'), ('allocation_validation_type', '=', 'officer')]}"/>
+=======
+                                'invisible': [('leave_validation_type', 'in', ['no_validation', 'manager']), '|', ('requires_allocation', '=', 'no'), ('allocation_validation_type', '!=', 'officer')]}"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                             <field name="request_unit"/>
                             <field name="support_document" string="Allow To Attach Supporting Document" />
                             <field name="time_type" required="1"/>
@@ -131,7 +136,6 @@
 
     <record id="open_view_holiday_status" model="ir.actions.act_window">
         <field name="name">Time Off Types</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">hr.leave.type</field>
         <field name="view_mode">tree,kanban,form</field>
     </record>

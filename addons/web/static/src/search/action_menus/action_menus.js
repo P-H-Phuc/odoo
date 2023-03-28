@@ -3,13 +3,15 @@
 import { browser } from "@web/core/browser/browser";
 import { makeContext } from "@web/core/context";
 import { session } from "@web/session";
-import { registry } from "@web/core/registry";
 import { Dropdown } from "@web/core/dropdown/dropdown";
 import { DropdownItem } from "@web/core/dropdown/dropdown_item";
 import { useService } from "@web/core/utils/hooks";
 
 import { Component, onWillStart, onWillUpdateProps } from "@odoo/owl";
+<<<<<<< HEAD
 let registryActionId = 0;
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 /**
  * Action menus (or Action/Print bar, previously called 'Sidebar')
  *
@@ -25,10 +27,10 @@ export class ActionMenus extends Component {
         this.orm = useService("orm");
         this.actionService = useService("action");
         onWillStart(async () => {
-            this.actionItems = await this.setActionItems(this.props);
+            this.actionItems = await this.getActionItems(this.props);
         });
         onWillUpdateProps(async (nextProps) => {
-            this.actionItems = await this.setActionItems(nextProps);
+            this.actionItems = await this.getActionItems(nextProps);
         });
     }
 
@@ -45,32 +47,18 @@ export class ActionMenus extends Component {
     // Private
     //---------------------------------------------------------------------
 
-    async setActionItems(props) {
-        // Callback based actions
-        const callbackActions = (props.items.other || []).map((action) =>
-            Object.assign({ key: `action-${action.description}` }, action)
-        );
-        // Action based actions
-        const actionActions = props.items.action || [];
-        const formattedActions = actionActions.map((action) => ({
-            action,
-            description: action.name,
-            key: action.id,
-        }));
-        // ActionMenus action registry components
-        const registryActions = [];
-        for (const { Component, getProps } of registry.category("action_menus").getAll()) {
-            const itemProps = await getProps(props, this.env);
-            if (itemProps) {
-                registryActions.push({
-                    Component,
-                    key: `registry-action-${registryActionId++}`,
-                    props: itemProps,
-                });
+    async getActionItems(props) {
+        return (props.items.action || []).map((action) => {
+            if (action.callback) {
+                return Object.assign({ key: `action-${action.description}` }, action);
+            } else {
+                return {
+                    action,
+                    description: action.name,
+                    key: action.id,
+                };
             }
-        }
-
-        return [...callbackActions, ...formattedActions, ...registryActions];
+        });
     }
 
     //---------------------------------------------------------------------
@@ -141,7 +129,6 @@ ActionMenus.props = {
         shape: {
             action: { type: Array, optional: true },
             print: { type: Array, optional: true },
-            other: { type: Array, optional: true },
         },
     },
     onActionExecuted: { type: Function, optional: true },

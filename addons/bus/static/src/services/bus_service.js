@@ -6,7 +6,10 @@ import { registry } from '@web/core/registry';
 import { session } from '@web/session';
 import { isIosApp } from '@web/core/browser/feature_detection';
 import { WORKER_VERSION } from "@bus/workers/websocket_worker";
+<<<<<<< HEAD
 import legacySession from "web.session";
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 const { EventBus } = owl;
 
@@ -21,9 +24,16 @@ const { EventBus } = owl;
  *  @emits notification
  */
 export const busService = {
+<<<<<<< HEAD
     dependencies: ['localization', 'multi_tab'],
 
     async start(env, { multi_tab: multiTab }) {
+=======
+    dependencies: ['bus.parameters', 'localization', 'multi_tab'],
+    async: true,
+
+    async start(env, { multi_tab: multiTab, "bus.parameters": params }) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         const bus = new EventBus();
         let worker;
         let isActive = false;
@@ -88,7 +98,11 @@ export const busService = {
                 uid = false;
             }
             send('initialize_connection', {
+<<<<<<< HEAD
                 websocketURL: `${legacySession.prefix.replace("http", "ws")}/websocket`,
+=======
+                websocketURL: `${params.serverURL.replace("http", "ws")}/websocket`,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 debug: odoo.debug,
                 lastNotificationId: multiTab.getSharedValue('last_notification_id', 0),
                 uid,
@@ -99,8 +113,13 @@ export const busService = {
          * Start the "bus_service" worker.
          */
         function startWorker() {
+<<<<<<< HEAD
             let workerURL = `${legacySession.prefix}/bus/websocket_worker_bundle?v=${WORKER_VERSION}`;
             if (legacySession.prefix !== window.origin) {
+=======
+            let workerURL = `${params.serverURL}/bus/websocket_worker_bundle?v=${WORKER_VERSION}`;
+            if (params.serverURL !== window.origin) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 // Bus service is loaded from a different origin than the bundle
                 // URL. The Worker expects an URL from this origin, give it a base64
                 // URL that will then load the bundle via "importScripts" which

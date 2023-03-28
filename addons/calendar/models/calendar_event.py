@@ -409,13 +409,15 @@ class Meeting(models.Model):
     def create(self, vals_list):
         # Prevent sending update notification when _inverse_dates is called
         self = self.with_context(is_calendar_event_new=True)
+<<<<<<< HEAD
+=======
+        defaults = self.default_get(['activity_ids', 'res_model_id', 'res_id', 'user_id', 'res_model', 'partner_ids'])
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         vals_list = [  # Else bug with quick_create when we are filter on an other user
-            dict(vals, user_id=self.env.user.id) if not 'user_id' in vals else vals
+            dict(vals, user_id=defaults.get('user_id', self.env.user.id)) if not 'user_id' in vals else vals
             for vals in vals_list
         ]
-
-        defaults = self.default_get(['activity_ids', 'res_model_id', 'res_id', 'user_id', 'res_model', 'partner_ids'])
         meeting_activity_type = self.env['mail.activity.type'].search([('category', '=', 'meeting')], limit=1)
         # get list of models ids and filter out None values directly
         model_ids = list(filter(None, {values.get('res_model_id', defaults.get('res_model_id')) for values in vals_list}))
@@ -476,40 +478,50 @@ class Meeting(models.Model):
             events._setup_alarms()
 
         return events.with_context(is_calendar_event_new=False)
+<<<<<<< HEAD
+
+    def _compute_field_value(self, field):
+        if field.compute_sudo:
+            return super(Meeting, self.with_context(prefetch_fields=False))._compute_field_value(field)
+        return super()._compute_field_value(field)
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     def _compute_field_value(self, field):
         if field.compute_sudo:
             return super(Meeting, self.with_context(prefetch_fields=False))._compute_field_value(field)
         return super()._compute_field_value(field)
 
-    def _read(self, fields):
+    def _fetch_query(self, query, fields):
         if self.env.is_system():
-            super()._read(fields)
-            return
+            return super()._fetch_query(query, fields)
 
-        fields = set(fields)
-        private_fields = fields - self._get_public_fields()
+        public_fnames = self._get_public_fields()
+        private_fields = [field for field in fields if field.name not in public_fnames]
         if not private_fields:
-            super()._read(fields)
-            return
+            return super()._fetch_query(query, fields)
 
-        private_fields.add('partner_ids')
-        super()._read(fields | {'privacy', 'user_id', 'partner_ids'})
+        fields_to_fetch = list(fields) + [self._fields[name] for name in ('privacy', 'user_id', 'partner_ids')]
+        events = super()._fetch_query(query, fields_to_fetch)
+
+        # determine private events to which the user does not participate
         current_partner_id = self.env.user.partner_id
-        others_private_events = self.filtered(
+        others_private_events = events.filtered(
             lambda e: e.privacy == 'private' \
                   and e.user_id != self.env.user \
                   and current_partner_id not in e.partner_ids
         )
         if not others_private_events:
-            return
+            return events
 
-        for field_name in private_fields:
-            field = self._fields[field_name]
+        private_fields.append(self._fields['partner_ids'])
+        for field in private_fields:
             replacement = field.convert_to_cache(
-                _('Busy') if field_name == 'name' else False,
+                _('Busy') if field.name == 'name' else False,
                 others_private_events)
             self.env.cache.update(others_private_events, field, repeat(replacement))
+
+        return events
 
     def write(self, values):
         detached_events = self.env['calendar.event']
@@ -756,12 +768,11 @@ class Meeting(models.Model):
             raise UserError(_("There are no attendees on these events"))
         template_id = self.env['ir.model.data']._xmlid_to_res_id('calendar.calendar_template_meeting_update', raise_if_not_found=False)
         # The mail is sent with datetime corresponding to the sending user TZ
-        composition_mode = self.env.context.get('composition_mode', 'comment')
+        default_composition_mode = self.env.context.get('default_composition_mode', self.env.context.get('composition_mode', 'comment'))
         compose_ctx = dict(
-            default_composition_mode=composition_mode,
+            default_composition_mode=default_composition_mode,
             default_model='calendar.event',
             default_res_ids=self.ids,
-            default_use_template=bool(template_id),
             default_template_id=template_id,
             default_partner_ids=self.partner_ids.ids,
             mail_tz=self.env.user.tz,

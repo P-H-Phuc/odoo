@@ -12,6 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2023-02-02 17:05+0000\n"
 "PO-Revision-Date: 2023-02-03 07:06+0000\n"
 "Last-Translator: Dylan Kiss, 2023\n"
@@ -151,6 +152,25 @@ msgid "0% S.Cocont"
 msgstr ""
 
 #. module: l10n_be
+=======
+"POT-Creation-Date: 2022-04-05 14:50+0000\n"
+"PO-Revision-Date: 2020-01-27 14:01+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_00
+msgid "00"
+msgstr "00"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_00_tag
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_line_00
 msgid "00 - Operations subject to a special regulation"
 msgstr "00 - Handelingen onderworpen aan een bijzondere regeling"
@@ -161,6 +181,7 @@ msgid "01 - Operations subject to 6% VAT"
 msgstr "01 - Handelingen onderworpen aan 6% btw"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_be.tax_report_line_02
 msgid "02 - Operations subject to 12% VAT"
 msgstr "02 - Handelingen onderworpen aan 12% btw"
@@ -503,11 +524,59 @@ msgid "21% S.TTC"
 msgstr ""
 
 #. module: l10n_be
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_01_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_01
+msgid "01 - Operations subject to 6% VAT"
+msgstr "01 - Handelingen onderworpen aan 6% btw"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_02
+msgid "02"
+msgstr "02"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_02_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_02
+msgid "02 - Operations subject to 12% VAT"
+msgstr "02 - Handelingen onderworpen aan 12% btw"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_03
+msgid "03"
+msgstr "03"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_03_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_03
+msgid "03 - Operations subject to 21% VAT"
+msgstr "03 - Handelingen onderworpen aan 21% btw"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_44
+msgid "44"
+msgstr "44"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_44_tag
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_line_44
 msgid "44 - Intra-Community services"
 msgstr "44 - Intracommunautaire diensten"
 
 #. module: l10n_be
+<<<<<<< HEAD
+#: model:account.report.line,name:l10n_be.tax_report_line_45
+msgid "45 - Operations subject to VAT due by the co-contractor"
+msgstr ""
+"45 - Handelingen waarvoor de btw verschuldigd is door de medecontractant"
+=======
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_45
+msgid "45"
+msgstr "45"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_45_tag
 #: model:account.report.line,name:l10n_be.tax_report_line_45
 msgid "45 - Operations subject to VAT due by the co-contractor"
 msgstr ""
@@ -519,16 +588,34 @@ msgid "46 - Exempted intra-Community deliveries and ABC sales"
 msgstr "46 - Vrijgestelde intracommunautaire leveringen en ABC-verkopen"
 
 #. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_46L
+msgid "46L"
+msgstr "46L"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_46L_tag
 #: model:account.report.line,name:l10n_be.tax_report_line_46L
 msgid "46L - Exempted intra-Community deliveries"
 msgstr "46L - Vrijgestelde intracommunautaire leveringen"
 
 #. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_46T
+msgid "46T"
+msgstr "46T"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_46T_tag
 #: model:account.report.line,name:l10n_be.tax_report_line_46T
 msgid "46T - ABC sales"
 msgstr "46T - ABC-verkopen"
 
 #. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_47
+msgid "47"
+msgstr "47"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_47_tag
 #: model:account.report.line,name:l10n_be.tax_report_line_47
 msgid "47 - Other exempted operations and operations carried out abroad"
 msgstr ""
@@ -541,13 +628,70 @@ msgid "48 - Credit notes for operations in grids [44] and [46]"
 msgstr ""
 "48 - Creditnota's met betrekking tot de handelingen ingeschreven in de "
 "roosters [44] en [46]"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 #. module: l10n_be
+#: model:account.report.line,name:l10n_be.tax_report_title_operations_sortie_46
+msgid "46 - Exempted intra-Community deliveries and ABC sales"
+msgstr "46 - Vrijgestelde intracommunautaire leveringen en ABC-verkopen"
+
+#. module: l10n_be
+<<<<<<< HEAD
+#: model:account.report.line,name:l10n_be.tax_report_line_46L
+msgid "46L - Exempted intra-Community deliveries"
+msgstr "46L - Vrijgestelde intracommunautaire leveringen"
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_48s44_tag
 #: model:account.report.line,name:l10n_be.tax_report_line_48s44
 msgid "48s44 - Credit notes for operations in grid [44]"
 msgstr ""
 "48s44 - Creditnota's met betrekking tot de handelingen ingeschreven in "
 "rooster [44]"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
+
+#. module: l10n_be
+#: model:account.report.line,name:l10n_be.tax_report_line_46T
+msgid "46T - ABC sales"
+msgstr "46T - ABC-verkopen"
+
+#. module: l10n_be
+<<<<<<< HEAD
+#: model:account.report.line,name:l10n_be.tax_report_line_47
+msgid "47 - Other exempted operations and operations carried out abroad"
+msgstr ""
+"47 - Andere vrijgestelde handelingen en andere handelingen verricht in het "
+"buitenland"
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_48s46L_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_48s46L
+msgid "48s46L - Credit notes for operations in grid [46L]"
+msgstr ""
+"48s46L - Creditnota's met betrekking tot de handelingen ingeschreven in "
+"rooster [46L]"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
+
+#. module: l10n_be
+#: model:account.report.line,name:l10n_be.tax_report_title_operations_sortie_48
+msgid "48 - Credit notes for operations in grids [44] and [46]"
+msgstr ""
+"48 - Creditnota's met betrekking tot de handelingen ingeschreven in de "
+"roosters [44] en [46]"
+
+#. module: l10n_be
+<<<<<<< HEAD
+#: model:account.report.line,name:l10n_be.tax_report_line_48s44
+msgid "48s44 - Credit notes for operations in grid [44]"
+msgstr ""
+"48s44 - Creditnota's met betrekking tot de handelingen ingeschreven in "
+"rooster [44]"
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_48s46T_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_48s46T
+msgid "48s46T - Credit notes for operations in grid [46T]"
+msgstr ""
+"48s46T - Creditnota's met betrekking tot de handelingen ingeschreven in "
+"rooster [46T]"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_line_48s46L
@@ -557,6 +701,7 @@ msgstr ""
 "rooster [46L]"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_be.tax_report_line_48s46T
 msgid "48s46T - Credit notes for operations in grid [46T]"
 msgstr ""
@@ -564,6 +709,9 @@ msgstr ""
 "rooster [46T]"
 
 #. module: l10n_be
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_49_tag
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_line_49
 msgid "49 - Credit notes for other operations in part II"
 msgstr ""
@@ -576,9 +724,17 @@ msgstr ""
 "54 - Btw op de handelingen aangegeven in de roosters [01], [02] en [03]"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_be.tax_report_line_55
 msgid "55 - VAT on operations in grids [86] and [88]"
 msgstr "55 - Btw op de handelingen aangegeven in de roosters [86] en [88]"
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_54_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_54
+msgid "54 - VAT on operations in grids [01], [02] and [03]"
+msgstr ""
+"54 - Btw op de handelingen aangegeven in de roosters [01], [02] en [03]"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_line_56
@@ -590,6 +746,7 @@ msgstr ""
 "invoeren met verlegging van heffing"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_be.tax_report_line_57
 msgid "57 - VAT on import with reverse charge"
 msgstr "57 - Btw op invoeren met verlegging van heffing"
@@ -692,6 +849,49 @@ msgstr ""
 #: model:account.tax.template,name:l10n_be.attn_VAT-OUT-06-S
 msgid "6% S"
 msgstr ""
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_55_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_55
+msgid "55 - VAT on operations in grids [86] and [88]"
+msgstr "55 - Btw op de handelingen aangegeven in de roosters [86] en [88]"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_56
+msgid "56"
+msgstr "56"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_56_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_56
+msgid ""
+"56 - VAT on operations in grid [87], with the exception of imports with "
+"reverse charge"
+msgstr ""
+"56 - Btw op de handelingen aangegeven in rooster [87], met uitzondering van "
+"invoeren met verlegging van heffing"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_57
+msgid "57"
+msgstr "57"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_57_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_57
+msgid "57 - VAT on import with reverse charge"
+msgstr "57 - Btw op invoeren met verlegging van heffing"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_59
+msgid "59"
+msgstr "59"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_59_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_59
+msgid "59 - Deductible VAT"
+msgstr "59 - Aftrekbare btw"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 #. module: l10n_be
 #: model:account.tax,name:l10n_be.1_attn_VAT-IN-V82-06-CC
@@ -701,6 +901,10 @@ msgid "6% S.Cocont"
 msgstr ""
 
 #. module: l10n_be
+<<<<<<< HEAD
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_61_tag
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_line_61
 msgid "61 - Various VAT regularizations in favor of the State"
 msgstr "61 - Diverse btw-regularisaties in het voordeel van de Staat"
@@ -711,21 +915,53 @@ msgid "62 - Various VAT regularizations in favor of the declarant"
 msgstr "62 - Diverse btw-regularisaties in het voordeel van de aangever"
 
 #. module: l10n_be
+<<<<<<< HEAD
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_62_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_62
+msgid "62 - Various VAT regularizations in favor of the declarant"
+msgstr "62 - Diverse btw-regularisaties in het voordeel van de aangever"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_63
+msgid "63"
+msgstr "63"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_63_tag
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_line_63
 msgid "63 - VAT to be paid back on credit notes received"
 msgstr "63 - Terug te storten btw vermeld op ontvangen creditnota's"
 
 #. module: l10n_be
+<<<<<<< HEAD
+=======
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_64
+msgid "64"
+msgstr "64"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_64_tag
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_line_64
 msgid "64 - VAT to be recovered on credit notes issued"
 msgstr "64 - Te recupereren btw vermeld op uitgereikte creditnota's"
 
 #. module: l10n_be
+<<<<<<< HEAD
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_71_formula
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_line_71
 msgid "71 - Taxes due to the State"
 msgstr "71 - Aan de Staat verschuldigde belasting"
 
 #. module: l10n_be
+<<<<<<< HEAD
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_72_formula
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_line_72
 msgid "72 - Amount owed by the State"
 msgstr "72 - Sommen verschuldigd door de Staat"
@@ -736,11 +972,49 @@ msgid "81 - Trade goods, raw materials and consumables"
 msgstr "81 - Handelsgoederen, grond- en hulpstoffen"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_be.tax_report_line_82
 msgid "82 - Services and miscellaneous goods"
 msgstr "82 - Diensten en diverse goederen"
 
 #. module: l10n_be
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_81_applied_carryover
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_81_balance
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_81_balance_unbound
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_81_carryover
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_81_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_81
+msgid "81 - Trade goods, raw materials and consumables"
+msgstr "81 - Handelsgoederen, grond- en hulpstoffen"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_82
+msgid "82"
+msgstr "82"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_82_applied_carryover
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_82_balance
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_82_balance_unbound
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_82_carryover
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_82_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_82
+msgid "82 - Services and miscellaneous goods"
+msgstr "82 - Diensten en diverse goederen"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_83
+msgid "83"
+msgstr "83"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_83_applied_carryover
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_83_balance
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_83_balance_unbound
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_83_carryover
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_83_tag
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_line_83
 msgid "83 - Investment goods"
 msgstr "83 - Bedrijfsmiddelen"
@@ -753,10 +1027,19 @@ msgstr ""
 "roosters [86] en [88]"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_be.tax_report_line_85
 msgid "85 - Credit notes received relating to other operations in part III"
 msgstr ""
 "85 - Creditnota's met betrekking tot de andere handelingen van deel III"
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_84_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_84
+msgid "84 - Credit notes for operations in grids [86] and [88]"
+msgstr ""
+"84 - Creditnota's met betrekking tot de handelingen ingeschreven in de "
+"roosters [86] en [88]"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 #. module: l10n_be
 #: model:account.report.line,name:l10n_be.tax_report_line_86
@@ -764,11 +1047,61 @@ msgid "86 - Intra-Community acquisitions and ABC sales"
 msgstr "86 - Intracommunautaire verwervingen en ABC-verkopen"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_be.tax_report_line_87
 msgid "87 - Other operations subject to VAT"
 msgstr "87 - Andere handelingen waarvoor de btw verschuldigd is"
 
 #. module: l10n_be
+=======
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_85_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_85
+msgid "85 - Credit notes received relating to other operations in part III"
+msgstr ""
+"85 - Creditnota's met betrekking tot de andere handelingen van deel III"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_86
+msgid "86"
+msgstr "86"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_86_applied_carryover
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_86_balance
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_86_balance_unbound
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_86_carryover
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_86_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_86
+msgid "86 - Intra-Community acquisitions and ABC sales"
+msgstr "86 - Intracommunautaire verwervingen en ABC-verkopen"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_87
+msgid "87"
+msgstr "87"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_87_applied_carryover
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_87_balance
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_87_balance_unbound
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_87_carryover
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_87_tag
+#: model:account.report.line,name:l10n_be.tax_report_line_87
+msgid "87 - Other operations subject to VAT"
+msgstr "87 - Andere handelingen waarvoor de btw verschuldigd is"
+
+#. module: l10n_be
+#: model:account.tax.report.line,tag_name:l10n_be.tax_report_line_88
+msgid "88"
+msgstr "88"
+
+#. module: l10n_be
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_88_applied_carryover
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_88_balance
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_88_balance_unbound
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_88_carryover
+#: model:account.report.expression,report_line_name:l10n_be.tax_report_line_88_tag
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_line_88
 msgid "88 - Intra-Community services with reverse charge"
 msgstr "88 -  Intracommunautaire diensten met verlegging van heffing"
@@ -779,6 +1112,7 @@ msgid "Account Chart Template"
 msgstr "Grootboekschema sjabloon"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a052
 #: model:account.account,name:l10n_be.2_a052
 #: model:account.account.template,name:l10n_be.a052
@@ -1679,6 +2013,11 @@ msgid ""
 msgstr ""
 "Belgische belastingen op het resultaat van het boekjaar - Verschuldigde of "
 "betaalde belastingen en voorheffingen"
+=======
+#: model:account.report.column,name:l10n_be.tax_report_vat_balance
+msgid "Balance"
+msgstr "Saldo"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 #. module: l10n_be
 #: model:ir.model.fields.selection,name:l10n_be.selection__account_journal__invoice_reference_model__be
@@ -1687,6 +2026,7 @@ msgid "Belgium"
 msgstr "België"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.group,name:l10n_be.1_be_group_07
 #: model:account.group,name:l10n_be.2_be_group_07
 #: model:account.group.template,name:l10n_be.be_group_07
@@ -2094,26 +2434,24 @@ msgid "Commettants et déposants de biens et de valeurs"
 msgstr "Committenten en deponenten van goederen en waarden"
 
 #. module: l10n_be
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:l10n_be.field_account_journal__invoice_reference_model
 msgid "Communication Standard"
 msgstr "Standaard communicatie"
 
 #. module: l10n_be
-#: model:account.account,name:l10n_be.1_a020
-#: model:account.account,name:l10n_be.2_a020
-#: model:account.account.template,name:l10n_be.a020
-msgid "Company creditors, beneficiaries of real guarantees"
-msgstr "Crediteuren van de onderneming, houders van zakelijke zekerheden"
+#: model:account.report.line,name:l10n_be.tax_report_title_operations_sortie
+msgid "II Outgoing"
+msgstr "II Uitgaand"
 
 #. module: l10n_be
-#: model:account.account,name:l10n_be.1_a000
-#: model:account.account,name:l10n_be.2_a000
-#: model:account.account.template,name:l10n_be.a000
-msgid "Company creditors, beneficiaries of third party guarantees"
-msgstr ""
-"Crediteuren van de onderneming, houders van door derden gestelde zekerheden"
+#: model:account.report.line,name:l10n_be.tax_report_title_operations_entree
+msgid "III Incoming"
+msgstr "III Inkomend"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a738
 #: model:account.account,name:l10n_be.2_a738
 #: model:account.account.template,name:l10n_be.a738
@@ -3544,266 +3882,11 @@ msgid "III Incoming"
 msgstr "III Inkomend"
 
 #. module: l10n_be
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_title_taxes_dues
 msgid "IV Due"
 msgstr "IV Verschuldigd"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_35
-#: model:account.group,name:l10n_be.2_be_group_35
-#: model:account.group.template,name:l10n_be.be_group_35
-msgid "Immeubles destinés à la vente"
-msgstr "Onroerende goederen bestemd voor verkoop"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_21
-#: model:account.group,name:l10n_be.2_be_group_21
-#: model:account.group.template,name:l10n_be.be_group_21
-msgid "Immobilisation incorporelles"
-msgstr "Immateriële vaste activa"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_27
-#: model:account.group,name:l10n_be.2_be_group_27
-#: model:account.group.template,name:l10n_be.be_group_27
-msgid "Immobilisations corporelles en cours et acomptes versés"
-msgstr "Vaste activa in aanbouw en vooruitbetalingen"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_25
-#: model:account.group,name:l10n_be.2_be_group_25
-#: model:account.group.template,name:l10n_be.be_group_25
-msgid "Immobilisations détenues en location-financement et droits similaires"
-msgstr "Vaste activa in leasing of op grond van een soortgelijk recht"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_28
-#: model:account.group,name:l10n_be.2_be_group_28
-#: model:account.group.template,name:l10n_be.be_group_28
-msgid "Immobilisations financières"
-msgstr "Financiële vaste activa"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a350
-#: model:account.account,name:l10n_be.2_a350
-#: model:account.account.template,name:l10n_be.a350
-msgid "Immovable property intended for sale - Acquisition value"
-msgstr "Onroerende goederen bestemd voor verkoop - Aanschaffingswaarde"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a359
-#: model:account.account,name:l10n_be.2_a359
-#: model:account.account.template,name:l10n_be.a359
-msgid "Immovable property intended for sale - amounts written down"
-msgstr ""
-"Onroerende goederen bestemd voor verkoop - Geboekte waardeverminderingen"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_771
-#: model:account.group,name:l10n_be.2_be_group_771
-#: model:account.group.template,name:l10n_be.be_group_771
-msgid "Impôts belges sur le résultat"
-msgstr "Belgische belastingen op het resultaat"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_671
-#: model:account.group,name:l10n_be.2_be_group_671
-#: model:account.group.template,name:l10n_be.be_group_671
-msgid "Impôts belges sur le résultat d'exercices antérieurs"
-msgstr "Belgische belastingen op het resultaat van vorige boekjaren"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_670
-#: model:account.group,name:l10n_be.2_be_group_670
-#: model:account.group.template,name:l10n_be.be_group_670
-msgid "Impôts belges sur le résultat de l'exercice"
-msgstr "Belgische belastingen op het resultaat van het boekjaar"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_168
-#: model:account.group,name:l10n_be.2_be_group_168
-#: model:account.group.template,name:l10n_be.be_group_168
-msgid "Impôts différés"
-msgstr "Uitgestelde belastingen"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_412
-#: model:account.group,name:l10n_be.2_be_group_412
-#: model:account.group.template,name:l10n_be.be_group_412
-msgid "Impôts et précomptes à récupérer"
-msgstr "Terug te vorderen belastingen en voorheffingen"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_452
-#: model:account.group,name:l10n_be.2_be_group_452
-#: model:account.group.template,name:l10n_be.be_group_452
-msgid "Impôts et taxes à payer"
-msgstr "Te betalen belastingen en taksen"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_67
-#: model:account.group,name:l10n_be.2_be_group_67
-#: model:account.group.template,name:l10n_be.be_group_67
-msgid "Impôts sur le résultat"
-msgstr "67 Belastingen op het resultaat"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_773
-#: model:account.group,name:l10n_be.2_be_group_773
-#: model:account.group.template,name:l10n_be.be_group_773
-msgid "Impôts étrangers sur le résultat"
-msgstr "Buitenlandse belastingen op het resultaat"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_673
-#: model:account.group,name:l10n_be.2_be_group_673
-#: model:account.group.template,name:l10n_be.be_group_673
-msgid "Impôts étrangers sur le résultat d'exercices antérieurs"
-msgstr "Buitenlandse belastingen op het resultaat van vorige boekjaren"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_672
-#: model:account.group,name:l10n_be.2_be_group_672
-#: model:account.group.template,name:l10n_be.be_group_672
-msgid "Impôts étrangers sur le résultat de l'exercice"
-msgstr "Buitenlandse belastingen op het resultaat van het boekjaar"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a751
-#: model:account.account,name:l10n_be.2_a751
-#: model:account.account.template,name:l10n_be.a751
-msgid "Income from current assets"
-msgstr "Opbrengsten uit vlottende activa"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a750
-#: model:account.account,name:l10n_be.2_a750
-#: model:account.account.template,name:l10n_be.a750
-msgid "Income from financial fixed assets"
-msgstr "Opbrengsten uit financiële vaste activa"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7170
-#: model:account.account,name:l10n_be.2_a7170
-#: model:account.account.template,name:l10n_be.a7170
-msgid "Increase (decrease) in contracts in progress - Acquisition value"
-msgstr ""
-"Toename (afname) van de bestellingen in uitvoering - Aanschaffingswaarde"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a7171
-#: model:account.account,name:l10n_be.2_a7171
-#: model:account.account.template,name:l10n_be.a7171
-msgid "Increase (decrease) in contracts in progress - Profit recognized"
-msgstr ""
-"Toename (afname) van de bestellingen in uitvoering - Toegerekende winst"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a713
-#: model:account.account,name:l10n_be.2_a713
-#: model:account.account.template,name:l10n_be.a713
-msgid "Increase (decrease) in stocks of finished goods"
-msgstr "Toename (afname) van de voorraad gereed product"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a71
-#: model:account.account,name:l10n_be.2_a71
-#: model:account.account.template,name:l10n_be.a71
-msgid ""
-"Increase (decrease) in stocks of finished goods and work and contracts in "
-"progress"
-msgstr ""
-"Toename (afname) in de voorraad goederen in bewerking en gereed product en "
-"in de bestellingen in uitvoering"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a715
-#: model:account.account,name:l10n_be.2_a715
-#: model:account.account.template,name:l10n_be.a715
-msgid ""
-"Increase (decrease) in stocks of immovable property constructed for resale"
-msgstr ""
-"Toename (afname) van de voorraad onroerende goederen bestemd voor verkoop"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a712
-#: model:account.account,name:l10n_be.2_a712
-#: model:account.account.template,name:l10n_be.a712
-msgid "Increase (decrease) in work in progress"
-msgstr "Toename (afname) van de voorraad goederen in bewerking"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_23
-#: model:account.group,name:l10n_be.1_be_group_251
-#: model:account.group,name:l10n_be.2_be_group_23
-#: model:account.group,name:l10n_be.2_be_group_251
-#: model:account.group.template,name:l10n_be.be_group_23
-#: model:account.group.template,name:l10n_be.be_group_251
-msgid "Installations, machines et outillage"
-msgstr "Installaties, machines en uitrusting"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a213
-#: model:account.account,name:l10n_be.2_a213
-#: model:account.account.template,name:l10n_be.a213
-msgid "Intangible fixed assets - Advance payments"
-msgstr "Immateriële vaste activa - Vooruitbetalingen"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a6500
-#: model:account.account,name:l10n_be.2_a6500
-#: model:account.account.template,name:l10n_be.a6500
-msgid "Interests, commissions and other charges relating to debts"
-msgstr "Rente, commissies en kosten verbonden aan schulden"
-
-#. module: l10n_be
-#: model:account.group,name:l10n_be.1_be_group_794
-#: model:account.group,name:l10n_be.2_be_group_794
-#: model:account.group.template,name:l10n_be.be_group_794
-msgid "Intervention d'associés (ou du propriétaire) dans la perte"
-msgstr "Tussenkomst van vennoten (of van de eigenaar) in het verlies"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a15
-#: model:account.account,name:l10n_be.2_a15
-#: model:account.account.template,name:l10n_be.a15
-msgid "Investment grants"
-msgstr "Kapitaalsubsidies"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a753
-#: model:account.account,name:l10n_be.2_a753
-#: model:account.account.template,name:l10n_be.a753
-msgid "Investment grants and interest subsidies"
-msgstr "Kapitaal- en interestsubsidies"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a151
-#: model:account.account,name:l10n_be.2_a151
-#: model:account.account.template,name:l10n_be.a151
-msgid "Investment grants received in cash"
-msgstr "Kapitaalsubsidies ontvangen in contanten"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a152
-#: model:account.account,name:l10n_be.2_a152
-#: model:account.account.template,name:l10n_be.a152
-msgid "Investment grants received in kind"
-msgstr "Kapitaalsubsidies ontvangen in nature"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a444
-#: model:account.account,name:l10n_be.2_a444
-#: model:account.account.template,name:l10n_be.a444
-msgid "Invoices to be received payable within one year"
-msgstr "Te ontvangen facturen op ten hoogste één jaar"
-
-#. module: l10n_be
-#: model:account.account,name:l10n_be.1_a100
-#: model:account.account,name:l10n_be.2_a100
-#: model:account.account.template,name:l10n_be.a100
-msgid "Issued capital"
-msgstr "Geplaatst kapitaal"
 
 #. module: l10n_be
 #: model:ir.model,name:l10n_be.model_account_journal
@@ -3816,13 +3899,12 @@ msgid "Journal Entry"
 msgstr "Boeking"
 
 #. module: l10n_be
-#: model:account.account,name:l10n_be.1_a220
-#: model:account.account,name:l10n_be.2_a220
-#: model:account.account.template,name:l10n_be.a220
-msgid "Land"
-msgstr "Terreinen"
+#: model:account.report.line,name:l10n_be.tax_report_title_operations
+msgid "Operations"
+msgstr "Handelingen"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a2201
 #: model:account.account,name:l10n_be.2_a2201
 #: model:account.account.template,name:l10n_be.a2201
@@ -5994,11 +6076,14 @@ msgid "Tantièmes de l'exercice"
 msgstr "Tantièmes over het boekjaar"
 
 #. module: l10n_be
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_title_taxes
 msgid "Taxes"
 msgstr "Belastingen"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.account,name:l10n_be.1_a412
 #: model:account.account,name:l10n_be.2_a412
 #: model:account.account.template,name:l10n_be.a412
@@ -6304,11 +6389,14 @@ msgid "Untaxed reserves"
 msgstr "Belastingvrije reserves"
 
 #. module: l10n_be
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:account.report.line,name:l10n_be.tax_report_title_taxes_deductibles
 msgid "V Deductible"
 msgstr "V Aftrekbaar"
 
 #. module: l10n_be
+<<<<<<< HEAD
 #: model:account.report,name:l10n_be.tax_report_vat
 msgid "VAT Report"
 msgstr "Btw-aangifte"
@@ -6540,6 +6628,11 @@ msgid ""
 msgstr ""
 "Terugneming van voorzieningen voor niet-recurrente bedrijfsrisico's en "
 "-kosten"
+=======
+#: model:account.report.line,name:l10n_be.tax_report_title_taxes_soldes
+msgid "VI Balance"
+msgstr "VI Saldo"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 #. module: l10n_be
 #: model:ir.model.fields,help:l10n_be.field_account_journal__invoice_reference_model
@@ -6547,6 +6640,7 @@ msgid ""
 "You can choose different models for each type of reference. The default one "
 "is the Odoo reference."
 msgstr ""
+<<<<<<< HEAD
 "Je kunt verschillende modellen kiezen voor elk type referentie. De standaard"
 " is de Odoo-referentie."
 
@@ -6556,3 +6650,5 @@ msgstr ""
 #: model:account.group.template,name:l10n_be.be_group_755
 msgid "Écart de conversion des devises"
 msgstr "Resultaten uit de omrekening van vreemde valuta"
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

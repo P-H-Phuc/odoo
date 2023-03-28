@@ -58,10 +58,14 @@ class TestWebsiteSaleProductAttributeValueConfig(AccountTestInvoicingCommon, Tes
         self.assertEqual(combination_info['has_discounted_price'], False)
 
         # CASE: B2C setting
+<<<<<<< HEAD
         group_tax_included = self.env.ref('account.group_show_line_subtotals_tax_included').with_context(active_test=False)
         group_tax_excluded = self.env.ref('account.group_show_line_subtotals_tax_excluded').with_context(active_test=False)
         group_tax_excluded.users -= self.env.user
         group_tax_included.users |= self.env.user
+=======
+        self.env.company.show_line_subtotals_tax_selection = 'tax_included'
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         combination_info = product_template._get_combination_info(pricelist=pricelist)
         self.assertEqual(combination_info['price'], 2222 * discount_rate * currency_ratio * tax_ratio)
@@ -119,10 +123,7 @@ class TestWebsiteSaleProductAttributeValueConfig(AccountTestInvoicingCommon, Tes
         computer_ssd_attribute_lines.product_template_value_ids[0].price_extra = 200
 
         # Enable tax included
-        group_tax_included = self.env.ref('account.group_show_line_subtotals_tax_included').with_context(active_test=False)
-        group_tax_excluded = self.env.ref('account.group_show_line_subtotals_tax_excluded').with_context(active_test=False)
-        group_tax_excluded.users -= self.env.user
-        group_tax_included.users |= self.env.user
+        self.env.company.show_line_subtotals_tax_selection = 'tax_included'
 
         combination_info = product._get_combination_info(pricelist=pricelist)
         self.assertEqual(combination_info['price'], 575, "500$ + 15% tax")
@@ -173,8 +174,7 @@ class TestWebsiteSaleProductPricelist(AccountTestInvoicingCommon, TestSaleProduc
         # We will test that the mapping of an 10% included tax by a 6% by a fiscal position is taken into account when updating the cart
         self.env.user.partner_id.country_id = False
         current_website = self.env['website'].get_current_website()
-        pricelist = current_website.get_current_pricelist()
-        (self.env['product.pricelist'].search([]) - pricelist).write({'active': False})
+        pricelist = self.env['product.pricelist'].create({'name': 'Base Pricelist'})
         # Add 10% tax on product
         tax10 = self.env['account.tax'].create({'name': "Test tax 10", 'amount': 10, 'price_include': True, 'amount_type': 'percent'})
         tax6 = self.env['account.tax'].create({'name': "Test tax 6", 'amount': 6, 'price_include': True, 'amount_type': 'percent'})
@@ -185,7 +185,7 @@ class TestWebsiteSaleProductPricelist(AccountTestInvoicingCommon, TestSaleProduc
             'taxes_id': [(6, 0, [tax10.id])],
         }).with_context(website_id=current_website.id)
 
-        # Add discout of 50% for pricelist
+        # Add discount of 50% for pricelist
         pricelist.item_ids = self.env['product.pricelist.item'].create({
             'applied_on': "1_product",
             'base': "list_price",
@@ -214,7 +214,6 @@ class TestWebsiteSaleProductPricelist(AccountTestInvoicingCommon, TestSaleProduc
         })
         self.assertEqual(round(sol.price_total), 55.0, "110$ with 50% discount 10% included tax")
         self.assertEqual(round(sol.price_tax), 5.0, "110$ with 50% discount 10% included tax")
-        so.pricelist_id = pricelist
         so.fiscal_position_id = fpos
         sol._compute_tax_id()
         with MockRequest(self.env, website=current_website, sale_order_id=so.id):
@@ -225,8 +224,11 @@ class TestWebsiteSaleProductPricelist(AccountTestInvoicingCommon, TestSaleProduc
         # We will test that the mapping of an 10% included tax by a 0% by a fiscal position is taken into account when updating the cart for no_variant product
         self.env.user.partner_id.country_id = False
         current_website = self.env['website'].get_current_website()
+<<<<<<< HEAD
         pricelist = current_website.get_current_pricelist()
         (self.env['product.pricelist'].search([]) - pricelist).write({'active': False})
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         # Add 10% tax on product
         tax10 = self.env['account.tax'].create({'name': "Test tax 10", 'amount': 10, 'price_include': True, 'amount_type': 'percent', 'type_tax_use': 'sale'})
         tax0 = self.env['account.tax'].create({'name': "Test tax 0", 'amount': 0, 'price_include': True, 'amount_type': 'percent', 'type_tax_use': 'sale'})
@@ -289,7 +291,10 @@ class TestWebsiteSaleProductPricelist(AccountTestInvoicingCommon, TestSaleProduc
             'tax_id': [(6, 0, [tax10.id])],
         })
         self.assertEqual(round(sol.price_total), 110.0, "110$ with 10% included tax")
+<<<<<<< HEAD
         so.pricelist_id = pricelist
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         so.fiscal_position_id = fpos
         sol._compute_tax_id()
         with MockRequest(self.env, website=current_website, sale_order_id=so.id):

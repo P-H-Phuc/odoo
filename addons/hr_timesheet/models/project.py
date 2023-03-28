@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
+import re
 from collections import defaultdict
 
 from odoo import models, fields, api, _
@@ -237,6 +237,7 @@ class Task(models.Model):
     _name = "project.task"
     _inherit = "project.task"
 
+    project_id = fields.Many2one(domain=[('is_internal_project', '=', False)])
     analytic_account_active = fields.Boolean("Active Analytic Account", compute='_compute_analytic_account_active', compute_sudo=True)
     allow_timesheets = fields.Boolean("Allow timesheets", related='project_id.allow_timesheets', help="Timesheets can be logged on this task.", readonly=True)
     remaining_hours = fields.Float("Remaining Hours", compute='_compute_remaining_hours', store=True, readonly=True, help="Number of allocated hours minus the number of hours spent.")
@@ -245,10 +246,16 @@ class Task(models.Model):
     total_hours_spent = fields.Float("Total Hours", compute='_compute_total_hours_spent', store=True, help="Time spent on this task and its sub-tasks (and their own sub-tasks).")
     progress = fields.Float("Progress", compute='_compute_progress_hours', store=True, group_operator="avg")
     overtime = fields.Float(compute='_compute_progress_hours', store=True)
-    subtask_effective_hours = fields.Float("Sub-tasks Hours Spent", compute='_compute_subtask_effective_hours', recursive=True, store=True, help="Time spent on the sub-tasks (and their own sub-tasks) of this task.")
+    subtask_effective_hours = fields.Float("Hours Spent on Sub-Tasks", compute='_compute_subtask_effective_hours', recursive=True, store=True, help="Time spent on the sub-tasks (and their own sub-tasks) of this task.")
     timesheet_ids = fields.One2many('account.analytic.line', 'task_id', 'Timesheets')
     encode_uom_in_days = fields.Boolean(compute='_compute_encode_uom_in_days', default=lambda self: self._uom_in_days())
-
+    display_name = fields.Char(help="""Use these keywords in the title to set new tasks:\n
+        30h Allocate 30 hours to the task
+        #tags Set tags on the task
+        @user Assign the task to a user
+        ! Set the task a high priority\n
+        Make sure to use the right format and order e.g. Improve the configuration screen 5h #feature #v16 @Mitchell !""",
+    )
     @property
     def SELF_READABLE_FIELDS(self):
         return super().SELF_READABLE_FIELDS | PROJECT_TASK_READABLE_FIELDS
@@ -324,6 +331,27 @@ class Task(models.Model):
     def _compute_subtask_effective_hours(self):
         for task in self.with_context(active_test=False):
             task.subtask_effective_hours = sum(child_task.effective_hours + child_task.subtask_effective_hours for child_task in task.child_ids)
+
+    def _get_group_pattern(self):
+        return {
+            **super()._get_group_pattern(),
+            'planned_hours': r'\s(\d+(?:\.\d+)?)[hH]',
+        }
+
+    def _get_groups_patterns(self):
+        return ['(?:%s)*' % self._get_group_pattern()['planned_hours']] + super()._get_groups_patterns()
+
+    def _get_cannot_start_with_patterns(self):
+        return super()._get_cannot_start_with_patterns() + [r'(?!\d+(?:\.\d+)?(?:h|H))']
+
+    def _extract_planned_hours(self):
+        planned_hours_group = self._get_group_pattern()['planned_hours']
+        if self.allow_timesheets:
+            self.planned_hours = sum(float(num) for num in re.findall(planned_hours_group, self.display_name))
+            self.display_name, dummy = re.subn(planned_hours_group, '', self.display_name)
+
+    def _get_groups(self):
+        return [lambda task: task._extract_planned_hours()] + super()._get_groups()
 
     def action_view_subtask_timesheet(self):
         self.ensure_one()

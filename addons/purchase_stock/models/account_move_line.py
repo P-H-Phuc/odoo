@@ -25,6 +25,7 @@ class AccountMoveLine(models.Model):
         total_out_and_not_invoiced_qty = max(0, out_qty - invoiced_qty)
         out_and_not_invoiced_qty = min(aml_qty, total_out_and_not_invoiced_qty)
         return self.product_id.uom_id._compute_quantity(out_and_not_invoiced_qty, self.product_uom_id)
+<<<<<<< HEAD
 
     def _get_price_diff_account(self):
         self.ensure_one()
@@ -32,3 +33,5 @@ class AccountMoveLine(models.Model):
             return False
         accounts = self.product_id.product_tmpl_id.get_product_accounts(fiscal_pos=self.move_id.fiscal_position_id)
         return accounts['expense']
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

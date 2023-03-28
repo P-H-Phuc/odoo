@@ -15,10 +15,12 @@ class ShowResequenceRenderer extends Component {
     }
 
     formatData(props) {
-        this.data = props.value ? JSON.parse(props.value) : { changeLines: [], ordering: "date" };
+        this.data = props.record.data[props.name] ? JSON.parse(props.record.data[props.name]) : { changeLines: [], ordering: "date" };
     }
 }
 ShowResequenceRenderer.template = "account.ResequenceRenderer";
 ShowResequenceRenderer.components = { ChangeLine };
 
-registry.category("fields").add("account_resequence_widget", ShowResequenceRenderer);
+registry.category("fields").add("account_resequence_widget", {
+    component: ShowResequenceRenderer,
+});

@@ -3,12 +3,21 @@ odoo.define('hr_expense.tour', function(require) {
 
 const {_t} = require('web.core');
 const {Markup} = require('web.utils');
-var tour = require('web_tour.tour');
 
+<<<<<<< HEAD
 tour.register('hr_expense_tour' , {
     url: "/web",
     rainbowManMessage: _t("There you go - expense management in a nutshell!"),
 }, [tour.stepUtils.showAppsMenuItem(), {
+=======
+const { registry } = require("@web/core/registry");
+const { stepUtils } = require('@web_tour/tour_service/tour_utils');
+
+registry.category("web_tour.tours").add('hr_expense_tour' , {
+    url: "/web",
+    rainbowManMessage: _t("There you go - expense management in a nutshell!"),
+    steps: [stepUtils.showAppsMenuItem(), {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     trigger: '.o_app[data-menu-xmlid="hr_expense.menu_hr_expense_root"]',
     content: _t("Wasting time recording your receipts? Let’s try a better way."),
     position: 'right',
@@ -40,10 +49,17 @@ tour.register('hr_expense_tour' , {
     extra_trigger: '.o_expense_form',
     content: Markup(_t("Ready? You can save it manually or discard modifications from here. You don't <em>need to save</em> - Odoo will save eveyrthing for you when you navigate.")),
     position: 'bottom',
+<<<<<<< HEAD
 }, ...tour.stepUtils.statusbarButtonsSteps(_t("Attach Receipt"), _t("Attach a receipt - usually an image or a PDF file.")),
 ...tour.stepUtils.statusbarButtonsSteps(_t("Create Report"), _t("Create a report to submit one or more expenses to your manager.")),
 ...tour.stepUtils.statusbarButtonsSteps(_t("Submit to Manager"), Markup(_t('Once your <b>Expense Report</b> is ready, you can submit it to your manager and wait for approval.'))),
 ...tour.stepUtils.goBackBreadcrumbsMobile(
+=======
+}, ...stepUtils.statusbarButtonsSteps(_t("Attach Receipt"), _t("Attach a receipt - usually an image or a PDF file.")),
+...stepUtils.statusbarButtonsSteps(_t("Create Report"), _t("Create a report to submit one or more expenses to your manager.")),
+...stepUtils.statusbarButtonsSteps(_t("Submit to Manager"), Markup(_t('Once your <b>Expense Report</b> is ready, you can submit it to your manager and wait for approval.'))),
+...stepUtils.goBackBreadcrumbsMobile(
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     _t("Use the breadcrumbs to go back to the list of expenses."),
     undefined,
     ".o_expense_form",
@@ -59,7 +75,11 @@ tour.register('hr_expense_tour' , {
     content: _t("The status of all your current expenses is visible from here."),
     position: 'bottom',
 },
+<<<<<<< HEAD
 tour.stepUtils.openBuggerMenu(),
+=======
+stepUtils.openBurgerMenu(),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 {
     trigger: "[data-menu-xmlid='hr_expense.menu_hr_expense_report']",
     extra_trigger: '.o_main_navbar',
@@ -76,7 +96,12 @@ tour.stepUtils.openBuggerMenu(),
     position: 'bottom',
     mobile: true,
 },
+<<<<<<< HEAD
 ...tour.stepUtils.statusbarButtonsSteps(_t("Approve"), _t("Managers can approve the report here, then an accountant can post the accounting entries.")),
 ]);
+=======
+...stepUtils.statusbarButtonsSteps(_t("Approve"), _t("Managers can approve the report here, then an accountant can post the accounting entries.")),
+]});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 });

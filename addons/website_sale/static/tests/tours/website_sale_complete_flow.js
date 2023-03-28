@@ -1,14 +1,15 @@
 odoo.define('website_sale_tour.tour', function (require) {
     'use strict';
 
-    var tour = require("web_tour.tour");
+    const { registry } = require("@web/core/registry");
     var rpc = require("web.rpc");
     const tourUtils = require('website_sale.tour_utils');
 
-    tour.register('website_sale_tour_1', {
+    registry.category("web_tour.tours").add('website_sale_tour_1', {
         test: true,
+        checkDelay: 250,
         url: '/shop?search=Storage Box Test',
-    }, [
+        steps: [
     // Testing b2c with Tax-Excluded Prices
     {
         content: "Open product page",
@@ -157,6 +158,7 @@ odoo.define('website_sale_tour.tour', function (require) {
     // Sign in as admin change config auth_signup -> b2b, sale_show_tax -> total and Logout
     {
         content: "Open Dropdown for logout",
+        extra_trigger: ".o_header_standard:not(.o_transitioning)",
         trigger: '#top_menu li.dropdown:visible a:contains("abcd")',
     },
     {
@@ -188,8 +190,6 @@ odoo.define('website_sale_tour.tour', function (require) {
                 args: [{
                     'auth_signup_uninvited': 'b2b',
                     'show_line_subtotals_tax_selection': 'tax_included',
-                    'group_show_line_subtotals_tax_excluded': false,
-                    'group_show_line_subtotals_tax_included': true,
                 }],
             });
             var def2 = def1.then(function (resId) {
@@ -303,6 +303,7 @@ odoo.define('website_sale_tour.tour', function (require) {
     // enable extra step on website checkout and check extra step on checkout process
     {
         content: "Open Dropdown for logout",
+        extra_trigger: ".o_header_standard:not(.o_transitioning)",
         trigger: '#top_menu li.dropdown:visible a:contains("abc")',
     },
     {
@@ -322,12 +323,12 @@ odoo.define('website_sale_tour.tour', function (require) {
             $('.oe_login_form input[name="redirect"]').val("/shop/cart");
             $('.oe_login_form').submit();
         },
-    }]);
+    }]});
 
-    tour.register('website_sale_tour_2', {
+    registry.category("web_tour.tours").add('website_sale_tour_2', {
         test: true,
         url: '/shop/cart',
-    }, [
+        steps: [
     {
         content: "Open Dropdown for logout",
         extra_trigger: '.progress-wizard-step:contains("Extra Info")',
@@ -386,5 +387,5 @@ odoo.define('website_sale_tour.tour', function (require) {
         content: "Pay Now",
         extra_trigger: '#payment_method label:contains("Wire Transfer") input:checked,#payment_method:not(:has("input:radio:visible"))',
         trigger: 'button[name="o_payment_submit_button"]:visible',
-    }]);
+    }]});
 });

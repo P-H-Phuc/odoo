@@ -10,7 +10,7 @@ from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
 
 from odoo import api, fields, models
-from odoo.addons.resource.models.resource import HOURS_PER_DAY
+from odoo.addons.resource.models.utils import HOURS_PER_DAY
 from odoo.addons.hr_holidays.models.hr_leave import get_employee_from_context
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tools.translate import _
@@ -134,7 +134,7 @@ class HolidaysAllocation(models.Model):
     is_officer = fields.Boolean(compute='_compute_is_officer')
     accrual_plan_id = fields.Many2one('hr.leave.accrual.plan', compute="_compute_from_holiday_status_id", store=True, readonly=False, domain="['|', ('time_off_type_id', '=', False), ('time_off_type_id', '=', holiday_status_id)]", tracking=True)
     max_leaves = fields.Float(compute='_compute_leaves')
-    leaves_taken = fields.Float(compute='_compute_leaves')
+    leaves_taken = fields.Float(compute='_compute_leaves', string='Time off Taken')
     taken_leave_ids = fields.One2many('hr.leave', 'holiday_allocation_id', domain="[('state', 'in', ['confirm', 'validate1', 'validate'])]")
 
     _sql_constraints = [
@@ -146,6 +146,11 @@ class HolidaysAllocation(models.Model):
          "The employee, department, company or employee category of this request is missing. Please make sure that your user login is linked to an employee."),
         ('duration_check', "CHECK( ( number_of_days > 0 AND allocation_type='regular') or (allocation_type != 'regular'))", "The duration must be greater than 0."),
     ]
+
+    @api.constrains('date_from', 'date_to')
+    def _check_date_from_date_to(self):
+        if any(allocation.date_to and allocation.date_from > allocation.date_to for allocation in self):
+            raise UserError(_("The Start Date of the Validity Period must be anterior to the End Date."))
 
     # The compute does not get triggered without a depends on record creation
     # aka keep the 'useless' depends
@@ -530,7 +535,7 @@ class HolidaysAllocation(models.Model):
 
             res.append(
                 (allocation.id,
-                 _("Allocation of %(allocation_name)s : %(duration).2f %(duration_type)s to %(person)s",
+                 _("Allocation of %(allocation_name)s: %(duration).2f %(duration_type)s to %(person)s",
                    allocation_name=allocation.holiday_status_id.sudo().name,
                    duration=allocation.number_of_hours_display if allocation.type_request_unit == 'hour' else allocation.number_of_days,
                    duration_type=_('hours') if allocation.type_request_unit == 'hour' else _('days'),
@@ -737,13 +742,16 @@ class HolidaysAllocation(models.Model):
         responsible = self.env.user
 
         if self.validation_type == 'officer' or self.validation_type == 'set':
-            if self.holiday_status_id.responsible_id:
-                responsible = self.holiday_status_id.responsible_id
+            if self.holiday_status_id.responsible_ids:
+                responsible = self.holiday_status_id.responsible_ids
+            else:
+                responsible = self.env.ref('hr_holidays.group_hr_holidays_user').users.filtered(lambda u: self.holiday_status_id.company_id in u.company_ids)
 
         return responsible
 
     def activity_update(self):
         to_clean, to_do = self.env['hr.leave.allocation'], self.env['hr.leave.allocation']
+        activity_vals = []
         for allocation in self:
             if allocation.validation_type != 'no':
                 note = _(
@@ -755,24 +763,25 @@ class HolidaysAllocation(models.Model):
                 if allocation.state == 'draft':
                     to_clean |= allocation
                 elif allocation.state == 'confirm':
-                    allocation.activity_schedule(
-                        'hr_holidays.mail_act_leave_allocation_approval',
-                        note=note,
-                        user_id=allocation.sudo()._get_responsible_for_approval().id or self.env.user.id)
-                elif allocation.state == 'validate1':
-                    allocation.activity_feedback(['hr_holidays.mail_act_leave_allocation_approval'])
-                    allocation.activity_schedule(
-                        'hr_holidays.mail_act_leave_allocation_second_approval',
-                        note=note,
-                        user_id=allocation.sudo()._get_responsible_for_approval().id or self.env.user.id)
+                    user_ids = allocation.sudo()._get_responsible_for_approval().ids or self.env.user.ids
+                    for user_id in user_ids:
+                        activity_vals.append({
+                            'activity_type_id': self.env.ref('hr_holidays.mail_act_leave_allocation_approval').id,
+                            'automated': True,
+                            'note': note,
+                            'user_id': user_id,
+                            'res_id': allocation.id,
+                            'res_model_id': self.env.ref('hr_holidays.model_hr_leave_allocation').id,
+                        })
                 elif allocation.state == 'validate':
                     to_do |= allocation
                 elif allocation.state == 'refuse':
                     to_clean |= allocation
+        self.env['mail.activity'].create(activity_vals)
         if to_clean:
-            to_clean.activity_unlink(['hr_holidays.mail_act_leave_allocation_approval', 'hr_holidays.mail_act_leave_allocation_second_approval'])
+            to_clean.activity_unlink(['hr_holidays.mail_act_leave_allocation_approval'])
         if to_do:
-            to_do.activity_feedback(['hr_holidays.mail_act_leave_allocation_approval', 'hr_holidays.mail_act_leave_allocation_second_approval'])
+            to_do.activity_feedback(['hr_holidays.mail_act_leave_allocation_approval'])
 
     ####################################################
     # Messaging methods
@@ -784,10 +793,12 @@ class HolidaysAllocation(models.Model):
             return allocation_notif_subtype_id or self.env.ref('hr_holidays.mt_leave_allocation')
         return super(HolidaysAllocation, self)._track_subtype(init_values)
 
-    def _notify_get_recipients_groups(self, msg_vals=None):
+    def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
         """ Handle HR users and officers recipients that can validate or refuse holidays
         directly from email. """
-        groups = super(HolidaysAllocation, self)._notify_get_recipients_groups(msg_vals=msg_vals)
+        groups = super()._notify_get_recipients_groups(
+            message, model_description, msg_vals=msg_vals
+        )
         if not self:
             return groups
 
@@ -806,14 +817,18 @@ class HolidaysAllocation(models.Model):
         new_group = (
             'group_hr_holidays_user',
             lambda pdata: pdata['type'] == 'user' and holiday_user_group_id in pdata['groups'],
-            {'actions': hr_actions}
+            {
+                'actions': hr_actions,
+                'active': True,
+                'has_button_access': True,
+            }
         )
 
         return [new_group] + groups
 
     def message_subscribe(self, partner_ids=None, subtype_ids=None):
         # due to record rule can not allow to add follower and mention on validated leave so subscribe through sudo
-        if self.state in ['validate', 'validate1']:
+        if any(state in ['validate', 'validate1'] for state in self.mapped('state')):
             self.check_access_rights('read')
             self.check_access_rule('read')
             return super(HolidaysAllocation, self.sudo()).message_subscribe(partner_ids=partner_ids, subtype_ids=subtype_ids)

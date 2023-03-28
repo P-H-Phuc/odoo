@@ -12,6 +12,20 @@ import { standardFieldProps } from "../standard_field_props";
 import { Component, onWillStart, onWillUpdateProps, useState } from "@odoo/owl";
 
 export class DomainField extends Component {
+    static template = "web.DomainField";
+    static components = {
+        DomainSelector,
+    };
+    static props = {
+        ...standardFieldProps,
+        context: { type: Object, optional: true },
+        editInDialog: { type: Boolean, optional: true },
+        resModel: { type: String, optional: true },
+    };
+    static defaultProps = {
+        editInDialog: false,
+    };
+
     setup() {
         this.orm = useService("orm");
         this.state = useState({
@@ -24,18 +38,18 @@ export class DomainField extends Component {
         this.isDebugEdited = false;
 
         onWillStart(() => {
-            this.displayedDomain = this.props.value;
+            this.displayedDomain = this.props.record.data[this.props.name];
             this.loadCount(this.props);
         });
         onWillUpdateProps((nextProps) => {
             this.isDebugEdited = this.isDebugEdited && this.props.readonly === nextProps.readonly;
             if (!this.isDebugEdited) {
-                this.displayedDomain = nextProps.value;
+                this.displayedDomain = nextProps.record.data[nextProps.name];
                 this.loadCount(nextProps);
             }
         });
 
-        useBus(this.env.bus, "RELATIONAL_MODEL:NEED_LOCAL_CHANGES", async (ev) => {
+        useBus(this.props.record.model.bus, "NEED_LOCAL_CHANGES", async (ev) => {
             if (this.isDebugEdited) {
                 const prom = this.loadCount(this.props);
                 ev.detail.proms.push(prom);
@@ -48,7 +62,7 @@ export class DomainField extends Component {
     }
 
     getContext(p) {
-        return p.record.getFieldContext(p.name);
+        return p.context;
     }
     getResModel(p) {
         let resModel = p.resModel;
@@ -66,7 +80,14 @@ export class DomainField extends Component {
                 noCreate: true,
                 multiSelect: false,
                 resModel: this.getResModel(this.props),
+<<<<<<< HEAD
                 domain: this.getDomain(this.props.value).toList(this.getContext(this.props)) || [],
+=======
+                domain:
+                    this.getDomain(this.props.record.data[this.props.name]).toList(
+                        this.getContext(this.props)
+                    ) || [],
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 context: this.getContext(this.props) || {},
             },
             {
@@ -77,9 +98,9 @@ export class DomainField extends Component {
     }
     get isValidDomain() {
         try {
-            this.getDomain(this.props.value).toList();
+            this.getDomain(this.props.record.data[this.props.name]).toList();
             return true;
-        } catch (_e) {
+        } catch {
             // WOWL TODO: rethrow error when not the expected type
             return false;
         }
@@ -95,14 +116,16 @@ export class DomainField extends Component {
 
         let recordCount;
         try {
-            const domain = this.getDomain(props.value).toList(this.getContext(props));
+            const domain = this.getDomain(props.record.data[props.name]).toList(
+                this.getContext(props)
+            );
             recordCount = await this.orm.silent.call(
                 this.getResModel(props),
                 "search_count",
                 [domain],
                 { context: this.getContext(props) }
             );
-        } catch (_e) {
+        } catch {
             // WOWL TODO: rethrow error when not the expected type
             Object.assign(this.state, { recordCount: 0, isValid: false });
             return;
@@ -112,42 +135,32 @@ export class DomainField extends Component {
 
     update(domain, isDebugEdited) {
         this.isDebugEdited = isDebugEdited;
-        return this.props.update(domain);
+        this.props.record.update({ [this.props.name]: domain });
     }
 
     onEditDialogBtnClick() {
         this.addDialog(DomainSelectorDialog, {
             resModel: this.getResModel(this.props),
-            initialValue: this.props.value || "[]",
+            initialValue: this.props.record.data[this.props.name] || "[]",
             readonly: this.props.readonly,
             isDebugMode: !!this.env.debug,
-            onSelected: this.props.update,
+            onSelected: (value) => this.props.record.update({ [this.props.name]: value }),
         });
     }
 }
 
-DomainField.template = "web.DomainField";
-DomainField.components = {
-    DomainSelector,
-};
-DomainField.props = {
-    ...standardFieldProps,
-    editInDialog: { type: Boolean, optional: true },
-    resModel: { type: String, optional: true },
-};
-DomainField.defaultProps = {
-    editInDialog: false,
-};
-
-DomainField.displayName = _lt("Domain");
-DomainField.supportedTypes = ["char"];
-
-DomainField.isEmpty = () => false;
-DomainField.extractProps = ({ attrs }) => {
-    return {
-        editInDialog: attrs.options.in_dialog,
-        resModel: attrs.options.model,
-    };
+export const domainField = {
+    component: DomainField,
+    displayName: _lt("Domain"),
+    supportedTypes: ["char"],
+    isEmpty: () => false,
+    extractProps({ options }, dynamicInfo) {
+        return {
+            editInDialog: options.in_dialog,
+            resModel: options.model,
+            context: dynamicInfo.context,
+        };
+    },
 };
 
-registry.category("fields").add("domain", DomainField);
+registry.category("fields").add("domain", domainField);

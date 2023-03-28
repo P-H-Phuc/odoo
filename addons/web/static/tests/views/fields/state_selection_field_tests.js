@@ -83,11 +83,6 @@ QUnit.module("Fields", (hooks) => {
             "should not have one green status since selection is the second, blocked state"
         );
         assert.containsNone(target, ".dropdown-menu", "there should not be a dropdown");
-        assert.strictEqual(
-            target.querySelector(".o_field_state_selection .dropdown-toggle").dataset.tooltip,
-            "Blocked",
-            "tooltip attribute has the right text"
-        );
 
         // Click on the status button to make the dropdown appear
         await click(target, ".o_field_widget.o_field_state_selection .o_status");
@@ -95,8 +90,13 @@ QUnit.module("Fields", (hooks) => {
         assert.containsN(
             target,
             ".dropdown-menu .dropdown-item",
-            2,
-            "there should be two options in the dropdown"
+            3,
+            "there should be three options in the dropdown"
+        );
+        assert.hasClass(
+            target.querySelector(".dropdown-menu .dropdown-item:nth-child(2)"),
+            "active",
+            "current value has a checkmark"
         );
 
         // Click on the first option, "Normal"
@@ -141,8 +141,8 @@ QUnit.module("Fields", (hooks) => {
         assert.containsN(
             target,
             ".dropdown-menu .dropdown-item",
-            2,
-            "there should be two options in the dropdown"
+            3,
+            "there should be three options in the dropdown"
         );
 
         // Click on the last option, "Done"
@@ -297,8 +297,8 @@ QUnit.module("Fields", (hooks) => {
         assert.containsN(
             target,
             ".dropdown-menu .dropdown-item",
-            2,
-            "there should be two options in the dropdown"
+            3,
+            "there should be three options in the dropdown"
         );
 
         // Click on the first option, "Normal"
@@ -352,8 +352,8 @@ QUnit.module("Fields", (hooks) => {
         assert.containsN(
             target,
             ".dropdown-menu .dropdown-item",
-            2,
-            "there should be two options in the dropdown"
+            3,
+            "there should be three options in the dropdown"
         );
 
         // Click on another row
@@ -382,8 +382,8 @@ QUnit.module("Fields", (hooks) => {
         assert.containsN(
             target,
             ".dropdown-menu .dropdown-item",
-            2,
-            "there should be two options in the dropdown"
+            3,
+            "there should be three options in the dropdown"
         );
 
         // Click on the last option, "Done"
@@ -431,7 +431,7 @@ QUnit.module("Fields", (hooks) => {
     });
 
     QUnit.test(
-        'StateSelectionField edited by the smart action "Set kanban state..."',
+        'StateSelectionField edited by the smart actions "Set kanban state as <state name>"',
         async function (assert) {
             await makeView({
                 type: "form",
@@ -448,20 +448,23 @@ QUnit.module("Fields", (hooks) => {
 
             triggerHotkey("control+k");
             await nextTick();
-            const idx = [...target.querySelectorAll(".o_command")]
-                .map((el) => el.textContent)
-                .indexOf("Set kanban state...ALT + SHIFT + R");
+            var commandTexts = [...target.querySelectorAll(".o_command")].map(
+                (el) => el.textContent
+            );
+            assert.ok(commandTexts.includes("Set kanban state as NormalALT + D"));
+            const idx = commandTexts.indexOf("Set kanban state as DoneALT + G");
             assert.ok(idx >= 0);
 
             await click([...target.querySelectorAll(".o_command")][idx]);
             await nextTick();
-            assert.deepEqual(
-                [...target.querySelectorAll(".o_command")].map((el) => el.textContent),
-                ["Normal", "Blocked", "Done"]
-            );
-            await click(target, "#o_command_2");
-            await nextTick();
             assert.containsOnce(target, ".o_status_green");
+
+            triggerHotkey("control+k");
+            await nextTick();
+            commandTexts = [...target.querySelectorAll(".o_command")].map((el) => el.textContent);
+            assert.ok(commandTexts.includes("Set kanban state as NormalALT + D"));
+            assert.ok(commandTexts.includes("Set kanban state as BlockedALT + F"));
+            assert.notOk(commandTexts.includes("Set kanban state as DoneALT + G"));
         }
     );
 
@@ -492,17 +495,17 @@ QUnit.module("Fields", (hooks) => {
         });
 
         await click(target, ".o_status");
-        let dropdownItemTexts = [...target.querySelectorAll(".dropdown-item")].map(
-            (el) => el.textContent
-        );
-        assert.deepEqual(dropdownItemTexts, ["Custom normal", "Custom done"]);
+        let dropdownItemTexts = [
+            ...target.querySelectorAll(".o_field_state_selection .dropdown-item"),
+        ].map((el) => el.textContent);
+        assert.deepEqual(dropdownItemTexts, ["Custom normal", "Custom blocked", "Custom done"]);
 
         await click(target.querySelector(".dropdown-item .o_status"));
         await click(target, ".o_status");
-        dropdownItemTexts = [...target.querySelectorAll(".dropdown-item")].map(
-            (el) => el.textContent
-        );
-        assert.deepEqual(dropdownItemTexts, ["Custom blocked", "Custom done"]);
+        dropdownItemTexts = [
+            ...target.querySelectorAll(".o_field_state_selection .dropdown-item"),
+        ].map((el) => el.textContent);
+        assert.deepEqual(dropdownItemTexts, ["Custom normal", "Custom blocked", "Custom done"]);
     });
 
     QUnit.test("works when required in a readonly view ", async function (assert) {
@@ -529,9 +532,10 @@ QUnit.module("Fields", (hooks) => {
                 return performRPC(route, args);
             },
         });
+        assert.containsNone(target, ".o_status_label");
 
         await click(target, ".o_field_state_selection button");
-        const doneItem = target.querySelectorAll(".dropdown-item")[1]; // item "done";
+        const doneItem = target.querySelectorAll(".dropdown-item")[2]; // item "done";
         await click(doneItem);
 
         assert.verifySteps(["write"]);

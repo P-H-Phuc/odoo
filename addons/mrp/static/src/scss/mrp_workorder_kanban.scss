@@ -14,14 +14,16 @@
             .o_kanban_workorder_title {
                 flex-basis: 40%;
             }
-            .o_kanban_workorder_date {
-            }
             .o_kanban_workorder_status {
                 flex-basis: 20%;
             }
         }
     }
     &.o_workcenter_kanban {
+<<<<<<< HEAD
        --KanbanRecord-width: 400px;
+=======
+        --KanbanRecord-width: 400px;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 }

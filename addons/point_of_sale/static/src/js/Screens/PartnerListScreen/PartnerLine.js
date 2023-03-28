@@ -1,9 +1,8 @@
-odoo.define('point_of_sale.PartnerLine', function(require) {
-    'use strict';
+/** @odoo-module */
 
-    const PosComponent = require('point_of_sale.PosComponent');
-    const Registries = require('point_of_sale.Registries');
+import { Component } from "@odoo/owl";
 
+<<<<<<< HEAD
     class PartnerLine extends PosComponent {
         get highlight() {
             return this._isPartnerSelected ? 'highlight' : '';
@@ -15,10 +14,15 @@ odoo.define('point_of_sale.PartnerLine', function(require) {
         get _isPartnerSelected() {
             return this.props.partner === this.props.selectedPartner;
         }
+=======
+export class PartnerLine extends Component {
+    static template = "PartnerLine";
+
+    get highlight() {
+        return this._isPartnerSelected ? "highlight" : "";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
-    PartnerLine.template = 'PartnerLine';
-
-    Registries.Component.add(PartnerLine);
-
-    return PartnerLine;
-});
+    get _isPartnerSelected() {
+        return this.props.partner === this.props.selectedPartner;
+    }
+}

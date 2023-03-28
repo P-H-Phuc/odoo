@@ -2,15 +2,19 @@
 
 import { getFixture, mount, nextTick } from "@web/../tests/helpers/utils";
 import { makeWithSearch, setupControlPanelServiceRegistry } from "@web/../tests/search/helpers";
-import { dialogService } from "@web/core/dialog/dialog_service";
-import { registry } from "@web/core/registry";
 import { Layout } from "@web/search/layout";
 import { getDefaultConfig } from "@web/views/view";
 import { makeTestEnv } from "@web/../tests/helpers/mock_env";
+import { SearchModel } from "@web/search/search_model";
 
+<<<<<<< HEAD
 import { Component, xml, useChildSubEnv } from "@odoo/owl";
 
 const serviceRegistry = registry.category("services");
+=======
+import { Component, xml, onWillStart, useChildSubEnv, useSubEnv } from "@odoo/owl";
+import { useService } from "@web/core/utils/hooks";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 let target;
 let serverData;
@@ -43,7 +47,6 @@ QUnit.module("Views", (hooks) => {
         };
 
         setupControlPanelServiceRegistry();
-        serviceRegistry.add("dialog", dialogService);
 
         target = getFixture();
     });
@@ -90,6 +93,43 @@ QUnit.module("Views", (hooks) => {
         assert.containsOnce(target, ".o_control_panel .o_cp_top_right .toy_search_bar");
         assert.containsOnce(target, ".o_component_with_search_panel .o_search_panel");
         assert.containsNone(target, ".o_cp_searchview");
+        assert.containsOnce(target, ".o_content > .toy_content");
+    });
+
+    QUnit.test("Rendering with default ControlPanel and SearchPanel", async (assert) => {
+        class ToyComponent extends Component {
+            setup() {
+                this.searchModel = new SearchModel(this.env, {
+                    user: useService("user"),
+                    orm: useService("orm"),
+                    view: useService("view"),
+                });
+                useSubEnv({ searchModel: this.searchModel });
+                onWillStart(async () => {
+                    await this.searchModel.load({ resModel: "foo" });
+                });
+            }
+        }
+        ToyComponent.template = xml`
+            <Layout className="'o_view_sample_data'" display="{
+                controlPanel: { 'top-right': false, 'bottom-right': false, 'bottom-left': false },
+                searchPanel: true,
+                }">
+                <div class="toy_content" />
+            </Layout>`;
+        ToyComponent.components = { Layout };
+
+        const env = await makeTestEnv();
+        const toyEnv = Object.assign(Object.create(env), {
+            config: { breadcrumbs: getDefaultConfig().breadcrumbs },
+        });
+
+        await mount(ToyComponent, getFixture(), { env: toyEnv });
+
+        assert.containsOnce(target, ".o_search_panel");
+        assert.containsOnce(target, ".o_control_panel");
+        assert.containsOnce(target, ".breadcrumb");
+        assert.containsOnce(target, ".o_component_with_search_panel");
         assert.containsOnce(target, ".o_content > .toy_content");
     });
 

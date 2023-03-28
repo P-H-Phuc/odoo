@@ -4,8 +4,8 @@ const { coreTypes } = spreadsheet;
 
 /** Plugin that link charts with Odoo menus. It can contain either the Id of the odoo menu, or its xml id. */
 export default class ChartOdooMenuPlugin extends spreadsheet.CorePlugin {
-    constructor() {
-        super(...arguments);
+    constructor(config) {
+        super(config);
         this.odooMenuReference = {};
     }
 
@@ -45,7 +45,6 @@ export default class ChartOdooMenuPlugin extends spreadsheet.CorePlugin {
         data.chartOdooMenusReferences = this.odooMenuReference;
     }
 }
-ChartOdooMenuPlugin.modes = ["normal", "headless"];
 ChartOdooMenuPlugin.getters = ["getChartOdooMenu"];
 
 coreTypes.add("LINK_ODOO_MENU_TO_CHART");

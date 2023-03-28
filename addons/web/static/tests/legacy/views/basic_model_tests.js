@@ -2,12 +2,10 @@ odoo.define('web.basic_model_tests', function (require) {
     "use strict";
 
     var BasicModel = require('web.BasicModel');
-    var FormView = require('web.FormView');
     var testUtils = require('web.test_utils');
     const session = require('web.session');
 
     var createModel = testUtils.createModel;
-    var createView = testUtils.createView;
 
     QUnit.module('LegacyViews', {
         beforeEach: function () {
@@ -116,89 +114,6 @@ odoo.define('web.basic_model_tests', function (require) {
                 });
         });
 
-        QUnit.test('can process x2many commands', async function (assert) {
-            assert.expect(6);
-
-            this.data.partner.fields.product_ids.default = [[0, 0, { category: [] }]];
-
-            const form = await createView({
-                View: FormView,
-                model: 'partner',
-                data: this.data,
-                arch: `
-                    <form>
-                        <field name="product_ids"/>
-                    </form>
-                `,
-                archs: {
-                    'product,false,list': `
-                        <tree>
-                            <field name="display_name"/>
-                        </tree>
-                    `,
-                    'product,false,kanban': `
-                        <kanban>
-                            <templates><t t-name="kanban-box">
-                                <div><field name="display_name"/></div>
-                            </t></templates>
-                        </kanban>
-                    `,
-                },
-                viewOptions: {
-                    mode: 'edit',
-                },
-                mockRPC(route, args) {
-                    assert.step(args.method);
-                    return this._super.apply(this, arguments);
-                },
-            });
-
-            assert.verifySteps([
-                'get_views',
-                'onchange',
-            ]);
-            assert.containsOnce(form, '.o_field_x2many_list', 'should have rendered a x2many list');
-            assert.containsOnce(form, '.o_data_row', 'should have added 1 record as default');
-            assert.containsOnce(form, '.o_field_x2many_list_row_add', 'should have rendered a x2many add row on list');
-            form.destroy();
-        });
-
-        QUnit.test('can process x2many commands (with multiple fields)', async function (assert) {
-            assert.expect(1);
-
-            this.data.partner.fields.product_ids.default = [[0, 0, { category: [] }]];
-
-            const form = await createView({
-                View: FormView,
-                model: 'partner',
-                data: this.data,
-                arch: `
-                    <form>
-                        <field name="product_ids"/>
-                    </form>
-                `,
-                archs: {
-                    'product,false,list': `
-                        <tree>
-                            <field name="display_name"/>
-                            <field name="active"/>
-                        </tree>
-                    `,
-                },
-                mockRPC(route, args) {
-                    if (args.method === "create") {
-                        const product_ids = args.args[0].product_ids;
-                        const values = product_ids[0][2];
-                        assert.strictEqual(values.active, true, "active field should be set");
-                    }
-                    return this._super.apply(this, arguments);
-                },
-            });
-
-            await testUtils.form.clickSave(form);
-            form.destroy();
-        });
-
         QUnit.test('can load a record', async function (assert) {
             assert.expect(7);
 
@@ -247,7 +162,7 @@ odoo.define('web.basic_model_tests', function (require) {
             try {
                 await model.load(this.params);
             }
-            catch (_e) {
+            catch {
                 assert.ok("load should return a rejected deferred for an invalid id");
             }
 
@@ -2098,62 +2013,6 @@ odoo.define('web.basic_model_tests', function (require) {
                 "should be the value of record 2");
 
             model.destroy();
-        });
-
-        QUnit.test('has a proper evaluation context', async function (assert) {
-            assert.expect(6);
-
-            const unpatchDate = testUtils.mock.patchDate(1997, 0, 9, 12, 0, 0);
-            this.params.fieldNames = Object.keys(this.data.partner.fields);
-            this.params.res_id = 1;
-
-            var model = await createModel({
-                Model: BasicModel,
-                data: this.data,
-            });
-
-            var resultID = await model.load(this.params);
-            const { evalContext } = model.get(resultID);
-            assert.strictEqual(typeof evalContext.datetime, "object");
-            assert.strictEqual(typeof evalContext.relativedelta, "object");
-            assert.strictEqual(typeof evalContext.time, "object");
-            assert.strictEqual(typeof evalContext.context_today, "function");
-            assert.strictEqual(typeof evalContext.tz_offset, "function");
-            const blackListedKeys = [
-                "time",
-                "datetime",
-                "relativedelta",
-                "context_today",
-                "tz_offset",
-            ];
-            // Remove uncomparable values from the evaluation context
-            for (const key of blackListedKeys) {
-                delete evalContext[key];
-            }
-            assert.deepEqual(evalContext, {
-                active: true,
-                active_id: 1,
-                active_ids: [1],
-                active_model: "partner",
-                bar: 1,
-                category: [12],
-                current_company_id: false,
-                current_date: moment().format('YYYY-MM-DD'),
-                today: moment().format('YYYY-MM-DD'),
-                now: moment().utc().format('YYYY-MM-DD HH:mm:ss'),
-                date: "2017-01-25",
-                display_name: "first partner",
-                foo: "blip",
-                id: 1,
-                product_id: 37,
-                product_ids: [],
-                qux: false,
-                reference: false,
-                total: 0,
-                x_active: true,
-            }, "should use the proper eval context");
-            model.destroy();
-            unpatchDate();
         });
 
         QUnit.test('x2manys in contexts and domains are correctly evaluated', async function (assert) {

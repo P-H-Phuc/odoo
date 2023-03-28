@@ -408,7 +408,11 @@ class Warehouse(models.Model):
                     'action': 'pull',
                     'auto': 'manual',
                     'propagate_carrier': True,
+<<<<<<< HEAD
                     'route_id': self._find_global_route('stock.route_warehouse0_mto', _('Make To Order')).id
+=======
+                    'route_id': self._find_global_route('stock.route_warehouse0_mto', _('Replenish on Order (MTO)')).id
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 },
                 'update_values': {
                     'name': self._format_rulename(location_id, location_dest_id, 'MTO'),
@@ -856,7 +860,7 @@ class Warehouse(models.Model):
         else:
             # We need to delete all the MTO stock rules, otherwise they risk to be used in the system
             Rule.search([
-                '&', ('route_id', '=', self._find_global_route('stock.route_warehouse0_mto', _('Make To Order')).id),
+                '&', ('route_id', '=', self._find_global_route('stock.route_warehouse0_mto', _('Replenish on Order (MTO)')).id),
                 ('location_dest_id.usage', '=', 'transit'),
                 ('action', '!=', 'push'),
                 ('location_src_id', '=', self.lot_stock_id.id)]).write({'active': False})

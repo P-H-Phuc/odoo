@@ -20,7 +20,7 @@ const DEFAULT_VIEWS_WITH_SEARCH_PANEL = ["kanban", "list"];
 function getContextGroubBy(context) {
     try {
         return makeContext([context]).group_by.split(":");
-    } catch (_err) {
+    } catch {
         return [];
     }
 }
@@ -127,15 +127,16 @@ export class SearchArchParser extends XMLParser {
         }
         if (node.hasAttribute("name")) {
             const name = node.getAttribute("name");
+            const fieldType = this.fields[name].type;
             preField.fieldName = name;
-            preField.fieldType = this.fields[name].type;
-            if (name in this.searchDefaults) {
+            preField.fieldType = fieldType;
+            if (fieldType !== "properties" && name in this.searchDefaults) {
                 preField.isDefault = true;
                 let value = this.searchDefaults[name];
                 value = Array.isArray(value) ? value[0] : value;
                 let operator = preField.operator;
                 if (!operator) {
-                    let type = preField.fieldType;
+                    let type = fieldType;
                     if (node.hasAttribute("widget")) {
                         type = node.getAttribute("widget");
                     }
@@ -149,8 +150,7 @@ export class SearchArchParser extends XMLParser {
                     }
                 }
                 preField.defaultRank = -10;
-                const { fieldType, fieldName } = preField;
-                const { selection, context, relation } = this.fields[fieldName];
+                const { selection, context, relation } = this.fields[name];
                 preField.defaultAutocompleteValue = { label: `${value}`, operator, value };
                 if (fieldType === "selection") {
                     const option = selection.find((sel) => sel[0] === value);
@@ -160,9 +160,17 @@ export class SearchArchParser extends XMLParser {
                     preField.defaultAutocompleteValue.label = option[1];
                 } else if (fieldType === "many2one") {
                     this.labels.push((orm) => {
+<<<<<<< HEAD
                         return orm.call(relation, "name_get", [value], { context }).then((results) => {
                             preField.defaultAutocompleteValue.label = results[0][1];
                         });
+=======
+                        return orm
+                            .call(relation, "name_get", [value], { context })
+                            .then((results) => {
+                                preField.defaultAutocompleteValue.label = results[0][1];
+                            });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     });
                 }
             }

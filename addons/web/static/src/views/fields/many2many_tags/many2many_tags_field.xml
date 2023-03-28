@@ -11,13 +11,21 @@
                 <Many2XAutocomplete
                     id="props.id"
                     placeholder="tags.length ? '' : props.placeholder"
+<<<<<<< HEAD
                     resModel="props.relation"
+=======
+                    resModel="relation"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     autoSelect="true"
                     fieldString="string"
                     activeActions="activeActions"
                     update="update"
                     quickCreate="activeActions.create ? quickCreate : null"
+<<<<<<< HEAD
                     context="context"
+=======
+                    context="props.context"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     getDomain.bind="getDomain"
                     isToMany="true"
                     nameCreateField="props.nameCreateField"

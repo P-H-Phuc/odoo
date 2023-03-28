@@ -38,30 +38,41 @@ class PageUrlField extends Component {
     }
 
     get fieldURL() {
+<<<<<<< HEAD
         const value = this.props.value;
+=======
+        const value = this.props.record.data[this.props.name];
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return (value.url !== undefined ? value.url : value).replace(/^\//g, '');
     }
 
     updateValues() {
         // HACK: update redirect data from the URL field.
         // TODO: remove this and use a transient model with redirect fields.
-        this.props.update(this.state);
+        this.props.record.update({ [this.props.name]: this.state });
     }
 }
+
 PageUrlField.components = {Switch, PageDependencies};
 PageUrlField.template = 'website.PageUrlField';
 PageUrlField.props = {
     ...standardFieldProps,
     placeholder: {type: String, optional: true},
 };
-PageUrlField.extractProps = ({attrs}) => {
-    return {
-        placeholder: attrs.placeholder,
-    };
-};
-PageUrlField.supportedTypes = ['char'];
 
+const pageUrlField = {
+    component: PageUrlField,
+    supportedTypes: ['char'],
+    extractProps: ({ attrs }) => ({
+        placeholder: attrs.placeholder,
+    }),
+};
+
+<<<<<<< HEAD
 registry.category("fields").add("page_url", PageUrlField);
+=======
+registry.category("fields").add("page_url", pageUrlField);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 /**
  * Displays 'Selection' field's values as images to select.
@@ -83,19 +94,22 @@ export class ImageRadioField extends Component {
      * @param {String} value
      */
     onSelectValue(value) {
-        this.props.update(value);
+        this.props.record.update({ [this.props.name]: value });
     }
 }
-ImageRadioField.supportedTypes = ['selection'];
+
 ImageRadioField.template = 'website.FieldImageRadio';
 ImageRadioField.props = {
     ...standardFieldProps,
     images: {type: Array, element: String},
 };
-ImageRadioField.extractProps = ({attrs}) => {
-    return {
-        images: attrs.options.images,
-    };
+
+export const imageRadioField = {
+    component: ImageRadioField,
+    supportedTypes: ['selection'],
+    extractProps: ({ options }) => ({
+        images: options.images,
+    }),
 };
 
-registry.category("fields").add("image_radio", ImageRadioField);
+registry.category("fields").add("image_radio", imageRadioField);

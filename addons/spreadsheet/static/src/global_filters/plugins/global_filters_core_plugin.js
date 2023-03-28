@@ -15,6 +15,10 @@
  * @property {string} type "text" | "date" | "relation"
  * @property {RangeType} [rangeType]
  * @property {boolean} [defaultsToCurrentPeriod]
+<<<<<<< HEAD
+=======
+ * @property {boolean} [automaticDefaultValue]
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
  * @property {string|Array<string>|Object} defaultValue Default Value
  * @property {number} [modelID] ID of the related model
  * @property {string} [modelName] Name of the related model
@@ -26,10 +30,18 @@ import spreadsheet from "@spreadsheet/o_spreadsheet/o_spreadsheet_extended";
 import CommandResult from "@spreadsheet/o_spreadsheet/cancelled_reason";
 import { checkFiltersTypeValueCombination } from "@spreadsheet/global_filters/helpers";
 import { _t } from "@web/core/l10n/translation";
+<<<<<<< HEAD
 
 export class GlobalFiltersCorePlugin extends spreadsheet.CorePlugin {
     constructor() {
         super(...arguments);
+=======
+import { escapeRegExp } from "@web/core/utils/strings";
+
+export class GlobalFiltersCorePlugin extends spreadsheet.CorePlugin {
+    constructor(config) {
+        super(config);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         /** @type {Object.<string, GlobalFilter>} */
         this.globalFilters = {};
     }
@@ -70,13 +82,17 @@ export class GlobalFiltersCorePlugin extends spreadsheet.CorePlugin {
     handle(cmd) {
         switch (cmd.type) {
             case "ADD_GLOBAL_FILTER":
-                this._addGlobalFilter(cmd.filter);
+                this.history.update("globalFilters", cmd.filter.id, cmd.filter);
                 break;
             case "EDIT_GLOBAL_FILTER":
                 this._editGlobalFilter(cmd.id, cmd.filter);
                 break;
             case "REMOVE_GLOBAL_FILTER":
+<<<<<<< HEAD
                 this._removeGlobalFilter(cmd.id);
+=======
+                this.history.update("globalFilters", cmd.id, undefined);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 break;
         }
     }
@@ -131,29 +147,9 @@ export class GlobalFiltersCorePlugin extends spreadsheet.CorePlugin {
     // ---------------------------------------------------------------------
 
     /**
-     * Add a global filter
-     *
-     * @param {GlobalFilter} filter
-     */
-    _addGlobalFilter(filter) {
-        const globalFilters = { ...this.globalFilters };
-        globalFilters[filter.id] = filter;
-        this.history.update("globalFilters", globalFilters);
-    }
-    /**
-     * Remove a global filter
-     *
-     * @param {number} id Id of the filter to remove
-     */
-    _removeGlobalFilter(id) {
-        const globalFilters = { ...this.globalFilters };
-        delete globalFilters[id];
-        this.history.update("globalFilters", globalFilters);
-    }
-    /**
      * Edit a global filter
      *
-     * @param {number} id Id of the filter to update
+     * @param {string} id Id of the filter to update
      * @param {GlobalFilter} newFilter
      */
     _editGlobalFilter(id, newFilter) {
@@ -206,10 +202,10 @@ export class GlobalFiltersCorePlugin extends spreadsheet.CorePlugin {
      */
     _updateFilterLabelInFormulas(currentLabel, newLabel) {
         const sheetIds = this.getters.getSheetIds();
-        currentLabel = currentLabel.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        currentLabel = escapeRegExp(currentLabel);
         for (const sheetId of sheetIds) {
             for (const cell of Object.values(this.getters.getCells(sheetId))) {
-                if (cell.isFormula()) {
+                if (cell.isFormula) {
                     const newContent = cell.content.replace(
                         new RegExp(`FILTER\\.VALUE\\(\\s*"${currentLabel}"\\s*\\)`, "g"),
                         `FILTER.VALUE("${newLabel}")`

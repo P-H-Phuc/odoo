@@ -223,6 +223,10 @@ const Wysiwyg = Widget.extend({
             direction: options.direction || localization.direction || 'ltr',
             collaborationClientAvatarUrl: `${browser.location.origin}/web/image?model=res.users&field=avatar_128&id=${this.getSession().uid}`,
             renderingClasses: ['o_dirty', 'o_transform_removal', 'oe_edited_link', 'o_menu_loading'],
+<<<<<<< HEAD
+=======
+            dropImageAsAttachment: options.dropImageAsAttachment,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             foldSnippets: !!options.foldSnippets,
         }, editorCollaborationOptions));
 
@@ -887,17 +891,20 @@ const Wysiwyg = Widget.extend({
      * @returns {Promise}
      */
     saveContent: async function (reload = true) {
+<<<<<<< HEAD
         // TODO dead code: we await for nothing. But let's be extra careful and
         // only remove it in master as `await nothing` actually allows external
         // code to take over before the rest of the function here is executed.
         const defs = [];
         await Promise.all(defs);
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.savingContent = true;
         await this.cleanForSave();
 
         const editables = this.options.getContentEditableAreas();
-        await this.saveModifiedImages(editables.length ? $(editables) : this.$editable);
+        await this.savePendingImages(editables.length ? $(editables) : this.$editable);
         await this._saveViewBlocks();
         this.savingContent = false;
 
@@ -943,15 +950,28 @@ const Wysiwyg = Widget.extend({
         });
     },
     /**
-     * Create/Update cropped attachments.
+     * Create/Update attachments for unsaved images.
+     * (e.g. modified/cropped images, drag & dropped images, pasted images..)
      *
      * @param {jQuery} $editable
      * @returns {Promise}
      */
-    saveModifiedImages: function ($editable = this.$editable) {
+    savePendingImages($editable = this.$editable) {
         const defs = _.map($editable, async editableEl => {
             const {oeModel: resModel, oeId: resId} = editableEl.dataset;
-            const proms = [...editableEl.querySelectorAll('.o_modified_image_to_save')].map(async el => {
+            const b64Proms = [...editableEl.querySelectorAll('.o_b64_image_to_save')].map(async el => {
+                const attachment = await this._rpc({
+                    route: '/web_editor/attachment/add_data',
+                    params: {
+                        name: el.dataset.fileName || '',
+                        data: el.getAttribute('src').split(',')[1],
+                        is_image: true,
+                    },
+                });
+                el.setAttribute('src', attachment.image_src);
+                el.classList.remove('o_b64_image_to_save');
+            });
+            const modifiedProms = [...editableEl.querySelectorAll('.o_modified_image_to_save')].map(async el => {
                 const isBackground = !el.matches('img');
                 el.classList.remove('o_modified_image_to_save');
                 // Modifying an image always creates a copy of the original, even if
@@ -977,7 +997,7 @@ const Wysiwyg = Widget.extend({
                     el.setAttribute('src', newAttachmentSrc);
                 }
             });
-            return Promise.all(proms);
+            return Promise.all([...b64Proms, ...modifiedProms]);
         });
         return Promise.all(defs);
     },
@@ -1198,10 +1218,18 @@ const Wysiwyg = Widget.extend({
                         startNode: options.link || this.lastMediaClicked,
                     });
                     if (!link) {
-                        return
+                        return;
                     }
-                    const linkToolsData = Object.assign({}, this.options.defaultDataForLinkTools);
-                    this.linkTools = new weWidgets.LinkTools(this, {wysiwyg: this, noFocusUrl: options.noFocusUrl}, this.odooEditor.editable, linkToolsData, $btn, link );
+                    const linkToolsData = Object.assign({}, this.options.defaultDataForLinkTools, {
+                        // If the link contains an image or an icon do not
+                        // display the label input (e.g. some mega menu links).
+                        needLabel: !link.querySelector('.fa, img'),
+                    });
+                    this.linkTools = new weWidgets.LinkTools(this, {
+                        wysiwyg: this,
+                        noFocusUrl: options.noFocusUrl,
+                        forceNewWindow: this.options.linkForceNewWindow,
+                    }, this.odooEditor.editable, linkToolsData, $btn, link );
                 }
                 this.linkTools.noFocusUrl = options.noFocusUrl;
                 const _onClick = ev => {
@@ -1502,8 +1530,13 @@ const Wysiwyg = Widget.extend({
                     break;
             }
         };
+<<<<<<< HEAD
         if (!options.snippets) {
             $toolbar.find('#justify, #table, #media-insert').remove();
+=======
+        if (!this.options.snippets) {
+            $toolbar.find('#justify, #media-insert').remove();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
         $toolbar.find('#media-insert, #media-replace, #media-description').click(openTools);
         $toolbar.find('#create-link').click(openTools);
@@ -1880,13 +1913,20 @@ const Wysiwyg = Widget.extend({
             '#justifyFull',
             '#list',
             '#colorInputButtonGroup',
-            '#table',
             '#create-link',
             '#media-insert', // "Insert media" should be replaced with "Replace media".
         ].join(',')).toggleClass('d-none', isInMedia);
         // Some icons are relevant for icons, that aren't for other media.
         this.toolbar.$el.find('#colorInputButtonGroup, #create-link').toggleClass('d-none', isInMedia && !$target.is('.fa'));
         this.toolbar.$el.find('.only_fa').toggleClass('d-none', !$target.is('.fa'));
+        // Hide unsuitable buttons for icon
+        if ($target.is('.fa')) {
+            this.toolbar.$el.find([
+                '#image-shape',
+                '#image-width',
+                '#image-edit',
+            ].join(',')).toggleClass('d-none', true);
+        }
         // Hide the create-link button if the selection spans several blocks.
         selection = this.odooEditor.document.getSelection();
         const range = selection && selection.rangeCount && selection.getRangeAt(0);
@@ -2075,7 +2115,7 @@ const Wysiwyg = Widget.extend({
                 category: _t('Structure'),
                 name: _t('Quote'),
                 priority: 30,
-                description: _t('Add a blockquote section.'),
+                description: _t('Add a blockquote section'),
                 fontawesome: 'fa-quote-right',
                 isDisabled: () => !this.odooEditor.isSelectionInBlockRoot(),
                 callback: () => {
@@ -2086,7 +2126,7 @@ const Wysiwyg = Widget.extend({
                 category: _t('Structure'),
                 name: _t('Code'),
                 priority: 20,
-                description: _t('Add a code section.'),
+                description: _t('Add a code section'),
                 fontawesome: 'fa-code',
                 isDisabled: () => !this.odooEditor.isSelectionInBlockRoot(),
                 callback: () => {
@@ -2096,7 +2136,7 @@ const Wysiwyg = Widget.extend({
             {
                 category: _t('Basic blocks'),
                 name: _t('Signature'),
-                description: _t('Insert your signature.'),
+                description: _t('Insert your signature'),
                 fontawesome: 'fa-pencil-square-o',
                 isDisabled: () => !this.odooEditor.isSelectionInBlockRoot(),
                 callback: async () => {
@@ -2114,7 +2154,7 @@ const Wysiwyg = Widget.extend({
                 category: _t('Structure'),
                 name: _t('2 columns'),
                 priority: 13,
-                description: _t('Convert into 2 columns.'),
+                description: _t('Convert into 2 columns'),
                 fontawesome: 'fa-columns',
                 callback: () => this.odooEditor.execCommand('columnize', 2, editorOptions.insertParagraphAfterColumns),
                 isDisabled: () => {
@@ -2130,7 +2170,7 @@ const Wysiwyg = Widget.extend({
                 category: _t('Structure'),
                 name: _t('3 columns'),
                 priority: 12,
-                description: _t('Convert into 3 columns.'),
+                description: _t('Convert into 3 columns'),
                 fontawesome: 'fa-columns',
                 callback: () => this.odooEditor.execCommand('columnize', 3, editorOptions.insertParagraphAfterColumns),
                 isDisabled: () => {
@@ -2146,7 +2186,7 @@ const Wysiwyg = Widget.extend({
                 category: _t('Structure'),
                 name: _t('4 columns'),
                 priority: 11,
-                description: _t('Convert into 4 columns.'),
+                description: _t('Convert into 4 columns'),
                 fontawesome: 'fa-columns',
                 callback: () => this.odooEditor.execCommand('columnize', 4, editorOptions.insertParagraphAfterColumns),
                 isDisabled: () => {
@@ -2162,7 +2202,7 @@ const Wysiwyg = Widget.extend({
                 category: _t('Structure'),
                 name: _t('Remove columns'),
                 priority: 10,
-                description: _t('Back to one column.'),
+                description: _t('Back to one column'),
                 fontawesome: 'fa-columns',
                 callback: () => this.odooEditor.execCommand('columnize', 0),
                 isDisabled: () => {
@@ -2182,7 +2222,7 @@ const Wysiwyg = Widget.extend({
                     category: _t('Navigation'),
                     name: _t('Link'),
                     priority: 40,
-                    description: _t('Add a link.'),
+                    description: _t('Add a link'),
                     fontawesome: 'fa-link',
                     callback: () => {
                         this.toggleLinkTools({forceDialog: true});
@@ -2192,7 +2232,7 @@ const Wysiwyg = Widget.extend({
                     category: _t('Navigation'),
                     name: _t('Button'),
                     priority: 30,
-                    description: _t('Add a button.'),
+                    description: _t('Add a button'),
                     fontawesome: 'fa-link',
                     callback: () => {
                         this.toggleLinkTools({forceDialog: true});
@@ -2212,7 +2252,7 @@ const Wysiwyg = Widget.extend({
                 category: _t('Media'),
                 name: _t('Image'),
                 priority: 40,
-                description: _t('Insert an image.'),
+                description: _t('Insert an image'),
                 fontawesome: 'fa-file-image-o',
                 callback: () => {
                     this.openMediaDialog();
@@ -2224,7 +2264,7 @@ const Wysiwyg = Widget.extend({
                 category: _t('Media'),
                 name: _t('Video'),
                 priority: 30,
-                description: _t('Insert a video.'),
+                description: _t('Insert a video'),
                 fontawesome: 'fa-file-video-o',
                 callback: () => {
                     this.openMediaDialog({noVideos: false, noImages: true, noIcons: true, noDocuments: true});

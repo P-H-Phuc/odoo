@@ -1459,10 +1459,25 @@ const DisableOverlayButtonOption = options.Class.extend({
         // TODO refactor in master
         const className = 'oe_snippet_' + buttonName;
         this.$overlay.add(this.$overlay.data('$optionsSection')).on('click', '.' + className, this.preventButton);
+<<<<<<< HEAD
         const $button = this.$overlay.add(this.$overlay.data('$optionsSection')).find('.' + className);
         $button.attr('title', message).tooltip({delay: 0});
         // TODO In master: add `o_disabled` but keep actual class.
         $button.removeClass(className); // Disable the functionnality
+=======
+        const $buttons = this.$overlay.add(this.$overlay.data('$optionsSection')).find('.' + className);
+        for (const buttonEl of $buttons) {
+            // For a disabled element to display a tooltip, it must be wrapped
+            // into a non-disabled element which holds the tooltip.
+            buttonEl.classList.add('o_disabled');
+            const spanEl = buttonEl.ownerDocument.createElement('span');
+            spanEl.setAttribute('tabindex', 0);
+            spanEl.setAttribute('title', message);
+            buttonEl.replaceWith(spanEl);
+            spanEl.appendChild(buttonEl);
+            Tooltip.getOrCreateInstance(spanEl, {delay: 0});
+        }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
 
     preventButton: function (event) {
@@ -1476,7 +1491,7 @@ const DisableOverlayButtonOption = options.Class.extend({
 // Disable duplicate button for model fields
 options.registry.WebsiteFormFieldModel = DisableOverlayButtonOption.extend({
     start: function () {
-        this.disableButton('clone', _t('You can\'t duplicate a model field.'));
+        this.disableButton('clone', _t('You cannot duplicate this field.'));
         return this._super.apply(this, arguments);
     }
 });
@@ -1484,7 +1499,7 @@ options.registry.WebsiteFormFieldModel = DisableOverlayButtonOption.extend({
 // Disable delete button for model required fields
 options.registry.WebsiteFormFieldRequired = DisableOverlayButtonOption.extend({
     start: function () {
-        this.disableButton('remove', _t('You can\'t remove a field that is required by the model itself.'));
+        this.disableButton('remove', _t('This field is mandatory for this Action. You cannot remove it.'));
         return this._super.apply(this, arguments);
     }
 });

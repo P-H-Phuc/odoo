@@ -104,6 +104,7 @@ export class PropertyValue extends Component {
                 const hasAccess = many2manyValue[1] !== null;
                 return {
                     id: many2manyValue[0],
+<<<<<<< HEAD
                     text: hasAccess ? many2manyValue[1] : _lt('No Access'),
                     onClick: hasAccess && this.clickableRelational
                         && (async () => await this._openRecord(this.props.comodel, many2manyValue[0])),
@@ -114,6 +115,22 @@ export class PropertyValue extends Component {
                     img: this.showAvatar && hasAccess
                         ? `/web/image/${this.props.comodel}/${many2manyValue[0]}/avatar_128`
                         : null,
+=======
+                    text: hasAccess ? many2manyValue[1] : _lt("No Access"),
+                    onClick:
+                        hasAccess &&
+                        this.clickableRelational &&
+                        (async () => await this._openRecord(this.props.comodel, many2manyValue[0])),
+                    onDelete:
+                        !this.props.readonly &&
+                        hasAccess &&
+                        (() => this.onMany2manyDelete(many2manyValue[0])),
+                    colorIndex: 0,
+                    img:
+                        this.showAvatar && hasAccess
+                            ? `/web/image/${this.props.comodel}/${many2manyValue[0]}/avatar_128`
+                            : null,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 };
             });
         } else if (this.props.type === "tags") {
@@ -134,7 +151,14 @@ export class PropertyValue extends Component {
         }
         let domain = new Domain(this.props.domain);
         if (this.props.type === "many2many" && this.props.value) {
+<<<<<<< HEAD
             domain = Domain.and([domain, [['id', 'not in', this.props.value.map(rec => rec[0])]]])
+=======
+            domain = Domain.and([
+                domain,
+                [["id", "not in", this.props.value.map((rec) => rec[0])]],
+            ]);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
         return domain.toList();
     }
@@ -180,8 +204,15 @@ export class PropertyValue extends Component {
      * @returns {boolean}
      */
     get showAvatar() {
+<<<<<<< HEAD
         return ["many2one", "many2many"].includes(this.props.type)
             && ["res.users", "res.partner"].includes(this.props.comodel);
+=======
+        return (
+            ["many2one", "many2many"].includes(this.props.type) &&
+            ["res.users", "res.partner"].includes(this.props.comodel)
+        );
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 
     /* --------------------------------------------------------

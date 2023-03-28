@@ -83,7 +83,11 @@ odoo.define('web.FavoriteMenu', function (require) {
     }
 
     FavoriteMenu.registry = new Registry();
+<<<<<<< HEAD
     FavoriteMenu.components = { Dialog, Dropdown, DropdownItem: SearchDropdownItem };
+=======
+    FavoriteMenu.components = { Dialog, Dropdown, SearchDropdownItem };
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     FavoriteMenu.template = 'web.Legacy.FavoriteMenu';
 
     return FavoriteMenu;

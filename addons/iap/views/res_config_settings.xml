@@ -18,6 +18,7 @@ if records:
         <field name="arch" type="xml">
             <xpath expr="//div[@id='contacts_settings']" position="inside">
                 <div id="iap_portal">
+<<<<<<< HEAD
                     <div class='row mt16 o_settings_container iap_portal' name="iap_purchases_setting_container">
                         <div class="col-12 col-lg-6 o_setting_box" id="iap_credits_setting">
                             <div class='o_setting_right_pane'>
@@ -35,6 +36,13 @@ if records:
                             </div>
                         </div>
                     </div>
+=======
+                    <block class='iap_portal' name="iap_purchases_setting_container">
+                        <setting id="iap_credits_setting" string="Odoo IAP" help ="View your IAP Services and recharge your credits" documentation="/applications/general/in_app_purchase.html">
+                            <button name="%(iap.open_iap_account)d" icon="fa-arrow-right" type="action" string="View My Services" class="btn-link"/>
+                        </setting>
+                    </block>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 </div>
             </xpath>
         </field>

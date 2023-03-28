@@ -17,7 +17,7 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
     def compute_tax(self, product, price, qty=1, taxes=None):
         if not taxes:
             taxes = product.taxes_id.filtered(lambda t: t.company_id.id == self.env.company.id)
-        currency = self.pos_config.pricelist_id.currency_id
+        currency = self.pos_config.currency_id
         res = taxes.compute_all(price, currency, qty, product=product)
         untax = res['total_excluded']
         return untax, sum(tax.get('amount', 0.0) for tax in res['taxes'])
@@ -147,7 +147,6 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
                     [0, 0, {'lot_name': '1002'}],
                 ]
             })],
-            'pricelist_id': 1,
             'amount_paid': 12.0,
             'amount_total': 12.0,
             'amount_tax': 0.0,
@@ -570,7 +569,6 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
            'amount_total': untax + atax,
            'creation_date': fields.Datetime.to_string(fields.Datetime.now()),
            'fiscal_position_id': False,
-           'pricelist_id': self.pos_config.available_pricelist_ids[0].id,
            'lines': [[0,
              0,
              {'discount': 0,
@@ -604,7 +602,6 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
            'amount_total': untax + atax,
            'creation_date': fields.Datetime.to_string(fields.Datetime.now()),
            'fiscal_position_id': False,
-           'pricelist_id': self.pos_config.available_pricelist_ids[0].id,
            'lines': [[0,
              0,
              {'discount': 0,
@@ -638,7 +635,6 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
            'amount_total': untax + atax,
            'creation_date': fields.Datetime.to_string(fields.Datetime.now()),
            'fiscal_position_id': False,
-           'pricelist_id': self.pos_config.available_pricelist_ids[0].id,
            'lines': [[0,
              0,
              {'discount': 0,
@@ -716,7 +712,7 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
         })
 
         # make a config that has currency different from the company
-        eur_pricelist = self.partner1.property_product_pricelist.copy(default={'currency_id': self.env.ref('base.EUR').id})
+        eur_pricelist = self.env['product.pricelist'].create({'name': 'Test EUR Pricelist', 'currency_id': self.env.ref('base.EUR').id})
         sale_journal = self.env['account.journal'].create({
             'name': 'PoS Sale EUR',
             'type': 'sale',
@@ -924,7 +920,6 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
            'amount_total': untax + atax,
            'creation_date': fields.Datetime.to_string(fields.Datetime.now()),
            'fiscal_position_id': False,
-           'pricelist_id': self.pos_config.available_pricelist_ids[0].id,
            'lines': [[0,
              0,
              {'discount': 0,
@@ -1041,7 +1036,7 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
             'amount_total': untax+tax,
             'amount_paid': 0,
             'amount_return': 0,
-            'to_ship': True,
+            'shipping_date': fields.Date.today(),
         })
 
         context_make_payment = {
@@ -1136,7 +1131,6 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
            'amount_total': 750,
            'creation_date': fields.Datetime.to_string(fields.Datetime.now()),
            'fiscal_position_id': False,
-           'pricelist_id': self.pos_config.available_pricelist_ids[0].id,
            'lines': [[0, 0, {
                 'discount': 0,
                 'id': 42,
@@ -1196,7 +1190,6 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
                     'amount_total': untax + atax,
                     'creation_date': fields.Datetime.to_string(fields.Datetime.now()),
                     'fiscal_position_id': False,
-                    'pricelist_id': self.pos_config.available_pricelist_ids[0].id,
                     'lines': [(0, 0, {
                         'discount': 0,
                         'id': 42,
@@ -1278,7 +1271,10 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
            'amount_total': 750,
            'creation_date': fields.Datetime.to_string(fields.Datetime.now()),
            'fiscal_position_id': False,
+<<<<<<< HEAD
            'pricelist_id': self.pos_config.available_pricelist_ids[0].id,
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
            'lines': [[0, 0, {
                 'discount': 0,
                 'id': 42,
@@ -1378,6 +1374,7 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
         refund_payment.with_context(**payment_context).check()
         current_session.action_pos_session_closing_control()
         self.assertEqual(refund.picking_ids.move_line_ids_without_package.owner_id.id, order.picking_ids.move_line_ids_without_package.owner_id.id, "The owner of the refund is not the same as the owner of the original order")
+<<<<<<< HEAD
 
     def test_journal_entries_category_without_account(self):
         #create a new product category without account
@@ -1430,3 +1427,5 @@ class TestPointOfSaleFlow(TestPointOfSaleCommon):
         order_payment.with_context(**payment_context).check()
         current_session.action_pos_session_closing_control()
         self.assertEqual(current_session.move_id.line_ids[0].account_id.id, account.id)
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

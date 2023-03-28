@@ -39,6 +39,7 @@ up a management by affair.
         'views/project_sharing_views.xml',
         'views/rating_rating_views.xml',
         'views/project_update_views.xml',
+        'wizard/hr_employee_delete_wizard_views.xml',
     ],
     'demo': [
         'data/hr_timesheet_demo.xml',
@@ -54,6 +55,10 @@ up a management by affair.
             'hr_timesheet/static/tests/**/*',
         ],
         'project.webclient': [
+<<<<<<< HEAD
+=======
+            'hr_timesheet/static/src/services/**/*',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'hr_timesheet/static/src/components/**/*',
             'hr_timesheet/static/src/scss/timesheets_task_form.scss'
         ],

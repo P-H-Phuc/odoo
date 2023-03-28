@@ -35,6 +35,7 @@
         'views/snippets/snippets.xml',
         'views/snippets/s_title.xml',
         'views/snippets/s_cover.xml',
+        'views/snippets/s_text_cover.xml',
         'views/snippets/s_text_image.xml',
         'views/snippets/s_image_text.xml',
         'views/snippets/s_banner.xml',
@@ -197,7 +198,6 @@
         ],
         'web.qunit_suite_tests': [
             'website/static/tests/dashboard_tests.js',
-            'website/static/tests/website_tests.js',
             'website/static/tests/redirect_field_tests.js',
         ],
         'web.tests_assets': [
@@ -239,6 +239,7 @@
             'website/static/src/snippets/s_dynamic_snippet_carousel/options.js',
             'website/static/src/snippets/s_embed_code/options.js',
             'website/static/src/snippets/s_website_form/options.js',
+            'website/static/src/js/form_editor_registry.js',
             'website/static/src/xml/website_form.xml',
             'website/static/src/xml/website.editor.xml',
             'website/static/src/xml/website_form_editor.xml',
@@ -274,7 +275,6 @@
             'website/static/src/components/translator/translator.js',
             'website/static/src/components/translator/translator.scss',
             'website/static/src/components/translator/translator.xml',
-            'website/static/src/js/form_editor_registry.js',
             'website/static/src/js/new_content_form.js',
             'website/static/src/services/website_custom_menus.js',
             'website/static/src/js/tours/homepage.js',
@@ -286,6 +286,7 @@
 
             # Don't include dark mode files in light mode
             ('remove', 'website/static/src/components/dialog/*.dark.scss'),
+<<<<<<< HEAD
         ],
         'website.test_bundle': [
             '/web/static/lib/qweb/qweb2.js',
@@ -295,6 +296,8 @@
             '/web/static/src/boot.js',
             'http://test.external.link/javascript2.js',
             'http://test.external.link/style2.css',
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         ],
     },
     'license': 'LGPL-3',

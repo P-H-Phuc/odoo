@@ -6,7 +6,7 @@
       class="o-dropdown dropdown"
       t-att-class="props.class"
       t-attf-class="
-        {{ directionCaretClass || ''}}
+        {{ state.directionCaretClass || ''}}
         {{ state.open ? 'show' : ''}}
         {{ !showCaret ? 'o-dropdown--no-caret' : '' }}
       "
@@ -19,6 +19,7 @@
           {{props.togglerClass || ''}}
           {{parentDropdown ? 'dropdown-item' : ''}}
         "
+        t-att-disabled="props.disabled"
         t-on-click.stop="onTogglerClick"
         t-on-mouseenter="onTogglerMouseEnter"
         t-att-title="props.title"
@@ -32,10 +33,11 @@
       </button>
       <div
         t-if="state.open"
-        class="o-dropdown--menu dropdown-menu d-block"
+        t-attf-class="o-dropdown--menu dropdown-menu {{ props.menuDisplay }}"
         t-att-class="props.menuClass"
         role="menu"
         t-ref="menuRef"
+        t-on-scroll="props.onScroll"
       >
         <t t-slot="default" />
       </div>

@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-15 12:49+0000\n"
 "PO-Revision-Date: 2022-12-15 12:49+0000\n"
+=======
+"Project-Id-Version: Odoo Server saas~16.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-17 10:53+0000\n"
+"PO-Revision-Date: 2023-01-17 10:53+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -190,11 +197,14 @@ msgid "Background Image"
 msgstr ""
 
 #. module: pos_restaurant
+<<<<<<< HEAD
 #: model:product.template,name:pos_restaurant.pos_food_bacon_product_template
 msgid "Bacon Burger"
 msgstr ""
 
 #. module: pos_restaurant
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/pos_restaurant/static/src/xml/Screens/ProductScreen/ControlButtons/PrintBillButton.xml:0
 #, python-format
@@ -242,6 +252,7 @@ msgid "CANCELLED"
 msgstr ""
 
 #. module: pos_restaurant
+<<<<<<< HEAD
 #: model:product.template,name:pos_restaurant.pos_food_cheeseburger_product_template
 msgid "Cheese Burger"
 msgstr ""
@@ -252,6 +263,8 @@ msgid "Chicken Curry Sandwich"
 msgstr ""
 
 #. module: pos_restaurant
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/pos_restaurant/static/src/xml/Screens/FloorScreen/EditBar.xml:0
 #: code:addons/pos_restaurant/static/src/xml/Screens/FloorScreen/EditBar.xml:0
@@ -323,6 +336,7 @@ msgid "Display Name"
 msgstr ""
 
 #. module: pos_restaurant
+<<<<<<< HEAD
 #: model:pos.category,name:pos_restaurant.drinks
 msgid "Drinks"
 msgstr ""
@@ -335,6 +349,8 @@ msgid "Due to a connection error, the orders are not synchronized."
 msgstr ""
 
 #. module: pos_restaurant
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/pos_restaurant/static/src/xml/Screens/FloorScreen/EditBar.xml:0
 #: code:addons/pos_restaurant/static/src/xml/Screens/FloorScreen/EditBar.xml:0
@@ -415,11 +431,14 @@ msgid "Floors & Tables Map"
 msgstr ""
 
 #. module: pos_restaurant
+<<<<<<< HEAD
 #: model:pos.category,name:pos_restaurant.food
 msgid "Food"
 msgstr ""
 
 #. module: pos_restaurant
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/pos_restaurant/static/src/xml/Screens/ReceiptScreen/OrderReceipt.xml:0
 #, python-format
@@ -427,11 +446,14 @@ msgid "For convenience, we are providing the following gratuity calculations:"
 msgstr ""
 
 #. module: pos_restaurant
+<<<<<<< HEAD
 #: model:product.template,name:pos_restaurant.pos_food_funghi_product_template
 msgid "Funghi"
 msgstr ""
 
 #. module: pos_restaurant
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/pos_restaurant/static/src/xml/Screens/FloorScreen/EditBar.xml:0
 #: code:addons/pos_restaurant/static/src/xml/Screens/FloorScreen/EditBar.xml:0
@@ -537,13 +559,6 @@ msgid "Kitchen Printers"
 msgstr ""
 
 #. module: pos_restaurant
-#: model:ir.model.fields,field_description:pos_restaurant.field_restaurant_floor____last_update
-#: model:ir.model.fields,field_description:pos_restaurant.field_restaurant_printer____last_update
-#: model:ir.model.fields,field_description:pos_restaurant.field_restaurant_table____last_update
-msgid "Last Modified on"
-msgstr ""
-
-#. module: pos_restaurant
 #: model:ir.model.fields,field_description:pos_restaurant.field_restaurant_floor__write_uid
 #: model:ir.model.fields,field_description:pos_restaurant.field_restaurant_printer__write_uid
 #: model:ir.model.fields,field_description:pos_restaurant.field_restaurant_table__write_uid
@@ -646,6 +661,7 @@ msgstr ""
 
 #. module: pos_restaurant
 #. odoo-javascript
+<<<<<<< HEAD
 #: code:addons/pos_restaurant/static/src/js/Screens/ProductScreen/ControlButtons/PrintBillButton.js:0
 #, python-format
 msgid "Nothing to Print"
@@ -653,6 +669,8 @@ msgstr ""
 
 #. module: pos_restaurant
 #. odoo-javascript
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/pos_restaurant/static/src/js/Screens/FloorScreen/FloorScreen.js:0
 #, python-format
 msgid "Number of Seats ?"
@@ -660,6 +678,7 @@ msgstr ""
 
 #. module: pos_restaurant
 #. odoo-javascript
+<<<<<<< HEAD
 #: code:addons/pos_restaurant/static/src/js/ChromeWidgets/TicketButton.js:0
 #: code:addons/pos_restaurant/static/src/js/Screens/FloorScreen/FloorScreen.js:0
 #: code:addons/pos_restaurant/static/src/js/Screens/FloorScreen/FloorScreen.js:0
@@ -672,6 +691,8 @@ msgstr ""
 
 #. module: pos_restaurant
 #. odoo-javascript
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/pos_restaurant/static/src/xml/Screens/BillScreen.xml:0
 #, python-format
 msgid "Ok"
@@ -734,6 +755,7 @@ msgid "PRO FORMA"
 msgstr ""
 
 #. module: pos_restaurant
+<<<<<<< HEAD
 #: model:product.template,name:pos_restaurant.pos_food_4formaggi_product_template
 msgid "Pasta 4 formaggi "
 msgstr ""
@@ -744,6 +766,8 @@ msgid "Pasta Bolognese"
 msgstr ""
 
 #. module: pos_restaurant
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/pos_restaurant/static/src/xml/Screens/SplitBillScreen/SplitBillScreen.xml:0
 #, python-format
@@ -915,7 +939,7 @@ msgstr ""
 
 #. module: pos_restaurant
 #: model_terms:ir.ui.view,arch_db:pos_restaurant.res_config_settings_view_form
-msgid "Restaurant &amp; Bar"
+msgid "Restaurant & Bar"
 msgstr ""
 
 #. module: pos_restaurant
@@ -975,11 +999,14 @@ msgid "Round Shape"
 msgstr ""
 
 #. module: pos_restaurant
+<<<<<<< HEAD
 #: model:product.template,name:pos_restaurant.pos_food_chirashi_product_template
 msgid "Salmon and Avocado"
 msgstr ""
 
 #. module: pos_restaurant
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/pos_restaurant/static/src/xml/Screens/FloorScreen/EditBar.xml:0
 #: code:addons/pos_restaurant/static/src/xml/Screens/FloorScreen/EditBar.xml:0
@@ -1031,11 +1058,14 @@ msgid "Skip line when sending ticket to kitchen printers."
 msgstr ""
 
 #. module: pos_restaurant
+<<<<<<< HEAD
 #: model:product.template,name:pos_restaurant.pos_food_tuna_product_template
 msgid "Spicy Tuna Sandwich"
 msgstr ""
 
 #. module: pos_restaurant
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/pos_restaurant/static/src/xml/Screens/ProductScreen/ControlButtons/SplitBillButton.xml:0
 #, python-format
@@ -1171,6 +1201,7 @@ msgstr ""
 
 #. module: pos_restaurant
 #. odoo-javascript
+<<<<<<< HEAD
 #: code:addons/pos_restaurant/static/src/js/Screens/ProductScreen/ControlButtons/PrintBillButton.js:0
 #, python-format
 msgid "There are no order lines"
@@ -1178,6 +1209,8 @@ msgstr ""
 
 #. module: pos_restaurant
 #. odoo-javascript
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/pos_restaurant/static/src/xml/Screens/FloorScreen/FloorScreen.xml:0
 #, python-format
 msgid "This floor has no tables yet, use the"
@@ -1248,6 +1281,7 @@ msgstr ""
 
 #. module: pos_restaurant
 #. odoo-javascript
+<<<<<<< HEAD
 #: code:addons/pos_restaurant/static/src/js/Screens/FloorScreen/FloorScreen.js:0
 #, python-format
 msgid "Unable to change background color"
@@ -1290,6 +1324,8 @@ msgstr ""
 
 #. module: pos_restaurant
 #. odoo-javascript
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/pos_restaurant/static/src/js/Screens/TipScreen.js:0
 #, python-format
 msgid "Unsynced order"

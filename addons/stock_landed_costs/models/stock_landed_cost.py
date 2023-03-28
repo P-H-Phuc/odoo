@@ -146,9 +146,9 @@ class StockLandedCost(models.Model):
                     })
                     linked_layer.remaining_value += cost_to_add
                     valuation_layer_ids.append(valuation_layer.id)
-                # Update the AVCO
+                # Update the AVCO/FIFO
                 product = line.move_id.product_id
-                if product.cost_method == 'average':
+                if product.cost_method in ['average', 'fifo']:
                     cost_to_add_byproduct[product] += cost_to_add
                 # Products with manual inventory valuation are ignored because they do not need to create journal entries.
                 if product.valuation != "real_time":
@@ -322,11 +322,11 @@ class StockLandedCostLine(models.Model):
         SPLIT_METHOD,
         string='Split Method',
         required=True,
-        help="Equal : Cost will be equally divided.\n"
-             "By Quantity : Cost will be divided according to product's quantity.\n"
-             "By Current cost : Cost will be divided according to product's current cost.\n"
-             "By Weight : Cost will be divided depending on its weight.\n"
-             "By Volume : Cost will be divided depending on its volume.")
+        help="Equal: Cost will be equally divided.\n"
+             "By Quantity: Cost will be divided according to product's quantity.\n"
+             "By Current cost: Cost will be divided according to product's current cost.\n"
+             "By Weight: Cost will be divided depending on its weight.\n"
+             "By Volume: Cost will be divided depending on its volume.")
     account_id = fields.Many2one('account.account', 'Account', domain=[('deprecated', '=', False)])
     currency_id = fields.Many2one('res.currency', related='cost_id.currency_id')
 

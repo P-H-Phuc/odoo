@@ -96,6 +96,7 @@ options.registry.StepsConnector = options.Class.extend({
         const type = possibleTypes.find(possibleType => possibleType && this.$target[0].classList.contains(possibleType)) || '';
         // As the connectors are only visible in desktop, we can ignore the
         // steps that are only visible in mobile.
+<<<<<<< HEAD
         // TODO master: rename the variable to stepsEls.
         const steps = this.$target[0].querySelectorAll('.s_process_step:not(.o_snippet_desktop_invisible)');
         const nbBootstrapCols = 12;
@@ -111,6 +112,22 @@ options.registry.StepsConnector = options.Class.extend({
             const nextStepOffset = this._getClassSuffixedInteger(steps[i + 1], 'offset-lg-');
             const stepPaddingTop = this._getClassSuffixedInteger(steps[i], 'pt');
             const nextStepPaddingTop = this._getClassSuffixedInteger(steps[i + 1], 'pt');
+=======
+        const stepsEls = this.$target[0].querySelectorAll('.s_process_step:not(.o_snippet_desktop_invisible)');
+        const nbBootstrapCols = 12;
+        let colsInRow = 0;
+
+        for (let i = 0; i < stepsEls.length - 1; i++) {
+            const connectorEl = stepsEls[i].querySelector('.s_process_step_connector');
+            const stepMainElementRect = this._getStepMainElementRect(stepsEls[i]);
+            const nextStepMainElementRect = this._getStepMainElementRect(stepsEls[i + 1]);
+            const stepSize = this._getClassSuffixedInteger(stepsEls[i], 'col-lg-');
+            const nextStepSize = this._getClassSuffixedInteger(stepsEls[i + 1], 'col-lg-');
+            const stepOffset = this._getClassSuffixedInteger(stepsEls[i], 'offset-lg-');
+            const nextStepOffset = this._getClassSuffixedInteger(stepsEls[i + 1], 'offset-lg-');
+            const stepPaddingTop = this._getClassSuffixedInteger(stepsEls[i], 'pt');
+            const nextStepPaddingTop = this._getClassSuffixedInteger(stepsEls[i + 1], 'pt');
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
             connectorEl.style.left = `calc(50% + ${stepMainElementRect.width / 2}px)`;
             connectorEl.style.height = `${stepMainElementRect.height}px`;
@@ -171,6 +188,7 @@ options.registry.StepsConnector = options.Class.extend({
         return {};
     },
     /**
+<<<<<<< HEAD
      * This function is deprecated and will be removed in master.
      * Returns the size of the step, as a number of bootstrap lg-col.
      *
@@ -198,6 +216,8 @@ options.registry.StepsConnector = options.Class.extend({
 
     },
     /**
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
      * Returns the svg path based on the type of connector.
      *
      * @private

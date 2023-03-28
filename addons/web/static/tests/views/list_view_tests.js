@@ -10,7 +10,11 @@ import { uiService } from "@web/core/ui/ui_service";
 import { getNextTabableElement } from "@web/core/utils/ui";
 import { session } from "@web/session";
 import { FloatField } from "@web/views/fields/float/float_field";
+<<<<<<< HEAD
 import { TextField } from "@web/views/fields/text/text_field";
+=======
+import { textField } from "@web/views/fields/text/text_field";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { ListController } from "@web/views/list/list_controller";
 import { DynamicRecordList, DynamicGroupList } from "@web/views/relational_model";
 import { actionService } from "@web/webclient/actions/action_service";
@@ -61,7 +65,11 @@ import {
     validateSearch,
 } from "../search/helpers";
 import { createWebClient, doAction, loadState } from "../webclient/helpers";
+<<<<<<< HEAD
 import { makeView, setupViewRegistries } from "./helpers";
+=======
+import { makeView, makeViewInDialog, setupViewRegistries } from "./helpers";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 import { Component, onWillStart, xml } from "@odoo/owl";
 
@@ -140,6 +148,11 @@ QUnit.module("Views", (hooks) => {
                                 ["event", "Event"],
                             ],
                         },
+                        properties: {
+                            type: "properties",
+                            definition_record: "m2o",
+                            definition_record_field: "definitions",
+                        },
                     },
                     records: [
                         {
@@ -157,6 +170,7 @@ QUnit.module("Views", (hooks) => {
                             date: "2017-01-25",
                             datetime: "2016-12-12 10:55:05",
                             reference: "bar,1",
+                            properties: [],
                         },
                         {
                             id: 2,
@@ -168,6 +182,7 @@ QUnit.module("Views", (hooks) => {
                             m2m: [1, 2, 3],
                             amount: 500,
                             reference: "res_currency,1",
+                            properties: [],
                         },
                         {
                             id: 3,
@@ -179,6 +194,7 @@ QUnit.module("Views", (hooks) => {
                             m2m: [],
                             amount: 300,
                             reference: "res_currency,2",
+                            properties: [],
                         },
                         {
                             id: 4,
@@ -189,15 +205,18 @@ QUnit.module("Views", (hooks) => {
                             m2o: 1,
                             m2m: [1],
                             amount: 0,
+                            properties: [],
                         },
                     ],
                 },
                 bar: {
-                    fields: {},
+                    fields: {
+                        definitions: { type: "properties_definitions" },
+                    },
                     records: [
-                        { id: 1, display_name: "Value 1" },
-                        { id: 2, display_name: "Value 2" },
-                        { id: 3, display_name: "Value 3" },
+                        { id: 1, display_name: "Value 1", definitions: [] },
+                        { id: 2, display_name: "Value 2", definitions: [] },
+                        { id: 3, display_name: "Value 3", definitions: [] },
                     ],
                 },
                 res_currency: {
@@ -267,6 +286,158 @@ QUnit.module("Views", (hooks) => {
         assert.isVisible(target.querySelector(".o_list_button_add"));
         assert.isNotVisible(target.querySelector(".o_list_button_save"));
         assert.isNotVisible(target.querySelector(".o_list_button_discard"));
+    });
+
+    QUnit.test("select record range with shift click", async function (assert) {
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: '<tree><field name="foo"/><field name="int_field"/></tree>',
+        });
+        await click(target.querySelectorAll(".o_data_row .o_list_record_selector input")[0]);
+        assert.containsOnce(target.querySelector(".o_cp_buttons"), ".o_list_selection_box");
+        assert.containsNone(target.querySelector(".o_list_selection_box"), ".o_list_select_domain");
+        assert.strictEqual(
+            target.querySelector(".o_list_selection_box").textContent.trim(),
+            "1 selected"
+        );
+        assert.strictEqual(
+            document.querySelectorAll(".o_data_row .o_list_record_selector input:checked").length,
+            1
+        );
+
+        // shift click the 4th record to have 0-1-2-3 toggled
+        await triggerEvents(
+            target.querySelectorAll(".o_data_row .o_list_record_selector input")[3],
+            null,
+            [["keydown", { key: "Shift", shiftKey: true }], "click"]
+        );
+
+        assert.strictEqual(
+            target.querySelector(".o_list_selection_box").textContent.trim(),
+            "4 selected  Unselect all"
+        );
+        assert.strictEqual(
+            document.querySelectorAll(".o_data_row .o_list_record_selector input:checked").length,
+            4
+        );
+
+        // shift click the 3rd record to untoggle 2-3
+        await triggerEvents(
+            target.querySelectorAll(".o_data_row .o_list_record_selector input")[2],
+            null,
+            [["keydown", { key: "Shift", shiftKey: true }], "click"]
+        );
+        assert.strictEqual(
+            target.querySelector(".o_list_selection_box").textContent.trim(),
+            "2 selected  Unselect all"
+        );
+        assert.strictEqual(
+            document.querySelectorAll(".o_data_row .o_list_record_selector input:checked").length,
+            2
+        );
+
+        // shift click the 1st record to untoggle 0-1
+        await triggerEvents(
+            target.querySelectorAll(".o_data_row .o_list_record_selector input")[0],
+            null,
+            [["keydown", { key: "Shift", shiftKey: true }], "click"]
+        );
+        assert.strictEqual(
+            document.querySelectorAll(".o_data_row .o_list_record_selector input:checked").length,
+            0
+        );
+    });
+
+    QUnit.test("select record range with shift+space", async function (assert) {
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: '<tree><field name="foo"/><field name="int_field"/></tree>',
+        });
+
+        // Go to the first checkbox and check it
+        triggerHotkey("ArrowDown");
+        triggerHotkey("ArrowDown");
+        await nextTick();
+        let checkbox = target.querySelector(
+            ".o_data_row:nth-child(1) .o_list_record_selector input"
+        );
+        assert.strictEqual(document.activeElement, checkbox);
+        await click(checkbox);
+        assert.ok(checkbox.checked);
+
+        // Go to the fourth checkbox and shift+space
+        triggerHotkey("ArrowDown");
+        triggerHotkey("ArrowDown");
+        triggerHotkey("ArrowDown");
+        await nextTick();
+        checkbox = target.querySelector(".o_data_row:nth-child(4) .o_list_record_selector input");
+        assert.strictEqual(document.activeElement, checkbox);
+        assert.ok(!checkbox.checked);
+        await triggerEvents(document.activeElement, null, [
+            ["keydown", { key: "Shift", shiftKey: true }],
+            ["keydown", { key: " ", shiftKey: true }],
+        ]);
+        // focus is on the input and not in the td cell
+        assert.strictEqual(document.activeElement.tagName, "INPUT");
+
+        // Check that all checkbox is checked
+        for (let i = 1; i < 5; i++) {
+            checkbox = target.querySelector(
+                `.o_data_row:nth-child(${i}) .o_list_record_selector input`
+            );
+            assert.ok(checkbox.checked);
+        }
+    });
+
+    QUnit.test("expand range of checkbox with shift+arrow", async function (assert) {
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: '<tree><field name="foo"/><field name="int_field"/></tree>',
+        });
+
+        // Go to the first checkbox and check it
+        triggerHotkey("ArrowDown");
+        triggerHotkey("ArrowDown");
+        await nextTick();
+        let checkbox = target.querySelector(
+            ".o_data_row:nth-child(1) .o_list_record_selector input"
+        );
+        assert.strictEqual(document.activeElement, checkbox);
+        await click(checkbox);
+        assert.ok(checkbox.checked);
+
+        // expand the checkbox with arrowdown
+        await triggerEvent(document.activeElement, null, "keydown", {
+            key: "Shift",
+            shiftKey: true,
+        });
+        triggerHotkey("shift+ArrowDown");
+        triggerHotkey("shift+ArrowDown");
+        triggerHotkey("shift+ArrowDown");
+        triggerHotkey("shift+ArrowUp");
+        await nextTick();
+        await triggerEvent(document.activeElement, null, "keyup", {
+            key: "Shift",
+            shiftKey: false,
+        });
+
+        checkbox = target.querySelector(".o_data_row:nth-child(3) .o_list_record_selector input");
+        assert.strictEqual(document.activeElement, checkbox);
+        assert.ok(checkbox.checked);
+
+        // Check that the three checkbox are checked
+        for (let i = 1; i < 4; i++) {
+            checkbox = target.querySelector(
+                `.o_data_row:nth-child(${i}) .o_list_record_selector input`
+            );
+            assert.ok(checkbox.checked);
+        }
     });
 
     QUnit.test("list with class", async function (assert) {
@@ -679,7 +850,7 @@ QUnit.module("Views", (hooks) => {
         );
         cpButtons = getButtons(target);
         assert.containsOnce(cpButtons[0], 'button[name="x"]');
-        assert.hasClass(cpButtons[0].querySelector('button[name="x"]'), "btn btn-secondary");
+        assert.hasClass(cpButtons[0].querySelector('button[name="x"]'), "btn btn-secondary plaf");
         assert.containsOnce(cpButtons[0], ".o_list_selection_box");
         assert.strictEqual(
             cpButtons[0].querySelector('button[name="x"]').nextElementSibling,
@@ -695,6 +866,91 @@ QUnit.module("Views", (hooks) => {
         assert.containsNone(cpButtons[0], ".o_list_selection_box");
         assert.containsNone(cpButtons[0], 'button[name="y"]');
     });
+
+    QUnit.test(
+        "list view: action button in controlPanel with display='always'",
+        async function (assert) {
+            await makeView({
+                type: "list",
+                resModel: "foo",
+                serverData,
+                arch: `
+                <tree>
+                    <header>
+                        <button name="display" type="object" class="display" string="display" display="always"/>
+                        <button name="default-selection" type="object" class="default-selection" string="default-selection"/>
+                    </header>
+                    <field name="foo" />
+                </tree>`,
+            });
+            let cpButtons = getButtons(target)[0];
+            assert.deepEqual(
+                [...cpButtons.querySelectorAll("button")].map((button) =>
+                    button.textContent.trim()
+                ),
+                ["New", "display", ""]
+            );
+
+            await click(
+                target.querySelector('.o_data_row .o_list_record_selector input[type="checkbox"]')
+            );
+            cpButtons = getButtons(target)[0];
+            assert.deepEqual(
+                [...cpButtons.querySelectorAll("button")].map((button) =>
+                    button.textContent.trim()
+                ),
+                ["New", "display", "default-selection"]
+            );
+
+            await click(
+                target.querySelector('.o_data_row .o_list_record_selector input[type="checkbox"]')
+            );
+            cpButtons = getButtons(target)[0];
+            assert.deepEqual(
+                [...cpButtons.querySelectorAll("button")].map((button) =>
+                    button.textContent.trim()
+                ),
+                ["New", "display", ""]
+            );
+        }
+    );
+
+    QUnit.test(
+        "list view: give a context dependent on the current context to a header button",
+        async function (assert) {
+            const list = await makeView({
+                type: "list",
+                resModel: "foo",
+                serverData,
+                arch: `
+                <tree>
+                    <header>
+                        <button name="toDo" type="object" string="toDo" display="always" context="{'b': context.get('a')}"/>
+                    </header>
+                    <field name="foo" />
+                </tree>`,
+                context: {
+                    a: "yop",
+                },
+            });
+
+            patchWithCleanup(list.env.services.action, {
+                doActionButton: (action) => {
+                    assert.step("doActionButton");
+                    assert.deepEqual(action.buttonContext, {
+                        active_domain: [],
+                        active_ids: [],
+                        active_model: "foo",
+                        b: "yop",
+                    });
+                },
+            });
+
+            const cpButtons = getButtons(target)[0];
+            await click(cpButtons.querySelectorAll("button")[1]);
+            assert.verifySteps(["doActionButton"]);
+        }
+    );
 
     QUnit.test(
         "list view: action button executes action on click: buttons are disabled and re-enabled",
@@ -930,15 +1186,21 @@ QUnit.module("Views", (hooks) => {
 
     QUnit.test("column names (noLabel, label, string and default)", async function (assert) {
         const fieldRegistry = registry.category("fields");
-        const CharField = fieldRegistry.get("char");
+        const charField = fieldRegistry.get("char");
 
-        class NoLabelCharField extends CharField {}
-        NoLabelCharField.noLabel = true;
-        fieldRegistry.add("nolabel_char", NoLabelCharField);
+        class NoLabelCharField extends charField.component {}
+        fieldRegistry.add("nolabel_char", {
+            ...charField,
+            component: NoLabelCharField,
+            noLabel: true,
+        });
 
-        class LabelCharField extends CharField {}
-        LabelCharField.label = "Some static label";
-        fieldRegistry.add("label_char", LabelCharField);
+        class LabelCharField extends charField.component {}
+        fieldRegistry.add("label_char", {
+            ...charField,
+            component: LabelCharField,
+            label: "Some static label",
+        });
 
         await makeView({
             type: "list",
@@ -1090,10 +1352,10 @@ QUnit.module("Views", (hooks) => {
                     <field name="foo" invisible="1"/>
                     <field name="int_field"/>
                 </tree>`,
-            mockRPC(route, args) {
-                assert.step(args.method);
-                if (args.method === "create") {
-                    assert.deepEqual(args.args, [{ int_field: 1 }]);
+            mockRPC(_, { args, method }) {
+                assert.step(method);
+                if (method === "create") {
+                    assert.deepEqual(args[0], [{ int_field: 1 }]);
                 }
             },
         });
@@ -2024,20 +2286,16 @@ QUnit.module("Views", (hooks) => {
         assert.expect(6);
 
         const listView = registry.category("views").get("list");
-        class ListViewCustom extends listView.Controller {
+        class CustomListController extends listView.Controller {
             openRecord(record) {
                 assert.step("openRecord");
                 assert.strictEqual(record.resId, 2);
             }
         }
-        registry.category("views").add(
-            "list",
-            {
-                ...listView,
-                Controller: ListViewCustom,
-            },
-            { force: true }
-        );
+        registry.category("views").add("custom_list", {
+            ...listView,
+            Controller: CustomListController,
+        });
 
         serverData.models.foo.fields.foo.sortable = true;
 
@@ -2045,7 +2303,7 @@ QUnit.module("Views", (hooks) => {
             type: "list",
             resModel: "foo",
             serverData,
-            arch: '<tree><field name="foo"/></tree>',
+            arch: '<tree js_class="custom_list"><field name="foo"/></tree>',
         });
 
         await click(target.querySelector("tr:nth-child(2) td:not(.o_list_record_selector)"));
@@ -2059,6 +2317,140 @@ QUnit.module("Views", (hooks) => {
         );
         assert.verifySteps(["openRecord", "openRecord"]);
     });
+
+    QUnit.test(
+        "execute an action before and after each valid save in a list view",
+        async function (assert) {
+            const listView = registry.category("views").get("list");
+            class CustomListController extends listView.Controller {
+                async onRecordSaved(record) {
+                    assert.step(`onRecordSaved ${record.resId}`);
+                }
+
+                async onWillSaveRecord(record) {
+                    assert.step(`onWillSaveRecord ${record.resId}`);
+                }
+            }
+            registry.category("views").add(
+                "custom_list",
+                {
+                    ...listView,
+                    Controller: CustomListController,
+                },
+                { force: true }
+            );
+
+            await makeView({
+                type: "list",
+                resModel: "foo",
+                serverData,
+                arch: '<tree js_class="custom_list" editable="top"><field name="foo" required="1"/></tree>',
+                mockRPC: async (route, args) => {
+                    if (args.method === "write") {
+                        assert.step(`write ${args.args[0]}`);
+                    }
+                },
+            });
+
+            await click(target.querySelector(".o_data_cell"));
+            await editInput(target, "[name='foo'] input", "");
+            await click(target, ".o_list_view");
+            assert.verifySteps([]);
+
+            await editInput(target, "[name='foo'] input", "YOLO");
+            await click(target, ".o_list_view");
+            assert.verifySteps(["onWillSaveRecord 1", "write 1", "onRecordSaved 1"]);
+        }
+    );
+
+    QUnit.test(
+        "execute an action before and after each valid save in a grouped list view",
+        async function (assert) {
+            const listView = registry.category("views").get("list");
+            class CustomListController extends listView.Controller {
+                async onRecordSaved(record) {
+                    assert.step(`onRecordSaved ${record.resId}`);
+                }
+
+                async onWillSaveRecord(record) {
+                    assert.step(`onWillSaveRecord ${record.resId}`);
+                }
+            }
+            registry.category("views").add("custom_list", {
+                ...listView,
+                Controller: CustomListController,
+            });
+
+            await makeView({
+                type: "list",
+                resModel: "foo",
+                serverData,
+                arch: '<tree js_class="custom_list" editable="top" expand="1"><field name="foo" required="1"/></tree>',
+                groupBy: ["bar"],
+                mockRPC: async (route, args) => {
+                    if (args.method === "write") {
+                        assert.step(`write ${args.args[0]}`);
+                    }
+                },
+            });
+
+            await click(target.querySelector(".o_data_cell[name='foo']"));
+            await editInput(target, "[name='foo'] input", "");
+            await click(target, ".o_list_view");
+            assert.verifySteps([]);
+
+            await editInput(target, "[name='foo'] input", "YOLO");
+            await click(target, ".o_list_view");
+            assert.verifySteps(["onWillSaveRecord 4", "write 4", "onRecordSaved 4"]);
+        }
+    );
+
+    QUnit.test(
+        "don't exec a valid save with onWillSaveRecord in a list view",
+        async function (assert) {
+            const listView = registry.category("views").get("list");
+            class ListViewCustom extends listView.Controller {
+                async onRecordSaved(record) {
+                    throw new Error("should not execute onRecordSaved");
+                }
+
+                async onWillSaveRecord(record) {
+                    assert.step(`onWillSaveRecord ${record.resId}`);
+                    return false;
+                }
+            }
+            registry.category("views").add(
+                "list",
+                {
+                    ...listView,
+                    Controller: ListViewCustom,
+                },
+                { force: true }
+            );
+
+            await makeView({
+                type: "list",
+                resModel: "foo",
+                serverData,
+                arch: '<tree editable="top"><field name="foo" required="1"/></tree>',
+                mockRPC: async (route, args) => {
+                    if (args.method === "write") {
+                        throw new Error("should not save the record");
+                    }
+                },
+            });
+
+            await click(target.querySelector(".o_data_cell"));
+            await editInput(target, "[name='foo'] input", "");
+            await click(target, ".o_list_view");
+            assert.verifySteps([]);
+
+            await click(target.querySelector(".o_data_cell"));
+            await editInput(target, "[name='foo'] input", "YOLO");
+            await click(target, ".o_list_view");
+            assert.verifySteps(["onWillSaveRecord 1"]);
+        }
+    );
 
     QUnit.test("action/type attributes on tree arch, type='object'", async (assert) => {
         const list = await makeView({
@@ -2664,7 +3056,7 @@ QUnit.module("Views", (hooks) => {
         assert.containsNone(target.querySelector(".o_list_selection_box"), ".o_list_select_domain");
         assert.strictEqual(
             target.querySelector(".o_list_selection_box").textContent.trim(),
-            "4 selected"
+            "4 selected  Unselect all"
         );
 
         // unselect a record
@@ -2673,7 +3065,18 @@ QUnit.module("Views", (hooks) => {
         assert.containsNone(target.querySelector(".o_list_selection_box"), ".o_list_select_domain");
         assert.strictEqual(
             target.querySelector(".o_list_selection_box").textContent.trim(),
-            "3 selected"
+            "3 selected  Unselect all"
+        );
+        await click(target.querySelector(".o_list_unselect_all"));
+        assert.containsNone(
+            target,
+            ".o_list_selection_box",
+            "selection options are no longer visible"
+        );
+        assert.containsNone(
+            target,
+            ".o_data_row .o_list_record_selector input:checked",
+            "no records should be selected"
         );
     });
 
@@ -2703,7 +3106,7 @@ QUnit.module("Views", (hooks) => {
         assert.containsOnce(target.querySelector(".o_list_selection_box"), ".o_list_select_domain");
         assert.strictEqual(
             target.querySelector(".o_list_selection_box").textContent.replace(/\s+/g, " ").trim(),
-            "3 selected Select all 4"
+            "3 selected Select all 4 Unselect all"
         );
 
         // select all domain
@@ -2711,7 +3114,13 @@ QUnit.module("Views", (hooks) => {
         assert.containsOnce(target.querySelector(".o_cp_buttons"), ".o_list_selection_box");
         assert.strictEqual(
             target.querySelector(".o_list_selection_box").textContent.trim(),
-            "All 4 selected"
+            "All 4 selected Unselect all"
+        );
+        await click(target.querySelector(".o_list_unselect_all"));
+        assert.containsNone(
+            target,
+            ".o_list_selection_box",
+            "selection options are no longer visible"
         );
     });
 
@@ -2744,7 +3153,7 @@ QUnit.module("Views", (hooks) => {
         assert.containsOnce(target.querySelector(".o_list_selection_box"), ".o_list_select_domain");
         assert.strictEqual(
             target.querySelector(".o_list_selection_box").textContent.replace(/\s+/g, " ").trim(),
-            "2 selected Select all 4"
+            "2 selected Select all 4 Unselect all"
         );
 
         // select all domain
@@ -2752,7 +3161,13 @@ QUnit.module("Views", (hooks) => {
         assert.containsOnce(target.querySelector(".o_cp_buttons"), ".o_list_selection_box");
         assert.strictEqual(
             target.querySelector(".o_list_selection_box").textContent.trim(),
-            "All 4 selected"
+            "All 4 selected Unselect all"
+        );
+        await click(target.querySelector(".o_list_unselect_all"));
+        assert.containsNone(
+            target,
+            ".o_list_selection_box",
+            "selection options are no longer visible"
         );
     });
 
@@ -2993,8 +3408,7 @@ QUnit.module("Views", (hooks) => {
             resModel: "foo",
             serverData,
             groupBy: ["m2o"],
-            arch:
-                '<tree editable="bottom"><field name="foo" /><field name="int_field" sum="Sum"/></tree>',
+            arch: '<tree editable="bottom"><field name="foo" /><field name="int_field" sum="Sum"/></tree>',
         });
         const groupHeaders = target.querySelectorAll(".o_group_header");
         assert.strictEqual(
@@ -3134,7 +3548,7 @@ QUnit.module("Views", (hooks) => {
         });
 
         assert.strictEqual(
-            target.querySelector('td[data-tooltip="Sum"]').innerText,
+            target.querySelector('span[data-tooltip="Sum"]').innerText,
             "32",
             "current total should be 32"
         );
@@ -3143,7 +3557,7 @@ QUnit.module("Views", (hooks) => {
         await editInput(target, "td.o_data_cell input", "15");
 
         assert.strictEqual(
-            target.querySelector('td[data-tooltip="Sum"]').innerText,
+            target.querySelector('span[data-tooltip="Sum"]').innerText,
             "37",
             "current total should be 37"
         );
@@ -5124,6 +5538,111 @@ QUnit.module("Views", (hooks) => {
         );
     });
 
+<<<<<<< HEAD
+=======
+    QUnit.test("apply custom static action menu (archive)", async function (assert) {
+        // add active field on foo model and make all records active
+        serverData.models.foo.fields.active = { string: "Active", type: "boolean", default: true };
+
+        const listView = registry.category("views").get("list");
+        class CustomListController extends listView.Controller {
+            getStaticActionMenuItems() {
+                const menuItems = super.getStaticActionMenuItems();
+                menuItems.archive.callback = () => {
+                    assert.step("customArchive");
+                };
+                return menuItems;
+            }
+        }
+        registry.category("views").add("custom_list", {
+            ...listView,
+            Controller: CustomListController,
+        });
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree js_class="custom_list">
+                    <field name="foo"/>
+                </tree>`,
+            actionMenus: {},
+        });
+        assert.containsNone(target, "div.o_control_panel .o_cp_action_menus");
+
+        await click(target, "thead .o_list_record_selector input");
+        assert.containsOnce(target, "div.o_control_panel .o_cp_action_menus");
+
+        await toggleActionMenu(target);
+        await toggleMenuItem(target, "Archive");
+        assert.verifySteps(["customArchive"]);
+    });
+
+    QUnit.test("add custom static action menu", async function (assert) {
+        const listView = registry.category("views").get("list");
+        class CustomListController extends listView.Controller {
+            getStaticActionMenuItems() {
+                const menuItems = super.getStaticActionMenuItems();
+                menuItems.customAvailable = {
+                    isAvailable: () => true,
+                    description: "Custom Available",
+                    sequence: 35,
+                    callback: () => {
+                        assert.step("Custom Available");
+                    },
+                };
+                menuItems.customNotAvailable = {
+                    isAvailable: () => false,
+                    description: "Custom Not Available",
+                    callback: () => {
+                        assert.step("Custom Not Available");
+                    },
+                };
+                menuItems.customDefaultAvailable = {
+                    description: "Custom Default Available",
+                    callback: () => {
+                        assert.step("Custom Default Available");
+                    },
+                };
+                return menuItems;
+            }
+        }
+        registry.category("views").add("custom_list", {
+            ...listView,
+            Controller: CustomListController,
+        });
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree js_class="custom_list">
+                    <field name="foo"/>
+                </tree>`,
+            actionMenus: {},
+        });
+        assert.containsNone(target, "div.o_control_panel .o_cp_action_menus");
+
+        await click(target, "thead .o_list_record_selector input");
+        assert.containsOnce(target, "div.o_control_panel .o_cp_action_menus");
+
+        await toggleActionMenu(target);
+        assert.deepEqual(
+            getNodesTextContent(target.querySelectorAll(".o_cp_action_menus .dropdown-item")),
+            ["Custom Default Available", "Export", "Custom Available", "Delete"]
+        );
+
+        await toggleMenuItem(target, "Custom Available");
+        assert.verifySteps(["Custom Available"]);
+
+        await toggleActionMenu(target);
+        await toggleMenuItem(target, "Custom Default Available");
+        assert.verifySteps(["Custom Default Available"]);
+    });
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     QUnit.test(
         "grouped, update the count of the group (and ancestors) when a record is deleted",
         async function (assert) {
@@ -5640,6 +6159,55 @@ QUnit.module("Views", (hooks) => {
         await click(target, ".o_back_button");
     });
 
+    QUnit.test(
+        "Navigate between the list and kanban view using the command palette",
+        async (assert) => {
+            serverData.views = {
+                "foo,false,search": `<search />`,
+                "foo,false,list": `<list><field name="display_name" /></list>`,
+                "foo,false,kanban": `
+                <kanban class="o_kanban_test">
+                    <templates><t t-name="kanban-box">
+                        <div>
+                            <field name="foo"/>
+                        </div>
+                    </t></templates>
+                </kanban>`,
+            };
+            registry.category("command_categories").add("view_switcher", {});
+
+            const wc = await createWebClient({ serverData });
+            await doAction(wc, {
+                res_model: "foo",
+                type: "ir.actions.act_window",
+                views: [
+                    [false, "list"],
+                    [false, "kanban"],
+                ],
+            });
+            assert.containsOnce(target, ".o_cp_switch_buttons");
+            assert.containsN(target, ".o_switch_view", 2);
+            assert.containsOnce(target, ".o_list_view");
+
+            triggerHotkey("control+k");
+            await nextTick();
+            assert.containsOnce(target.querySelector(".o_command_category"), ".o_command");
+            let command = target.querySelector(".o_command_category .o_command");
+            assert.strictEqual(command.textContent, "Show Kanban view");
+
+            await click(command);
+            assert.containsOnce(target, ".o_kanban_view");
+
+            triggerHotkey("control+k");
+            await nextTick();
+            assert.containsOnce(target.querySelector(".o_command_category"), ".o_command");
+            command = target.querySelector(".o_command_category .o_command");
+            assert.strictEqual(command.textContent, "Show List view");
+            await click(command);
+            assert.containsOnce(target, ".o_list_view");
+        }
+    );
+
     QUnit.test("can sort records when clicking on header", async function (assert) {
         serverData.models.foo.fields.foo.sortable = true;
 
@@ -5829,6 +6397,7 @@ QUnit.module("Views", (hooks) => {
     QUnit.test("use default_order on editable tree: sort on demand", async function (assert) {
         serverData.models.foo.records[0].o2m = [1, 3];
         serverData.models.bar.fields = {
+            ...serverData.models.bar.fields,
             name: { string: "Name", type: "char", sortable: true },
         };
         serverData.models.bar.records[0].name = "Value 1";
@@ -5889,6 +6458,7 @@ QUnit.module("Views", (hooks) => {
         "use default_order on editable tree: sort on demand in page",
         async function (assert) {
             serverData.models.bar.fields = {
+                ...serverData.models.bar.fields,
                 name: { string: "Name", type: "char", sortable: true },
             };
 
@@ -9140,6 +9710,7 @@ QUnit.module("Views", (hooks) => {
         "grouped list with another grouped list parent, click unfold",
         async function (assert) {
             serverData.models.bar.fields = {
+                ...serverData.models.bar.fields,
                 cornichon: { string: "cornichon", type: "char" },
             };
 
@@ -10814,7 +11385,7 @@ QUnit.module("Views", (hooks) => {
             assert.strictEqual(
                 modalText,
                 "Among the 4 selected records, 2 are valid for this update. Are you sure you want to " +
-                    "perform the following update on those 2 records ? Field:int_fieldUpdate to:666"
+                    "perform the following update on those 2 records? Field:int_fieldUpdate to:666"
             );
             assert.strictEqual(
                 target.querySelector(".modal .o_modal_changes .o_field_widget").parentNode.style
@@ -11315,13 +11886,10 @@ QUnit.module("Views", (hooks) => {
 
     QUnit.test("editable list: edit many2one from external link", async function (assert) {
         serverData.views = {
-            "bar,false,form": `
-                <form string="Bar">
-                    <field name="display_name"/>
-                </form>`,
+            "bar,false,form": `<form><field name="display_name"/></form>`,
         };
 
-        await makeView({
+        await makeViewInDialog({
             arch: `
                 <tree editable="top" multi_edit="1">
                     <field name="m2o" open_target="new"/>
@@ -11336,7 +11904,8 @@ QUnit.module("Views", (hooks) => {
             type: "list",
         });
 
-        assert.containsNone(target, ".o_selected_row", "not in edit mode");
+        assert.containsOnce(target, ".o_dialog .o_list_view");
+        assert.containsNone(target, ".o_selected_row");
         await click(target.querySelector("thead .o_list_record_selector input"));
         await click(target.querySelector(".o_data_row .o_data_cell"));
         assert.containsOnce(target, ".o_selected_row", "in edit mode");
@@ -11344,23 +11913,24 @@ QUnit.module("Views", (hooks) => {
 
         // Clicking somewhere on the form dialog should not close it
         // and should not leave edit mode
-        assert.containsOnce(target, ".modal[role='dialog']");
+        assert.containsN(target, ".modal[role='dialog']", 2);
         await click(target.querySelector(".modal[role='dialog']"));
-        assert.containsOnce(target, ".modal[role='dialog']");
+        assert.containsN(target, ".modal[role='dialog']", 2);
         assert.containsOnce(target, ".o_selected_row", "in edit mode");
 
-        // Change the M2O value in the Form dialog
-        await editInput(target, ".modal input", "OOF");
-        await click(target.querySelector(".modal .o_form_button_save"));
-
+        // Change the M2O value in the Form dialog (will open a confirmation dialog)
+        await editInput(target.querySelectorAll(".modal")[1], "input", "OOF");
+        await click(target.querySelectorAll(".modal")[1], ".o_form_button_save");
+        assert.containsN(target, ".modal[role='dialog']", 3);
+        const confirmationDialog = target.querySelectorAll(".modal")[2];
         assert.strictEqual(
-            target.querySelector(".modal .o_field_widget[name=m2o]").innerText,
+            confirmationDialog.querySelector(".modal .o_field_widget[name=m2o]").innerText,
             "OOF",
             "Value of the m2o should be updated in the confirmation dialog"
         );
 
         // Close the confirmation dialog
-        await click(target.querySelector(".modal .btn-primary"));
+        await click(confirmationDialog, ".btn-primary");
 
         assert.strictEqual(
             target.querySelector(".o_data_cell").innerText,
@@ -11458,7 +12028,7 @@ QUnit.module("Views", (hooks) => {
         "editable form alongside html field: click out to unselect the row",
         async function (assert) {
             // FIXME WOWL hack: add back the text field as html field removed by web_editor html_field file
-            registry.category("fields").add("html", TextField, { force: true });
+            registry.category("fields").add("html", textField, { force: true });
 
             await makeView({
                 type: "form",
@@ -11692,49 +12262,6 @@ QUnit.module("Views", (hooks) => {
             4,
             "list view should still contain 4 records"
         );
-    });
-
-    QUnit.test('list view on a "noCache" model', async function (assert) {
-        const list = await makeView({
-            type: "list",
-            resModel: "foo",
-            serverData,
-            arch: `<tree editable="top"><field name="display_name"/></tree>`,
-            mockRPC(route, args) {
-                if (["name_create", "unlink", "write"].includes(args.method)) {
-                    assert.step(args.method);
-                }
-            },
-            actionMenus: {},
-        });
-
-        list.model.noCacheModels = list.model.noCacheModels.concat(["foo"]);
-        list.env.bus.on("CLEAR-CACHES", target, assert.step.bind(assert, "clear_cache"));
-
-        // create a new record
-        await click(target.querySelector(".o_list_button_add"));
-        await editInput(target, ".o_selected_row .o_field_widget input", "some value");
-        await clickSave(target);
-
-        // edit an existing record
-        await click(target.querySelector(".o_data_cell"));
-        await editInput(target, ".o_selected_row .o_field_widget input", "new value");
-        await click(target.querySelector(".o_list_button_save"));
-
-        // delete a record
-        await click(target.querySelector(".o_data_row .o_list_record_selector input"));
-        await toggleActionMenu(target);
-        await toggleMenuItem(target, "Delete");
-        await click(target.querySelector(".modal-footer .btn-primary"));
-
-        assert.verifySteps([
-            "name_create",
-            "clear_cache",
-            "write",
-            "clear_cache",
-            "unlink",
-            "clear_cache",
-        ]);
     });
 
     QUnit.test(
@@ -14479,9 +15006,9 @@ QUnit.module("Views", (hooks) => {
 
         const def = makeDeferred();
         const fieldRegistry = registry.category("fields");
-        const CharField = fieldRegistry.get("char");
+        const charField = fieldRegistry.get("char");
 
-        class AsyncCharField extends CharField {
+        class AsyncCharField extends charField.component {
             setup() {
                 super.setup();
                 onWillStart(async () => {
@@ -14490,7 +15017,7 @@ QUnit.module("Views", (hooks) => {
                 });
             }
         }
-        fieldRegistry.add("asyncwidget", AsyncCharField);
+        fieldRegistry.add("asyncwidget", { component: AsyncCharField });
 
         await makeView({
             type: "list",
@@ -14846,11 +15373,18 @@ QUnit.module("Views", (hooks) => {
         assert.strictEqual(widthsAfterResize[1], widthsAfterReorder[1]);
 
         // 3. Resize again, this time check sizes while dragging and after drop.
+<<<<<<< HEAD
         const drop = drag(resizeHandle, th3);
         assertAlmostEqual(th2.offsetWidth, widthsAfterReorder[1] + widthsAfterReorder[2] / 2);
 
         drop();
         await nextTick();
+=======
+        const { drop } = await drag(resizeHandle, th3);
+        assertAlmostEqual(th2.offsetWidth, widthsAfterReorder[1] + widthsAfterReorder[2] / 2);
+
+        await drop();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         assertAlmostEqual(th2.offsetWidth, widthsAfterReorder[1] + widthsAfterReorder[2] / 2);
     });
 
@@ -14963,7 +15497,7 @@ QUnit.module("Views", (hooks) => {
         assert.strictEqual(finalWidths[2], originalWidths[2]);
     });
 
-    QUnit.test("editable list: resize column headers with max-width", async function (assert) {
+    QUnit.test("editable list: resize column headers", async function (assert) {
         // This test will ensure that, on resize list header,
         // the resized element have the correct size and other elements are not resized
         serverData.models.foo.records[0].foo = "a".repeat(200);
@@ -14993,12 +15527,10 @@ QUnit.module("Views", (hooks) => {
 
         const thFinalWidth = th.getBoundingClientRect().width;
         const thNextFinalWidth = thNext.getBoundingClientRect().width;
-        // const thWidthDiff = thExpectedWidth - thFinalWidth;
 
-        assert.strictEqual(
-            Math.floor(thFinalWidth),
-            Math.floor(thExpectedWidth),
-            "Wrong width on resize"
+        assert.ok(
+            Math.abs(Math.floor(thFinalWidth) - Math.floor(thExpectedWidth)) <= 1,
+            `Wrong width on resize (final: ${thFinalWidth}, expected: ${thExpectedWidth})`
         );
         assert.strictEqual(
             Math.floor(thNextOriginalWidth),
@@ -15746,7 +16278,7 @@ QUnit.module("Views", (hooks) => {
         "selecting a row after another one containing a table within an html field should be the correct one",
         async function (assert) {
             // FIXME WOWL hack: add back the text field as html field removed by web_editor html_field file
-            registry.category("fields").add("html", TextField, { force: true });
+            registry.category("fields").add("html", textField, { force: true });
             serverData.models.foo.fields.html = { string: "HTML field", type: "html" };
             serverData.models.foo.records[0].html = `
                 <table class="table table-bordered">
@@ -16040,12 +16572,13 @@ QUnit.module("Views", (hooks) => {
     QUnit.test("fieldDependencies support for fields", async (assert) => {
         serverData.models.foo.records = [{ id: 1, int_field: 2 }];
 
-        class CustomField extends Component {}
-        CustomField.fieldDependencies = {
-            int_field: { type: "integer" },
+        const customField = {
+            component: class CustomField extends Component {
+                static template = xml`<span t-esc="props.record.data.int_field"/>`;
+            },
+            fieldDependencies: [{ name: "int_field", type: "integer" }],
         };
-        CustomField.template = xml`<span t-esc="props.record.data.int_field"/>`;
-        registry.category("fields").add("custom_field", CustomField);
+        registry.category("fields").add("custom_field", customField);
 
         await makeView({
             resModel: "foo",
@@ -16064,12 +16597,13 @@ QUnit.module("Views", (hooks) => {
     QUnit.test(
         "fieldDependencies support for fields: dependence on a relational field",
         async (assert) => {
-            class CustomField extends Component {}
-            CustomField.fieldDependencies = {
-                m2o: { type: "many2one", relation: "bar" },
+            const customField = {
+                component: class CustomField extends Component {
+                    static template = xml`<span t-esc="props.record.data.m2o[0]"/>`;
+                },
+                fieldDependencies: [{ name: "m2o", type: "many2one", relation: "bar" }],
             };
-            CustomField.template = xml`<span t-esc="props.record.data.m2o[0]"/>`;
-            registry.category("fields").add("custom_field", CustomField);
+            registry.category("fields").add("custom_field", customField);
 
             await makeView({
                 resModel: "foo",
@@ -16540,9 +17074,19 @@ QUnit.module("Views", (hooks) => {
     });
 
     QUnit.test("view widgets are rendered in list view", async function (assert) {
+<<<<<<< HEAD
         class TestWidget extends Component {}
         TestWidget.template = xml`<div class="test_widget" t-esc="props.record.data.bar"/>`;
         registry.category("view_widgets").add("test_widget", TestWidget);
+=======
+        class TestWidget extends Component {
+            static template = xml`<div class="test_widget" t-esc="props.record.data.bar"/>`;
+        }
+        const testWidget = {
+            component: TestWidget,
+        };
+        registry.category("view_widgets").add("test_widget", testWidget);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         await makeView({
             type: "list",
             resModel: "foo",
@@ -16593,17 +17137,29 @@ QUnit.module("Views", (hooks) => {
 
             await click(target.querySelectorAll(".o_data_cell")[0]);
             await nextTick();
+<<<<<<< HEAD
             assert.containsOnce(target, ".o_dialog_error");
 
             await click(target, ".o_dialog_error .btn-primary.o-default-button");
+=======
+            assert.containsOnce(target, ".o_error_dialog");
+
+            await click(target, ".o_error_dialog .btn-primary.o-default-button");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             assert.containsOnce(target, ".o_selected_row");
             assert.hasClass(target.querySelectorAll(".o_data_row")[1], "o_selected_row");
 
             await click(target.querySelectorAll(".o_data_cell")[0]);
             await nextTick();
+<<<<<<< HEAD
             assert.containsOnce(target, ".o_dialog_error");
 
             await click(target, ".o_dialog_error .btn-primary.o-default-button");
+=======
+            assert.containsOnce(target, ".o_error_dialog");
+
+            await click(target, ".o_error_dialog .btn-primary.o-default-button");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             assert.containsOnce(target, ".o_selected_row");
             assert.hasClass(target.querySelectorAll(".o_data_row")[1], "o_selected_row");
         }
@@ -16723,6 +17279,47 @@ QUnit.module("Views", (hooks) => {
         assert.verifySteps(["name_search"]);
     });
 
+<<<<<<< HEAD
+=======
+    QUnit.test("list view with default_group_by", async (assert) => {
+        serverData.models.foo.fields.m2m.store = true;
+
+        let readGroupCount = 0;
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree default_group_by="bar">
+                    <field name="bar"/>
+                </tree>
+            `,
+            async mockRPC(route, { kwargs }) {
+                if (route === "/web/dataset/call_kw/partner/web_read_group") {
+                    readGroupCount++;
+                    switch (readGroupCount) {
+                        case 1:
+                            return assert.deepEqual(kwargs.groupby, ["bar"]);
+                        case 2:
+                            return assert.deepEqual(kwargs.groupby, ["m2m"]);
+                        case 3:
+                            return assert.deepEqual(kwargs.groupby, ["bar"]);
+                    }
+                }
+            },
+        });
+
+        assert.hasClass(target.querySelector(".o_list_renderer table"), "o_list_table_grouped");
+        assert.containsN(target, ".o_group_header", 2);
+
+        await groupByMenu(target, "m2m");
+        assert.containsN(target, ".o_group_header", 4);
+
+        await toggleMenuItem(target, "M2M field");
+        assert.containsN(target, ".o_group_header", 2);
+    });
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     QUnit.test("ungrouped list, apply filter, decrease limit", async function (assert) {
         await makeView({
             type: "list",
@@ -16750,6 +17347,7 @@ QUnit.module("Views", (hooks) => {
         assert.containsN(target, ".o_data_row", 2);
     });
 
+<<<<<<< HEAD
     QUnit.test("resequenceable list items", async function (assert) {
         serverData.models.bar = {
             fields: {
@@ -16833,6 +17431,822 @@ QUnit.module("Views", (hooks) => {
         const second = target.querySelector(".o_data_row:nth-child(2) td[name=titi]");
         assert.strictEqual(first.textContent, "one", "'one' should be kept as the first child");
         assert.strictEqual(second.textContent, "two", "'two' should be kept as the second child");
+=======
+    QUnit.test("Properties: char", async (assert) => {
+        const definition = {
+            type: "char",
+            name: "property_char",
+            string: "Property char",
+        };
+        serverData.models.bar.records[0].definitions = [definition];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition, value: "CHAR" }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route, { method, args }) {
+                if (method === "write") {
+                    assert.deepEqual(args, [
+                        [1],
+                        { properties: [{ ...definition, value: "TEST" }] },
+                    ]);
+                }
+            },
+        });
+
+        await click(target, ".o_optional_columns_dropdown_toggle");
+        await click(target, ".o_optional_columns_dropdown input[type='checkbox']");
+
+        assert.containsOnce(target, ".o_list_renderer th[data-name='properties.property_char']");
+        assert.strictEqual(
+            target.querySelector(".o_list_renderer th[data-name='properties.property_char']")
+                .textContent,
+            "Property char"
+        );
+        assert.containsN(target, ".o_field_cell.o_char_cell", 3);
+        assert.strictEqual(target.querySelector(".o_field_cell.o_char_cell").textContent, "CHAR");
+
+        await click(target.querySelector(".o_field_cell.o_char_cell"));
+        await editInput(target, ".o_field_cell.o_char_cell input", "TEST");
+        await clickSave(target);
+
+        assert.strictEqual(target.querySelector(".o_field_cell.o_char_cell").textContent, "TEST");
+    });
+
+    QUnit.test("Properties: boolean", async (assert) => {
+        const definition = {
+            type: "boolean",
+            name: "property_boolean",
+            string: "Property boolean",
+        };
+        serverData.models.bar.records[0].definitions = [definition];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition, value: true }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route, { method, args }) {
+                if (method === "write") {
+                    assert.deepEqual(args, [
+                        [1],
+                        { properties: [{ ...definition, value: false }] },
+                    ]);
+                }
+            },
+        });
+
+        await click(target, ".o_optional_columns_dropdown_toggle");
+        await click(target, ".o_optional_columns_dropdown input[type='checkbox']");
+
+        assert.containsOnce(target, ".o_list_renderer th[data-name='properties.property_boolean']");
+        assert.strictEqual(
+            target.querySelector(".o_list_renderer th[data-name='properties.property_boolean']")
+                .textContent,
+            "Property boolean"
+        );
+        assert.containsN(target, ".o_field_cell.o_boolean_cell", 3);
+
+        await click(target.querySelector(".o_field_cell.o_boolean_cell"));
+        await click(target.querySelector(".o_field_cell.o_boolean_cell input"));
+        await clickSave(target);
+
+        assert.strictEqual(
+            target.querySelector(".o_field_cell.o_boolean_cell input").checked,
+            false
+        );
+    });
+
+    QUnit.test("Properties: integer", async (assert) => {
+        const definition = {
+            type: "integer",
+            name: "property_integer",
+            string: "Property integer",
+        };
+        serverData.models.bar.records[0].definitions = [definition];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition, value: 123 }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route, { method, args }) {
+                if (method === "write") {
+                    assert.deepEqual(args, [[1], { properties: [{ ...definition, value: 321 }] }]);
+                }
+            },
+        });
+
+        await click(target, ".o_optional_columns_dropdown_toggle");
+        await click(target, ".o_optional_columns_dropdown input[type='checkbox']");
+
+        assert.containsOnce(target, ".o_list_renderer th[data-name='properties.property_integer']");
+        assert.strictEqual(
+            target.querySelector(".o_list_renderer th[data-name='properties.property_integer']")
+                .textContent,
+            "Property integer"
+        );
+        assert.containsN(target, ".o_field_cell.o_integer_cell", 3);
+
+        await click(target.querySelector(".o_field_cell.o_integer_cell"));
+        await editInput(target, ".o_field_cell.o_integer_cell input", 321);
+        await clickSave(target);
+
+        assert.strictEqual(target.querySelector(".o_field_cell.o_integer_cell").textContent, "321");
+    });
+
+    QUnit.test("Properties: float", async (assert) => {
+        const definition = {
+            type: "float",
+            name: "property_float",
+            string: "Property float",
+        };
+        serverData.models.bar.records[0].definitions = [definition];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition, value: 123.45 }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route, { method, args }) {
+                if (method === "write") {
+                    assert.deepEqual(args, [[1], { properties: [{ ...definition, value: 3.21 }] }]);
+                }
+            },
+        });
+
+        await click(target, ".o_optional_columns_dropdown_toggle");
+        await click(target, ".o_optional_columns_dropdown input[type='checkbox']");
+
+        assert.containsOnce(target, ".o_list_renderer th[data-name='properties.property_float']");
+        assert.strictEqual(
+            target.querySelector(".o_list_renderer th[data-name='properties.property_float']")
+                .textContent,
+            "Property float"
+        );
+        assert.containsN(target, ".o_field_cell.o_float_cell", 3);
+
+        await click(target.querySelector(".o_field_cell.o_float_cell"));
+        await editInput(target, ".o_field_cell.o_float_cell input", 3.21);
+        await clickSave(target);
+
+        assert.strictEqual(target.querySelector(".o_field_cell.o_float_cell").textContent, "3.21");
+    });
+
+    QUnit.test("Properties: date", async (assert) => {
+        const definition = {
+            type: "date",
+            name: "property_date",
+            string: "Property date",
+        };
+        serverData.models.bar.records[0].definitions = [definition];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition, value: "2022-12-12" }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route, { method, args }) {
+                if (method === "write") {
+                    assert.deepEqual(args, [
+                        [1],
+                        { properties: [{ ...definition, value: "2022-12-19" }] },
+                    ]);
+                }
+            },
+        });
+
+        await click(target, ".o_optional_columns_dropdown_toggle");
+        await click(target, ".o_optional_columns_dropdown input[type='checkbox']");
+
+        assert.containsOnce(target, ".o_list_renderer th[data-name='properties.property_date']");
+        assert.strictEqual(
+            target.querySelector(".o_list_renderer th[data-name='properties.property_date']")
+                .textContent,
+            "Property date"
+        );
+        assert.containsN(target, ".o_field_cell.o_date_cell", 3);
+
+        await click(target.querySelector(".o_field_cell.o_date_cell"));
+        await click(target, ".o_datepicker input");
+        await click(document.querySelector(".datepicker-days td[data-day='12/19/2022']"));
+        await clickSave(target);
+
+        assert.strictEqual(
+            target.querySelector(".o_field_cell.o_date_cell").textContent,
+            "12/19/2022"
+        );
+    });
+
+    QUnit.test("Properties: datetime", async (assert) => {
+        patchTimeZone(0);
+        const definition = {
+            type: "datetime",
+            name: "property_datetime",
+            string: "Property datetime",
+        };
+        serverData.models.bar.records[0].definitions = [definition];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition, value: "2022-12-12 12:12:00" }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route, { method, args }) {
+                if (method === "write") {
+                    assert.deepEqual(args, [
+                        [1],
+                        { properties: [{ ...definition, value: "2022-12-19 12:12:00" }] },
+                    ]);
+                }
+            },
+        });
+
+        await click(target, ".o_optional_columns_dropdown_toggle");
+        await click(target, ".o_optional_columns_dropdown input[type='checkbox']");
+
+        assert.containsOnce(
+            target,
+            ".o_list_renderer th[data-name='properties.property_datetime']"
+        );
+        assert.strictEqual(
+            target.querySelector(".o_list_renderer th[data-name='properties.property_datetime']")
+                .textContent,
+            "Property datetime"
+        );
+        assert.containsN(target, ".o_field_cell.o_datetime_cell", 3);
+
+        await click(target.querySelector(".o_field_cell.o_datetime_cell"));
+        await click(target, ".o_datepicker input");
+        await click(document.querySelector(".datepicker-days td[data-day='12/19/2022']"));
+        await click(document, ".bootstrap-datetimepicker-widget a[data-action='close']");
+        await clickSave(target);
+
+        assert.strictEqual(
+            target.querySelector(".o_field_cell.o_datetime_cell").textContent,
+            "12/19/2022 12:12:00"
+        );
+    });
+
+    QUnit.test("Properties: selection", async (assert) => {
+        const definition = {
+            type: "selection",
+            name: "property_selection",
+            string: "Property selection",
+            selection: [
+                ["a", "A"],
+                ["b", "B"],
+                ["c", "C"],
+            ],
+        };
+        serverData.models.bar.records[0].definitions = [definition];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition, value: "b" }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route, { method, args }) {
+                if (method === "write") {
+                    assert.deepEqual(args, [[1], { properties: [{ ...definition, value: "a" }] }]);
+                }
+            },
+        });
+
+        await click(target, ".o_optional_columns_dropdown_toggle");
+        await click(target, ".o_optional_columns_dropdown input[type='checkbox']");
+
+        assert.containsOnce(
+            target,
+            ".o_list_renderer th[data-name='properties.property_selection']"
+        );
+        assert.strictEqual(
+            target.querySelector(".o_list_renderer th[data-name='properties.property_selection']")
+                .textContent,
+            "Property selection"
+        );
+        assert.containsN(target, ".o_field_cell.o_selection_cell", 3);
+
+        await click(target.querySelector(".o_field_cell.o_selection_cell"));
+        await editSelect(target, ".o_field_cell.o_selection_cell select", `"a"`);
+        await clickSave(target);
+
+        assert.strictEqual(target.querySelector(".o_field_cell.o_selection_cell").textContent, "A");
+    });
+
+    QUnit.test("Properties: tags", async (assert) => {
+        const definition = {
+            type: "tags",
+            name: "property_tags",
+            string: "Property tags",
+            tags: [
+                ["a", "A", 1],
+                ["b", "B", 2],
+                ["c", "C", 3],
+            ],
+        };
+        serverData.models.bar.records[0].definitions = [definition];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition, value: ["a", "c"] }];
+            }
+        }
+
+        let expectedValue = null;
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route, { method, args }) {
+                if (method === "write") {
+                    assert.deepEqual(args, [
+                        [1],
+                        { properties: [{ ...definition, value: expectedValue }] },
+                    ]);
+                }
+            },
+        });
+
+        await click(target, ".o_optional_columns_dropdown_toggle");
+        await click(target, ".o_optional_columns_dropdown input[type='checkbox']");
+
+        assert.containsOnce(target, ".o_list_renderer th[data-name='properties.property_tags']");
+        assert.strictEqual(
+            target.querySelector(".o_list_renderer th[data-name='properties.property_tags']")
+                .textContent,
+            "Property tags"
+        );
+        assert.containsN(target, ".o_field_cell.o_property_tags_cell", 3);
+
+        await click(target.querySelector(".o_field_cell.o_property_tags_cell"));
+        await click(target.querySelectorAll(".o_field_cell.o_property_tags_cell .o_delete")[0]);
+        expectedValue = ["c"];
+        await clickSave(target);
+
+        assert.strictEqual(
+            target.querySelector(".o_field_cell.o_property_tags_cell").textContent,
+            "C"
+        );
+
+        await click(target.querySelector(".o_field_cell.o_property_tags_cell"));
+        await selectDropdownItem(target, "properties.property_tags", "B");
+        expectedValue = ["c", "b"];
+        await clickSave(target);
+
+        assert.strictEqual(
+            target.querySelector(".o_field_cell.o_property_tags_cell").textContent,
+            "BC"
+        );
+    });
+
+    QUnit.test("Properties: many2one", async (assert) => {
+        const definition = {
+            type: "many2one",
+            name: "property_many2one",
+            string: "Property many2one",
+            comodel: "res_currency",
+            domain: [],
+        };
+        serverData.models.bar.records[0].definitions = [definition];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition, value: [1, "USD"] }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route, { method, args }) {
+                if (method === "write") {
+                    assert.deepEqual(args, [
+                        [1],
+                        { properties: [{ ...definition, value: [2, "EUR"] }] },
+                    ]);
+                }
+            },
+        });
+
+        await click(target, ".o_optional_columns_dropdown_toggle");
+        await click(target, ".o_optional_columns_dropdown input[type='checkbox']");
+
+        assert.containsOnce(
+            target,
+            ".o_list_renderer th[data-name='properties.property_many2one']"
+        );
+        assert.strictEqual(
+            target.querySelector(".o_list_renderer th[data-name='properties.property_many2one']")
+                .textContent,
+            "Property many2one"
+        );
+        assert.containsN(target, ".o_field_cell.o_many2one_cell", 3);
+
+        await click(target.querySelector(".o_field_cell.o_many2one_cell"));
+        await selectDropdownItem(target, "properties.property_many2one", "EUR");
+        await clickSave(target);
+
+        assert.strictEqual(
+            target.querySelector(".o_field_cell.o_many2one_cell").textContent,
+            "EUR"
+        );
+    });
+
+    QUnit.test("Properties: many2many", async (assert) => {
+        const definition = {
+            type: "many2many",
+            name: "property_many2many",
+            string: "Property many2many",
+            comodel: "res_currency",
+            domain: [],
+        };
+        serverData.models.bar.records[0].definitions = [definition];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition, value: [[1, "USD"]] }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route, { method, args }) {
+                if (method === "write") {
+                    assert.deepEqual(args, [[1], { properties: [{ ...definition, value: [] }] }]);
+                }
+            },
+        });
+
+        await click(target, ".o_optional_columns_dropdown_toggle");
+        await click(target, ".o_optional_columns_dropdown input[type='checkbox']");
+
+        assert.containsOnce(
+            target,
+            ".o_list_renderer th[data-name='properties.property_many2many']"
+        );
+        assert.strictEqual(
+            target.querySelector(".o_list_renderer th[data-name='properties.property_many2many']")
+                .textContent,
+            "Property many2many"
+        );
+        assert.containsN(target, ".o_field_cell.o_many2many_tags_cell", 3);
+    });
+
+    QUnit.test("multiple sources of properties definitions", async (assert) => {
+        const definition0 = {
+            type: "char",
+            name: "property_char",
+            string: "Property char",
+        };
+        const definition1 = {
+            type: "boolean",
+            name: "property_boolean",
+            string: "Property boolean",
+        };
+        serverData.models.bar.records[0].definitions = [definition0];
+        serverData.models.bar.records[1].definitions = [definition1];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition0, value: "0" }];
+            } else if (record.m2o === 2) {
+                record.properties = [{ ...definition1, value: true }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+        });
+
+        await click(target, ".o_optional_columns_dropdown_toggle");
+        await click(
+            target.querySelectorAll(".o_optional_columns_dropdown input[type='checkbox']")[0]
+        );
+        await click(
+            target.querySelectorAll(".o_optional_columns_dropdown input[type='checkbox']")[1]
+        );
+
+        assert.containsOnce(target, ".o_list_renderer th[data-name='properties.property_char']");
+        assert.containsN(target, ".o_field_cell.o_char_cell", 3);
+
+        assert.containsOnce(target, ".o_list_renderer th[data-name='properties.property_boolean']");
+        assert.containsOnce(target, ".o_field_cell.o_boolean_cell", 1);
+    });
+
+    QUnit.test("toggle properties", async (assert) => {
+        const definition0 = {
+            type: "char",
+            name: "property_char",
+            string: "Property char",
+        };
+        const definition1 = {
+            type: "boolean",
+            name: "property_boolean",
+            string: "Property boolean",
+        };
+        serverData.models.bar.records[0].definitions = [definition0];
+        serverData.models.bar.records[1].definitions = [definition1];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition0, value: "0" }];
+            } else if (record.m2o === 2) {
+                record.properties = [{ ...definition1, value: true }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+        });
+
+        await click(target, ".o_optional_columns_dropdown_toggle");
+
+        await click(
+            target.querySelectorAll(".o_optional_columns_dropdown input[type='checkbox']")[0]
+        );
+        assert.containsOnce(target, ".o_list_renderer th[data-name='properties.property_char']");
+        assert.containsNone(target, ".o_list_renderer th[data-name='properties.property_boolean']");
+
+        await click(
+            target.querySelectorAll(".o_optional_columns_dropdown input[type='checkbox']")[1]
+        );
+        assert.containsOnce(target, ".o_list_renderer th[data-name='properties.property_char']");
+        assert.containsOnce(target, ".o_list_renderer th[data-name='properties.property_boolean']");
+
+        await click(
+            target.querySelectorAll(".o_optional_columns_dropdown input[type='checkbox']")[0]
+        );
+        assert.containsNone(target, ".o_list_renderer th[data-name='properties.property_char']");
+        assert.containsOnce(target, ".o_list_renderer th[data-name='properties.property_boolean']");
+
+        await click(
+            target.querySelectorAll(".o_optional_columns_dropdown input[type='checkbox']")[1]
+        );
+        assert.containsNone(target, ".o_list_renderer th[data-name='properties.property_char']");
+        assert.containsNone(target, ".o_list_renderer th[data-name='properties.property_boolean']");
+    });
+
+    QUnit.test("reload properties definitions when domain change", async (assert) => {
+        const definition0 = {
+            type: "char",
+            name: "property_char",
+            string: "Property char",
+        };
+        serverData.models.bar.records[0].definitions = [definition0];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition0, value: "AA" }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route) {
+                assert.step(route);
+            },
+            irFilters: [
+                {
+                    context: "{}",
+                    domain: "[['id', '=', 1]]",
+                    id: 7,
+                    name: "only one",
+                    sort: "[]",
+                    user_id: [2, "Mitchell Admin"],
+                },
+            ],
+        });
+
+        assert.verifySteps([
+            "/web/dataset/call_kw/foo/get_views",
+            "/web/dataset/call_kw/foo/web_search_read",
+        ]);
+
+        await toggleFavoriteMenu(target);
+        await toggleMenuItem(target, "only one");
+
+        assert.verifySteps(["/web/dataset/call_kw/foo/web_search_read"]);
+    });
+
+    QUnit.test("do not reload properties definitions when page change", async (assert) => {
+        const definition0 = {
+            type: "char",
+            name: "property_char",
+            string: "Property char",
+        };
+        serverData.models.bar.records[0].definitions = [definition0];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition0, value: "0" }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom" limit="2">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route) {
+                assert.step(route);
+            },
+        });
+
+        assert.verifySteps([
+            "/web/dataset/call_kw/foo/get_views",
+            "/web/dataset/call_kw/foo/web_search_read",
+        ]);
+
+        await pagerNext(target);
+
+        assert.verifySteps(["/web/dataset/call_kw/foo/web_search_read"]);
+    });
+
+    QUnit.test("load properties definitions only once when grouped", async (assert) => {
+        const definition0 = {
+            type: "char",
+            name: "property_char",
+            string: "Property char",
+        };
+        serverData.models.bar.records[0].definitions = [definition0];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition0, value: "0" }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" />
+                </tree>
+            `,
+            mockRPC(route) {
+                assert.step(route);
+            },
+            groupBy: ["m2o"],
+        });
+
+        assert.verifySteps([
+            "/web/dataset/call_kw/foo/get_views",
+            "/web/dataset/call_kw/foo/web_read_group",
+        ]);
+
+        await click(target.querySelector(".o_group_header"));
+        assert.verifySteps(["/web/dataset/call_kw/foo/web_search_read"]);
+    });
+
+    QUnit.test("Invisible Properties", async (assert) => {
+        const definition = {
+            type: "integer",
+            name: "property_integer",
+            string: "Property integer",
+        };
+        serverData.models.bar.records[0].definitions = [definition];
+        for (const record of serverData.models.foo.records) {
+            if (record.m2o === 1) {
+                record.properties = [{ ...definition, value: 123 }];
+            }
+        }
+
+        await makeView({
+            type: "list",
+            resModel: "foo",
+            serverData,
+            arch: `
+                <tree editable="bottom">
+                    <field name="m2o"/>
+                    <field name="properties" invisible="1"/>
+                </tree>
+            `,
+            mockRPC(route, { method, args }) {
+                assert.step(method);
+            },
+        });
+
+        assert.containsNone(target, ".o_optional_columns_dropdown_toggle");
+        assert.verifySteps(["get_views", "web_search_read"]);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     });
 
     QUnit.test("header buttons in list view", async function (assert) {

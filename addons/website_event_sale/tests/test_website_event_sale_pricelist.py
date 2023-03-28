@@ -17,7 +17,11 @@ class TestWebsiteEventPriceList(TestWebsiteEventSaleCommon):
         cls.WebsiteSaleController = WebsiteSale()
 
     def test_pricelist_different_currency(self):
+<<<<<<< HEAD
 
+=======
+        self.env['product.pricelist'].search([('id', '!=', self.pricelist.id)]).action_archive()
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         so_line = self.env['sale.order.line'].create({
             'event_id': self.event.id,
             'event_ticket_id': self.ticket.id,
@@ -40,7 +44,11 @@ class TestWebsiteEventPriceList(TestWebsiteEventSaleCommon):
         with MockRequest(self.env, sale_order_id=self.so.id, website=self.current_website):
             self.WebsiteSaleController.pricelist(promo=None)
             self.so._cart_update(line_id=so_line.id, product_id=self.ticket.product_id.id, set_qty=1)
+<<<<<<< HEAD
         self.assertEqual(so_line.price_reduce, 100)
+=======
+        self.assertEqual(so_line.price_reduce_taxexcl, 100)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         # set pricelist to 10% - without discount
         self.pricelist.write({
@@ -56,7 +64,11 @@ class TestWebsiteEventPriceList(TestWebsiteEventSaleCommon):
         with MockRequest(self.env, sale_order_id=self.so.id, website=self.current_website):
             self.WebsiteSaleController.pricelist(promo=None)
             self.so._cart_update(line_id=so_line.id, product_id=self.ticket.product_id.id, set_qty=1)
+<<<<<<< HEAD
         self.assertEqual(so_line.price_reduce, 900, 'Incorrect amount based on the pricelist and its currency.')
+=======
+        self.assertEqual(so_line.price_reduce_taxexcl, 900, 'Incorrect amount based on the pricelist and its currency.')
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         # set pricelist to 10% - with discount
         self.pricelist.write({
@@ -66,4 +78,8 @@ class TestWebsiteEventPriceList(TestWebsiteEventSaleCommon):
         with MockRequest(self.env, sale_order_id=self.so.id, website=self.current_website):
             self.WebsiteSaleController.pricelist(promo=None)
             self.so._cart_update(line_id=so_line.id, product_id=self.ticket.product_id.id, set_qty=1)
+<<<<<<< HEAD
         self.assertEqual(so_line.price_reduce, 900, 'Incorrect amount based on the pricelist and its currency.')
+=======
+        self.assertEqual(so_line.price_reduce_taxexcl, 900, 'Incorrect amount based on the pricelist and its currency.')
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

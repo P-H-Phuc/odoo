@@ -44,9 +44,15 @@ const { UuidGenerator, createEmptyExcelSheet } = spreadsheet.helpers;
 const uuidGenerator = new UuidGenerator();
 
 export default class GlobalFiltersUIPlugin extends spreadsheet.UIPlugin {
+<<<<<<< HEAD
     constructor(getters, history, dispatch, config) {
         super(getters, history, dispatch, config);
         this.orm = config.evalContext.env ? config.evalContext.env.services.orm : undefined;
+=======
+    constructor(config) {
+        super(config);
+        this.orm = config.custom.env ? config.custom.env.services.orm : undefined;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         /**
          * Cache record display names for relation filters.
          * For each filter, contains a promise resolving to

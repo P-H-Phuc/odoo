@@ -9,6 +9,7 @@ from odoo.exceptions import ValidationError, UserError
 
 FIGURE_TYPE_SELECTION_VALUES = [
     ('monetary', "Monetary"),
+    ('monetary_without_symbol', "Monetary Without Symbol"),
     ('percentage', "Percentage"),
     ('integer', "Integer"),
     ('float', "Float"),
@@ -30,7 +31,7 @@ class AccountReport(models.Model):
     column_ids = fields.One2many(string="Columns", comodel_name='account.report.column', inverse_name='report_id')
     root_report_id = fields.Many2one(string="Root Report", comodel_name='account.report', help="The report this report is a variant of.")
     variant_report_ids = fields.One2many(string="Variants", comodel_name='account.report', inverse_name='root_report_id')
-    chart_template_id = fields.Many2one(string="Chart of Accounts", comodel_name='account.chart.template')
+    chart_template = fields.Selection(string="Chart of Accounts", selection=lambda self: self.env['account.chart.template']._select_chart_template())
     country_id = fields.Many2one(string="Country", comodel_name='res.country')
     only_tax_exigible = fields.Boolean(
         string="Only Tax Exigible Lines",
@@ -447,6 +448,19 @@ class AccountReportExpression(models.Model):
              " in case the carryover destination requires more complex logic."
     )
 
+    _sql_constraints = [
+        (
+            "domain_engine_subformula_required",
+            "CHECK(engine != 'domain' OR subformula IS NOT NULL)",
+            "Expressions using 'domain' engine should all have a subformula."
+        ),
+        (
+            "line_label_uniq",
+            "UNIQUE(report_line_id,label)",
+            "The expression label must be unique per report line."
+        ),
+    ]
+
     @api.depends('engine')
     def _compute_auditable(self):
         auditable_engines = self._get_auditable_engines()
@@ -658,7 +672,7 @@ class AccountReportExpression(models.Model):
             'type': 'ir.actions.act_window',
             'name': _('Carryover lines for: %s', self.report_line_name),
             'res_model': 'account.report.external.value',
-            'views': [(self.env.ref('account_reports.account_report_external_value_tree').id, 'list')],
+            'views': [(False, 'list')],
             'domain': [
                 ('target_report_expression_id', '=', self.id),
                 ('date', '>=', date_from),

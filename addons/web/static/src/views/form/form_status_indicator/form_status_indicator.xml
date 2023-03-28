@@ -2,8 +2,13 @@
 <templates xml:space="preserve">
 
     <t t-name="web.FormStatusIndicator" owl="1">
+<<<<<<< HEAD
         <div class="o_form_status_indicator d-md-flex ms-md-1" t-att-class="{ o_form_status_indicator_new_record: props.model.root.isVirtual }">
             <div class="o_form_status_indicator_buttons d-flex" t-att-class="{ invisible: !(props.model.root.isVirtual or displayButtons) }">
+=======
+        <div class="o_form_status_indicator d-md-flex ms-md-1" t-att-class="{ o_form_status_indicator_new_record: props.model.root.isNew }">
+            <div class="o_form_status_indicator_buttons d-flex" t-att-class="{ invisible: !(props.model.root.isNew or displayButtons) }">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 <button
                     type="button"
                     class="o_form_button_save btn btn-light py-0"
@@ -26,7 +31,11 @@
                 </button>
             </div>
             <span
+<<<<<<< HEAD
                 t-if="!props.model.root.isVirtual and indicatorMode === 'invalid'"
+=======
+                t-if="!props.model.root.isNew and indicatorMode === 'invalid'"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 class="text-danger small ms-2"
                 data-tooltip="Correct issues to save, or discard changes">
                 <i class="fa fa-warning" />

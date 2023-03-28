@@ -18,14 +18,44 @@ import { useService } from "@web/core/utils/hooks";
 
 import { Component, useRef } from "@odoo/owl";
 
-class Many2ManyTagsFieldColorListPopover extends Component {}
-Many2ManyTagsFieldColorListPopover.template = "web.Many2ManyTagsFieldColorListPopover";
-Many2ManyTagsFieldColorListPopover.components = {
-    CheckBox,
-    ColorList,
-};
+class Many2ManyTagsFieldColorListPopover extends Component {
+    static template = "web.Many2ManyTagsFieldColorListPopover";
+    static components = {
+        CheckBox,
+        ColorList,
+    };
+}
 
 export class Many2ManyTagsField extends Component {
+    static template = "web.Many2ManyTagsField";
+    static components = {
+        TagsList,
+        Many2XAutocomplete,
+    };
+    static props = {
+        ...standardFieldProps,
+        canCreate: { type: Boolean, optional: true },
+        canQuickCreate: { type: Boolean, optional: true },
+        canCreateEdit: { type: Boolean, optional: true },
+        colorField: { type: String, optional: true },
+        createDomain: { type: [Array, Boolean], optional: true },
+        domain: { type: Array, optional: true },
+        context: { type: Object, optional: true },
+        placeholder: { type: String, optional: true },
+        nameCreateField: { type: String, optional: true },
+        string: { type: String, optional: true },
+    };
+    static defaultProps = {
+        canCreate: true,
+        canQuickCreate: true,
+        canCreateEdit: true,
+        nameCreateField: "name",
+        context: {},
+    };
+
+    static RECORD_COLORS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    static SEARCH_MORE_LIMIT = 320;
+
     setup() {
         this.orm = useService("orm");
         this.previousColorsMap = {};
@@ -35,7 +65,10 @@ export class Many2ManyTagsField extends Component {
 
         this.autoCompleteRef = useRef("autoComplete");
 
-        const { saveRecord, removeRecord } = useX2ManyCrud(() => this.props.value, true);
+        const { saveRecord, removeRecord } = useX2ManyCrud(
+            () => this.props.record.data[this.props.name],
+            true
+        );
 
         this.activeActions = useActiveActions({
             fieldType: "many2many",
@@ -65,25 +98,22 @@ export class Many2ManyTagsField extends Component {
 
         if (this.props.canQuickCreate) {
             this.quickCreate = async (name) => {
-                const created = await this.orm.call(this.props.relation, "name_create", [name], {
-                    context: this.context,
+                const created = await this.orm.call(this.relation, "name_create", [name], {
+                    context: this.props.context,
                 });
                 return saveRecord([created[0]]);
             };
         }
     }
 
-    get domain() {
-        return this.props.record.getFieldDomain(this.props.name);
-    }
-    get context() {
-        return this.props.record.getFieldContext(this.props.name);
+    get relation() {
+        return this.props.record.fields[this.props.name].relation;
     }
     get evalContext() {
         return this.props.record.evalContext;
     }
     get string() {
-        return this.props.record.activeFields[this.props.name].string;
+        return this.props.string || this.props.record.fields[this.props.name].string || "";
     }
 
     getTagProps(record) {
@@ -98,7 +128,9 @@ export class Many2ManyTagsField extends Component {
     }
 
     get tags() {
-        return this.props.value.records.map((record) => this.getTagProps(record));
+        return this.props.record.data[this.props.name].records.map((record) =>
+            this.getTagProps(record)
+        );
     }
 
     get showM2OSelectionField() {
@@ -106,16 +138,20 @@ export class Many2ManyTagsField extends Component {
     }
 
     deleteTag(id) {
-        const tagRecord = this.props.value.records.find((record) => record.id === id);
-        const ids = this.props.value.currentIds.filter((id) => id !== tagRecord.resId);
-        this.props.value.replaceWith(ids);
+        const tagRecord = this.props.record.data[this.props.name].records.find(
+            (record) => record.id === id
+        );
+        const ids = this.props.record.data[this.props.name].currentIds.filter(
+            (id) => id !== tagRecord.resId
+        );
+        this.props.record.data[this.props.name].replaceWith(ids);
     }
 
     getDomain() {
         return Domain.and([
-            this.domain,
-            Domain.not([["id", "in", this.props.value.currentIds]]),
-        ]).toList(this.context);
+            this.props.domain || this.props.record.getFieldDomain(this.props.name),
+            Domain.not([["id", "in", this.props.record.data[this.props.name].currentIds]]),
+        ]).toList(this.props.context);
     }
 
     focusTag(index) {
@@ -216,65 +252,60 @@ export class Many2ManyTagsField extends Component {
     }
 }
 
-Many2ManyTagsField.RECORD_COLORS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-Many2ManyTagsField.SEARCH_MORE_LIMIT = 320;
-
-Many2ManyTagsField.template = "web.Many2ManyTagsField";
-Many2ManyTagsField.components = {
-    TagsList,
-    Many2XAutocomplete,
+export const many2ManyTagsField = {
+    component: Many2ManyTagsField,
+    displayName: _lt("Tags"),
+    supportedTypes: ["many2many"],
+    isSet: (value) => value.count > 0,
+    relatedFields: ({ options }) => {
+        const relatedFields = [{ name: "display_name", type: "char" }];
+        if (options.color_field) {
+            relatedFields.push({ name: options.color_field, type: "integer" });
+        }
+        return relatedFields;
+    },
+    extractProps({ attrs, options, string }, dynamicInfo) {
+        const noCreate = Boolean(options.no_create);
+        const canCreate = attrs.can_create && Boolean(JSON.parse(attrs.can_create)) && !noCreate;
+        const noQuickCreate = Boolean(options.no_quick_create);
+        const noCreateEdit = Boolean(options.no_create_edit);
+        return {
+            colorField: options.color_field,
+            nameCreateField: options.create_name_field,
+            canCreate,
+            canQuickCreate: canCreate && !noQuickCreate,
+            canCreateEdit: canCreate && !noCreateEdit,
+            createDomain: options.create,
+            context: dynamicInfo.context,
+            domain: dynamicInfo.domain,
+            placeholder: attrs.placeholder,
+            string,
+        };
+    },
 };
 
-Many2ManyTagsField.props = {
-    ...standardFieldProps,
-    canCreate: { type: Boolean, optional: true },
-    canQuickCreate: { type: Boolean, optional: true },
-    canCreateEdit: { type: Boolean, optional: true },
-    colorField: { type: String, optional: true },
-    createDomain: { type: [Array, Boolean], optional: true },
-    placeholder: { type: String, optional: true },
-    relation: { type: String },
-    nameCreateField: { type: String, optional: true },
-};
-Many2ManyTagsField.defaultProps = {
-    canCreate: true,
-    canQuickCreate: true,
-    canCreateEdit: true,
-    nameCreateField: "name",
-};
-
-Many2ManyTagsField.displayName = _lt("Tags");
-Many2ManyTagsField.supportedTypes = ["many2many"];
-Many2ManyTagsField.fieldsToFetch = {
-    display_name: { name: "display_name", type: "char" },
-};
-Many2ManyTagsField.isSet = (value) => value.count > 0;
-
-Many2ManyTagsField.extractProps = ({ attrs, field }) => {
-    const noCreate = Boolean(attrs.options.no_create);
-    const canCreate = attrs.can_create && Boolean(JSON.parse(attrs.can_create)) && !noCreate;
-    const noQuickCreate = Boolean(attrs.options.no_quick_create);
-    const noCreateEdit = Boolean(attrs.options.no_create_edit);
-
-    return {
-        colorField: attrs.options.color_field,
-        nameCreateField: attrs.options.create_name_field,
-        relation: field.relation,
-        canCreate,
-        canQuickCreate: canCreate && !noQuickCreate,
-        canCreateEdit: canCreate && !noCreateEdit,
-        createDomain: attrs.options.create,
-        placeholder: attrs.placeholder,
-    };
-};
-
-registry.category("fields").add("many2many_tags", Many2ManyTagsField);
+registry.category("fields").add("many2many_tags", many2ManyTagsField);
+registry.category("fields").add("calendar.one2many", many2ManyTagsField);
+registry.category("fields").add("calendar.many2many", many2ManyTagsField);
 
 /**
  * A specialization that allows to edit the color with the colorpicker.
  * Used in form view.
  */
 export class Many2ManyTagsFieldColorEditable extends Many2ManyTagsField {
+    static components = {
+        ...super.components,
+        Popover: Many2ManyTagsFieldColorListPopover,
+    };
+    static props = {
+        ...super.props,
+        canEditColor: { type: Boolean, optional: true },
+    };
+    static defaultProps = {
+        ...super.defaultProps,
+        canEditColor: true,
+    };
+
     getTagProps(record) {
         const props = super.getTagProps(record);
         props.onClick = (ev) => this.onBadgeClick(ev, record);
@@ -316,7 +347,9 @@ export class Many2ManyTagsFieldColorEditable extends Many2ManyTagsField {
     }
 
     onTagVisibilityChange(isHidden, tag) {
-        const tagRecord = this.props.value.records.find((record) => record.id === tag.id);
+        const tagRecord = this.props.record.data[this.props.name].records.find(
+            (record) => record.id === tag.id
+        );
         if (tagRecord.data[this.props.colorField] != 0) {
             this.previousColorsMap[tagRecord.resId] = tagRecord.data[this.props.colorField];
         }
@@ -328,13 +361,16 @@ export class Many2ManyTagsFieldColorEditable extends Many2ManyTagsField {
     }
 
     switchTagColor(colorIndex, tag) {
-        const tagRecord = this.props.value.records.find((record) => record.id === tag.id);
+        const tagRecord = this.props.record.data[this.props.name].records.find(
+            (record) => record.id === tag.id
+        );
         tagRecord.update({ [this.props.colorField]: colorIndex });
         tagRecord.save();
         this.closePopover();
     }
 }
 
+<<<<<<< HEAD
 Many2ManyTagsFieldColorEditable.components = {
     ...Many2ManyTagsField.components,
     Popover: Many2ManyTagsFieldColorListPopover,
@@ -362,3 +398,16 @@ registry.category("fields").add("form.many2many_tags", Many2ManyTagsFieldColorEd
 
 registry.category("fields").add("calendar.one2many", Many2ManyTagsField);
 registry.category("fields").add("calendar.many2many", Many2ManyTagsField);
+=======
+export const many2ManyTagsFieldColorEditable = {
+    ...many2ManyTagsField,
+    component: Many2ManyTagsFieldColorEditable,
+    extractProps({ options }) {
+        const props = many2ManyTagsField.extractProps(...arguments);
+        props.canEditColor = !options.no_edit_color && !!options.color_field;
+        return props;
+    },
+};
+
+registry.category("fields").add("form.many2many_tags", many2ManyTagsFieldColorEditable);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

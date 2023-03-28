@@ -83,7 +83,7 @@ class StockWarehouseOrderpoint(models.Model):
     rule_ids = fields.Many2many('stock.rule', string='Rules used', compute='_compute_rules')
     lead_days_date = fields.Date(compute='_compute_lead_days')
     route_id = fields.Many2one(
-        'stock.route', string='Preferred Route', domain="[('product_selectable', '=', True)]")
+        'stock.route', string='Route', domain="[('product_selectable', '=', True)]")
     qty_on_hand = fields.Float('On Hand', readonly=True, compute='_compute_qty', digits='Product Unit of Measure')
     qty_forecast = fields.Float('Forecast', readonly=True, compute='_compute_qty', digits='Product Unit of Measure')
     qty_to_order = fields.Float('To Order', compute='_compute_qty_to_order', store=True, readonly=False, digits='Product Unit of Measure')
@@ -225,7 +225,6 @@ class StockWarehouseOrderpoint(models.Model):
                 'res_model': 'product.product',
                 'res_id': self.product_id.id,
                 'views': [(self.env.ref('product.product_normal_form_view').id, 'form')],
-                'context': {'form_view_initial_mode': 'edit'}
             }, _('Edit Product'))
         notification = False
         if len(self) == 1:

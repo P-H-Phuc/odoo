@@ -31,10 +31,13 @@ const SharedPopupWidget = publicWidget.Widget.extend({
     destroy() {
         this._super(...arguments);
 
+<<<<<<< HEAD
         if (!this._isNormalCase()) {
             return;
         }
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         // Popup are always closed when entering edit mode (see PopupWidget),
         // this allows to make sure the class is sync on the .s_popup parent
         // after that moment too.
@@ -44,6 +47,7 @@ const SharedPopupWidget = publicWidget.Widget.extend({
     },
 
     //--------------------------------------------------------------------------
+<<<<<<< HEAD
     // Private
     //--------------------------------------------------------------------------
 
@@ -57,6 +61,8 @@ const SharedPopupWidget = publicWidget.Widget.extend({
     },
 
     //--------------------------------------------------------------------------
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     // Handlers
     //--------------------------------------------------------------------------
 
@@ -64,18 +70,24 @@ const SharedPopupWidget = publicWidget.Widget.extend({
      * @private
      */
     _onModalShow() {
+<<<<<<< HEAD
         if (!this._isNormalCase()) {
             return;
         }
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.el.classList.remove('d-none');
     },
     /**
      * @private
      */
     _onModalHidden() {
+<<<<<<< HEAD
         if (!this._isNormalCase()) {
             return;
         }
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.el.classList.add('d-none');
     },
 });
@@ -107,7 +119,7 @@ const PopupWidget = publicWidget.Widget.extend({
     destroy: function () {
         this._super.apply(this, arguments);
         $(document).off('mouseleave.open_popup');
-        this.$target.find('.modal').modal('hide');
+        this.$el.find('.modal').modal('hide');
         clearTimeout(this.timeout);
     },
 
@@ -119,7 +131,7 @@ const PopupWidget = publicWidget.Widget.extend({
      * @private
      */
     _bindPopup: function () {
-        const $main = this.$target.find('.modal');
+        const $main = this.$el.find('.modal');
 
         let display = $main.data('display');
         let delay = $main.data('showAfter');
@@ -147,7 +159,7 @@ const PopupWidget = publicWidget.Widget.extend({
      * @private
      */
     _hidePopup: function () {
-        this.$target.find('.modal').modal('hide');
+        this.$el.find('.modal').modal('hide');
     },
     /**
      * @private
@@ -156,7 +168,7 @@ const PopupWidget = publicWidget.Widget.extend({
         if (this._popupAlreadyShown || !this._canShowPopup()) {
             return;
         }
-        this.$target.find('.modal').modal('show');
+        this.$el.find('.modal').modal('show');
     },
 
     //--------------------------------------------------------------------------
@@ -177,7 +189,7 @@ const PopupWidget = publicWidget.Widget.extend({
         setCookie(this.el.id, this.cookieValue, nbDays * 24 * 60 * 60, 'required');
         this._popupAlreadyShown = true;
 
-        this.$target.find('.media_iframe_video iframe').each((i, iframe) => {
+        this.$el.find('.media_iframe_video iframe').each((i, iframe) => {
             iframe.src = '';
         });
     },

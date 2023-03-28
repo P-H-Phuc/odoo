@@ -40,7 +40,10 @@ class ResCompany(models.Model):
         default_journal = new_env['account.journal'].search(
             [('type', '=', 'bank'), ('company_id', '=', new_env.company.id)], limit=1
         )
+<<<<<<< HEAD
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         stripe_provider = new_env.ref('payment.payment_provider_stripe')
         stripe_provider.journal_id = stripe_provider.journal_id or default_journal
 

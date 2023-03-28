@@ -263,9 +263,11 @@ class Channel(models.Model):
         if 'image_128' in vals:
             notifications = []
             for channel in self:
-                notifications.append([channel, 'mail.channel/insert', {
-                    'avatarCacheKey': channel._get_avatar_cache_key(),
-                    'id': channel.id,
+                notifications.append([channel, 'mail.record/insert', {
+                    'Channel': {
+                        'avatarCacheKey': channel._get_avatar_cache_key(),
+                        'id': channel.id,
+                    }
                 }])
             self.env['bus.bus']._sendmany(notifications)
         return result
@@ -314,10 +316,12 @@ class Channel(models.Model):
         notification = _('<div class="o_mail_notification">left the channel</div>')
         # post 'channel left' message as root since the partner just unsubscribed from the channel
         self.sudo().message_post(body=notification, subtype_xmlid="mail.mt_comment", author_id=partner.id)
-        self.env['bus.bus']._sendone(self, 'mail.channel/insert', {
-            'channelMembers': [('insert-and-unlink', {'id': member_id})],
-            'id': self.id,
-            'memberCount': self.member_count,
+        self.env['bus.bus']._sendone(self, 'mail.record/insert', {
+            'Channel': {
+                'channelMembers': [('insert-and-unlink', {'id': member_id})],
+                'id': self.id,
+                'memberCount': self.member_count,
+            }
         })
 
     def add_members(self, partner_ids=None, guest_ids=None, invite_to_rtc_call=False, open_chat_window=False, post_joined_message=True):
@@ -395,19 +399,23 @@ class Channel(models.Model):
                     notifications.append((guest, 'mail.channel/joined', {
                         'channel': member.channel_id.sudo().channel_info()[0],
                     }))
-            notifications.append((channel, 'mail.channel/insert', {
-                'channelMembers': [('insert', list(new_members._mail_channel_member_format().values()))],
-                'id': channel.id,
-                'memberCount': channel.member_count,
+            notifications.append((channel, 'mail.record/insert', {
+                'Channel': {
+                    'channelMembers': [('insert', list(new_members._mail_channel_member_format().values()))],
+                    'id': channel.id,
+                    'memberCount': channel.member_count,
+                }
             }))
             if existing_members:
                 # If the current user invited these members but they are already present, notify the current user about their existence as well.
                 # In particular this fixes issues where the current user is not aware of its own member in the following case:
                 # create channel from form view, and then join from discuss without refreshing the page.
-                notifications.append((current_partner or current_guest, 'mail.channel/insert', {
-                    'channelMembers': [('insert', list(existing_members._mail_channel_member_format().values()))],
-                    'id': channel.id,
-                    'memberCount': channel.member_count,
+                notifications.append((current_partner or current_guest, 'mail.record/insert', {
+                    'Channel': {
+                        'channelMembers': [('insert', list(existing_members._mail_channel_member_format().values()))],
+                        'id': channel.id,
+                        'memberCount': channel.member_count,
+                    }
                 }))
         if invite_to_rtc_call:
             for channel in self:
@@ -461,16 +469,18 @@ class Channel(models.Model):
                 target = member.partner_id
             else:
                 target = member.guest_id
-            invitation_notifications.append((target, 'mail.thread/insert', {
-                'id': self.id,
-                'model': 'mail.channel',
-                'rtcInvitingSession': [('unlink',)],
+            invitation_notifications.append((target, 'mail.record/insert', {
+                'Thread': {
+                    'id': self.id,
+                    'model': 'mail.channel',
+                    'rtcInvitingSession': [('unlink',)],
+                }
             }))
         self.env['bus.bus']._sendmany(invitation_notifications)
         channel_data = {'id': self.id, 'model': 'mail.channel'}
         if members:
             channel_data['invitedMembers'] = [('insert-and-unlink', list(members._mail_channel_member_format(fields={'id': True, 'channel': {}, 'persona': {'partner': {'id', 'name', 'im_status'}, 'guest': {'id', 'name', 'im_status'}}}).values()))]
-            self.env['bus.bus']._sendone(self, 'mail.thread/insert', channel_data)
+            self.env['bus.bus']._sendone(self, 'mail.record/insert', {'Thread': channel_data})
         return channel_data
 
     # ------------------------------------------------------------
@@ -535,12 +545,14 @@ class Channel(models.Model):
 
         return recipients_data
 
-    def _notify_get_recipients_groups(self, msg_vals=None):
+    def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
         """ All recipients of a message on a channel are considered as partners.
         This means they will receive a minimal email, without a link to access
         in the backend. Mailing lists should indeed send minimal emails to avoid
         the noise. """
-        groups = super(Channel, self)._notify_get_recipients_groups(msg_vals=msg_vals)
+        groups = super()._notify_get_recipients_groups(
+            message, model_description, msg_vals=msg_vals
+        )
         for (index, (group_name, _group_func, group_data)) in enumerate(groups):
             if group_name != 'customer':
                 groups[index] = (group_name, lambda partner: False, group_data)
@@ -607,7 +619,7 @@ class Channel(models.Model):
         Automatically set the message posted by the current user as seen for themselves.
         """
         self._set_last_seen_message(message)
-        return super()._message_post_after_hook(message=message, msg_vals=msg_vals)
+        return super()._message_post_after_hook(message, msg_vals)
 
     def _check_can_update_message_content(self, message):
         """ We don't call super in this override as we want to ignore the
@@ -617,10 +629,12 @@ class Channel(models.Model):
 
     def _message_update_content_after_hook(self, message):
         self.ensure_one()
-        self.env['bus.bus']._sendone(self, 'mail.message/insert', {
-            'id': message.id,
-            'body': message.body,
-            'attachments': message.attachment_ids._attachment_format(),
+        self.env['bus.bus']._sendone(self, 'mail.record/insert', {
+            'Message': {
+                'id': message.id,
+                'body': message.body,
+                'attachment_ids': message.attachment_ids._attachment_format(),
+            }
         })
         return super()._message_update_content_after_hook(message=message)
 
@@ -633,15 +647,17 @@ class Channel(models.Model):
             guests = []
             partners = [('insert', {'id': self.env.user.partner_id.id})]
         reactions = self.env['mail.message.reaction'].sudo().search([('message_id', '=', message.id), ('content', '=', content)])
-        self.env['bus.bus']._sendone(self, 'mail.message/insert', {
-            'id': message.id,
-            'messageReactionGroups': [('insert' if len(reactions) > 0 else 'insert-and-unlink', {
-                'content': content,
-                'count': len(reactions),
-                'guests': guests,
-                'message': {'id': message.id},
-                'partners': partners,
-            })],
+        self.env['bus.bus']._sendone(self, 'mail.record/insert', {
+            'Message': {
+                'id': message.id,
+                'messageReactionGroups': [('insert' if len(reactions) > 0 else 'insert-and-unlink', {
+                    'content': content,
+                    'count': len(reactions),
+                    'guests': guests,
+                    'message': {'id': message.id},
+                    'partners': partners,
+                })],
+            }
         })
         return super()._message_add_reaction_after_hook(message=message, content=content)
 
@@ -654,15 +670,17 @@ class Channel(models.Model):
             guests = []
             partners = [('insert-and-unlink', {'id': self.env.user.partner_id.id})]
         reactions = self.env['mail.message.reaction'].sudo().search([('message_id', '=', message.id), ('content', '=', content)])
-        self.env['bus.bus']._sendone(self, 'mail.message/insert', {
-            'id': message.id,
-            'messageReactionGroups': [('insert' if len(reactions) > 0 else 'insert-and-unlink', {
-                'content': content,
-                'count': len(reactions),
-                'guests': guests,
-                'message': {'id': message.id},
-                'partners': partners,
-            })],
+        self.env['bus.bus']._sendone(self, 'mail.record/insert', {
+            'Message': {
+                'id': message.id,
+                'messageReactionGroups': [('insert' if len(reactions) > 0 else 'insert-and-unlink', {
+                    'content': content,
+                    'count': len(reactions),
+                    'guests': guests,
+                    'message': {'id': message.id},
+                    'partners': partners,
+                })],
+            }
         })
         return super()._message_remove_reaction_after_hook(message=message, content=content)
 
@@ -704,14 +722,18 @@ class Channel(models.Model):
             :param message : the mail.message to sent
             :returns list of bus notifications (tuple (bus_channe, message_content))
         """
-        message_format = message_format or message.message_format()[0]
+        message_format = dict(message_format or message.message_format()[0])
+        if 'temporary_id' in self.env.context:
+            message_format['temporary_id'] = self.env.context['temporary_id']
         notifications = []
         for channel in self:
             payload = {
                 'id': channel.id,
-                'message': dict(message_format),
+                'message': message_format,
             }
             notifications.append((channel, 'mail.channel/new_message', payload))
+            if self.env.user.partner_id == message.author_id:
+                self._channel_seen(last_message_id=message.id)
         return notifications
 
     # ------------------------------------------------------------
@@ -925,10 +947,12 @@ class Channel(models.Model):
                 vals['is_minimized'] = is_minimized
             if vals:
                 session_state.write(vals)
-            self.env['bus.bus']._sendone(self.env.user.partner_id, 'mail.thread/insert', {
-                'id': session_state.channel_id.id,
-                'model': 'mail.channel',
-                'serverFoldState': state,
+            self.env['bus.bus']._sendone(self.env.user.partner_id, 'mail.record/insert', {
+                'Thread': {
+                    'id': session_state.channel_id.id,
+                    'model': 'mail.channel',
+                    'serverFoldState': state,
+                }
             })
 
     def channel_pin(self, pinned=False):
@@ -942,21 +966,26 @@ class Channel(models.Model):
         else:
             self.env['bus.bus']._sendone(self.env.user.partner_id, 'mail.channel/legacy_insert', self.channel_info()[0])
 
-    def _channel_seen(self, last_message_id=None):
+    def _channel_seen(self, last_message_id=None, allow_older=False):
         """
         Mark channel as seen by updating seen message id of the current logged partner
         :param last_message_id: the id of the message to be marked as seen, last message of the
         thread by default. This param SHOULD be required, the default behaviour is DEPRECATED and
         kept only for compatibility reasons.
+        :param allow_order: whether to allow setting and older message
+        as the last seen message.
         """
         self.ensure_one()
         domain = ["&", ("model", "=", "mail.channel"), ("res_id", "in", self.ids)]
         if last_message_id:
-            domain = expression.AND([domain, [('id', '<=', last_message_id)]])
-        last_message = self.env['mail.message'].search(domain, order="id DESC", limit=1)
-        if not last_message:
+            domain = expression.AND([domain, [('id', '<=', int(last_message_id))]])
+        last_message = (
+            self.env["mail.message"] if last_message_id is False
+            else self.env['mail.message'].search(domain, order="id DESC", limit=1)
+        )
+        if last_message_id is not False and not last_message:
             return
-        self._set_last_seen_message(last_message)
+        self._set_last_seen_message(last_message, allow_older=allow_older)
         data = {
             'channel_id': self.id,
             'last_message_id': last_message.id,
@@ -966,22 +995,24 @@ class Channel(models.Model):
         self.env['bus.bus']._sendone(target, 'mail.channel.member/seen', data)
         return last_message.id
 
-    def _set_last_seen_message(self, last_message):
+    def _set_last_seen_message(self, last_message, allow_older=False):
         """
         Set last seen message of `self` channels for the current user.
         :param last_message: the message to set as last seen message
+        :param allow_order: whether to allow setting and older message
+        as the last seen message.
         """
         channel_member_domain = expression.AND([
             [('channel_id', 'in', self.ids)],
             [('partner_id', '=', self.env.user.partner_id.id)],
-            expression.OR([
+            [] if allow_older else expression.OR([
                 [('seen_message_id', '=', False)],
                 [('seen_message_id', '<', last_message.id)]
             ])
         ])
         member = self.env['mail.channel.member'].search(channel_member_domain)
         member.write({
-            'fetched_message_id': last_message.id,
+            'fetched_message_id': max(member.fetched_message_id.id, last_message.id),
             'seen_message_id': last_message.id,
             'last_seen_dt': fields.Datetime.now(),
         })
@@ -1013,27 +1044,33 @@ class Channel(models.Model):
         self.ensure_one()
         member = self.env['mail.channel.member'].search([('partner_id', '=', self.env.user.partner_id.id), ('channel_id', '=', self.id)])
         member.write({'custom_channel_name': name})
-        self.env['bus.bus']._sendone(member.partner_id, 'mail.channel/insert', {
-            'custom_channel_name': name,
-            'id': self.id,
+        self.env['bus.bus']._sendone(member.partner_id, 'mail.record/insert', {
+            'Channel': {
+                'custom_channel_name': name,
+                'id': self.id,
+            }
         })
 
     def channel_rename(self, name):
         self.ensure_one()
         self.write({'name': name})
-        self.env['bus.bus']._sendone(self, 'mail.thread/insert', {
-            'id': self.id,
-            'model': 'mail.channel',
-            'name': name,
+        self.env['bus.bus']._sendone(self, 'mail.record/insert', {
+            'Thread': {
+                'id': self.id,
+                'model': 'mail.channel',
+                'name': name,
+            }
         })
 
     def channel_change_description(self, description):
         self.ensure_one()
         self.write({'description': description})
-        self.env['bus.bus']._sendone(self, 'mail.thread/insert', {
-            'id': self.id,
-            'description': description,
-            'model': 'mail.channel',
+        self.env['bus.bus']._sendone(self, 'mail.record/insert', {
+            'Thread': {
+                'id': self.id,
+                'description': description,
+                'model': 'mail.channel',
+            }
         })
 
     def channel_join(self):
@@ -1159,7 +1196,7 @@ class Channel(models.Model):
             `content` is HTML, dynamic parts should be escaped by the caller.
         """
         self.env['bus.bus']._sendone(partner_to, 'mail.channel/transient_message', {
-            'body': "<span class='o_mail_notification'>" + content + "</span>",
+            'body': f"<span class='o_mail_notification'>{content}</span>",
             'model': self._name,
             'res_id': self.id,
         })

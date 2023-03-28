@@ -1,7 +1,10 @@
 <templates id="template" xml:space="preserve">
 
     <!-- Widget PortalComposer (standalone)
+<<<<<<< HEAD
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         required many options: token, res_model, res_id, ...
     -->
     <t t-name="project.ChatterComposer" owl="1">
@@ -20,11 +23,21 @@
                     <div class="flex-grow-1">
                         <div class="o_portal_chatter_composer_input">
                             <div class="o_portal_chatter_composer_body mb32">
+<<<<<<< HEAD
                                 <TextField
                                     rowCount="4"
                                     placeholder="'Write a message...'"
                                     value="state.message"
                                     update.bind="update"
+=======
+                                <textarea
+                                    class="o_input"
+                                    placeholder="Write a message..."
+                                    rows="4"
+                                    value="state.message"
+                                    t-on-input="update"
+                                    t-ref="textarea"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                 />
                                 <ChatterAttachmentsViewer
                                     attachments="state.attachments"

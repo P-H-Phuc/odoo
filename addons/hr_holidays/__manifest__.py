@@ -62,13 +62,8 @@ A synchronization with an internal agenda (Meetings of the CRM module) is also p
     'installable': True,
     'application': True,
     'assets': {
-        'mail.assets_messaging': [
-            'hr_holidays/static/src/models/*.js',
-        ],
-        'mail.assets_discuss_public': [
-            'hr_holidays/static/src/components/*/*',
-        ],
         'web.assets_backend': [
+<<<<<<< HEAD
             'hr_holidays/static/src/views/**/*.js',
             'hr_holidays/static/src/views/**/*.scss',
             'hr_holidays/static/src/views/**/*.xml',
@@ -91,12 +86,25 @@ A synchronization with an internal agenda (Meetings of the CRM module) is also p
         "web.dark_mode_assets_backend": [
             'hr_holidays/static/src/views/**/*.dark.scss',
             'hr_holidays/static/src/dashboard/**/*.dark.scss',
+=======
+            'hr_holidays/static/src/**/*',
+            # Don't include dark mode files in light mode
+            ('remove', 'hr_holidays/static/src/**/*.dark.scss'),
+        ],
+        "web.dark_mode_assets_backend": [
+            'hr_holidays/static/src/**/*.dark.scss',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         ],
         'web.tests_assets': [
             'hr_holidays/static/tests/helpers/**/*',
         ],
         'web.qunit_suite_tests': [
-            'hr_holidays/static/tests/qunit_suite_tests/**/*.js',
+            'hr_holidays/static/tests/**/*.js',
+            ('remove', 'hr_holidays/static/tests/tours/**/*'),
+            ('remove', 'hr_holidays/static/tests/helpers/**/*'),
+        ],
+        'web.assets_tests': [
+            '/hr_holidays/static/tests/tours/**/*'
         ],
         'web.assets_tests': [
             '/hr_holidays/static/tests/tours/**/**.js'

@@ -24,7 +24,7 @@ export class AccountPaymentField extends Component {
     }
 
     formatData(props) {
-        const info = props.value || {
+        const info = props.record.data[props.name] || {
             content: [],
             outstanding: false,
             title: "",
@@ -88,6 +88,10 @@ export class AccountPaymentField extends Component {
     }
 }
 AccountPaymentField.template = "account.AccountPaymentField";
-AccountPaymentField.supportedTypes = ["char"];
 
-registry.category("fields").add("payment", AccountPaymentField);
+export const accountPaymentField = {
+    component: AccountPaymentField,
+    supportedTypes: ["char"],
+};
+
+registry.category("fields").add("payment", accountPaymentField);

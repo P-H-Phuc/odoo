@@ -40,7 +40,10 @@
         'web.assets_backend': [
             'purchase/static/src/toaster_button/*',
             'purchase/static/src/views/*.js',
+<<<<<<< HEAD
             'purchase/static/src/js/purchase_toaster_button.js',
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'purchase/static/src/js/tours/purchase.js',
             'purchase/static/src/**/*.xml',
         ],

@@ -26,10 +26,19 @@ import { makeView, setupViewRegistries } from "@web/../tests/views/helpers";
 import { createWebClient, doAction } from "@web/../tests/webclient/helpers";
 import { browser } from "@web/core/browser/browser";
 import { registry } from "@web/core/registry";
+<<<<<<< HEAD
 import { getBorderWhite, DEFAULT_BG, getColors, hexToRGBA } from "@web/views/graph/colors";
 import { GraphArchParser } from "@web/views/graph/graph_arch_parser";
 import { patchWithCleanup } from "../helpers/utils";
 import { fakeCookieService } from "@web/../tests/helpers/mock_services";
+=======
+import { getBorderWhite, DEFAULT_BG, getColors, hexToRGBA } from "@web/core/colors/colors";
+import { GraphArchParser } from "@web/views/graph/graph_arch_parser";
+import { patchWithCleanup } from "../helpers/utils";
+import { fakeCookieService } from "@web/../tests/helpers/mock_services";
+import { Domain } from "@web/core/domain";
+import { SampleServer } from "@web/views/sample_server";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 const serviceRegistry = registry.category("services");
 
@@ -402,9 +411,15 @@ QUnit.module("Views", (hooks) => {
                     data: [4, 0],
                     label: "xpad",
                 },
+                {
+                    backgroundColor: "rgba(0,0,0,0.4)",
+                    borderColor: "rgba(0,0,0,0.4)",
+                    data: [5, 3],
+                    label: "Sum",
+                },
             ]
         );
-        checkLegend(assert, graph, ["xphone", "xpad"]);
+        checkLegend(assert, graph, ["xphone", "xpad", "Sum"]);
         checkTooltip(assert, graph, { lines: [{ label: "false / xphone", value: "1" }] }, 0, 0);
         checkTooltip(assert, graph, { lines: [{ label: "true / xphone", value: "3" }] }, 1, 0);
         checkTooltip(assert, graph, { lines: [{ label: "false / xpad", value: "4" }] }, 0, 1);
@@ -2204,6 +2219,7 @@ QUnit.module("Views", (hooks) => {
             });
             assert.containsNone(target, ".o_view_nocontent");
             assert.containsOnce(target, ".o_graph_canvas_container");
+<<<<<<< HEAD
             checkDatasets(assert, graph, ["backgroundColor", "borderColor", "data", "label", "stack"], {
                 backgroundColor: ["#1f77b4"],
                 borderColor: getBorderWhite(),
@@ -2211,6 +2227,20 @@ QUnit.module("Views", (hooks) => {
                 label: "",
                 stack: undefined,
             });
+=======
+            checkDatasets(
+                assert,
+                graph,
+                ["backgroundColor", "borderColor", "data", "label", "stack"],
+                {
+                    backgroundColor: ["#1f77b4"],
+                    borderColor: getBorderWhite(),
+                    data: [2],
+                    label: "",
+                    stack: undefined,
+                }
+            );
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
     );
 
@@ -2392,7 +2422,7 @@ QUnit.module("Views", (hooks) => {
         });
 
         checkLabels(assert, graph, ["xphone", "xpad"]);
-        checkLegend(assert, graph, ["false / Undefined", "true / Undefined", "true / red"]);
+        checkLegend(assert, graph, ["false / Undefined", "true / Undefined", "true / red", "Sum"]);
 
         await selectMode(target, "line");
 
@@ -3453,8 +3483,12 @@ QUnit.module("Views", (hooks) => {
             `,
         });
 
-        checkLegend(assert, graph, ["false", "true"], "measure should be by count");
-        checkDatasets(assert, graph, "data", [{ data: [1, 1, 3] }, { data: [3, 0, 0] }]);
+        checkLegend(assert, graph, ["false", "true", "Sum"], "measure should be by count");
+        checkDatasets(assert, graph, "data", [
+            { data: [1, 1, 3] },
+            { data: [3, 0, 0] },
+            { data: [4, 1, 3] },
+        ]);
 
         await click(target, "button.fa-sort-amount-asc");
         assert.hasClass(
@@ -3462,7 +3496,11 @@ QUnit.module("Views", (hooks) => {
             "active",
             "ascending order should be applied by default"
         );
-        checkDatasets(assert, graph, "data", [{ data: [1, 3, 1] }, { data: [0, 0, 3] }]);
+        checkDatasets(assert, graph, "data", [
+            { data: [1, 3, 1] },
+            { data: [0, 0, 3] },
+            { data: [1, 3, 4] },
+        ]);
 
         await click(target, "button.fa-sort-amount-desc");
         assert.hasClass(
@@ -3470,7 +3508,11 @@ QUnit.module("Views", (hooks) => {
             "active",
             "ascending order button should be active"
         );
-        checkDatasets(assert, graph, "data", [{ data: [1, 3, 1] }, { data: [3, 0, 0] }]);
+        checkDatasets(assert, graph, "data", [
+            { data: [1, 3, 1] },
+            { data: [3, 0, 0] },
+            { data: [4, 3, 1] },
+        ]);
 
         // again click on descending button to deactivate order button
         await click(target, "button.fa-sort-amount-desc");
@@ -3479,7 +3521,11 @@ QUnit.module("Views", (hooks) => {
             "active",
             "descending order button should not be active"
         );
-        checkDatasets(assert, graph, "data", [{ data: [1, 1, 3] }, { data: [3, 0, 0] }]);
+        checkDatasets(assert, graph, "data", [
+            { data: [1, 1, 3] },
+            { data: [3, 0, 0] },
+            { data: [4, 1, 3] },
+        ]);
     });
 
     QUnit.test("graph view sort by measure for multiple grouped data", async function (assert) {
@@ -3509,11 +3555,17 @@ QUnit.module("Views", (hooks) => {
             `,
         });
 
-        checkLegend(assert, graph, ["xphone", "xpad", "zphone"], "measure should be by count");
+        checkLegend(
+            assert,
+            graph,
+            ["xphone", "xpad", "zphone", "Sum"],
+            "measure should be by count"
+        );
         checkDatasets(assert, graph, "data", [
             { data: [1, 0, 0, 0] },
             { data: [1, 2, 1, 2] },
             { data: [0, 1, 0, 0] },
+            { data: [2, 3, 1, 2] },
         ]);
 
         await click(target, "button.fa-sort-amount-asc");
@@ -3526,6 +3578,7 @@ QUnit.module("Views", (hooks) => {
             { data: [1, 1, 2, 2] },
             { data: [0, 1, 0, 0] },
             { data: [0, 0, 0, 1] },
+            { data: [1, 2, 2, 3] },
         ]);
 
         await click(target, "button.fa-sort-amount-desc");
@@ -3538,6 +3591,7 @@ QUnit.module("Views", (hooks) => {
             { data: [1, 0, 0, 0] },
             { data: [2, 1, 2, 1] },
             { data: [0, 1, 0, 0] },
+            { data: [3, 2, 2, 1] },
         ]);
 
         // again click on descending button to deactivate order button
@@ -3551,6 +3605,7 @@ QUnit.module("Views", (hooks) => {
             { data: [1, 0, 0, 0] },
             { data: [1, 2, 1, 2] },
             { data: [0, 1, 0, 0] },
+            { data: [2, 3, 1, 2] },
         ]);
     });
 
@@ -4098,6 +4153,28 @@ QUnit.module("Views", (hooks) => {
     });
 
     QUnit.test(
+<<<<<<< HEAD
+=======
+        "In the middle of a year, a graph view grouped by a date field with granularity 'year' should have a single group of SampleServer.MAIN_RECORDSET_SIZE records",
+        async function (assert) {
+            patchDate(2023, 5, 15, 8, 0, 0);
+            const graph = await makeView({
+                serverData,
+                type: "graph",
+                resModel: "foo",
+                arch: `
+                <graph sample="1">
+                    <field name="date" interval="year"/>
+                </graph>
+            `,
+                domain: Domain.FALSE.toList(),
+            });
+            checkDatasets(assert, graph, ["data"], { data: [SampleServer.MAIN_RECORDSET_SIZE] });
+        }
+    );
+
+    QUnit.test(
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         "no class 'o_view_sample_data' when real data are presented",
         async function (assert) {
             serverData.models.foo.records = [];

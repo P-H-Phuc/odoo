@@ -23,6 +23,7 @@ const LinkTools = Link.extend({
         'change .link-custom-color-border input': '_onChangeCustomBorderWidth',
         'keypress .link-custom-color-border input': '_onKeyPressCustomBorderWidth',
         'click we-select [name="link_border_style"] we-button': '_onBorderStyleSelectOption',
+        'input input[name="label"]': '_onLabelInput',
     }),
 
     /**
@@ -30,19 +31,22 @@ const LinkTools = Link.extend({
      */
     init: function (parent, options, editable, data, $button, link) {
         this._link = link;
-        this._observer = new MutationObserver(() =>{
-            this._setLinkContent = false;
-            this._observer.disconnect();
+        this._observer = new MutationObserver(async () => {
+            await this.renderingPromise;
+            this._updateLabelInput();
         });
         this._observer.observe(this._link, {subtree: true, childList: true, characterData: true});
         this._super(parent, options, editable, data, $button, this._link);
         // Keep track of each selected custom color and colorpicker.
         this.customColors = {};
         this.colorpickers = {};
+<<<<<<< HEAD
         // TODO remove me in master: we still save the promises indicating when
         // each colorpicker is fully instantiated but we now make sure to never
         // use them while they are not, without this.
         this.colorpickersPromises = {};
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.COLORPICKER_CSS_PROPERTIES = ['color', 'background-color', 'border-color'];
         this.PREFIXES = {
             'color': 'text-',
@@ -233,8 +237,12 @@ const LinkTools = Link.extend({
     /**
      * @override
      */
-    _isNewWindow: function () {
-        return this.$('we-checkbox[name="is_new_window"]').closest('we-button.o_we_checkbox_wrapper').hasClass('active');
+    _isNewWindow: function (url) {
+        if (this.options.forceNewWindow) {
+            return this._isFromAnotherHostName(url);
+        } else {
+            return this.$('we-checkbox[name="is_new_window"]').closest('we-button.o_we_checkbox_wrapper').hasClass('active');
+        }
     },
     /**
      * @override
@@ -290,6 +298,7 @@ const LinkTools = Link.extend({
     _updateColorpicker: async function (cssProperty) {
         const prefix = this.PREFIXES[cssProperty];
         let colorpicker = this.colorpickers[cssProperty];
+<<<<<<< HEAD
 
         if (!colorpicker) {
             // As a fix, we made it possible to use this method always
@@ -297,6 +306,8 @@ const LinkTools = Link.extend({
             // TODO Remove in master.
             colorpicker = await this._addColorPicker(cssProperty);
         }
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         // Update selected color.
         const colorNames = colorpicker.getColorNames();
@@ -345,8 +356,12 @@ const LinkTools = Link.extend({
             withGradients: cssProperty === 'background-color',
         });
         this.colorpickers[cssProperty] = colorpicker;
+<<<<<<< HEAD
         this.colorpickersPromises[cssProperty] = colorpicker.appendTo(document.createDocumentFragment());
         await this.colorpickersPromises[cssProperty];
+=======
+        await colorpicker.appendTo(document.createDocumentFragment());
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         colorpicker.on('custom_color_picked color_picked color_hover color_leave', this, (ev) => {
             // Reset color styles in link content to make sure new color is not hidden.
             // Only done when applied to avoid losing state during preview.
@@ -396,6 +411,14 @@ const LinkTools = Link.extend({
         $(this.options.wysiwyg.odooEditor.document).find('.oe_edited_link').removeClass('oe_edited_link');
         this.$button.removeClass('active');
         this.options.wysiwyg.odooEditor.observerActive("hint_classes");
+    },
+    /**
+     * Updates the label input with the DOM content of the link.
+     *
+     * @private
+     */
+    _updateLabelInput() {
+        this.el.querySelector('#o_link_dialog_label_input').value = this.linkEl.innerText;
     },
 
     //--------------------------------------------------------------------------
@@ -470,6 +493,26 @@ const LinkTools = Link.extend({
         this._adaptPreview();
         this.options.wysiwyg.odooEditor.historyUnpauseSteps('_onURLInput');
     },
+<<<<<<< HEAD
+=======
+    /**
+     * Updates the DOM content of the link with the input value.
+     *
+     * @private
+     * @param {Event} ev
+     */
+    _onLabelInput(ev) {
+        const data = this._getData();
+        if (!data) {
+            return;
+        }
+        this._observer.disconnect();
+        // Force update of link's content with new data using 'force: true'.
+        // Without this, no update if input is same as original text.
+        this._updateLinkContent(this.$link, data, {force: true});
+        this._observer.observe(this._link, {subtree: true, childList: true, characterData: true});
+    },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 });
 
 return LinkTools;

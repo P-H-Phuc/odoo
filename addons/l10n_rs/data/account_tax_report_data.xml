@@ -11,6 +11,10 @@
                 <field name="name">Balance</field>
                 <field name="expression_label">balance</field>
                 <field name="sequence" eval="1"/>
+<<<<<<< HEAD
+=======
+                <field name="figure_type">monetary_without_symbol</field>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             </record>
         </field>
         <field name="line_ids">

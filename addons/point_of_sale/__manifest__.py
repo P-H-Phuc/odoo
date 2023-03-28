@@ -17,6 +17,7 @@
         'wizard/pos_payment.xml',
         'wizard/pos_close_session_wizard.xml',
         'wizard/pos_session_check_product_wizard.xml',
+        'wizard/pos_daily_sales_reports.xml',
         'views/pos_assets_common.xml',
         'views/pos_assets_index.xml',
         'views/pos_assets_qunit.xml',
@@ -116,6 +117,7 @@
             'point_of_sale/static/src/css/popups/cash_opening_popup.css',
             'point_of_sale/static/src/css/popups/closing_pos_popup.css',
             'point_of_sale/static/src/css/popups/money_details_popup.css',
+            'point_of_sale/static/src/css/popups/text_area_popup.css',
             'web/static/src/legacy/scss/fontawesome_overridden.scss',
 
             # Here includes the lib and POS UI assets.
@@ -124,11 +126,12 @@
             'point_of_sale/static/src/js/**/*.js',
             'web/static/lib/zxing-library/zxing-library.js',
             'point_of_sale/static/src/xml/**/*.xml',
+            'point_of_sale/static/src/utils.js',
+            'point_of_sale/static/src/app/**/*',
         ],
         # This bundle contains the code responsible for starting the POS UI.
         # It is practically the entry point.
         'point_of_sale.assets_backend_prod_only': [
-            'point_of_sale/static/src/entry/chrome_adapter.js',
             'point_of_sale/static/src/entry/main.js',
             'web/static/src/start.js',
             'web/static/src/legacy/legacy_setup.js',

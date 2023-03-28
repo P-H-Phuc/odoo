@@ -6,6 +6,7 @@
                 <header class="title">
                     <t t-esc="props.title" />
                 </header>
+<<<<<<< HEAD
                 <div class="body">
                     <p>
                         <t t-esc="props.body" />
@@ -13,6 +14,13 @@
                     <input type="text" t-model="state.inputValue" t-ref="input" t-att-placeholder="props.placeholder"/>
                 </div>
                 <div class="footer">
+=======
+                <main>
+                    <p t-esc="props.body" />
+                    <input type="text" t-model="state.inputValue" t-ref="input" t-att-placeholder="props.placeholder"/>
+                </main>
+                <div class="footer footer-flex">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     <div class="button confirm highlight" t-on-click="confirm">
                         <t t-esc="props.confirmText" />
                     </div>

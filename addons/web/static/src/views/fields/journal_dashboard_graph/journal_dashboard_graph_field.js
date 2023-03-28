@@ -2,18 +2,28 @@
 
 import { loadJS } from "@web/core/assets";
 import { registry } from "@web/core/registry";
+<<<<<<< HEAD
 import { getColor, hexToRGBA } from "@web/views/graph/colors";
+=======
+import { getColor, hexToRGBA } from "@web/core/colors/colors";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { standardFieldProps } from "../standard_field_props";
 import { useService } from "@web/core/utils/hooks";
 
 import { Component, onWillStart, useEffect, useRef } from "@odoo/owl";
 
 export class JournalDashboardGraphField extends Component {
+    static template = "web.JournalDashboardGraphField";
+    static props = {
+        ...standardFieldProps,
+        graphType: String,
+    };
+
     setup() {
         this.chart = null;
         this.cookies = useService("cookie");
         this.canvasRef = useRef("canvas");
-        this.data = JSON.parse(this.props.value);
+        this.data = JSON.parse(this.props.record.data[this.props.name]);
 
         onWillStart(() => loadJS("/web/static/lib/Chart/Chart.js"));
 
@@ -145,18 +155,12 @@ export class JournalDashboardGraphField extends Component {
     }
 }
 
-JournalDashboardGraphField.template = "web.JournalDashboardGraphField";
-JournalDashboardGraphField.props = {
-    ...standardFieldProps,
-    graphType: String,
-};
-
-JournalDashboardGraphField.supportedTypes = ["text"];
-
-JournalDashboardGraphField.extractProps = ({ attrs }) => {
-    return {
+export const journalDashboardGraphField = {
+    component: JournalDashboardGraphField,
+    supportedTypes: ["text"],
+    extractProps: ({ attrs }) => ({
         graphType: attrs.graph_type,
-    };
+    }),
 };
 
-registry.category("fields").add("dashboard_graph", JournalDashboardGraphField);
+registry.category("fields").add("dashboard_graph", journalDashboardGraphField);

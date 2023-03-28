@@ -11,6 +11,15 @@ import { standardFieldProps } from "../standard_field_props";
 import { Component, onWillStart, onWillUpdateProps, useEffect, useRef } from "@odoo/owl";
 
 export class AceField extends Component {
+    static template = "web.AceField";
+    static props = {
+        ...standardFieldProps,
+        mode: { type: String, optional: true },
+    };
+    static defaultProps = {
+        mode: "qweb",
+    };
+
     setup() {
         this.aceEditor = null;
         this.editorRef = useRef("editor");
@@ -38,8 +47,14 @@ export class AceField extends Component {
             () => [this.editorRef.el]
         );
 
+<<<<<<< HEAD
         useBus(this.env.bus, "RELATIONAL_MODEL:WILL_SAVE_URGENTLY", () => this.commitChanges());
         useBus(this.env.bus, "RELATIONAL_MODEL:NEED_LOCAL_CHANGES", ({ detail }) =>
+=======
+        const { model } = this.props.record;
+        useBus(model.bus, "WILL_SAVE_URGENTLY", () => this.commitChanges());
+        useBus(model.bus, "NEED_LOCAL_CHANGES", ({ detail }) =>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             detail.proms.push(this.commitChanges())
         );
     }
@@ -66,7 +81,7 @@ export class AceField extends Component {
         this.aceEditor.on("blur", this.commitChanges.bind(this));
     }
 
-    updateAce({ mode, readonly, value }) {
+    updateAce({ mode, readonly, record }) {
         if (!this.aceEditor) {
             return;
         }
@@ -88,7 +103,7 @@ export class AceField extends Component {
 
         this.aceEditor.renderer.$cursorLayer.element.style.display = readonly ? "none" : "block";
 
-        const formattedValue = formatText(value);
+        const formattedValue = formatText(record.data[this.props.name]);
         if (this.aceSession.getValue() !== formattedValue) {
             this.aceSession.setValue(formattedValue);
         }
@@ -103,29 +118,25 @@ export class AceField extends Component {
     commitChanges() {
         if (!this.props.readonly) {
             const value = this.aceSession.getValue();
+<<<<<<< HEAD
             if (this.props.value !== value) {
                 return this.props.update(value);
+=======
+            if (this.props.record.data[this.props.name] !== value) {
+                return this.props.record.update({ [this.props.name]: value });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
         }
     }
 }
 
-AceField.template = "web.AceField";
-AceField.props = {
-    ...standardFieldProps,
-    mode: { type: String, optional: true },
-};
-AceField.defaultProps = {
-    mode: "qweb",
-};
-
-AceField.displayName = _lt("Ace Editor");
-AceField.supportedTypes = ["text"];
-
-AceField.extractProps = ({ attrs }) => {
-    return {
-        mode: attrs.options.mode,
-    };
+export const aceField = {
+    component: AceField,
+    displayName: _lt("Ace Editor"),
+    supportedTypes: ["text"],
+    extractProps: ({ options }) => ({
+        mode: options.mode,
+    }),
 };
 
-registry.category("fields").add("ace", AceField);
+registry.category("fields").add("ace", aceField);

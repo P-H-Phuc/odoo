@@ -1,5 +1,6 @@
 /** @odoo-module **/
 
+<<<<<<< HEAD
 import tour from 'web_tour.tour';
 import { getPriceListChecksSteps } from 'website_event_booth_sale.tour.WebsiteEventBoothSaleTourMethods';
 
@@ -7,6 +8,15 @@ tour.register('event_booth_sale_pricelists_different_currencies', {
     test: true,
     url: '/event',
 }, [
+=======
+import { registry } from "@web/core/registry";
+import { getPriceListChecksSteps } from 'website_event_booth_sale.tour.WebsiteEventBoothSaleTourMethods';
+
+registry.category("web_tour.tours").add('event_booth_sale_pricelists_different_currencies', {
+    test: true,
+    url: '/event',
+    steps: [
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     // Init: registering the booth
     {
         content: 'Open "Test Event Booths" event',
@@ -45,31 +55,57 @@ tour.register('event_booth_sale_pricelists_different_currencies', {
     ...getPriceListChecksSteps({
         pricelistName: "EUR With Discount Included",
         eventName: "Test Event Booths",
+<<<<<<< HEAD
         price: "90.00",
         priceSelected: "90",
+=======
+        price: "99.00",
+        priceSelected: "99",
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         priceCart: "99.00",
     }),
     ...getPriceListChecksSteps({
         pricelistName: "EUR Without Discount Included",
         eventName: "Test Event Booths",
+<<<<<<< HEAD
         price: "90.00",
         priceSelected: "90",
         priceCart: "99.00",
         priceBeforeDiscount: "100.00",
+=======
+        price: "99.00",
+        priceSelected: "99",
+        priceCart: "99.00",
+        priceBeforeDiscount: "110.00",
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }),
     ...getPriceListChecksSteps({
         pricelistName: "EX With Discount Included",
         eventName: "Test Event Booths",
+<<<<<<< HEAD
         price: "900.00",
         priceSelected: "900",
+=======
+        price: "990.00",
+        priceSelected: "990",
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         priceCart: "990.00",
     }),
     ...getPriceListChecksSteps({
         pricelistName: "EX Without Discount Included",
         eventName: "Test Event Booths",
+<<<<<<< HEAD
         price: "900.00",
         priceSelected: "900",
         priceCart: "990.00",
         priceBeforeDiscount: "1,000.00",
     }),
 ]);
+=======
+        price: "990.00",
+        priceSelected: "990",
+        priceCart: "990.00",
+        priceBeforeDiscount: "1,100.00",
+    }),
+]});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

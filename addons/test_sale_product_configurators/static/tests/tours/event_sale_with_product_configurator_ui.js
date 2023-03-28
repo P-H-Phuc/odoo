@@ -1,11 +1,12 @@
 /** @odoo-module **/
 
-import tour from 'web_tour.tour';
+import { registry } from "@web/core/registry";
+import { stepUtils } from "@web_tour/tour_service/tour_utils";
 
-tour.register('event_sale_with_product_configurator_tour', {
+registry.category("web_tour.tours").add('event_sale_with_product_configurator_tour', {
     url: '/web',
     test: true,
-}, [tour.stepUtils.showAppsMenuItem(), {
+    steps: [stepUtils.showAppsMenuItem(), {
     trigger: '.o_app[data-menu-xmlid="sale.sale_menu_root"]',
 }, {
     trigger: '.o_list_button_add',
@@ -17,7 +18,7 @@ tour.register('event_sale_with_product_configurator_tour', {
     trigger: '.ui-menu-item > a:contains("Tajine Saucisse")',
     auto: true,
 }, {
-    trigger: "a:contains('Add a product')",
+    trigger: 'a:contains("Add a product")',
 }, {
     trigger: 'div[name="product_template_id"] input',
     run: 'text event (',
@@ -47,7 +48,7 @@ tour.register('event_sale_with_product_configurator_tour', {
     trigger: '.o_event_sale_js_event_configurator_ok'
 }, {
     trigger: 'a:contains("Add a product")',
-    extra_trigger: '.o_monetary_cell span:contains("16.50")',  // wait for the optional product line
+    extra_trigger: 'td[name="price_subtotal"]:contains("16.50")',  // wait for the optional product line
 }, {
     trigger: 'div[name="product_template_id"] input',
     extra_trigger: '[name="product_template_id"] .o_dropdown_button',
@@ -83,7 +84,7 @@ tour.register('event_sale_with_product_configurator_tour', {
     trigger: '.o_event_sale_js_event_configurator_ok'
 }, {
     trigger: 'a:contains("Add a product")',
-    extra_trigger: '.o_monetary_cell span:contains("150.00")',  // wait for the adult tickets line
+    extra_trigger: 'td[name="price_subtotal"]:contains("150.00")',  // wait for the adult tickets line
 }, {
     trigger: 'div[name="product_template_id"] input',
     extra_trigger: '[name="product_template_id"] .o_dropdown_button',
@@ -113,5 +114,10 @@ tour.register('event_sale_with_product_configurator_tour', {
     in_modal: false,
 }, {
     trigger: '.o_event_sale_js_event_configurator_ok',
+<<<<<<< HEAD
 }, ...tour.stepUtils.saveForm({ extra_trigger: '.o_field_cell.o_data_cell.o_list_number:contains("60.00")' }),
 ]);
+=======
+}, ...stepUtils.saveForm({ extra_trigger: '.o_field_cell.o_data_cell.o_list_number:contains("60.00")' }),
+]});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

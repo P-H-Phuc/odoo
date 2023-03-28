@@ -1,0 +1,12 @@
+// = Call Participant Card View
+// ============================================================================
+// No CSS hacks, variables overrides only
+
+<<<<<<< HEAD:addons/mail/static/src/components/call_participant_card/call_participant_card.dark.scss
+.o_CallParticipantCard_avatarFrame {
+    --CallParticipantCard_avatarFrame-background-color: #{$o-gray-100};
+=======
+.o-mail-CallParticipantCard-avatar {
+    --o-mail-CallParticipantCard-avatarBgColor: #{$o-gray-100};
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6:addons/mail/static/src/rtc/call_participant_card.dark.scss
+}

@@ -152,11 +152,12 @@ odoo_mailgate: "|/path/to/odoo-mailgate.py --host=localhost -u %(uid)d -p PASSWO
 
     def button_confirm_login(self):
         for server in self:
+            connection = None
             try:
                 connection = server.connect(allow_archived=True)
                 server.write({'state': 'done'})
             except UnicodeError as e:
-                raise UserError(_("Invalid server name !\n %s", tools.ustr(e)))
+                raise UserError(_("Invalid server name!\n %s", tools.ustr(e)))
             except (gaierror, timeout, IMAP4.abort) as e:
                 raise UserError(_("No response received. Check server information.\n %s", tools.ustr(e)))
             except (IMAP4.error, poplib.error_proto) as err:

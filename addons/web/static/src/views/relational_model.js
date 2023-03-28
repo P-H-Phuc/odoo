@@ -1,5 +1,6 @@
 /* @odoo-module */
 
+import { markRaw, markup, toRaw } from "@odoo/owl";
 import { AlertDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { makeContext } from "@web/core/context";
 import { Domain } from "@web/core/domain";
@@ -16,20 +17,24 @@ import { registry } from "@web/core/registry";
 import { unique } from "@web/core/utils/arrays";
 import { Deferred, KeepLast, Mutex } from "@web/core/utils/concurrency";
 import { memoize } from "@web/core/utils/functions";
+import { pick } from "@web/core/utils/objects";
 import { escape } from "@web/core/utils/strings";
 import { session } from "@web/session";
+import { getFieldFromRegistry } from "@web/views/fields/field";
 import { FormArchParser } from "@web/views/form/form_arch_parser";
 import { ListConfirmationDialog } from "@web/views/list/list_confirmation_dialog";
 import { Model } from "@web/views/model";
-import { archParseBoolean, evalDomain, isNumeric, isRelational, isX2Many } from "@web/views/utils";
+import { evalDomain, isNumeric, isRelational, isX2Many, orderByToString } from "@web/views/utils";
 
 const { DateTime } = luxon;
+<<<<<<< HEAD
 import { markRaw, markup, toRaw } from "@odoo/owl";
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 const preloadedDataRegistry = registry.category("preloadedData");
 
 const { CREATE, UPDATE, DELETE, FORGET, LINK_TO, DELETE_ALL, REPLACE_WITH } = x2ManyCommands;
-const QUICK_CREATE_FIELD_TYPES = ["char", "boolean", "many2one", "selection"];
 const AGGREGATABLE_FIELD_TYPES = ["float", "integer", "monetary"]; // types that can be aggregated in grouped views
 const DEFAULT_HANDLE_FIELD = "sequence";
 const DEFAULT_QUICK_CREATE_FIELDS = {
@@ -56,28 +61,28 @@ const DEFAULT_QUICK_CREATE_VIEW = {
  */
 
 /**
- * @param {Object} groupByField
- * @returns {boolean}
+ * @param {RawContext} rawContext
+ * @param {Context} defaultContext
+ * @returns {Context}
  */
-export function isAllowedDateField(groupByField) {
-    return (
-        ["date", "datetime"].includes(groupByField.type) &&
-        archParseBoolean(groupByField.rawAttrs.allow_group_range_value)
-    );
-}
+function processRawContext(rawContext, defaultContext) {
+    const contexts = [];
+    if (!rawContext) {
+        return Object.assign({}, defaultContext);
+    }
+    contexts.push({ ...defaultContext, ...rawContext.make() });
+    while (rawContext.parent) {
+        rawContext = rawContext.parent;
+        const context = rawContext.make();
+        for (const key in context) {
+            if (key.startsWith("default_")) {
+                delete context[key];
+            }
+        }
+        contexts.push(context);
+    }
 
-/**
- * @typedef {Object} OrderTerm ?
- * @property {string} name
- * @property {boolean} asc
- */
-
-/**
- * @param {OrderTerm[]} orderBy
- * @returns {string}
- */
-function orderByToString(orderBy) {
-    return orderBy.map((o) => `${o.name} ${o.asc ? "ASC" : "DESC"}`).join(", ");
+    return Object.assign({}, ...contexts.reverse());
 }
 
 /**
@@ -273,7 +278,16 @@ class DataPoint {
         this.model = model;
         this.resModel = params.resModel;
         this.fields = params.fields;
+        if (!("id" in this.fields)) {
+            this.fields.id = { name: "id", type: "integer", readonly: true };
+        }
+        if (!("display_name" in this.fields)) {
+            this.fields.display_name = { name: "display_name", type: "char" };
+        }
         this.setActiveFields(params.activeFields);
+
+        this.onWillSaveRecord = params.onWillSaveRecord || (() => {});
+        this.onRecordSaved = params.onRecordSaved || (() => {});
 
         this.rawContext = params.rawContext;
         this.defaultContext = params.defaultContext;
@@ -289,7 +303,9 @@ class DataPoint {
     }
 
     get fieldNames() {
-        return Object.keys(this.activeFields);
+        return Object.keys(this.activeFields).filter(
+            (fieldName) => !this.activeFields[fieldName].relatedPropertyField
+        );
     }
 
     // -------------------------------------------------------------------------
@@ -310,32 +326,6 @@ class DataPoint {
      * @param {Object} state
      */
     setup() {}
-
-    /**
-     * TODO WOWL: adapt this comment to new system
-     * Also, is datapoint the best place ? Could be in record.
-     *
-     * Invalidates the DataManager's cache if the main model (i.e. the model of
-     * its root parent) of the given dataPoint is a model in 'noCacheModels'.
-     *
-     * Reloads the currencies if the main model is 'res.currency'.
-     * Reloads the webclient if we modify a res.company, to (un)activate the
-     * multi-company environment if we are not in a tour test.
-     *
-     */
-    invalidateCache() {
-        if (this.resModel === "res.currency") {
-            // TODO WOWL: this needs to be ported from basic model for the list view to have it.
-            // session.reloadCurrencies();
-            // There is a test in form view but it uses the basic model for now.
-        }
-        if (this.resModel === "res.company") {
-            this.model.action.doAction("reload_context");
-        }
-        if (this.model.noCacheModels.includes(this.resModel)) {
-            this.model.env.bus.trigger("CLEAR-CACHES");
-        }
-    }
 
     /**
      * @param {Object} [activeFields={}]
@@ -366,6 +356,14 @@ class DataPoint {
                     return hasKey0 ? 0 : value;
                 }
                 break;
+            }
+            case "properties": {
+                return value
+                    ? value.map((property) => ({
+                          ...property,
+                          value: this._parseServerValue(property, property.value ?? false),
+                      }))
+                    : [];
             }
         }
         return value;
@@ -434,7 +432,7 @@ export class Record extends DataPoint {
 
         this._onWillSwitchMode = params.onRecordWillSwitchMode || (() => {});
 
-        this.canBeAbandoned = this.isVirtual;
+        this.canBeAbandoned = this.isNew;
     }
 
     // -------------------------------------------------------------------------
@@ -444,7 +442,7 @@ export class Record extends DataPoint {
     get dataContext() {
         // should not be called befor this.data is ready!
         const evalContext = { ...this.model.user.context };
-        for (const fieldName in this.activeFields) {
+        for (const fieldName of this.fieldNames) {
             const value = this.data[fieldName];
             if ([null].includes(value)) {
                 // simplify that?
@@ -528,22 +526,11 @@ export class Record extends DataPoint {
         return false;
     }
 
-    get dirtyFields() {
-        if (!this.isDirty) {
-            return [];
-        }
-        return this._changes.map((change) => this.activeFields[change]);
-    }
-
     get isInEdition() {
         return this.mode === "edit";
     }
 
     get isNew() {
-        return this.isVirtual;
-    }
-
-    get isVirtual() {
         return !this.resId;
     }
 
@@ -574,7 +561,11 @@ export class Record extends DataPoint {
      */
     async urgentSave() {
         this._urgentSave = true;
+<<<<<<< HEAD
         this.model.env.bus.trigger("RELATIONAL_MODEL:WILL_SAVE_URGENTLY");
+=======
+        this.model.bus.trigger("WILL_SAVE_URGENTLY");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return this._save({ stayInEdition: true, noReload: true });
     }
 
@@ -582,7 +573,12 @@ export class Record extends DataPoint {
         await toggleArchive(this.model, this.resModel, [this.resId], true, this.context);
         await this.load();
         this.model.notify();
-        this.invalidateCache();
+    }
+
+    async askChanges() {
+        const proms = [];
+        this.model.bus.trigger("NEED_LOCAL_CHANGES", { proms });
+        await Promise.all([...proms, this.model.mutex.getUnlockedDef()]);
     }
 
     async askChanges() {
@@ -610,10 +606,9 @@ export class Record extends DataPoint {
                 continue;
             }
 
-            const isSet =
-                activeField && activeField.FieldComponent && activeField.FieldComponent.isSet;
+            const isSet = activeField && activeField.field && activeField.field.isSet;
 
-            if (this.isRequired(fieldName) && isSet && !isSet(this.data[fieldName])) {
+            if (this._isRequired(fieldName) && isSet && !isSet(this.data[fieldName])) {
                 this.setInvalidField(fieldName);
                 continue;
             }
@@ -631,7 +626,7 @@ export class Record extends DataPoint {
                     }
                     break;
                 default:
-                    if (!isSet && this.isRequired(fieldName) && !this.data[fieldName]) {
+                    if (!isSet && this._isRequired(fieldName) && !this.data[fieldName]) {
                         this.setInvalidField(fieldName);
                     }
             }
@@ -658,13 +653,12 @@ export class Record extends DataPoint {
             this._changes = {};
             this.preloadedData = {};
         }
-        this.invalidateCache();
     }
 
     discard() {
         clearObject(this._changes);
         clearObject(this._domains);
-        for (const fieldName in this.activeFields) {
+        for (const fieldName of this.fieldNames) {
             // activeFields should be changed
             const field = this.fields[fieldName];
             if (isX2Many(field)) {
@@ -675,7 +669,11 @@ export class Record extends DataPoint {
         }
         this._invalidFields.clear();
 
+<<<<<<< HEAD
         if (!this.isVirtual) {
+=======
+        if (!this.isNew) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             this.switchMode("readonly");
         }
         this.model.notify();
@@ -702,6 +700,29 @@ export class Record extends DataPoint {
         };
     }
 
+    _formatServerValue(fieldType, value) {
+        if (fieldType === "many2one") {
+            return value ? value[0] : false;
+        } else if (fieldType === "date") {
+            return value ? serializeDate(value) : false;
+        } else if (fieldType === "datetime") {
+            return value ? serializeDateTime(value) : false;
+        } else if (fieldType === "reference") {
+            return value && value.resModel && value.resId
+                ? `${value.resModel},${value.resId}`
+                : value || false;
+        } else if (fieldType === "properties") {
+            return value.map((property) => ({
+                ...property,
+                value:
+                    property.type === "many2one"
+                        ? property.value
+                        : this._formatServerValue(property.type, property.value),
+            }));
+        }
+        return value;
+    }
+
     getChanges(allFields = false, parentChanges = false) {
         const changes = { ...(allFields ? this.data : this._changes) };
         for (const fieldName in changes) {
@@ -709,7 +730,7 @@ export class Record extends DataPoint {
                 !allFields &&
                 fieldName in this.activeFields &&
                 !this.activeFields[fieldName].forceSave &&
-                this.isReadonly(fieldName)
+                this._isReadonly(fieldName)
             ) {
                 delete changes[fieldName];
                 continue;
@@ -721,6 +742,7 @@ export class Record extends DataPoint {
                 if (!changes[fieldName]) {
                     delete changes[fieldName];
                 }
+<<<<<<< HEAD
             } else if (fieldType === "many2one") {
                 changes[fieldName] = changes[fieldName] ? changes[fieldName][0] : false;
             } else if (fieldType === "date") {
@@ -735,6 +757,10 @@ export class Record extends DataPoint {
                     value && value.resModel && value.resId
                         ? `${value.resModel},${value.resId}`
                         : value || false;
+=======
+            } else {
+                changes[fieldName] = this._formatServerValue(fieldType, changes[fieldName]);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
         }
 
@@ -750,13 +776,19 @@ export class Record extends DataPoint {
         };
     }
 
-    getFieldContext(fieldName) {
+    getFieldDomain(fieldName) {
+        const { domain } = this.fields[fieldName];
+        return domain ? new Domain(domain).toList(this.evalContext) : [];
+    }
+
+    _getFieldContext(fieldName) {
         return Object.assign(
             this.context,
             makeContext([this.activeFields[fieldName].context], this.evalContext)
         );
     }
 
+<<<<<<< HEAD
     getFieldDomain(fieldName) {
         const rawDomains = [
             this._domains[fieldName] || [],
@@ -767,6 +799,10 @@ export class Record extends DataPoint {
         return Domain.and(
             rawDomains.map((d) => (typeof d === "string" ? evaluateExpr(d, evalContext) : d))
         );
+=======
+    isFieldDirty(fieldName) {
+        return this.isDirty && !!this._changes[fieldName];
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 
     isInvalid(fieldName) {
@@ -778,7 +814,7 @@ export class Record extends DataPoint {
      * @param {string} fieldName
      * @returns {boolean}
      */
-    isInvisible(fieldName) {
+    _isInvisible(fieldName) {
         const activeField = this.activeFields[fieldName];
         const { invisible } = activeField.modifiers || {};
         return invisible ? evalDomain(invisible, this.evalContext) : false;
@@ -789,10 +825,9 @@ export class Record extends DataPoint {
      * @param {string} fieldName
      * @returns {boolean}
      */
-    isReadonly(fieldName) {
-        const activeField = this.activeFields[fieldName];
-        const { readonly } = activeField.modifiers || {};
-        return readonly ? evalDomain(readonly, this.evalContext) : false;
+    _isReadonly(fieldName) {
+        const { readonly } = this.activeFields[fieldName].modifiers || {};
+        return evalDomain(readonly, this.evalContext);
     }
 
     /**
@@ -800,7 +835,7 @@ export class Record extends DataPoint {
      * @param {string} fieldName
      * @returns {boolean}
      */
-    isRequired(fieldName) {
+    _isRequired(fieldName) {
         const required = this._requiredFields[fieldName];
         return required ? evalDomain(required, this.evalContext) : false;
     }
@@ -830,7 +865,7 @@ export class Record extends DataPoint {
             }
         }
 
-        if (!(params.values || !this.isVirtual)) {
+        if (!(params.values || !this.isNew)) {
             const changes = params.changes || (await this._onChange());
             await this._load({ changes });
         } else {
@@ -848,12 +883,25 @@ export class Record extends DataPoint {
             if (!info.loadOnTypes.includes(this.fields[fieldName].type)) {
                 return;
             }
-            const domain = this.getFieldDomain(fieldName).toList(this.evalContext).toString();
+
+            const evalContext = this.evalContext;
+            const domain = this.activeFields[fieldName].domain
+                ? new Domain(
+                      evaluateExpr(this.activeFields[fieldName].domain, evalContext)
+                  ).toList()
+                : this.getFieldDomain(fieldName);
+
             const getExtraKey = info.extraMemoizationKey || (() => null);
-            const key = JSON.stringify([domain, getExtraKey(this, fieldName)]);
+            const key = JSON.stringify([domain.toString(), getExtraKey(this, fieldName)]);
             if (this.preloadedDataCaches[fieldName] !== key) {
+                const context = this._getFieldContext(fieldName);
                 this.preloadedDataCaches[fieldName] = key;
-                this.preloadedData[fieldName] = await info.preload(this.model.orm, this, fieldName);
+                this.preloadedData[fieldName] = await info.preload(
+                    this.model.orm,
+                    this,
+                    fieldName,
+                    { context, domain }
+                );
             }
         };
 
@@ -862,7 +910,7 @@ export class Record extends DataPoint {
             const activeField = this.activeFields[fieldName];
             // @FIXME type should not be get like this
             const type = activeField.widget || this.fields[fieldName].type;
-            if (!this.isInvisible(fieldName) && preloadedDataRegistry.contains(type)) {
+            if (!this._isInvisible(fieldName) && preloadedDataRegistry.contains(type)) {
                 proms.push(fetchPreloadedData(preloadedDataRegistry.get(type), fieldName));
             }
         }
@@ -871,7 +919,7 @@ export class Record extends DataPoint {
 
     async loadRelationalData() {
         const proms = [];
-        for (const fieldName in this.activeFields) {
+        for (const fieldName of this.fieldNames) {
             const field = this.fields[fieldName];
             if (field.type === "many2one") {
                 proms.push(
@@ -979,7 +1027,6 @@ export class Record extends DataPoint {
         await toggleArchive(this.model, this.resModel, [this.resId], false, this.context);
         await this.load();
         this.model.notify();
-        this.invalidateCache();
     }
 
     async update(changes, options) {
@@ -998,7 +1045,14 @@ export class Record extends DataPoint {
     async _applyChanges(changes) {
         for (let [fieldName, value] of Object.entries(changes)) {
             const field = this.fields[fieldName];
-            if (field && isX2Many(field)) {
+            if (field && field.relatedPropertyField) {
+                const propertyFieldName = field.relatedPropertyField.fieldName;
+                this.data[propertyFieldName] = this.data[propertyFieldName].map((property) =>
+                    property.name === field.propertyName ? { ...property, value } : property
+                );
+                this._changes[propertyFieldName] = this.data[propertyFieldName];
+                this.data[fieldName] = value;
+            } else if (field && isX2Many(field)) {
                 this._changes[fieldName] = value;
                 await this.data[fieldName].update(value);
             } else {
@@ -1052,17 +1106,91 @@ export class Record extends DataPoint {
         return [id, label];
     }
 
+    _applyPropertyDefinitions(fieldName) {
+        const definitions = this.data[fieldName];
+        const propertiesField = this.fields[fieldName];
+
+        for (const definition of definitions) {
+            const propertyFieldName = `${fieldName}.${definition.name}`;
+            if (propertyFieldName in this.fields) {
+                continue;
+            }
+
+            let widget = definition.type;
+            if (["many2one", "many2many"].includes(definition.type)) {
+                if (!definition.comodel) {
+                    continue;
+                }
+
+                if (["res.users", "res.partner"].includes(definition.comodel)) {
+                    widget =
+                        definition.type === "many2one"
+                            ? "many2one_avatar"
+                            : "many2many_tags_avatar";
+                } else {
+                    widget = definition.type === "many2one" ? widget : "many2many_tags";
+                }
+            } else if (widget === "tags") {
+                widget = `property_tags`;
+            }
+
+            const parent = this.data[propertiesField.definition_record];
+            const relatedPropertyField = {
+                fieldName,
+            };
+            if (parent) {
+                relatedPropertyField.id = parent[0]; //record.id,
+                relatedPropertyField.displayName = parent[1]; //record.display_name,
+            }
+
+            this.fields[propertyFieldName] = {
+                ...pick(definition, "selection", "string", "tags", "type"),
+                name: propertyFieldName,
+                sortable: false,
+                required: false,
+                relatedPropertyField,
+                propertyName: definition.name,
+                relation: definition.comodel,
+            };
+            const field = getFieldFromRegistry(definition.type, widget);
+            let { relatedFields } = field;
+            if (relatedFields) {
+                if (relatedFields instanceof Function) {
+                    relatedFields = relatedFields({ options: {}, attrs: {} });
+                }
+                relatedFields = Object.fromEntries(relatedFields.map((f) => [f.name, f]));
+            }
+            this.activeFields[propertyFieldName] = {
+                ...pick(
+                    this.activeFields[fieldName],
+                    "context",
+                    "modifiers",
+                    "viewType",
+                    "help",
+                    "onChange",
+                    "decorations"
+                ),
+                name: propertyFieldName,
+                string: definition.string,
+                relatedPropertyField,
+                attrs: {},
+                options: {},
+                widget,
+                relatedFields,
+                field,
+            };
+        }
+    }
+
     _createStaticList(fieldName) {
         const field = this.fields[fieldName];
         const activeField = this.activeFields[fieldName];
-        const { fieldsToFetch, relatedFields = {}, views = {}, viewMode } = activeField;
+        const { relatedFields, views = {}, viewMode } = activeField;
         const fields = {
-            id: { name: "id", type: "integer", readonly: true },
             ...relatedFields,
-            ...fieldsToFetch,
         };
         const activeFields = (views[viewMode] && views[viewMode].activeFields) || {
-            ...fieldsToFetch,
+            ...relatedFields,
         };
         for (const fieldName in relatedFields) {
             if (relatedFields[fieldName].active) {
@@ -1098,7 +1226,18 @@ export class Record extends DataPoint {
             views,
             viewMode,
             onChanges: async () => {
-                this._changes[fieldName] = list;
+                const field = this.fields[fieldName];
+                if (field && field.relatedPropertyField) {
+                    const propertyFieldName = field.relatedPropertyField.fieldName;
+                    this.data[propertyFieldName] = this.data[propertyFieldName].map((property) =>
+                        property.name === field.propertyName
+                            ? { ...property, value: list.currentIds }
+                            : property
+                    );
+                    this._changes[propertyFieldName] = this.data[propertyFieldName];
+                } else {
+                    this._changes[fieldName] = list;
+                }
                 const proms = [];
                 if (activeField && activeField.onChange && this.isX2ManyValid(fieldName)) {
                     const changes = await this._onChange([fieldName]);
@@ -1137,7 +1276,7 @@ export class Record extends DataPoint {
                 defaultValues[fieldName] = 0;
             } else if (["date", "datetime"].includes(field.type)) {
                 defaultValues[fieldName] = false;
-            } else if (isX2Many(field)) {
+            } else if (isX2Many(field) || field.type === "properties") {
                 defaultValues[fieldName] = [];
             } else {
                 defaultValues[fieldName] = null;
@@ -1150,6 +1289,9 @@ export class Record extends DataPoint {
         const specs = {};
         function buildSpec(activeFields, prefix) {
             for (const [fieldName, activeField] of Object.entries(activeFields)) {
+                if (activeField.relatedPropertyField) {
+                    continue;
+                }
                 const key = prefix ? `${prefix}.${fieldName}` : fieldName;
                 specs[key] = activeField.onChange ? "1" : "";
                 const subViewInfo = activeField.views && activeField.views[activeField.viewMode];
@@ -1172,7 +1314,7 @@ export class Record extends DataPoint {
         this._changes = params.changes || {};
         this._rawChanges = { ...this._changes };
         const defaultValues = this._getDefaultValues();
-        for (const fieldName in this.activeFields) {
+        for (const fieldName of this.fieldNames) {
             delete this._rawChanges[fieldName];
             const field = this.fields[fieldName];
             if (isX2Many(field)) {
@@ -1192,6 +1334,34 @@ export class Record extends DataPoint {
                 } else {
                     this.data[fieldName] = defaultValues[fieldName];
                 }
+
+                if (field.type === "properties") {
+                    this._applyPropertyDefinitions(fieldName);
+                    for (const property of this.data[fieldName]) {
+                        const fieldPropertyName = `${fieldName}.${property.name}`;
+                        if (!this.activeFields[fieldPropertyName]) {
+                            continue;
+                        }
+                        if (isX2Many(property)) {
+                            const staticList = this._createStaticList(fieldPropertyName);
+                            this._cache[fieldPropertyName] = staticList;
+                            await staticList.setDataRecords(
+                                (property.value || []).map((val) => ({
+                                    id: val[0],
+                                    display_name: val[1] || this.model.env._t("No Access"),
+                                }))
+                            );
+                            this.data[fieldPropertyName] = staticList;
+                        } else if (property.type === "many2one") {
+                            this.data[fieldPropertyName] =
+                                property.value.length && property.value[1] === null
+                                    ? [property.value[0], this.model.env._t("No Access")]
+                                    : property.value;
+                        } else {
+                            this.data[fieldPropertyName] = property.value ?? false;
+                        }
+                    }
+                }
             }
         }
 
@@ -1207,11 +1377,11 @@ export class Record extends DataPoint {
         const activeField = this.activeFields[fieldName];
         if (
             activeField &&
-            !this.isInvisible(fieldName) &&
+            !this._isInvisible(fieldName) &&
             value &&
             (!value[1] || activeField.options.always_reload)
         ) {
-            const context = this.getFieldContext(fieldName);
+            const context = this._getFieldContext(fieldName);
             const result = await this.model.orm.nameGet(relation, [value[0]], { context });
             return result[0];
         }
@@ -1228,7 +1398,7 @@ export class Record extends DataPoint {
                 value = { resModel, resId: parseInt(resId, 10) };
             }
             const { resModel, resId } = value;
-            const context = this.getFieldContext(fieldName);
+            const context = this._getFieldContext(fieldName);
             const nameGet = await this.model.orm.nameGet(resModel, [resId], { context });
             return {
                 resModel,
@@ -1241,7 +1411,7 @@ export class Record extends DataPoint {
     }
 
     async _loadX2ManyData(fieldName) {
-        if (!this.isInvisible(fieldName)) {
+        if (!this._isInvisible(fieldName)) {
             await this.data[fieldName].load();
         }
     }
@@ -1251,7 +1421,11 @@ export class Record extends DataPoint {
             return;
         }
 
-        const { domain, value: changes, warning } = await this.model.orm.call(
+        const {
+            domain,
+            value: changes,
+            warning,
+        } = await this.model.orm.call(
             this.resModel,
             "onchange",
             [
@@ -1336,13 +1510,16 @@ export class Record extends DataPoint {
             });
             return false;
         }
+        if ((await this.onWillSaveRecord(this)) === false) {
+            return false;
+        }
         const changes = this.getChanges();
         const keys = Object.keys(changes);
-        const hasChanges = this.isVirtual || keys.length;
+        const hasChanges = this.isNew || keys.length;
         const shouldReload = hasChanges ? !options.noReload : false;
         const context = this.context;
 
-        if (this.isVirtual) {
+        if (this.isNew) {
             if (keys.length === 1 && keys[0] === "display_name") {
                 const [resId] = await this.model.orm.call(
                     this.resModel,
@@ -1352,13 +1529,17 @@ export class Record extends DataPoint {
                 );
                 this.resId = resId;
             } else {
-                this.resId = await this.model.orm.create(this.resModel, [changes], { context });
+                const [resId] = await this.model.orm.create(this.resModel, [changes], { context });
+                this.resId = resId;
             }
             delete this.virtualId;
             this.data.id = this.resId;
             this.resIds.push(this.resId);
             this._changes = {};
+<<<<<<< HEAD
             this.invalidateCache();
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         } else if (keys.length > 0) {
             try {
                 await this.model.orm.write(this.resModel, [this.resId], changes, { context });
@@ -1369,7 +1550,10 @@ export class Record extends DataPoint {
                 throw e;
             }
             this._changes = {};
+<<<<<<< HEAD
             this.invalidateCache();
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
 
         this.isInQuickCreation = false;
@@ -1379,6 +1563,7 @@ export class Record extends DataPoint {
         if (!options.stayInEdition) {
             this.switchMode("readonly");
         }
+        await this.onRecordSaved(this);
         return true;
     }
 
@@ -1466,7 +1651,11 @@ class DynamicList extends DataPoint {
                 this.editedRecord = record;
             }
             if (params.onRecordWillSwitchMode) {
+<<<<<<< HEAD
                 await params.onRecordWillSwitchMode(record, mode, options);
+=======
+                return await params.onRecordWillSwitchMode(record, mode, options);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
         };
     }
@@ -1485,7 +1674,7 @@ class DynamicList extends DataPoint {
         }
         const [groupByFieldName, granularity] = this.firstGroupBy.split(":");
         return {
-            rawAttrs: {},
+            attrs: {},
             ...this.fields[groupByFieldName],
             ...this.activeFields[groupByFieldName],
             granularity: granularity,
@@ -1520,16 +1709,7 @@ class DynamicList extends DataPoint {
         const resIds = await this.getResIds(isSelected);
         await toggleArchive(this.model, this.resModel, resIds, true, this.context);
         await this.model.load();
-        this.invalidateCache();
         return resIds;
-    }
-
-    canQuickCreate() {
-        return (
-            this.groupByField &&
-            (isAllowedDateField(this.groupByField) ||
-                QUICK_CREATE_FIELD_TYPES.includes(this.groupByField.type))
-        );
     }
 
     canResequence() {
@@ -1597,7 +1777,6 @@ class DynamicList extends DataPoint {
         const resIds = await this.getResIds(isSelected);
         await toggleArchive(this.model, this.resModel, resIds, false, this.context);
         await this.model.load();
-        this.invalidateCache();
         return resIds;
     }
 
@@ -1618,8 +1797,8 @@ class DynamicList extends DataPoint {
             if (
                 !Object.keys(changes).filter(
                     (fieldName) =>
-                        record.isReadonly(fieldName) ||
-                        (record.isRequired(fieldName) && !changes[fieldName])
+                        record._isReadonly(fieldName) ||
+                        (record._isRequired(fieldName) && !changes[fieldName])
                 ).length
             ) {
                 result.push(record);
@@ -1643,14 +1822,13 @@ class DynamicList extends DataPoint {
                     try {
                         const context = this.context;
                         await this.model.orm.write(this.resModel, resIds, changes, { context });
-                        this.invalidateCache();
                         validSelection.forEach((record) => {
                             record.selected = false;
                         });
                         await Promise.all(validSelection.map((record) => record.load()));
                         record.switchMode("readonly");
                         this.model.notify();
-                    } catch (_) {
+                    } catch {
                         record.discard();
                     }
                     validSelection.forEach((record) => {
@@ -1672,11 +1850,14 @@ class DynamicList extends DataPoint {
                 record,
                 fieldNodes: this.model.fieldNodes,
             };
-            this.model.trigger("list-confirmation-dialog-will-open");
-            await this.model.dialogService.add(ListConfirmationDialog, dialogProps, {
-                onClose: () => {
-                    this.model.trigger("list-confirmation-dialog-closed");
-                },
+            this.model.bus.trigger("list-confirmation-dialog-will-open");
+            await new Promise((resolve) => {
+                this.model.dialogService.add(ListConfirmationDialog, dialogProps, {
+                    onClose: () => {
+                        this.model.bus.trigger("list-confirmation-dialog-closed");
+                        resolve();
+                    },
+                });
             });
         } else {
             await record._save();
@@ -1812,6 +1993,35 @@ export class DynamicRecordList extends DynamicList {
     }
 
     // -------------------------------------------------------------------------
+<<<<<<< HEAD
+=======
+    // Getters
+    // -------------------------------------------------------------------------
+
+    get commonRecordParams() {
+        return {
+            resModel: this.resModel,
+            fields: this.fields,
+            activeFields: this.activeFields,
+            onRecordSaved: this.onRecordSaved,
+            onRecordWillSwitchMode: this.onRecordWillSwitchMode,
+            onWillSaveRecord: this.onWillSaveRecord,
+            defaultContext: this.defaultContext,
+            rawContext: {
+                parent: this.rawContext,
+                make: () => this.context,
+            },
+        };
+    }
+
+    get evalContext() {
+        return {
+            ...this.context,
+        };
+    }
+
+    // -------------------------------------------------------------------------
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     // Public
     // -------------------------------------------------------------------------
 
@@ -1822,15 +2032,7 @@ export class DynamicRecordList extends DynamicList {
      */
     async addExistingRecord(resId, atFirstPosition) {
         const newRecord = this.model.createDataPoint("record", {
-            resModel: this.resModel,
-            fields: this.fields,
-            activeFields: this.activeFields,
-            onRecordWillSwitchMode: this.onRecordWillSwitchMode,
-            defaultContext: this.defaultContext,
-            rawContext: {
-                parent: this.rawContext,
-                make: () => this.context,
-            },
+            ...this.commonRecordParams,
             resId,
         });
         if (this.model.useSampleModel) {
@@ -1860,16 +2062,10 @@ export class DynamicRecordList extends DynamicList {
      */
     async createRecord(params = {}, atFirstPosition = false) {
         const newRecord = this.model.createDataPoint("record", {
-            resModel: this.resModel,
-            fields: this.fields,
-            activeFields: this.activeFields,
+            ...this.commonRecordParams,
             parentActiveFields: this.activeFields,
-            onRecordWillSwitchMode: this.onRecordWillSwitchMode,
-            defaultContext: this.defaultContext,
-            rawContext: {
-                parent: this.rawContext,
-                make: () => this.context,
-            },
+            activeFields: this.activeFields,
+            fields: this.fields,
             ...params,
         });
         if (this.model.useSampleModel) {
@@ -2051,12 +2247,10 @@ export class DynamicRecordList extends DynamicList {
         const records = await Promise.all(
             rawRecords.map(async (data) => {
                 const record = this.model.createDataPoint("record", {
-                    resModel: this.resModel,
+                    ...this.commonRecordParams,
                     resId: data.id,
-                    fields: this.fields,
-                    activeFields: this.activeFields,
                     rawContext: this.rawContext,
-                    onRecordWillSwitchMode: this.onRecordWillSwitchMode,
+                    defaultContext: undefined,
                 });
                 await record.load({ values: data });
                 return record;
@@ -2131,7 +2325,9 @@ export class DynamicGroupList extends DynamicList {
             groupByInfo: this.groupByInfo,
             rawContext: this.rawContext,
             onCreateRecord: this.onCreateRecord,
+            onRecordSaved: this.onRecordSaved,
             onRecordWillSwitchMode: this.onRecordWillSwitchMode,
+            onWillSaveRecord: this.onWillSaveRecord,
         };
     }
 
@@ -2159,10 +2355,6 @@ export class DynamicGroupList extends DynamicList {
         this.count++;
         this.model.notify();
         return group;
-    }
-
-    canQuickCreate() {
-        return super.canQuickCreate() && this.groups.length;
     }
 
     /**
@@ -2216,35 +2408,9 @@ export class DynamicGroupList extends DynamicList {
         return state;
     }
 
-    /**
-     * @param {string} shortType
-     * @returns {boolean}
-     */
-    groupedBy(shortType) {
-        const { type } = this.groupByField;
-        switch (shortType) {
-            case "m2o":
-            case "many2one": {
-                return type === "many2one";
-            }
-            case "o2m":
-            case "one2many": {
-                return type === "one2many";
-            }
-            case "m2m":
-            case "many2many": {
-                return type === "many2many";
-            }
-            case "m2x":
-            case "many2x": {
-                return ["many2one", "many2many"].includes(type);
-            }
-            case "x2m":
-            case "x2many": {
-                return ["one2many", "many2many"].includes(type);
-            }
-        }
-        return false;
+    hasAggregate(fieldName) {
+        const group = this.groups[0];
+        return group && fieldName in group.aggregates;
     }
 
     hasAggregate(fieldName) {
@@ -2436,7 +2602,7 @@ export class DynamicGroupList extends DynamicList {
                         } else {
                             groupParams.displayName = Array.isArray(value) ? value[1] : value;
                         }
-                        if (this.groupedBy("m2x")) {
+                        if (["many2one", "many2many"].includes(this.groupByField.type)) {
                             groupParams.recordParams = this.groupByInfo[this.firstGroupBy];
                         }
                         break;
@@ -2579,7 +2745,9 @@ export class Group extends DataPoint {
             countLimit: params.count,
             groupByInfo: params.groupByInfo,
             onCreateRecord: params.onCreateRecord,
+            onRecordSaved: this.onRecordSaved,
             onRecordWillSwitchMode: params.onRecordWillSwitchMode,
+            onWillSaveRecord: this.onWillSaveRecord,
             defaultContext: {
                 ...params.defaultContext,
                 [`default_${this.groupByField.name}`]: this.getServerValue(),
@@ -2646,21 +2814,21 @@ export class Group extends DataPoint {
         };
     }
 
-    getAggregableRecords() {
-        return this.list.records.filter((r) => !r.isInQuickCreation);
-    }
-
     getAggregates(fieldName) {
         return fieldName ? this.aggregates[fieldName] || 0 : this.count;
     }
 
     getServerValue() {
         const { name, selection, type, granularity } = this.groupByField;
+
         switch (type) {
             case "many2one":
             case "char":
             case "boolean": {
                 return this.value || false;
+            }
+            case "many2many": {
+                return this.value ? [this.value] : false;
             }
             case "selection": {
                 const descriptor = selection.find((opt) => opt[0] === this.value);
@@ -2701,6 +2869,8 @@ export class Group extends DataPoint {
             resModel: this.resModel,
             resId: this.value,
             rawContext: this.rawContext,
+            onRecordSaved: this.onRecordSaved,
+            onWillSaveRecord: this.onWillSaveRecord,
             ...params,
         });
     }
@@ -2904,7 +3074,7 @@ export class StaticList extends DataPoint {
         const ids = [];
         for (const recordId of recordIds) {
             const record = this._cache[recordId];
-            if (record.isVirtual) {
+            if (record.isNew) {
                 delete this._cache[recordId];
             }
             const id = record.resId || record.virtualId;
@@ -2924,7 +3094,7 @@ export class StaticList extends DataPoint {
 
     discard() {
         for (const record of Object.values(this._cache)) {
-            if (record.isVirtual) {
+            if (record.isNew) {
                 delete this._cache[record.id];
             } else {
                 record.discard();
@@ -3104,7 +3274,7 @@ export class StaticList extends DataPoint {
             if (this.currentIds) {
                 for (const resId of this.currentIds) {
                     const record = this._cache[this._mapping[resId]];
-                    if (record && record.isVirtual) {
+                    if (record && record.isNew) {
                         commands.push(x2ManyCommands.create(resId, record.data));
                     } else {
                         commands.push(x2ManyCommands.linkTo(resId));
@@ -3131,6 +3301,20 @@ export class StaticList extends DataPoint {
         this._commandsById = {}; // to remove?
         this._commands = this._getNormalizedCommands([], commands); // modifies commands and this._commandsById in places
         this.currentIds = this._getCurrentIds(this._serverIds, this._commands, true);
+    }
+
+    async setDataRecords(data) {
+        const proms = [];
+        this.currentIds = [];
+        this._commandsById = {};
+        this._commands = this._getNormalizedCommands([], []);
+        for (const values of data) {
+            const record = this._createRecord({ resId: values.id, mode: "readonly" });
+            this.currentIds.push(values.id);
+            proms.push(record.load({ values }));
+        }
+        await Promise.all(proms);
+        this.records = this._getRecords();
     }
 
     async sortBy(fieldName) {
@@ -3431,6 +3615,8 @@ export class RelationalModel extends Model {
             viewMode: params.viewMode || null,
             resModel: params.resModel,
             groupByInfo: params.groupByInfo,
+            onRecordSaved: params.onRecordSaved,
+            onWillSaveRecord: params.onWillSaveRecord,
         };
         this.fieldNodes = params.fieldNodes; // used by the ListConfirmationDialog
         if (this.rootType === "record") {
@@ -3447,15 +3633,11 @@ export class RelationalModel extends Model {
             this.rootParams.groupsLimit = groupsLimit;
             this.rootParams.expand = expand;
         }
-        this.initialValues = params.initialValues;
 
         // this.db = Object.create(null);
         this.root = null;
 
         this.nextId = 1;
-
-        // list of models for which the DataManager's cache should be cleared on create, update and delete operations
-        this.noCacheModels = ["ir.actions.act_window", "ir.filters", "ir.ui.view", "res.currency"];
     }
 
     /**
@@ -3488,9 +3670,12 @@ export class RelationalModel extends Model {
         const state = this.root
             ? Object.assign(this.root.exportState(), { offset: 0 })
             : this.initialRootState;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         const newRoot = this.createDataPoint(this.rootType, rootParams, state);
-        await this.keepLast.add(newRoot.load({ values: this.initialValues }));
+        await this.keepLast.add(newRoot.load({ values: params.values }));
         this.root = newRoot;
         this.rootParams = rootParams;
         this.notify();
@@ -3559,7 +3744,7 @@ export class RelationalModel extends Model {
 
         await Promise.all([record, ...relatedRecords].map((r) => r.load()));
 
-        this.trigger("record-updated", { record, relatedRecords });
+        this.bus.trigger("record-updated", { record, relatedRecords });
         this.notify();
     }
 }

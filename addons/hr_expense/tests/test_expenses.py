@@ -48,8 +48,8 @@ class TestExpenses(TestExpenseCommon):
         expense2.employee_id = self.expense_employee.id
         self.assertEqual(expense2.sheet_id.id, False, 'Sheet should be unlinked from the expense')
 
-    def test_expense_sheet_payment_state(self):
-        ''' Test expense sheet payment states when partially paid, in payment and paid. '''
+    def test_expense_sheet_paid_employee(self):
+        ''' Test expense sheet paid by employee flow'''
 
         def get_payment(expense_sheet, amount):
             ctx = {'active_model': 'account.move', 'active_ids': expense_sheet.account_move_id.ids}
@@ -73,19 +73,45 @@ class TestExpenses(TestExpenseCommon):
         })
 
         expense_sheet.action_submit_sheet()
-        expense_sheet.approve_expense_sheets()
+        self.assertEqual(expense_sheet.state, 'submit', 'sheet should be submitted')
+
+        expense_sheet.action_approve_expense_sheets()
+        self.assertEqual(expense_sheet.state, 'approve', 'sheet should be aproved')
+
+        expense_sheet.action_sheet_move_create()
+        self.assertEqual(expense_sheet.state, 'post', 'sheet should be posted')
+
+        move = expense_sheet.account_move_id
+
+        self.assertRecordValues(move.line_ids, [
+            {'debit': 304.35, 'credit': 0.0, 'reconciled': False, },
+            {'debit': 45.65, 'credit': 0.0, 'reconciled': False},
+            {'debit': 0.0, 'credit': 350, 'reconciled': False},
+        ])
+
+        expense_sheet.action_reset_expense_sheets()
+        self.assertEqual(expense_sheet.state, 'draft', 'sheet should be reverted to approved')
+
+        reverse_move = self.env['account.move'].search([('reversed_entry_id', '=', move.id)])
+        self.assertFalse(expense_sheet.account_move_id)
+        self.assertEqual(move.payment_state, 'reversed', 'vendor bill should be reversed')
+        self.assertTrue(350 == expense_sheet.total_amount == move.amount_total == reverse_move.amount_total, 'taxes properly included in price')
+
+        expense_sheet.action_submit_sheet()
+        expense_sheet.action_approve_expense_sheets()
         expense_sheet.action_sheet_move_create()
 
-        payment = get_payment(expense_sheet, 100.0)
-        liquidity_lines1 = payment._seek_for_lines()[0]
+        payment_1 = get_payment(expense_sheet, 100.0)
+        liquidity_lines1 = payment_1._seek_for_lines()[0]
 
         self.assertEqual(expense_sheet.payment_state, 'partial', 'payment_state should be partial')
 
-        payment = get_payment(expense_sheet, 250.0)
-        liquidity_lines2 = payment._seek_for_lines()[0]
+        payment_2 = get_payment(expense_sheet, 250.0)
+        liquidity_lines2 = payment_2._seek_for_lines()[0]
 
         in_payment_state = expense_sheet.account_move_id._get_invoice_in_payment_state()
         self.assertEqual(expense_sheet.payment_state, in_payment_state, 'payment_state should be ' + in_payment_state)
+        self.assertEqual(expense_sheet.state, 'done', 'sheet should be marked as done')
 
         statement_line = self.env['account.bank.statement.line'].create({
             'journal_id': self.company_data['default_journal_bank'].id,
@@ -102,6 +128,47 @@ class TestExpenses(TestExpenseCommon):
         (st_suspense_lines + liquidity_lines1 + liquidity_lines2).reconcile()
 
         self.assertEqual(expense_sheet.payment_state, 'paid', 'payment_state should be paid')
+        self.assertEqual(expense_sheet.state, 'done', 'sheet should be marked as done')
+
+        payment_1.action_draft()
+        payment_2.action_draft()
+
+        self.assertEqual(expense_sheet.state, 'post', 'sheet should be reverted to posted')
+        self.assertEqual(expense_sheet.payment_state, 'not_paid', 'payment_state should be not_paid')
+
+    def test_expense_sheet_paid_company(self):
+        ''' Test expense sheet paid by company flow '''
+
+        expense_sheet = self.env['hr.expense.sheet'].create({
+            'name': 'Expense for John Smith',
+            'employee_id': self.expense_employee.id,
+            'accounting_date': '2021-01-01',
+            'payment_method_line_id': self.outbound_payment_method_line.id,
+            'expense_line_ids': [(0, 0, {
+                'name': 'Car Travel Expenses',
+                'employee_id': self.expense_employee.id,
+                'product_id': self.product_a.id,
+                'unit_amount': 350.00,
+                'payment_mode': 'company_account',
+            })]
+        })
+
+        expense_sheet.action_submit_sheet()
+        expense_sheet.action_approve_expense_sheets()
+        expense_sheet.action_sheet_move_create()
+
+        move = expense_sheet.account_move_id
+
+        self.assertEqual(expense_sheet.state, 'done', 'sheet should be marked as done')
+        self.assertTrue(350 == expense_sheet.total_amount == move.amount_total == move.payment_id.amount)
+
+        self.assertEqual(expense_sheet.payment_state, 'paid', 'payment_state should be paid')
+
+        move.payment_id.action_draft()
+        move.payment_id.unlink()
+
+        self.assertEqual(expense_sheet.state, 'approve', 'sheet should be reverted to approve')
+        self.assertEqual(expense_sheet.payment_state, 'not_paid', 'payment_state should be not_paid')
 
     def test_expense_values(self):
         """ Checking accounting move entries and analytic entries when submitting expense """
@@ -143,7 +210,7 @@ class TestExpenses(TestExpenseCommon):
         self.assertRecordValues(expense_sheet, [{'state': 'draft', 'total_amount': 1500.0}])
 
         expense_sheet.action_submit_sheet()
-        expense_sheet.approve_expense_sheets()
+        expense_sheet.action_approve_expense_sheets()
         expense_sheet.action_sheet_move_create()
 
         # Check expense sheet journal entry values.
@@ -237,10 +304,18 @@ class TestExpenses(TestExpenseCommon):
             expense_sheet_form.employee_id = expense.employee_id
             expense_sheet_form.name = expense.name
             expense_sheet_form.expense_line_ids.add(expense)
+<<<<<<< HEAD
             expense_sheet = expense_sheet_form.save()
 
         expense_sheet.action_submit_sheet()
         expense_sheet.approve_expense_sheets()
+=======
+            expense_sheet_form.payment_method_line_id = self.outbound_payment_method_line
+            expense_sheet = expense_sheet_form.save()
+
+        expense_sheet.action_submit_sheet()
+        expense_sheet.action_approve_expense_sheets()
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         expense_sheet.action_sheet_move_create()
 
     def test_account_entry_multi_currency(self):
@@ -274,7 +349,7 @@ class TestExpenses(TestExpenseCommon):
         expense.action_submit_sheet()
         self.assertEqual(expense.state, 'submit', 'Expense is not in Reported state')
         # Approve
-        expense.approve_expense_sheets()
+        expense.action_approve_expense_sheets()
         self.assertEqual(expense.state, 'approve', 'Expense is not in Approved state')
         # Create Expense Entries
         expense.action_sheet_move_create()
@@ -336,7 +411,7 @@ class TestExpenses(TestExpenseCommon):
             })
 
         expense.action_submit_sheet()
-        expense.approve_expense_sheets()
+        expense.action_approve_expense_sheets()
 
         # Assert not "Cannot create unbalanced journal entry" error.
         expense.action_sheet_move_create()
@@ -387,7 +462,7 @@ class TestExpenses(TestExpenseCommon):
 
         #actions
         sheet.action_submit_sheet()
-        sheet.approve_expense_sheets()
+        sheet.action_approve_expense_sheets()
         sheet.action_sheet_move_create()
         action_data = sheet.action_register_payment()
         wizard = Form(self.env['account.payment.register'].with_context(action_data['context'])).save()
@@ -416,7 +491,7 @@ class TestExpenses(TestExpenseCommon):
 
         #actions
         sheet.action_submit_sheet()
-        sheet.approve_expense_sheets()
+        sheet.action_approve_expense_sheets()
         sheet.action_sheet_move_create()
         action_data = sheet.action_register_payment()
         wizard = Form(self.env['account.payment.register'].with_context(action_data['context'])).save()
@@ -493,7 +568,11 @@ class TestExpenses(TestExpenseCommon):
         self.assertRecordValues(expense_sheet, [{'state': 'draft', 'total_amount': 345.0}])
 
         expense_sheet.action_submit_sheet()
+<<<<<<< HEAD
         expense_sheet.approve_expense_sheets()
+=======
+        expense_sheet.action_approve_expense_sheets()
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         expense_sheet.action_sheet_move_create()
 
         # Check expense sheet journal entry values.
@@ -553,7 +632,11 @@ class TestExpenses(TestExpenseCommon):
         })
 
         expense_sheet.action_submit_sheet()
+<<<<<<< HEAD
         expense_sheet.approve_expense_sheets()
+=======
+        expense_sheet.action_approve_expense_sheets()
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         expense_sheet.action_sheet_move_create()
 
         # Check whether employee is set as supplier on the receipt
@@ -590,7 +673,11 @@ class TestExpenses(TestExpenseCommon):
 
         #actions
         sheet.action_submit_sheet()
+<<<<<<< HEAD
         sheet.approve_expense_sheets()
+=======
+        sheet.action_approve_expense_sheets()
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         sheet.action_sheet_move_create()
         action_data = sheet.action_register_payment()
         payment_method_line = self.env.company.bank_journal_ids.outbound_payment_method_line_ids.filtered(lambda m: m.code == 'check_printing')
@@ -600,6 +687,7 @@ class TestExpenses(TestExpenseCommon):
         action = wizard.action_create_payments()
         self.assertEqual(sheet.state, 'done', 'all account.move.line linked to expenses must be reconciled after payment')
 
+<<<<<<< HEAD
         payments = self.env[action['res_model']].browse(action['res_id'])
         for payment in payments:
             pages = payment._check_get_pages()
@@ -614,6 +702,21 @@ class TestExpenses(TestExpenseCommon):
                 'amount_paid': formatLang(self.env, payment.amount_total, currency_obj=self.env.company.currency_id),
                 'currency': self.env.company.currency_id
             })
+=======
+        payment = self.env[action['res_model']].browse(action['res_id'])
+        pages = payment._check_get_pages()
+        stub_line = pages[0]['stub_lines'][:1]
+        self.assertTrue(stub_line)
+        move = self.env[action_data['context']['active_model']].browse(action_data['context']['active_ids'])
+        self.assertDictEqual(stub_line[0], {
+            'due_date': payment.date.strftime("%m/%d/%Y"),
+            'number': ' - '.join([move.name, move.ref] if move.ref else [move.name]),
+            'amount_total': formatLang(self.env, move.amount_total, currency_obj=self.env.company.currency_id),
+            'amount_residual': '-',
+            'amount_paid': formatLang(self.env, payment.amount_total, currency_obj=self.env.company.currency_id),
+            'currency': self.env.company.currency_id
+        })
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     def test_hr_expense_split(self):
         """

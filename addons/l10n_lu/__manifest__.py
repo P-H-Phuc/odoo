@@ -1,10 +1,4 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
-# Copyright (C) 2011 Thamini S.à.R.L (<http://www.thamini.com>)
-# Copyright (C) 2011 ADN Consultants S.à.R.L (<http://www.adn-luxembourg.com>)
-#    Copyright (C) 2014 ACSONE SA/NV (<http://acsone.eu>)
-
 {
     'name': 'Luxembourg - Accounting',
     'version': '2.1',
@@ -23,19 +17,16 @@ Notes:
       see the first sheet of tax.xls for details of coverage
     * to update the chart of tax template, update tax.xls and run tax2csv.py
 """,
-    'author': 'OpenERP SA, ADN, ACSONE SA/NV',
+    'author': 'Odoo S.A., ADN, ACSONE SA/NV',
     'depends': [
         'account',
         'base_iban',
         'base_vat',
-        'l10n_multilang',
     ],
     'data': [
-        # basic accounting data
         'data/l10n_lu_chart_data.xml',
-        'data/account.account.template.csv',
-        'data/account.group.template.csv',
         'data/account_tax_report_line.xml',
+<<<<<<< HEAD
         'data/account.tax.group.csv',
         'data/account_tax_template_2015.xml',
         'data/account.fiscal.position.template-2011.csv',
@@ -45,6 +36,8 @@ Notes:
         'data/account.chart.template.csv',
         'data/account_chart_template_data.xml',
         'data/l10n_lu_chart_template_data.xml',
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     ],
     'demo': [
         'demo/demo_company.xml',

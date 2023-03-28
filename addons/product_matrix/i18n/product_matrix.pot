@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-04 09:25+0000\n"
 "PO-Revision-Date: 2022-10-04 09:25+0000\n"
+=======
+"Project-Id-Version: Odoo Server saas~16.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-17 08:01+0000\n"
+"PO-Revision-Date: 2023-01-17 08:01+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,6 +23,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: product_matrix
+<<<<<<< HEAD
 #: model:product.attribute.value,name:product_matrix.product_attribute_value_color_1
 msgid "Blue"
 msgstr ""
@@ -33,10 +41,30 @@ msgstr ""
 #. module: product_matrix
 #: model:product.template,name:product_matrix.matrix_product_template_shirt
 msgid "My Company Tshirt (GRID)"
+=======
+#. odoo-javascript
+#: code:addons/product_matrix/static/src/js/product_matrix_dialog.js:0
+#, python-format
+msgid "Choose Product Variants"
 msgstr ""
 
 #. module: product_matrix
-#. openerp-web
+#. odoo-javascript
+#: code:addons/product_matrix/static/src/xml/product_matrix_dialog.xml:0
+#, python-format
+msgid "Confirm"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
+msgstr ""
+
+#. module: product_matrix
+#. odoo-javascript
+#: code:addons/product_matrix/static/src/xml/product_matrix_dialog.xml:0
+#, python-format
+msgid "Discard"
+msgstr ""
+
+#. module: product_matrix
+#. odoo-javascript
 #: code:addons/product_matrix/static/src/xml/product_matrix.xml:0
 #, python-format
 msgid "Not available"

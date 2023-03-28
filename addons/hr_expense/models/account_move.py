@@ -17,8 +17,8 @@ class AccountMove(models.Model):
         return {
             'name': self.expense_sheet_id.name,
             'type': 'ir.actions.act_window',
-            'view_type': 'form',
             'view_mode': 'form',
+            'views': [(False, 'form')],
             'res_model': 'hr.expense.sheet',
             'res_id': self.expense_sheet_id.id
         }
@@ -39,7 +39,11 @@ class AccountMove(models.Model):
 
     def _creation_message(self):
         if self.expense_sheet_id:
+<<<<<<< HEAD
             return _("Expense entry Created")
+=======
+            return _("Expense entry created from: %s", self.expense_sheet_id._get_html_link())
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return super()._creation_message()
 
     @api.depends('expense_sheet_id.payment_mode')
@@ -67,12 +71,17 @@ class AccountMove(models.Model):
                     ): {
                         "balance": balance,
                         "name": "",
+<<<<<<< HEAD
                         "account_id": move.expense_sheet_id.expense_line_ids[0]._get_expense_account_destination(),
+=======
+                        "account_id": move.expense_sheet_id._get_expense_account_destination(),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     }
                 }
 
     def _reverse_moves(self, default_values_list=None, cancel=False):
         if self.expense_sheet_id:
+<<<<<<< HEAD
             self.expense_sheet_id.state = 'approve'
             self.expense_sheet_id = False
             self.ref = False # else, when restarting the expense flow we get duplicate issue on vendor.bill
@@ -83,3 +92,8 @@ class AccountMove(models.Model):
             self.expense_sheet_id.state = 'approve'
             self.expense_sheet_id.account_move_id = False # cannot change to delete='set null' in stable
         return super().unlink()
+=======
+            self.expense_sheet_id = False
+            self.ref = False # else, when restarting the expense flow we get duplicate issue on vendor.bill
+        return super()._reverse_moves(default_values_list=default_values_list, cancel=cancel)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

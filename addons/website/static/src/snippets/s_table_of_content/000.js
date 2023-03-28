@@ -28,8 +28,13 @@ const TableOfContent = publicWidget.Widget.extend({
         if (indexCallback >= 0) {
             extraMenuUpdateCallbacks.splice(indexCallback, 1);
         }
+<<<<<<< HEAD
         this.$target.css('top', '');
         this.$target.find('.s_table_of_content_navbar').css({top: '', maxHeight: ''});
+=======
+        this.$el.css('top', '');
+        this.$el.find('.s_table_of_content_navbar').css({top: '', maxHeight: ''});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this._super(...arguments);
     },
 
@@ -56,13 +61,18 @@ const TableOfContent = publicWidget.Widget.extend({
      * @private
      */
     _updateTableOfContentNavbarPosition() {
+<<<<<<< HEAD
         if (!this.$target[0].querySelector('a.table_of_content_link')) {
+=======
+        if (!this.el.querySelector('a.table_of_content_link')) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             // Do not start the scrollspy if the TOC is empty.
             return;
         }
         let position = 0;
         const $fixedElements = $('.o_top_fixed_element');
         _.each($fixedElements, el => position += $(el).outerHeight());
+<<<<<<< HEAD
         const isHorizontalNavbar = this.$target.hasClass('s_table_of_content_horizontal_navbar');
         this.$target.css('top', isHorizontalNavbar ? position : '');
         this.$target.find('.s_table_of_content_navbar').css('top', isHorizontalNavbar ? '' : position + 20);
@@ -74,6 +84,19 @@ const TableOfContent = publicWidget.Widget.extend({
                 method: 'offset',
                 offset: position + 100,
                 alwaysKeepFirstActive: true,
+=======
+        const isHorizontalNavbar = this.$el.hasClass('s_table_of_content_horizontal_navbar');
+        this.$el.css('top', isHorizontalNavbar ? position : '');
+        this.$el.find('.s_table_of_content_navbar').css('top', isHorizontalNavbar ? '' : position + 20);
+        position += isHorizontalNavbar ? this.$el.outerHeight() : 0;
+        this.$el.find('.s_table_of_content_navbar').css('maxHeight', isHorizontalNavbar ? '' : `calc(100vh - ${position + 40}px)`);
+        if (this.previousPosition !== position) {
+            new ScrollSpy(this.$scrollingElement, {
+                target: this.$el.find('.s_table_of_content_navbar'),
+                method: 'offset',
+                offset: position + 100,
+                alwaysKeepFirstActive: true
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             });
             this.previousPosition = position;
         }

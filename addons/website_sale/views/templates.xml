@@ -191,7 +191,7 @@
                     <t t-set="template_price_vals" t-value="get_product_prices(product)"/>
                     <div class="o_wsale_product_btn"/>
                     <div class="product_price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/Offer">
-                        <t t-if="'base_price' in template_price_vals">
+                        <t t-if="'base_price' in template_price_vals and template_price_vals['base_price'] &gt; template_price_vals['price_reduce']">
                             <del t-attf-class="text-muted me-1 h6 mb-0" style="white-space: nowrap;">
                                 <em class="small" t-esc="template_price_vals['base_price']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}" />
                             </del>
@@ -854,9 +854,9 @@
             </label>
             <input type="range" multiple="multiple"
                    t-attf-class="form-range range-with-input {{_classes_input}}"
-                   t-att-data-currency="pricelist.currency_id.symbol"
-                   t-att-data-currency-position="pricelist.currency_id.position"
-                   t-att-step="pricelist.currency_id.rounding" t-att-min="'%f' % (available_min_price)"
+                   t-att-data-currency="website.currency_id.symbol"
+                   t-att-data-currency-position="website.currency_id.position"
+                   t-att-step="website.currency_id.rounding" t-att-min="'%f' % (available_min_price)"
                    t-att-max="'%f' % (available_max_price)" t-att-value="'%f,%f' % (min_price, max_price)"/>
         </div>
     </template>
@@ -869,7 +869,11 @@
     </template>
 
     <!-- /shop/product page -->
+<<<<<<< HEAD
     <template id="base_unit_price" name="Product Bas eunit price">
+=======
+    <template id="base_unit_price" name="Product Base unit price">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         (<span class="o_base_unit_price" t-esc="combination_info['base_unit_price']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
          / <span class="oe_custom_base_unit" t-field="product.base_unit_name"/>)
     </template>
@@ -1141,10 +1145,10 @@
     </template>
 
     <template id="website_sale.tax_indication" active="False">
-        <span groups="account.group_show_line_subtotals_tax_excluded" class="h6 text-muted">
+        <span t-if="env.company.show_line_subtotals_tax_selection == 'tax_excluded'" class="h6 text-muted">
             VAT Excluded
         </span>
-        <span groups="account.group_show_line_subtotals_tax_included" class="h6 text-muted">
+        <span t-if="env.company.show_line_subtotals_tax_selection == 'tax_included'" class="h6 text-muted">
             VAT Included
         </span>
     </template>
@@ -1155,17 +1159,19 @@
                 <span class="oe_price" style="white-space: nowrap;" t-esc="combination_info['price']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
                 <span itemprop="price" style="display:none;" t-esc="combination_info['price']"/>
                 <span itemprop="priceCurrency" style="display:none;" t-esc="website.currency_id.name"/>
-                <span t-attf-class="text-danger oe_default_price ms-1 h5 {{'' if combination_info['has_discounted_price'] else 'd-none'}}" style="text-decoration: line-through; white-space: nowrap;"
-                    t-esc="combination_info['list_price']" t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"
+                <span t-attf-class="text-danger oe_default_price ms-1 h5 {{'' if combination_info['has_discounted_price'] and not combination_info['compare_list_price'] else 'd-none'}}"
+                      style="text-decoration: line-through; white-space: nowrap;"
+                      t-esc="combination_info['list_price']"
+                      t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"
                     itemprop="listPrice"
                 />
                 <t t-if="is_view_active('website_sale.tax_indication')" t-call="website_sale.tax_indication"/>
-                <del t-if="product.compare_list_price">
-                    <span t-field="product.compare_list_price"
-                        groups="website_sale.group_product_price_comparison"
-                        t-options='{
+                <del t-if="combination_info['compare_list_price'] and (combination_info['compare_list_price'] &gt; combination_info['price'])">
+                    <span t-esc="combination_info['compare_list_price']"
+                          groups="website_sale.group_product_price_comparison"
+                          t-options='{
                            "widget": "monetary",
-                           "display_currency": product.currency_id,
+                           "display_currency": website.currency_id,
                        }'/>
                 </del>
             </h3>
@@ -1176,13 +1182,13 @@
                        "display_currency": product.currency_id,
                 }'/>
                 <t t-if="is_view_active('website_sale.tax_indication')" t-call="website_sale.tax_indication"/>
-                <del t-if="product.compare_list_price">
+                <del t-if="combination_info['compare_list_price'] and (combination_info['compare_list_price'] &gt; combination_info['price'])">
                     <span t-field="product.compare_list_price"
-                        groups="website_sale.group_product_price_comparison"
-                        t-options='{
-                            "widget": "monetary",
-                            "display_currency": product.currency_id,
-                        }'/>
+                          groups="website_sale.group_product_price_comparison"
+                          t-options='{
+                           "widget": "monetary",
+                           "display_currency": website.currency_id,
+                       }'/>
                 </del>
             </h3>
         </div>
@@ -1237,23 +1243,23 @@
 
         <div class="row">
             <div class="col-xl">
-                <div class="wizard">
-                    <div class="progress-wizard">
-                        <a class="no-decoration" t-att-href="step&gt;=10 and '/shop/cart' or '#'">
+                <div class="wizard container">
+                    <div class="progress-wizard row g-0">
+                        <a class="no-decoration col" t-att-href="step&gt;=10 and '/shop/cart' or '#'">
                           <div id="wizard-step10" t-att-class="'progress-wizard-step %s' % (step == 10 and 'active' or step&gt;10 and 'complete' or 'disabled')">
                             <div class="progress-wizard-bar d-none d-md-block"/>
                             <span class="progress-wizard-dot d-none d-md-inline-block"></span>
                             <div class="text-center progress-wizard-steplabel">Review Order</div>
                           </div>
                         </a>
-                        <a class="no-decoration" t-att-href="step&gt;=20 and '/shop/checkout' or '#'">
+                        <a class="no-decoration col" t-att-href="step&gt;=20 and '/shop/checkout' or '#'">
                           <div id="wizard-step20" t-att-class="'progress-wizard-step %s' % (step == 20 and 'active' or step&gt;20 and 'complete' or 'disabled')">
                             <div class="progress-wizard-bar d-none d-md-block"/>
                             <span class="progress-wizard-dot d-none d-md-inline-block"></span>
                             <div class="text-center progress-wizard-steplabel">Address</div>
                           </div>
                         </a>
-                        <a class="no-decoration" t-att-href="step&gt;=40 and '/shop/payment' or '#'">
+                        <a class="no-decoration col" t-att-href="step&gt;=40 and '/shop/payment' or '#'">
                           <div id="wizard-step40" t-att-class="'progress-wizard-step %s' % (step == 40 and 'active' or step&gt;40 and 'complete' or 'disabled')">
                             <div class="progress-wizard-bar d-none d-md-block"/>
                             <span class="progress-wizard-dot d-none d-md-inline-block"></span>
@@ -1336,12 +1342,8 @@
     </template>
 
     <template id="extra_info_option" name="Extra Step Option" inherit_id="wizard_checkout" active="False">
-        <!-- Add a "flag element" to trigger style variation -->
-        <xpath expr="//div[hasclass('wizard')]/div" position="before">
-            <span class="o_wizard_has_extra_step d-none"/>
-        </xpath>
-        <xpath expr="//div[@id='wizard-step20']" position="after">
-            <a class="no-decoration" t-att-href="step&gt;=30 and '/shop/extra_info' or '#'">
+        <xpath expr="//div[@id='wizard-step20']/parent::a" position="after">
+            <a class="no-decoration col" t-att-href="step&gt;=30 and '/shop/extra_info' or '#'">
                 <div id="wizard-step30" t-att-class="'progress-wizard-step %s' % (step == 30 and 'active' or step&gt;30 and 'complete' or 'disabled')">
                     <div class="progress-wizard-bar d-none d-md-block"/>
                     <span class="progress-wizard-dot d-none d-md-inline-block"></span>
@@ -1452,10 +1454,14 @@
                             <t t-set="combination" t-value="line.product_id.product_template_attribute_value_ids + line.product_no_variant_attribute_value_ids"/>
                             <t t-set="combination_info" t-value="line.product_id.product_tmpl_id._get_combination_info(combination, pricelist=website_sale_order.pricelist_id, add_qty=line.product_uom_qty)"/>
 
+<<<<<<< HEAD
                             <t groups="account.group_show_line_subtotals_tax_excluded">
+=======
+                            <t t-if="env.company.show_line_subtotals_tax_selection == 'tax_excluded'">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                 <span t-field="line.price_reduce_taxexcl" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}"/>
                             </t>
-                            <t groups="account.group_show_line_subtotals_tax_included">
+                            <t t-if="env.company.show_line_subtotals_tax_selection == 'tax_included'">
                                 <span t-field="line.price_reduce_taxinc" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}"/>
                             </t>
                             <t t-if="line.discount">
@@ -2077,7 +2083,7 @@
         <div class="card">
             <div class="card-body p-xl-0">
                 <div class="toggle_summary d-xl-none">
-                    <b>Your order: </b> <span id="amount_total_summary" class="monetary_field" t-field="website_sale_order.amount_total" t-options='{"widget": "monetary", "display_currency": website_sale_order.pricelist_id.currency_id}'/>
+                    <b>Your order: </b> <span id="amount_total_summary" class="monetary_field" t-field="website_sale_order.amount_total" t-options='{"widget": "monetary", "display_currency": website_sale_order.currency_id}'/>
                     <span class='fa fa-chevron-down fa-border float-end' role="img" aria-label="Details" title="Details"></span>
                 </div>
                 <div t-if="not website_sale_order or not website_sale_order.website_order_line" class="alert alert-info">
@@ -2112,15 +2118,15 @@
                                         </div>
                                     </td>
                                 </t>
-                                <td class='td-qty'>
-                                    <div t-esc="line.product_uom_qty" />
+                                <td class='text-center td-qty'>
+                                    <div t-esc="int(line.product_uom_qty)"/>
                                     <t t-if='line._get_shop_warning(clear=False)'>
                                         <i class='fa fa-warning text-warning' t-att-title="line._get_shop_warning()" role="img" aria-label="Warning"/>
                                     </t>
                                 </td>
                                 <td class="text-center td-price">
-                                    <span t-field="line.price_reduce_taxexcl" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}" groups="account.group_show_line_subtotals_tax_excluded" />
-                                    <span t-field="line.price_reduce_taxinc" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}" groups="account.group_show_line_subtotals_tax_included" />
+                                    <span t-field="line.price_reduce_taxexcl" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}" t-if="env.company.show_line_subtotals_tax_selection == 'tax_excluded'"/>
+                                    <span t-field="line.price_reduce_taxinc" style="white-space: nowrap;" t-options="{'widget': 'monetary', 'display_currency': website_sale_order.currency_id}" t-if="env.company.show_line_subtotals_tax_selection == 'tax_included'"/>
                                 </td>
                             </tr>
                         </tbody>
@@ -2178,7 +2184,11 @@
                                                 <strong>Total:</strong>
                                             </td>
                                             <td class="text-end" width="100">
+<<<<<<< HEAD
                                                 <strong t-field="payment_tx_id.amount" t-options="{'widget': 'monetary', 'display_currency': order.pricelist_id.currency_id}" />
+=======
+                                                <strong t-field="payment_tx_id.amount" t-options="{'widget': 'monetary', 'display_currency': order.currency_id}" />
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                             </td>
                                         </tr>
                                     </tbody>
@@ -2232,7 +2242,7 @@
                       <td class="text-end border-top border-bottom-0"><strong>Total:</strong></td>
                       <td class="text-xl-end border-top border-bottom-0">
                           <strong t-field="website_sale_order.amount_total" class="monetary_field"
-                              t-options='{"widget": "monetary", "display_currency": website_sale_order.pricelist_id.currency_id}'/>
+                              t-options='{"widget": "monetary", "display_currency": website_sale_order.currency_id}'/>
                       </td>
                   </tr>
             </table>

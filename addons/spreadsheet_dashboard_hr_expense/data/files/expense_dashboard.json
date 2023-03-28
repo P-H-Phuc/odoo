@@ -103,6 +103,59 @@
                     "style": 4,
                     "content": "=ODOO.LIST(1,10,\"name\")"
                 },
+<<<<<<< HEAD
+=======
+                "A32": {
+                    "style": 1,
+                    "content": "[Top Reinvoiced Orders](odoo://view/{\"viewType\":\"pivot\",\"action\":{\"domain\":[[\"sale_order_id\",\"!=\",false]],\"context\":{\"group_by\":[\"sale_order_id\"],\"pivot_measures\":[\"__count\",\"total_amount\"],\"pivot_column_groupby\":[],\"pivot_row_groupby\":[\"sale_order_id\"]},\"modelName\":\"hr.expense\",\"views\":[[false,\"graph\"],[false,\"pivot\"],[false,\"list\"],[false,\"kanban\"],[false,\"form\"],[false,\"search\"]]},\"threshold\":0,\"name\":\"Expenses Analysis\"})",
+                    "border": 1
+                },
+                "A33": {
+                    "style": 2,
+                    "content": "=_t(\"Order\")",
+                    "border": 2
+                },
+                "A34": {
+                    "style": 5,
+                    "content": "=ODOO.PIVOT.HEADER(9,\"#sale_order_id\",1)"
+                },
+                "A35": {
+                    "style": 6,
+                    "content": "=ODOO.PIVOT.HEADER(9,\"#sale_order_id\",2)"
+                },
+                "A36": {
+                    "style": 5,
+                    "content": "=ODOO.PIVOT.HEADER(9,\"#sale_order_id\",3)"
+                },
+                "A37": {
+                    "style": 6,
+                    "content": "=ODOO.PIVOT.HEADER(9,\"#sale_order_id\",4)"
+                },
+                "A38": {
+                    "style": 5,
+                    "content": "=ODOO.PIVOT.HEADER(9,\"#sale_order_id\",5)"
+                },
+                "A39": {
+                    "style": 6,
+                    "content": "=ODOO.PIVOT.HEADER(9,\"#sale_order_id\",6)"
+                },
+                "A40": {
+                    "style": 5,
+                    "content": "=ODOO.PIVOT.HEADER(9,\"#sale_order_id\",7)"
+                },
+                "A41": {
+                    "style": 6,
+                    "content": "=ODOO.PIVOT.HEADER(9,\"#sale_order_id\",8)"
+                },
+                "A42": {
+                    "style": 5,
+                    "content": "=ODOO.PIVOT.HEADER(9,\"#sale_order_id\",9)"
+                },
+                "A43": {
+                    "style": 6,
+                    "content": "=ODOO.PIVOT.HEADER(9,\"#sale_order_id\",10)"
+                },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 "B20": {
                     "style": 2,
                     "content": "=_t(\"Employee\")",
@@ -143,6 +196,59 @@
                 "B30": {
                     "content": "=ODOO.LIST(1,10,\"employee_id\")"
                 },
+<<<<<<< HEAD
+=======
+                "B33": {
+                    "style": 8,
+                    "content": "=_t(\"# Expenses\")",
+                    "border": 2
+                },
+                "B34": {
+                    "style": 7,
+                    "format": 1,
+                    "content": "=ODOO.PIVOT(9,\"__count\",\"#sale_order_id\",1)"
+                },
+                "B35": {
+                    "format": 1,
+                    "content": "=ODOO.PIVOT(9,\"__count\",\"#sale_order_id\",2)"
+                },
+                "B36": {
+                    "style": 7,
+                    "format": 1,
+                    "content": "=ODOO.PIVOT(9,\"__count\",\"#sale_order_id\",3)"
+                },
+                "B37": {
+                    "format": 1,
+                    "content": "=ODOO.PIVOT(9,\"__count\",\"#sale_order_id\",4)"
+                },
+                "B38": {
+                    "style": 7,
+                    "format": 1,
+                    "content": "=ODOO.PIVOT(9,\"__count\",\"#sale_order_id\",5)"
+                },
+                "B39": {
+                    "format": 1,
+                    "content": "=ODOO.PIVOT(9,\"__count\",\"#sale_order_id\",6)"
+                },
+                "B40": {
+                    "style": 7,
+                    "format": 1,
+                    "content": "=ODOO.PIVOT(9,\"__count\",\"#sale_order_id\",7)"
+                },
+                "B41": {
+                    "format": 1,
+                    "content": "=ODOO.PIVOT(9,\"__count\",\"#sale_order_id\",8)"
+                },
+                "B42": {
+                    "style": 7,
+                    "format": 1,
+                    "content": "=ODOO.PIVOT(9,\"__count\",\"#sale_order_id\",9)"
+                },
+                "B43": {
+                    "format": 1,
+                    "content": "=ODOO.PIVOT(9,\"__count\",\"#sale_order_id\",10)"
+                },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 "C20": {
                     "style": 8,
                     "content": "=_t(\"Total\")",
@@ -183,6 +289,49 @@
                 "C30": {
                     "content": "=ODOO.LIST(1,10,\"total_amount\")"
                 },
+<<<<<<< HEAD
+=======
+                "C33": {
+                    "style": 8,
+                    "content": "=_t(\"Total\")",
+                    "border": 2
+                },
+                "C34": {
+                    "style": 7,
+                    "content": "=ODOO.PIVOT(9,\"total_amount\",\"#sale_order_id\",1)"
+                },
+                "C35": {
+                    "content": "=ODOO.PIVOT(9,\"total_amount\",\"#sale_order_id\",2)"
+                },
+                "C36": {
+                    "style": 7,
+                    "content": "=ODOO.PIVOT(9,\"total_amount\",\"#sale_order_id\",3)"
+                },
+                "C37": {
+                    "content": "=ODOO.PIVOT(9,\"total_amount\",\"#sale_order_id\",4)"
+                },
+                "C38": {
+                    "style": 7,
+                    "content": "=ODOO.PIVOT(9,\"total_amount\",\"#sale_order_id\",5)"
+                },
+                "C39": {
+                    "content": "=ODOO.PIVOT(9,\"total_amount\",\"#sale_order_id\",6)"
+                },
+                "C40": {
+                    "style": 7,
+                    "content": "=ODOO.PIVOT(9,\"total_amount\",\"#sale_order_id\",7)"
+                },
+                "C41": {
+                    "content": "=ODOO.PIVOT(9,\"total_amount\",\"#sale_order_id\",8)"
+                },
+                "C42": {
+                    "style": 7,
+                    "content": "=ODOO.PIVOT(9,\"total_amount\",\"#sale_order_id\",9)"
+                },
+                "C43": {
+                    "content": "=ODOO.PIVOT(9,\"total_amount\",\"#sale_order_id\",10)"
+                },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 "E19": {
                     "style": 1,
                     "content": "[Top Categories](odoo://view/{\"viewType\":\"pivot\",\"action\":{\"domain\":[[\"product_id\",\"!=\",false]],\"context\":{\"group_by\":[\"product_id\"],\"pivot_measures\":[\"__count\",\"total_amount\"],\"pivot_column_groupby\":[],\"pivot_row_groupby\":[\"product_id\"]},\"modelName\":\"hr.expense\",\"views\":[[false,\"graph\"],[false,\"pivot\"],[false,\"list\"],[false,\"kanban\"],[false,\"form\"],[false,\"search\"]]},\"threshold\":0,\"name\":\"Expenses Analysis\"})",
@@ -412,35 +561,55 @@
                     "style": 7,
                     "content": "=ODOO.PIVOT(4,\"total_amount\",\"#employee_id\",1)"
                 },
+<<<<<<< HEAD
                 "C35": {
+=======
+                "G35": {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     "content": "=ODOO.PIVOT(4,\"total_amount\",\"#employee_id\",2)"
                 },
                 "C36": {
                     "style": 7,
                     "content": "=ODOO.PIVOT(4,\"total_amount\",\"#employee_id\",3)"
                 },
+<<<<<<< HEAD
                 "C37": {
+=======
+                "G37": {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     "content": "=ODOO.PIVOT(4,\"total_amount\",\"#employee_id\",4)"
                 },
                 "C38": {
                     "style": 7,
                     "content": "=ODOO.PIVOT(4,\"total_amount\",\"#employee_id\",5)"
                 },
+<<<<<<< HEAD
                 "C39": {
+=======
+                "G39": {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     "content": "=ODOO.PIVOT(4,\"total_amount\",\"#employee_id\",6)"
                 },
                 "C40": {
                     "style": 7,
                     "content": "=ODOO.PIVOT(4,\"total_amount\",\"#employee_id\",7)"
                 },
+<<<<<<< HEAD
                 "C41": {
+=======
+                "G41": {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     "content": "=ODOO.PIVOT(4,\"total_amount\",\"#employee_id\",8)"
                 },
                 "C42": {
                     "style": 7,
                     "content": "=ODOO.PIVOT(4,\"total_amount\",\"#employee_id\",9)"
                 },
+<<<<<<< HEAD
                 "C43": {
+=======
+                "G43": {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     "content": "=ODOO.PIVOT(4,\"total_amount\",\"#employee_id\",10)"
                 },
                 "A8": {
@@ -949,6 +1118,50 @@
                 "measure": "total_amount",
                 "order": "desc"
             }
+<<<<<<< HEAD
+=======
+        },
+        "9": {
+            "colGroupBys": [],
+            "context": {
+                "params": {
+                    "action": 952,
+                    "model": "hr.expense",
+                    "view_type": "pivot",
+                    "menu_id": 659,
+                    "cids": 1
+                }
+            },
+            "domain": [
+                [
+                    "sale_order_id",
+                    "!=",
+                    false
+                ]
+            ],
+            "id": "9",
+            "measures": [
+                {
+                    "field": "__count"
+                },
+                {
+                    "field": "total_amount"
+                }
+            ],
+            "model": "hr.expense",
+            "rowGroupBys": [
+                "sale_order_id"
+            ],
+            "name": "Expenses Analysis by Customer to Reinvoice",
+            "sortedColumn": {
+                "groupId": [
+                    [],
+                    []
+                ],
+                "measure": "total_amount",
+                "order": "desc"
+            }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
     },
     "pivotNextId": 10,
@@ -1040,6 +1253,10 @@
                 "8": {
                     "field": "product_id",
                     "type": "many2one"
+                },
+                "9": {
+                    "field": "product_id",
+                    "type": "many2one"
                 }
             },
             "listFields": {
@@ -1056,6 +1273,61 @@
             }
         },
         {
+<<<<<<< HEAD
+=======
+            "id": "e1b40389-7f46-44c0-acee-52033634fc5f",
+            "type": "relation",
+            "label": "Order",
+            "modelName": "sale.order",
+            "defaultValue": [],
+            "defaultValueDisplayNames": [],
+            "rangeType": "year",
+            "defaultsToCurrentPeriod": false,
+            "pivotFields": {
+                "1": {
+                    "field": "sale_order_id",
+                    "type": "many2one"
+                },
+                "4": {
+                    "field": "sale_order_id",
+                    "type": "many2one"
+                },
+                "5": {
+                    "field": "sale_order_id",
+                    "type": "many2one"
+                },
+                "6": {
+                    "field": "sale_order_id",
+                    "type": "many2one"
+                },
+                "7": {
+                    "field": "sale_order_id",
+                    "type": "many2one"
+                },
+                "8": {
+                    "field": "sale_order_id",
+                    "type": "many2one"
+                },
+                "9": {
+                    "field": "sale_order_id",
+                    "type": "many2one"
+                }
+            },
+            "listFields": {
+                "1": {
+                    "field": "sale_order_id",
+                    "type": "many2one"
+                }
+            },
+            "graphFields": {
+                "6ce637db-4068-457f-91a4-ce83736932ff": {
+                    "field": "sale_order_id",
+                    "type": "many2one"
+                }
+            }
+        },
+        {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             "id": "88fbcc54-dcb5-42ec-86e9-1676c4c73c6e",
             "type": "relation",
             "label": "Employee",
@@ -1086,6 +1358,10 @@
                     "type": "many2one"
                 },
                 "8": {
+                    "field": "employee_id",
+                    "type": "many2one"
+                },
+                "9": {
                     "field": "employee_id",
                     "type": "many2one"
                 }

@@ -26,6 +26,7 @@
 @import "images";
 @import "containers";
 @import "grid";
+<<<<<<< HEAD
 
 // Bootstrap tables can basically be customized with the `$table-bg` and
 // `$table-color` variables. The problem is that, by default, BS5 defines them
@@ -65,6 +66,9 @@ $-tmp-hover: $table-hover-color;
 $table-color: $-tmp;
 $table-hover-color: $-tmp-hover;
 
+=======
+@import "tables";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 @import "forms";
 
 // Small hack in bootstrap (see bootstrap_review.scss): prevent it to generate

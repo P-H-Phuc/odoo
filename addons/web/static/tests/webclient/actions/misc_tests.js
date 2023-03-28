@@ -6,7 +6,6 @@ import { session } from "@web/session";
 import AbstractAction from "web.AbstractAction";
 import core from "web.core";
 import testUtils from "web.test_utils";
-import Widget from "web.Widget";
 import { makeTestEnv } from "../../helpers/mock_env";
 import {
     click,
@@ -22,7 +21,6 @@ import {
     getActionManagerServerData,
     setupWebClientRegistries,
 } from "./../helpers";
-import * as cpHelpers from "@web/../tests/search/helpers";
 import { listView } from "@web/views/list/list_view";
 import { companyService } from "@web/webclient/company_service";
 
@@ -205,177 +203,6 @@ QUnit.module("ActionManager", (hooks) => {
         assert.deepEqual(action.context, actionParams);
     });
 
-    QUnit.test("no widget memory leaks when doing some action stuff", async function (assert) {
-        assert.expect(1);
-        let delta = 0;
-        testUtils.mock.patch(Widget, {
-            init: function () {
-                delta++;
-                this._super.apply(this, arguments);
-            },
-            destroy: function () {
-                delta--;
-                this._super.apply(this, arguments);
-            },
-        });
-        const webClient = await createWebClient({ serverData });
-        await doAction(webClient, 8);
-        const n = delta;
-        await doAction(webClient, 4);
-        // kanban view is loaded, switch to list view
-        await cpHelpers.switchView(target, "list");
-        await legacyExtraNextTick();
-        // open a record in form view
-        await testUtils.dom.click(target.querySelector(".o_list_view .o_data_row"));
-        await legacyExtraNextTick();
-        // go back to action 7 in breadcrumbs
-        await testUtils.dom.click(target.querySelector(".o_control_panel .breadcrumb a"));
-        await legacyExtraNextTick();
-        assert.strictEqual(delta, n, "should have properly destroyed all other widgets");
-        testUtils.mock.unpatch(Widget);
-    });
-
-    QUnit.test("no widget memory leaks when executing actions in dialog", async function (assert) {
-        assert.expect(1);
-        let delta = 0;
-        testUtils.mock.patch(Widget, {
-            init: function () {
-                delta++;
-                this._super.apply(this, arguments);
-            },
-            destroy: function () {
-                if (!this.isDestroyed()) {
-                    delta--;
-                }
-                this._super.apply(this, arguments);
-            },
-        });
-        const webClient = await createWebClient({ serverData });
-        const n = delta;
-        await doAction(webClient, 5);
-        await doAction(webClient, { type: "ir.actions.act_window_close" });
-        assert.strictEqual(delta, n, "should have properly destroyed all widgets");
-        testUtils.mock.unpatch(Widget);
-    });
-
-    QUnit.test(
-        "no memory leaks when executing an action while switching view",
-        async function (assert) {
-            assert.expect(1);
-            let def;
-            let delta = 0;
-            testUtils.mock.patch(Widget, {
-                init: function () {
-                    delta += 1;
-                    this._super.apply(this, arguments);
-                },
-                destroy: function () {
-                    delta -= 1;
-                    this._super.apply(this, arguments);
-                },
-            });
-            const mockRPC = async function (route, args) {
-                if (args && args.method === "read") {
-                    await Promise.resolve(def);
-                }
-            };
-            const webClient = await createWebClient({ serverData, mockRPC });
-            await doAction(webClient, 4);
-            const n = delta;
-            await doAction(webClient, 3, { clearBreadcrumbs: true });
-            // switch to the form view (this request is blocked)
-            def = testUtils.makeTestPromise();
-            await testUtils.dom.click(target.querySelector(".o_list_view .o_data_row"));
-            // execute another action meanwhile (don't block this request)
-            await doAction(webClient, 4, { clearBreadcrumbs: true });
-            // unblock the switch to the form view in action 3
-            def.resolve();
-            await testUtils.nextTick();
-            assert.strictEqual(n, delta, "all widgets of action 3 should have been destroyed");
-            testUtils.mock.unpatch(Widget);
-        }
-    );
-
-    QUnit.test(
-        "no memory leaks when executing an action while loading views",
-        async function (assert) {
-            assert.expect(1);
-            let def;
-            let delta = 0;
-            testUtils.mock.patch(Widget, {
-                init: function () {
-                    delta += 1;
-                    this._super.apply(this, arguments);
-                },
-                destroy: function () {
-                    delta -= 1;
-                    this._super.apply(this, arguments);
-                },
-            });
-            const mockRPC = async function (route, args) {
-                if (args && args.method === "get_views") {
-                    await Promise.resolve(def);
-                }
-            };
-            const webClient = await createWebClient({ serverData, mockRPC });
-            // execute action 4 to know the number of widgets it instantiates
-            await doAction(webClient, 4);
-            const n = delta;
-            // execute a first action (its 'get_views' RPC is blocked)
-            def = testUtils.makeTestPromise();
-            doAction(webClient, 3, { clearBreadcrumbs: true });
-            await testUtils.nextTick();
-            await legacyExtraNextTick();
-            // execute another action meanwhile (and unlock the RPC)
-            doAction(webClient, 4, { clearBreadcrumbs: true });
-            def.resolve();
-            await testUtils.nextTick();
-            await legacyExtraNextTick();
-            assert.strictEqual(n, delta, "all widgets of action 3 should have been destroyed");
-            testUtils.mock.unpatch(Widget);
-        }
-    );
-
-    QUnit.test(
-        "no memory leaks when executing an action while loading data of default view",
-        async function (assert) {
-            assert.expect(1);
-            let def;
-            let delta = 0;
-            testUtils.mock.patch(Widget, {
-                init: function () {
-                    delta += 1;
-                    this._super.apply(this, arguments);
-                },
-                destroy: function () {
-                    delta -= 1;
-                    this._super.apply(this, arguments);
-                },
-            });
-            const mockRPC = async function (route) {
-                if (route === "/web/dataset/search_read") {
-                    await Promise.resolve(def);
-                }
-            };
-            const webClient = await createWebClient({ serverData, mockRPC });
-            // execute action 4 to know the number of widgets it instantiates
-            await doAction(webClient, 4);
-            const n = delta;
-            // execute a first action (its 'search_read' RPC is blocked)
-            def = testUtils.makeTestPromise();
-            doAction(webClient, 3, { clearBreadcrumbs: true });
-            await testUtils.nextTick();
-            await legacyExtraNextTick();
-            // execute another action meanwhile (and unlock the RPC)
-            doAction(webClient, 4, { clearBreadcrumbs: true });
-            def.resolve();
-            await testUtils.nextTick();
-            await legacyExtraNextTick();
-            assert.strictEqual(n, delta, "all widgets of action 3 should have been destroyed");
-            testUtils.mock.unpatch(Widget);
-        }
-    );
-
     QUnit.test('action with "no_breadcrumbs" set to true', async function (assert) {
         serverData.actions[4].context = { no_breadcrumbs: true };
         const webClient = await createWebClient({ serverData });
@@ -480,8 +307,8 @@ QUnit.module("ActionManager", (hooks) => {
         );
     });
 
-    QUnit.test("stores and restores scroll position", async function (assert) {
-        assert.expect(3);
+    QUnit.test("stores and restores scroll position (in kanban)", async function (assert) {
+        serverData.actions[3].views = [[false, "kanban"]];
         for (let i = 0; i < 60; i++) {
             serverData.models.partner.records.push({ id: 100 + i, foo: `Record ${i}` });
         }
@@ -501,6 +328,31 @@ QUnit.module("ActionManager", (hooks) => {
         // go back using the breadcrumbs
         await click(target.querySelector(".o_control_panel .breadcrumb a"));
         assert.strictEqual(target.querySelector(".o_content").scrollTop, 100);
+    });
+
+    QUnit.test("stores and restores scroll position (in list)", async function (assert) {
+        for (let i = 0; i < 60; i++) {
+            serverData.models.partner.records.push({ id: 100 + i, foo: `Record ${i}` });
+        }
+        const container = document.createElement("div");
+        container.classList.add("o_web_client");
+        container.style.height = "250px";
+        target.appendChild(container);
+        const webClient = await createWebClient({ target: container, serverData });
+        // execute a first action
+        await doAction(webClient, 3);
+        assert.strictEqual(target.querySelector(".o_content").scrollTop, 0);
+        assert.strictEqual(target.querySelector(".o_list_renderer").scrollTop, 0);
+        // simulate a scroll
+        target.querySelector(".o_list_renderer").scrollTop = 100;
+        await nextTick();
+        // execute a second action (in which we don't scroll)
+        await doAction(webClient, 4);
+        assert.strictEqual(target.querySelector(".o_content").scrollTop, 0);
+        // go back using the breadcrumbs
+        await click(target.querySelector(".o_control_panel .breadcrumb a"));
+        assert.strictEqual(target.querySelector(".o_content").scrollTop, 0);
+        assert.strictEqual(target.querySelector(".o_list_renderer").scrollTop, 100);
     });
 
     QUnit.test(

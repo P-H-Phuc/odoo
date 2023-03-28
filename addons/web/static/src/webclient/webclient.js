@@ -115,3 +115,4 @@ WebClient.components = {
     MainComponentsContainer,
 };
 WebClient.template = "web.WebClient";
+WebClient.props = {};

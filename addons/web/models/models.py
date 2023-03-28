@@ -33,14 +33,6 @@ DISPLAY_DATE_FORMATS = {
 }
 
 
-class IrActionsActWindowView(models.Model):
-    _inherit = 'ir.actions.act_window.view'
-
-    view_mode = fields.Selection(selection_add=[
-        ('qweb', 'QWeb')
-    ], ondelete={'qweb': 'cascade'})
-
-
 class Base(models.AbstractModel):
     _inherit = 'base'
 
@@ -204,7 +196,13 @@ class Base(models.AbstractModel):
             # Again, imitating what _read_group_format_result and _read_group_prepare_data do
             if group_by_value and field_type in ['date', 'datetime']:
                 locale = get_lang(self.env).code
-                group_by_value = date_utils.start_of(fields.Datetime.to_datetime(group_by_value), group_by_modifier)
+                group_by_value = fields.Datetime.to_datetime(group_by_value)
+                if group_by_modifier != 'week':
+                    # start_of(v, 'week') does not take into account the locale
+                    # to determine the first day of the week; this part is not
+                    # necessary, since the formatting below handles the locale
+                    # as expected, and outputs correct results
+                    group_by_value = date_utils.start_of(group_by_value, group_by_modifier)
                 group_by_value = pytz.timezone('UTC').localize(group_by_value)
                 tz_info = None
                 if field_type == 'datetime' and self._context.get('tz') in pytz.all_timezones:
@@ -224,32 +222,6 @@ class Base(models.AbstractModel):
             record_values['__count'] = 1
 
         return records_values
-
-    ##### qweb view hooks #####
-    @api.model
-    def qweb_render_view(self, view_id, domain):
-        assert view_id
-        return self.env['ir.qweb']._render(
-            view_id,
-            {
-                'model': self,
-                'domain': domain,
-                # not necessarily necessary as env is already part of the
-                # non-minimal qcontext
-                'context': self.env.context,
-                'records': lazy(self.search, domain),
-            })
-
-    @api.model
-    def _get_view(self, view_id=None, view_type='form', **options):
-        arch, view = super()._get_view(view_id, view_type, **options)
-        # avoid leaking the raw (un-rendered) template, also avoids bloating
-        # the response payload for no reason. Only send the root node,
-        # to send attributes such as `js_class`.
-        if view_type == 'qweb':
-            root = arch
-            arch = etree.Element('qweb', root.attrib)
-        return arch, view
 
     @api.model
     def _search_panel_field_image(self, field_name, **kwargs):

@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-09-27 15:12+0000\n"
 "PO-Revision-Date: 2022-09-27 15:12+0000\n"
+=======
+"Project-Id-Version: Odoo Server saas~16.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-17 10:54+0000\n"
+"PO-Revision-Date: 2023-01-17 10:54+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,49 +23,82 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "Current"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#: model:spreadsheet.dashboard,name:spreadsheet_dashboard_stock_account.spreadsheet_dashboard_inventory_on_hand
+msgid "Inventory On Hand"
+msgstr ""
+
+#. module: spreadsheet_dashboard_stock_account
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "Inventory Value"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "Inventory by Location"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "Inventory by Lot/Serial Number"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "Inventory by Product"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "KPI"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
@@ -66,14 +106,22 @@ msgid "Location"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "Lot/Serial"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
@@ -82,7 +130,11 @@ msgid "On Hand"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
@@ -90,7 +142,11 @@ msgid "Product"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
@@ -99,42 +155,66 @@ msgid "Reserved"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "Stock Quantity by Location"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "Top Locations"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "Top Lots / Serial Numbers"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "Top Products"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "Total inventory value"
 msgstr ""
 
 #. module: spreadsheet_dashboard_stock_account
+<<<<<<< HEAD
 #. openerp-web
+=======
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/spreadsheet_dashboard_stock_account/data/files/inventory_on_hand_dashboard.json:0
 #, python-format
 msgid "total inventory value"

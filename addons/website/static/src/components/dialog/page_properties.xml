@@ -61,8 +61,13 @@
 
 <t t-name="website.DeletePageDialog" owl="1">
     <WebsiteDialog title="title" close="props.close">
+<<<<<<< HEAD
         <p t-if="props.resIds.length > 1">Are you sure you want to delete those pages ?</p>
         <p t-else="">Are you sure you want to delete this page ?</p>
+=======
+        <p t-if="props.resIds.length > 1">Are you sure you want to delete those pages?</p>
+        <p t-else="">Are you sure you want to delete this page?</p>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         <p class="text-warning">Don't forget to update all links referring to it.</p>
         <PageDependencies resIds="props.resIds" resModel="props.resModel" mode="'collapse'"/>
         <CheckBox value="state.confirm" onChange.bind="onConfirmCheckboxChange">

@@ -1,9 +1,9 @@
 /** @odoo-module **/
 
-import { addFieldDependencies, archParseBoolean, getActiveActions } from "@web/views/utils";
-import { Field } from "@web/views/fields/field";
 import { XMLParser } from "@web/core/utils/xml";
+import { Field } from "@web/views/fields/field";
 import { Widget } from "@web/views/widgets/widget";
+import { addFieldDependencies, archParseBoolean, getActiveActions } from "@web/views/utils";
 
 export class FormArchParser extends XMLParser {
     parse(arch, models, modelName) {
@@ -12,6 +12,8 @@ export class FormArchParser extends XMLParser {
         const disableAutofocus = archParseBoolean(xmlDoc.getAttribute("disable_autofocus") || "");
         const activeActions = getActiveActions(xmlDoc);
         const fieldNodes = {};
+        const widgetNodes = {};
+        let widgetNextId = 0;
         const fieldNextIds = {};
         let autofocusFieldId = null;
         const activeFields = {};
@@ -32,18 +34,21 @@ export class FormArchParser extends XMLParser {
                 addFieldDependencies(
                     activeFields,
                     models[modelName],
-                    fieldInfo.FieldComponent.fieldDependencies
+                    fieldInfo.field.fieldDependencies
                 );
                 return false;
             } else if (node.tagName === "div" && node.classList.contains("oe_chatter")) {
                 // remove this when chatter fields are declared as attributes on the root node
                 return false;
             } else if (node.tagName === "widget") {
-                const { WidgetComponent } = Widget.parseWidgetNode(node);
+                const widgetInfo = Widget.parseWidgetNode(node);
+                const widgetId = `widget_${++widgetNextId}`;
+                widgetNodes[widgetId] = widgetInfo;
+                node.setAttribute("widget_id", widgetId);
                 addFieldDependencies(
                     activeFields,
                     models[modelName],
-                    WidgetComponent.fieldDependencies
+                    widgetInfo.widget.fieldDependencies
                 );
             }
         });
@@ -79,6 +84,7 @@ export class FormArchParser extends XMLParser {
             autofocusFieldId,
             disableAutofocus,
             fieldNodes,
+            widgetNodes,
             xmlDoc,
             __rawArch: arch,
         };

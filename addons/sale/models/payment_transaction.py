@@ -31,14 +31,14 @@ class PaymentTransaction(models.Model):
         for trans in self:
             trans.sale_order_ids_nbr = len(trans.sale_order_ids)
 
-    def _set_pending(self, state_message=None):
+    def _set_pending(self, state_message=None, **kwargs):
         """ Override of `payment` to send the quotations automatically.
 
         :param str state_message: The reason for which the transaction is set in 'pending' state.
         :return: updated transactions.
         :rtype: `payment.transaction` recordset.
         """
-        txs_to_process = super()._set_pending(state_message=state_message)
+        txs_to_process = super()._set_pending(state_message=state_message, **kwargs)
 
         for tx in txs_to_process:  # Consider only transactions that are indeed set pending.
             sales_orders = tx.sale_order_ids.filtered(lambda so: so.state in ['draft', 'sent'])
@@ -92,9 +92,9 @@ class PaymentTransaction(models.Model):
                         )
         return confirmed_orders
 
-    def _set_authorized(self, state_message=None):
+    def _set_authorized(self, state_message=None, **kwargs):
         """ Override of payment to confirm the quotations automatically. """
-        super()._set_authorized(state_message=state_message)
+        super()._set_authorized(state_message=state_message, **kwargs)
         confirmed_orders = self._check_amount_and_confirm_order()
         confirmed_orders._send_order_confirmation_mail()
 
@@ -108,7 +108,7 @@ class PaymentTransaction(models.Model):
         """
         super()._log_message_on_linked_documents(message)
         self = self.with_user(SUPERUSER_ID)  # Log messages as 'OdooBot'
-        for order in self.sale_order_ids:
+        for order in self.sale_order_ids or self.source_transaction_id.sale_order_ids:
             order.message_post(body=message)
 
     def _reconcile_after_done(self):
@@ -128,10 +128,14 @@ class PaymentTransaction(models.Model):
             self._send_invoice()
 
     def _send_invoice(self):
-        template_id = self.env['ir.config_parameter'].sudo().get_param(
-            'sale.default_invoice_email_template'
-        )
+        template_id = int(self.env['ir.config_parameter'].sudo().get_param(
+            'sale.default_invoice_email_template',
+            default=0
+        ))
         if not template_id:
+            return
+        template = self.env['mail.template'].browse(template_id).exists()
+        if not template:
             return
 
         for tx in self:
@@ -142,11 +146,11 @@ class PaymentTransaction(models.Model):
                 lambda i: not i.is_move_sent and i.state == 'posted' and i._is_ready_to_be_sent()
             )
             invoice_to_send.is_move_sent = True # Mark invoice as sent
-            for invoice in invoice_to_send.with_user(SUPERUSER_ID):
-                invoice.message_post_with_template(
-                    int(template_id),
-                    email_layout_xmlid='mail.mail_notification_layout_with_responsible_signature',
-                )
+            invoice_to_send.with_user(SUPERUSER_ID).message_post_with_source(
+                template,
+                email_layout_xmlid='mail.mail_notification_layout_with_responsible_signature',
+                subtype_xmlid='mail.mt_comment',
+            )
 
     def _cron_send_invoice(self):
         """
@@ -178,7 +182,7 @@ class PaymentTransaction(models.Model):
                 confirmed_orders._force_lines_to_invoice_policy_order()
                 invoices = confirmed_orders.with_context(
                     raise_if_nothing_to_invoice=False
-                )._create_invoices()
+                )._create_invoices(final=True)
                 # Setup access token in advance to avoid serialization failure between
                 # edi postprocessing of invoice and displaying the sale order on the portal
                 for invoice in invoices:

@@ -8,6 +8,18 @@ import { standardWidgetProps } from "@web/views/widgets/standard_widget_props";
 import { Component } from "@odoo/owl";
 
 export class SignatureWidget extends Component {
+<<<<<<< HEAD
+=======
+    static template = "web.SignatureWidget";
+    static props = {
+        ...standardWidgetProps,
+        fullName: { type: String, optional: true },
+        highlight: { type: Boolean, optional: true },
+        string: { type: String },
+        signatureField: { type: String, optional: true },
+    };
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     setup() {
         this.dialogService = useService("dialog");
         this.orm = useService("orm");
@@ -55,6 +67,7 @@ export class SignatureWidget extends Component {
     }
 }
 
+<<<<<<< HEAD
 SignatureWidget.template = "web.SignatureWidget";
 SignatureWidget.props = {
     ...standardWidgetProps,
@@ -74,3 +87,19 @@ SignatureWidget.extractProps = ({ attrs }) => {
 };
 
 registry.category("view_widgets").add("signature", SignatureWidget);
+=======
+export const signatureWidget = {
+    component: SignatureWidget,
+    extractProps: ({ attrs }) => {
+        const { full_name: fullName, highlight, signature_field, string } = attrs;
+        return {
+            fullName,
+            highlight: !!highlight,
+            string,
+            signatureField: signature_field || "signature",
+        };
+    },
+};
+
+registry.category("view_widgets").add("signature", signatureWidget);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

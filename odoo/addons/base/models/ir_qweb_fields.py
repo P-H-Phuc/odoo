@@ -27,6 +27,17 @@ def nl2br(string):
     :rtype: unicode
     """
     return pycompat.to_text(string).replace('\n', Markup('<br>\n'))
+<<<<<<< HEAD
+=======
+
+
+def nl2br_enclose(string, enclosure_tag='div'):
+    """ Like nl2br, but returns enclosed Markup allowing to better manipulate
+    trusted and untrusted content. New lines added by use are trusted, other
+    content is escaped. """
+    converted = nl2br(escape(string))
+    return Markup(f'<{enclosure_tag}>{converted}</{enclosure_tag}>')
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 #--------------------------------------------------------------------
 # QWeb Fields converters

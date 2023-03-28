@@ -27,6 +27,7 @@ ERROR_CODES = [
     'NO_PRICE_AVAILABLE',
     'FORMAT_ERROR',
     'UNKNOWN_ERROR',
+    'ATTACHMENT_ERROR',
 ]
 
 
@@ -138,7 +139,6 @@ class SnailmailLetter(models.Model):
                     return False
                 else:
                     self.write({'report_template': report.id})
-                # report = self.env.ref('account.account_invoices')
             if report.print_report_name:
                 report_name = safe_eval(report.print_report_name, {'object': obj})
             elif report.attachment:

@@ -30,7 +30,7 @@ export function getOdooFunctions(formula, functionNames) {
     let ast;
     try {
         ast = parse(formula);
-    } catch (_) {
+    } catch {
         return [];
     }
     return _getOdooFunctionsFromAST(ast, functionNames);

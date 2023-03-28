@@ -2,6 +2,9 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from . import test_customize
+from . import test_delivery_controller
+from . import test_delivery_express_checkout_flows
+from . import test_delivery_ui
 from . import test_express_checkout_flows
 from . import test_sale_process
 from . import test_sitemap
@@ -21,5 +24,6 @@ from . import test_website_sale_visitor
 from . import test_website_sale_product
 from . import test_website_sale_shop_variant_exclusion
 from . import test_website_editor
+from . import test_setting
 from . import test_website_sale_reorder_from_portal
 from . import test_website_sale_snippets

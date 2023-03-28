@@ -1,5 +1,6 @@
 /** @odoo-module **/
 
+<<<<<<< HEAD
 import Dialog from 'web.Dialog';
 import { qweb } from "web.core";
 import { registry } from '@web/core/registry';
@@ -7,18 +8,37 @@ import { Many2OneField } from '@web/views/fields/many2one/many2one_field';
 import { formatMonetary } from "@web/views/fields/formatters";
 
 const { markup, onWillUpdateProps } = owl;
+=======
+import { registry } from '@web/core/registry';
+import { Many2OneField, many2OneField } from '@web/views/fields/many2one/many2one_field';
+import { ProductMatrixDialog } from "@product_matrix/js/product_matrix_dialog";
+import { useService } from "@web/core/utils/hooks";
+
+const { onWillUpdateProps } = owl;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 
 export class PurchaseOrderLineProductField extends Many2OneField {
 
     setup() {
         super.setup();
+<<<<<<< HEAD
 
         onWillUpdateProps(async (nextProps) => {
             if (nextProps.record.mode === 'edit' && nextProps.value) {
                 if (
                     !this.props.value ||
                     this.props.value[0] != nextProps.value[0]
+=======
+        this.dialog = useService("dialog");
+        this.currentValue = this.value;
+
+        onWillUpdateProps(async (nextProps) => {
+            if (nextProps.record.mode === 'edit' && nextProps.record.data[nextProps.name]) {
+                if (
+                    !this.currentValue ||
+                    this.currentValue[0] != nextProps.record.data[nextProps.name][0]
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 ) {
                     // Field was updated if line was open in edit mode,
                     //      field is not emptied,
@@ -27,6 +47,10 @@ export class PurchaseOrderLineProductField extends Many2OneField {
                     this._onProductTemplateUpdate();
                 }
             }
+<<<<<<< HEAD
+=======
+            this.currentValue = nextProps.record.data[nextProps.name];
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         });
     }
 
@@ -95,6 +119,7 @@ export class PurchaseOrderLineProductField extends Many2OneField {
 
     _openMatrixConfigurator(jsonInfo, productTemplateId, editedCellAttributes) {
         const infos = JSON.parse(jsonInfo);
+<<<<<<< HEAD
         const saleOrderRecord = this.props.record.model.root;
         const MatrixDialog = new Dialog(this, {
             title: this.env._t('Choose Product Variants'),
@@ -150,10 +175,27 @@ export class PurchaseOrderLineProductField extends Many2OneField {
             } else {
                 MatrixDialog.$content.find('.o_matrix_input:first()').focus();
             }
+=======
+        this.dialog.add(ProductMatrixDialog, {
+            header: infos.header,
+            rows: infos.matrix,
+            editedCellAttributes: editedCellAttributes.toString(),
+            product_template_id: productTemplateId,
+            record: this.props.record.model.root,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         });
     }
 }
 
 PurchaseOrderLineProductField.template = "purchase.PurchaseProductField";
 
+<<<<<<< HEAD
 registry.category("fields").add("pol_product_many2one", PurchaseOrderLineProductField);
+=======
+export const purchaseOrderLineProductField = {
+    ...many2OneField,
+    component: PurchaseOrderLineProductField,
+};
+
+registry.category("fields").add("pol_product_many2one", purchaseOrderLineProductField);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

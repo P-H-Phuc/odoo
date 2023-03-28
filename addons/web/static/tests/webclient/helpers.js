@@ -50,7 +50,7 @@ import session from "web.session";
 import LegacyMockServer from "web.MockServer";
 import Widget from "web.Widget";
 import { uiService } from "@web/core/ui/ui_service";
-import { ClientActionAdapter, ViewAdapter } from "@web/legacy/action_adapters";
+import { ClientActionAdapter } from "@web/legacy/action_adapters";
 import { commandService } from "@web/core/commands/command_service";
 import { ConnectionAbortedError } from "@web/core/network/rpc_service";
 import { CustomFavoriteItem } from "@web/search/favorite_menu/custom_favorite_item";
@@ -267,14 +267,6 @@ export async function createWebClient(params) {
             });
         },
     });
-    patchWithCleanup(ViewAdapter.prototype, {
-        setup() {
-            this._super();
-            onMounted(() => {
-                controllers.push(this.widget);
-            });
-        },
-    });
 
     const legacyParams = params.legacyParams;
     params.serverData = params.serverData || {};
@@ -300,6 +292,7 @@ export async function createWebClient(params) {
     const WebClientClass = params.WebClientClass || WebClient;
     const target = params && params.target ? params.target : getFixture();
     const wc = await mount(WebClientClass, target, { env });
+    odoo.__WOWL_DEBUG__ = { root: wc };
     target.classList.add("o_web_client"); // necessary for the stylesheet
     registerCleanup(() => {
         target.classList.remove("o_web_client");

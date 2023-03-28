@@ -13,9 +13,14 @@ class Project(models.Model):
         if not self.analytic_account_id:
             return {}
         can_see_expense = with_action and self.user_has_groups('hr_expense.group_hr_expense_team_approver')
+<<<<<<< HEAD
         query = self.env['hr.expense']._search([('is_refused', '=', False), ('state', 'in', ['approved', 'done'])])
         query.add_where('hr_expense.analytic_distribution ? %s', [str(self.analytic_account_id.id)])
         query.order = None
+=======
+        query = self.env['hr.expense']._search([('state', 'in', ['approved', 'done'])])
+        query.add_where('hr_expense.analytic_distribution ? %s', [str(self.analytic_account_id.id)])
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         query_string, query_param = query.select('sale_order_id', 'product_id', 'array_agg(id) as ids', 'SUM(untaxed_amount) as untaxed_amount')
         query_string = f"{query_string} GROUP BY sale_order_id, product_id"
         self._cr.execute(query_string, query_param)

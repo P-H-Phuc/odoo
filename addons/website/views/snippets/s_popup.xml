@@ -2,6 +2,10 @@
 <odoo>
 
 <template id="s_popup" name="Popup">
+    <!--
+    Note: those popups are saved with the d-none class but this is not part of
+    their XML definition here as that would hurt the drag and drop feature.
+    -->
     <div class="s_popup o_snippet_invisible" data-vcss="001">
         <div class="modal fade s_popup_middle" style="background-color: var(--black-50) !important;" data-show-after="5000" data-display="afterDelay" data-consents-duration="7" data-bs-focus="false" data-bs-backdrop="false" tabindex="-1" role="dialog">
             <div class="modal-dialog d-flex">
@@ -54,8 +58,8 @@
             <t t-set="unit_popup_duration">days</t>
             <we-input string="Hide For" title="Once the user closes the popup, it won't be shown again for that period of time." t-attf-data-select-data-attribute="7#{unit_popup_duration}" data-attribute-name="consentsDuration" t-att-data-unit="unit_popup_duration"/>
             <we-select string="Show on" data-no-preview="true">
-                <we-button data-move-block="moveToBody">This page</we-button>
-                <we-button data-move-block="moveToFooter">All pages</we-button>
+                <we-button data-move-block="currentPage">This page</we-button>
+                <we-button data-move-block="allPages">All pages</we-button>
             </we-select>
         </t>
         <div data-js="SnippetPopup"

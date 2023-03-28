@@ -98,10 +98,15 @@ class Binary(http.Controller):
                     ('url', '=like', f'/web/assets/%/{filename}'),
                     ('url', 'not like', f'/web/assets/%/%/{filename}')
                 ]
+<<<<<<< HEAD
             attachments = request.env['ir.attachment'].sudo().search_read(domain, fields=['id'], limit=1)
             if not attachments:
+=======
+            attachment = request.env['ir.attachment'].sudo().search(domain, limit=1)
+            if not attachment:
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 raise request.not_found()
-            id = attachments[0]['id']
+            id = attachment.id
         with replace_exceptions(UserError, by=request.not_found()):
             record = request.env['ir.binary']._find_record(res_id=int(id))
             stream = request.env['ir.binary']._get_stream_from(record, 'raw', filename)

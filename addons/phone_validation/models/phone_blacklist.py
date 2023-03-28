@@ -60,61 +60,67 @@ class PhoneBlackList(models.Model):
             values['number'] = sanitized
         return super(PhoneBlackList, self).write(values)
 
-    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+    def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
         """ Override _search in order to grep search on sanitized number field """
-        if args:
-            new_args = []
-            for arg in args:
-                if isinstance(arg, (list, tuple)) and arg[0] == 'number' and isinstance(arg[2], str):
-                    number = arg[2]
-                    sanitized = phone_validation.phone_sanitize_numbers_w_record([number], self.env.user)[number]['sanitized']
-                    if sanitized:
-                        new_args.append([arg[0], arg[1], sanitized])
-                    else:
-                        new_args.append(arg)
-                else:
-                    new_args.append(arg)
-        else:
-            new_args = args
-        return super(PhoneBlackList, self)._search(new_args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
+        def sanitize_number(arg):
+            if isinstance(arg, (list, tuple)) and arg[0] == 'number' and isinstance(arg[2], str):
+                number = arg[2]
+                sanitized = phone_validation.phone_sanitize_numbers_w_record([number], self.env.user)[number]['sanitized']
+                if sanitized:
+                    return (arg[0], arg[1], sanitized)
+            return arg
 
-    def add(self, number):
+        domain = [sanitize_number(item) for item in domain]
+        return super()._search(domain, offset, limit, order, access_rights_uid)
+
+    def add(self, number, message=None):
         sanitized = phone_validation.phone_sanitize_numbers_w_record([number], self.env.user)[number]['sanitized']
-        return self._add([sanitized])
+        return self._add([sanitized], message=message)
 
-    def _add(self, numbers):
+    def _add(self, numbers, message=None):
         """ Add or re activate a phone blacklist entry.
 
         :param numbers: list of sanitized numbers """
         records = self.env["phone.blacklist"].with_context(active_test=False).search([('number', 'in', numbers)])
         todo = [n for n in numbers if n not in records.mapped('number')]
         if records:
+            if message:
+                records._track_set_log_message(message)
             records.action_unarchive()
         if todo:
-            records += self.create([{'number': n} for n in todo])
+            new_records = self.create([{'number': n} for n in todo])
+            if message:
+                for record in new_records:
+                    record.with_context(mail_create_nosubscribe=True).message_post(
+                        body=message,
+                        subtype_xmlid='mail.mt_note',
+                    )
+            records += new_records
         return records
 
-    def action_remove_with_reason(self, number, reason=None):
-        records = self.remove(number)
-        if reason:
-            for record in records:
-                record.message_post(body=_("Unblacklisting Reason: %s", reason))
-        return records
-
-    def remove(self, number):
+    def remove(self, number, message=None):
         sanitized = phone_validation.phone_sanitize_numbers_w_record([number], self.env.user)[number]['sanitized']
-        return self._remove([sanitized])
+        return self._remove([sanitized], message=message)
 
-    def _remove(self, numbers):
+    def _remove(self, numbers, message=None):
         """ Add de-activated or de-activate a phone blacklist entry.
 
         :param numbers: list of sanitized numbers """
         records = self.env["phone.blacklist"].with_context(active_test=False).search([('number', 'in', numbers)])
         todo = [n for n in numbers if n not in records.mapped('number')]
         if records:
+            if message:
+                records._track_set_log_message(message)
             records.action_archive()
         if todo:
-            records += self.create([{'number': n, 'active': False} for n in todo])
+            new_records = self.create([{'number': n, 'active': False} for n in todo])
+            if message:
+                for record in new_records:
+                    record.with_context(mail_create_nosubscribe=True).message_post(
+                        body=message,
+                        subtype_xmlid='mail.mt_note',
+                    )
+            records += new_records
         return records
 
     def phone_action_blacklist_remove(self):

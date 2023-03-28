@@ -19,7 +19,7 @@
                 <field name="show_credentials_page" invisible="1"/>
                 <field name="show_allow_express_checkout" invisible="1"/>
                 <field name="show_allow_tokenization" invisible="1"/>
-                <field name="show_payment_icon_ids" invisible="1"/>
+                <field name="show_payment_method_ids" invisible="1"/>
                 <field name="show_pre_msg" invisible="1"/>
                 <field name="show_pending_msg" invisible="1"/>
                 <field name="show_auth_msg" invisible="1"/>
@@ -79,28 +79,51 @@
                             <group name="provider_config">
                                 <group string="Payment Form" name="payment_form">
                                     <field name="display_as" placeholder="If not defined, the provider name will be used."/>
-                                    <field name="payment_icon_ids" attrs="{'invisible': [('show_payment_icon_ids', '=', False)]}" widget="many2many_tags"/>
+                                    <field name="payment_method_ids"
+                                           options="{'no_create': True, 'no_edit': True}"
+                                           widget="many2many_tags"
+                                           attrs="{'invisible': [('show_payment_method_ids', '=', False)]}" />
                                     <field name="allow_tokenization" attrs="{'invisible': ['|', ('support_tokenization', '=', False), ('show_allow_tokenization', '=', False)]}"/>
                                     <field name="capture_manually" attrs="{'invisible': [('support_manual_capture', '=', False)]}"/>
                                     <field name="allow_express_checkout" attrs="{'invisible': ['|', ('support_express_checkout', '=', False), ('show_allow_express_checkout', '=', False)]}"/>
                                 </group>
                                 <group string="Availability" name="availability">
                                     <field name="maximum_amount"/>
+<<<<<<< HEAD
+=======
+                                    <label for="available_currency_ids"/>
+                                    <!-- Use `o_row` to allow placing a button next to the field in overrides. -->
+                                    <div name="available_currencies" class="o_row">
+                                        <field name="available_currency_ids"
+                                               widget="many2many_tags"
+                                               placeholder="Select currencies. Leave empty not to restrict any."
+                                               context="{'active_test': False}"
+                                               options="{'no_create': True}"/>
+                                    </div>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                     <field name="available_country_ids"
                                            widget="many2many_tags"
                                            placeholder="Select countries. Leave empty to make available everywhere."
-                                           options="{'no_open': True, 'no_create': True}"/>
+                                           options="{'no_create': True}"/>
                                 </group>
                                 <group string="Payment Followup" name="payment_followup" invisible="1"/>
                             </group>
                         </page>
                         <page string="Fees" name="fees" attrs="{'invisible': [('support_fees', '=', False)]}">
                             <group name="payment_fees">
-                                <field name="fees_active"/>
-                                <field name="fees_dom_fixed" attrs="{'invisible': [('fees_active', '=', False)]}"/>
-                                <field name="fees_dom_var" attrs="{'invisible': [('fees_active', '=', False)]}"/>
-                                <field name="fees_int_fixed" attrs="{'invisible': [('fees_active', '=', False)]}"/>
-                                <field name="fees_int_var" attrs="{'invisible': [('fees_active', '=', False)]}"/>
+                                <group class="oe_inline">
+                                    <field name="fees_active"/>
+                                    <field name="fees_dom_fixed"
+                                           attrs="{'invisible': [('fees_active', '=', False)]}"/>
+                                    <field name="fees_dom_var"
+                                           widget="percentage"
+                                           attrs="{'invisible': [('fees_active', '=', False)]}"/>
+                                    <field name="fees_int_fixed"
+                                           attrs="{'invisible': [('fees_active', '=', False)]}"/>
+                                    <field name="fees_int_var"
+                                           widget="percentage"
+                                           attrs="{'invisible': [('fees_active', '=', False)]}"/>
+                                </group>
                             </group>
                         </page>
                         <page string="Messages"

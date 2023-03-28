@@ -7,15 +7,6 @@ from odoo import api, fields, models, _
 from odoo.tools import float_is_zero, float_round
 
 
-class MrpProductionWorkcenterLineTime(models.Model):
-    _inherit = 'mrp.workcenter.productivity'
-
-    # checked when a ongoing production posts journal entries for its costs.
-    # This way, we can record one production's cost multiple times and only
-    # consider new entries in the work centers time lines."
-    cost_already_recorded = fields.Boolean('Cost Recorded')
-
-
 class MrpProduction(models.Model):
     _inherit = 'mrp.production'
 
@@ -87,9 +78,13 @@ class MrpProduction(models.Model):
         if finished_move:
             finished_move.ensure_one()
             for work_order in self.workorder_ids:
+<<<<<<< HEAD
                 time_lines = work_order.time_ids.filtered(lambda t: t.date_end and not t.cost_already_recorded)
                 work_center_cost += work_order._cal_cost(times=time_lines)
                 time_lines.write({'cost_already_recorded': True})
+=======
+                work_center_cost += work_order._cal_cost()
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             qty_done = finished_move.product_uom._compute_quantity(
                 finished_move.quantity_done, finished_move.product_id.uom_id)
             extra_cost = self.extra_cost * qty_done

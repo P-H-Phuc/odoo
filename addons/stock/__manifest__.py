@@ -27,7 +27,6 @@
         'data/stock_sequence_data.xml',
         'data/stock_traceability_report_data.xml',
 
-        'report/report_stock_forecasted.xml',
         'report/report_stock_quantity.xml',
         'report/report_stock_reception.xml',
         'report/stock_report_views.xml',
@@ -66,6 +65,7 @@
         'wizard/stock_inventory_warning.xml',
         'wizard/stock_label_type.xml',
         'wizard/stock_lot_label_layout.xml',
+        'wizard/stock_quant_reserve.xml',
 
         'views/res_partner_views.xml',
         'views/product_strategy_views.xml',
@@ -95,11 +95,6 @@
     'post_init_hook': '_assign_default_mail_template_picking_id',
     'assets': {
         'web.report_assets_common': [
-            # legacy reports (delete when all reports are converted)
-            'stock/static/src/legacy_web_report/utils.js',
-            'stock/static/src/legacy_web_report/report.js',
-            'stock/static/src/legacy_web_report/report_backend.scss',
-
             'web/static/src/legacy/scss/views.scss',
             'stock/static/src/scss/report_stock_reception.scss',
             'stock/static/src/scss/report_stock_rule.scss',
@@ -110,9 +105,13 @@
         'web.assets_backend': [
             'stock/static/src/**/*.js',
             'stock/static/src/**/*.xml',
+<<<<<<< HEAD
             'stock/static/src/scss/stock_forecasted.scss',
             'stock/static/src/scss/forecast_widget.scss',
             'stock/static/src/scss/stock_empty_screen.scss',
+=======
+            'stock/static/src/scss/*.scss',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'stock/static/src/views/**/*',
         ],
         'web.assets_frontend': [

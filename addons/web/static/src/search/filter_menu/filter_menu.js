@@ -38,5 +38,12 @@ export class FilterMenu extends Component {
     }
 }
 
+<<<<<<< HEAD
 FilterMenu.components = { CustomFilterItem, Dropdown, DropdownItem: SearchDropdownItem };
+=======
+FilterMenu.components = { CustomFilterItem, Dropdown, SearchDropdownItem };
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 FilterMenu.template = "web.FilterMenu";
+FilterMenu.props = {
+    class: { type: String, optional: true },
+};

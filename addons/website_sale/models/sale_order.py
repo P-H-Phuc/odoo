@@ -27,6 +27,14 @@ class SaleOrder(models.Model):
     website_id = fields.Many2one('website', string='Website', readonly=True,
                                  help='Website through which this order was placed for eCommerce orders.')
     shop_warning = fields.Char('Warning')
+    amount_delivery = fields.Monetary(
+        string="Delivery Amount",
+        compute='_compute_amount_delivery',
+        help="The amount without tax.",
+        store=True,
+        tracking=True,
+    )
+    access_point_address = fields.Json("Delivery Point Address")
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -70,6 +78,14 @@ class SaleOrder(models.Model):
         for order in self:
             order.cart_quantity = int(sum(order.mapped('website_order_line.product_uom_qty')))
             order.only_services = all(l.product_id.type == 'service' for l in order.website_order_line)
+
+    @api.depends('order_line.price_unit', 'order_line.tax_id', 'order_line.discount', 'order_line.product_uom_qty')
+    def _compute_amount_delivery(self):
+        for order in self:
+            if self.env.company.show_line_subtotals_tax_selection == 'tax_excluded':
+                order.amount_delivery = sum(order.order_line.filtered('is_delivery').mapped('price_subtotal'))
+            else:
+                order.amount_delivery = sum(order.order_line.filtered('is_delivery').mapped('price_total'))
 
     @api.depends('website_id', 'date_order', 'order_line', 'state', 'partner_id')
     def _compute_abandoned_cart(self):
@@ -191,6 +207,11 @@ class SaleOrder(models.Model):
             # the requested quantity update.
             warning = ''
 
+<<<<<<< HEAD
+=======
+        self._remove_delivery_line()
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         order_line = self._cart_update_order_line(product_id, quantity, order_line, **kwargs)
 
         return {
@@ -352,12 +373,10 @@ class SaleOrder(models.Model):
             'context': {
                 'default_composition_mode': 'mass_mail' if len(self.ids) > 1 else 'comment',
                 'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
-                'default_res_id': self.ids[0],
+                'default_res_ids': self.ids,
                 'default_model': 'sale.order',
-                'default_use_template': bool(template_id),
                 'default_template_id': template_id,
                 'website_sale_send_recovery_email': True,
-                'active_ids': self.ids,
             },
         }
 
@@ -387,15 +406,34 @@ class SaleOrder(models.Model):
                 sent_orders |= order
         sent_orders.write({'cart_recovery_email_sent': True})
 
-    def _notify_get_recipients_groups(self, msg_vals=None):
+    def _message_mail_after_hook(self, mails):
+        """ After sending recovery cart emails, update orders to avoid sending
+        it again. """
+        if self.env.context.get('website_sale_send_recovery_email'):
+            self.filtered_domain([
+                ('cart_recovery_email_sent', '=', False),
+                ('is_abandoned_cart', '=', True)
+            ]).cart_recovery_email_sent = True
+        return super()._message_mail_after_hook(mails)
+
+    def _message_post_after_hook(self, message, msg_vals):
+        """ After sending recovery cart emails, update orders to avoid sending
+        it again. """
+        if self.env.context.get('website_sale_send_recovery_email'):
+            self.cart_recovery_email_sent = True
+        return super(SaleOrder, self)._message_post_after_hook(message, msg_vals)
+
+    def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
         """ In case of cart recovery email, update link to redirect directly
         to the cart (like ``mail_template_sale_cart_recovery`` template). """
-        groups = super(SaleOrder, self)._notify_get_recipients_groups(msg_vals=msg_vals)
+        groups = super()._notify_get_recipients_groups(
+            message, model_description, msg_vals=msg_vals
+        )
         if not self:
             return groups
 
         self.ensure_one()
-        customer_portal_group = next(group for group in groups if group[0] == 'portal_customer')
+        customer_portal_group = next((group for group in groups if group[0] == 'portal_customer'), None)
         if customer_portal_group:
             access_opt = customer_portal_group[2].setdefault('button_access', {})
             if self._context.get('website_sale_send_recovery_email'):
@@ -404,11 +442,56 @@ class SaleOrder(models.Model):
         return groups
 
     def action_confirm(self):
-        res = super(SaleOrder, self).action_confirm()
+        res = super().action_confirm()
         for order in self:
             if not order.transaction_ids and not order.amount_total and self._context.get('send_email'):
                 order._send_order_confirmation_mail()
         return res
+
+    def _action_confirm(self):
+        for order in self:
+            order_location = order.access_point_address
+
+            if not order_location:
+                continue
+
+            # retrieve all the data :
+            # name, street, city, state, zip, country
+            name = order.partner_shipping_id.name
+            street = order_location['pick_up_point_address']
+            city = order_location['pick_up_point_town']
+            zip_code = order_location['pick_up_point_postal_code']
+            country = order.env['res.country'].search([('code', '=', order_location['pick_up_point_country'])]).id
+            state = order.env['res.country.state'].search(['&', ('code', '=', order_location['pick_up_point_state']), ('country_id.id', '=', country)]).id if (order_location['pick_up_point_state'] and country) else None
+            parent_id = order.partner_shipping_id.id
+            email = order.partner_shipping_id.email
+            phone = order.partner_shipping_id.phone
+
+            # we can check if the current partner has a partner of type "delivery" that has the same address
+            existing_partner = order.env['res.partner'].search(['&', '&', '&', '&',
+                                                                ('street', '=', street),
+                                                                ('city', '=', city),
+                                                                ('state_id', '=', state),
+                                                                ('country_id', '=', country),
+                                                                ('type', '=', 'delivery')], limit=1)
+
+            if existing_partner:
+                order.partner_shipping_id = existing_partner
+            else:
+                # if not, we create that res.partner
+                order.partner_shipping_id = order.env['res.partner'].create({
+                    'parent_id': parent_id,
+                    'type': 'delivery',
+                    'name': name,
+                    'street': street,
+                    'city': city,
+                    'state_id': state,
+                    'zip': zip_code,
+                    'country_id': country,
+                    'email': email,
+                    'phone': phone
+                })
+        return super()._action_confirm()
 
     def _get_shop_warning(self, clear=True):
         self.ensure_one()
@@ -469,3 +552,54 @@ class SaleOrder(models.Model):
             # URL should always be relative, safety check
             action['url'] = f'/@{action["url"]}'
         return action
+<<<<<<< HEAD
+=======
+
+    def _check_carrier_quotation(self, force_carrier_id=None, keep_carrier=False):
+        self.ensure_one()
+        DeliveryCarrier = self.env['delivery.carrier']
+
+        if self.only_services:
+            self._remove_delivery_line()
+            return True
+        else:
+            self = self.with_company(self.company_id)
+            # attempt to use partner's preferred carrier
+            if not force_carrier_id and self.partner_shipping_id.property_delivery_carrier_id and not keep_carrier:
+                force_carrier_id = self.partner_shipping_id.property_delivery_carrier_id.id
+
+            carrier = force_carrier_id and DeliveryCarrier.browse(force_carrier_id) or self.carrier_id
+            available_carriers = self._get_delivery_methods()
+            if carrier:
+                if carrier not in available_carriers:
+                    carrier = DeliveryCarrier
+                else:
+                    # set the forced carrier at the beginning of the list to be verfied first below
+                    available_carriers -= carrier
+                    available_carriers = carrier + available_carriers
+            if force_carrier_id or not carrier or carrier not in available_carriers:
+                for delivery in available_carriers:
+                    verified_carrier = delivery._match_address(self.partner_shipping_id)
+                    if verified_carrier:
+                        carrier = delivery
+                        break
+                self.write({'carrier_id': carrier.id})
+            self._remove_delivery_line()
+            if carrier:
+                res = carrier.rate_shipment(self)
+                if res.get('success'):
+                    self.set_delivery_line(carrier, res['price'])
+                    self.delivery_rating_success = True
+                    self.delivery_message = res['warning_message']
+                else:
+                    self.set_delivery_line(carrier, 0.0)
+                    self.delivery_rating_success = False
+                    self.delivery_message = res['error_message']
+
+        return bool(carrier)
+
+    def _get_delivery_methods(self):
+        address = self.partner_shipping_id
+        # searching on website_published will also search for available website (_search method on computed field)
+        return self.env['delivery.carrier'].sudo().search([('website_published', '=', True)]).available_carriers(address)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

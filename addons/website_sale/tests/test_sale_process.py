@@ -14,6 +14,7 @@ class TestUi(HttpCaseWithUserDemo):
 
     def setUp(self):
         super(TestUi, self).setUp()
+        self.env['product.pricelist'].sudo().search([]).action_archive()
         product_product_7 = self.env['product.product'].create({
             'name': 'Storage Box',
             'standard_price': 70.0,
@@ -118,8 +119,6 @@ class TestUi(HttpCaseWithUserDemo):
         self.env['res.config.settings'].create({
             'auth_signup_uninvited': 'b2c',
             'show_line_subtotals_tax_selection': 'tax_excluded',
-            'group_show_line_subtotals_tax_excluded': True,
-            'group_show_line_subtotals_tax_included': False,
         }).execute()
 
         self.start_tour("/", 'website_sale_tour_1')

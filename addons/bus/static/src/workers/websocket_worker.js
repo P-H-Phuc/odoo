@@ -232,7 +232,11 @@ export class WebsocketWorker {
             }
             this.channelsByClient.forEach((_, key) => this.channelsByClient.set(key, []));
         }
+<<<<<<< HEAD
         this.sendToClient(client, 'initialized');
+=======
+        this.sendToClient(client, "initialized");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 
     /**

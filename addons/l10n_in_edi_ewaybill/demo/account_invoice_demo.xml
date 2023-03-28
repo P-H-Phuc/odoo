@@ -33,7 +33,11 @@
                     ('company_id', '=', ref('l10n_in_edi_ewaybill.demo_company_in_ewaybill')),
                     ('type_tax_use', '=', 'sale'),
                     ('amount','=', 28),
+<<<<<<< HEAD
                     ('tax_group_id', '=', ref('l10n_in.igst_group'))], limit=1).ids)]
+=======
+                    ('tax_group_id', '=', ref('account.%s_igst_group' % ref('l10n_in_edi_ewaybill.demo_company_in_ewaybill')))], limit=1).ids)]
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }),
             (0, 0, {
                 'product_id': ref('product.product_product_9'),
@@ -43,7 +47,11 @@
                     ('company_id', '=', ref('l10n_in_edi_ewaybill.demo_company_in_ewaybill')),
                     ('type_tax_use', '=', 'sale'),
                     ('amount','=', 18),
+<<<<<<< HEAD
                     ('tax_group_id', '=', ref('l10n_in.igst_group'))], limit=1).ids)]
+=======
+                    ('tax_group_id', '=', ref('account.%s_igst_group' % ref('l10n_in_edi_ewaybill.demo_company_in_ewaybill')))], limit=1).ids)]
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }),
             (0, 0, {
                 'product_id': ref('product.product_product_10'),
@@ -55,9 +63,15 @@
                     '|',
                         '&amp;',
                         ('amount', '=', 18),
+<<<<<<< HEAD
                         ('tax_group_id', '=', ref('l10n_in.igst_group')),
                         '&amp;',
                         ('tax_group_id', '=', ref('l10n_in.cess_group')),
+=======
+                        ('tax_group_id', '=', ref('account.%s_igst_group' % ref('l10n_in_edi_ewaybill.demo_company_in_ewaybill'))),
+                        '&amp;',
+                        ('tax_group_id', '=', ref('account.%s_cess_group' % ref('l10n_in_edi_ewaybill.demo_company_in_ewaybill'))),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         ('children_tax_ids.amount','=', 5)
                     ], limit=2).ids)]
             }),

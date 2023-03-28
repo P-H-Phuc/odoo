@@ -29,14 +29,7 @@ class ProductTemplate(models.Model):
         compute='_compute_used_in_bom_count', compute_sudo=False)
     mrp_product_qty = fields.Float('Manufactured', digits='Product Unit of Measure',
         compute='_compute_mrp_product_qty', compute_sudo=False)
-    produce_delay = fields.Float(
-        'Manufacturing Lead Time', default=0.0,
-        help="Average lead time in days to manufacture this product. In the case of multi-level BOM, the manufacturing lead times of the components will be added. In case the product is subcontracted, this can be used to determine the date at which components should be sent to the subcontractor.")
     is_kits = fields.Boolean(compute='_compute_is_kits', compute_sudo=False)
-    days_to_prepare_mo = fields.Float(
-        string="Days to prepare Manufacturing Order", default=0.0,
-        help="Create and confirm Manufacturing Orders these many days in advance, to have enough time to replenish components or manufacture semi-finished products.\n"
-             "Note that this does not affect the MO scheduled date, which still respects the just-in-time mechanism.")
 
     def _compute_bom_count(self):
         for product in self:
@@ -87,10 +80,22 @@ class ProductTemplate(models.Model):
         }
         return action
 
-    def action_compute_bom_days(self):
-        templates = self.filtered(lambda t: t.bom_count > 0)
-        if templates:
-            return templates.mapped('product_variant_id').action_compute_bom_days()
+    def action_archive(self):
+        filtered_products = self.env['mrp.bom.line'].search([('product_id', 'in', self.product_variant_ids.ids)]).product_id.mapped('display_name')
+        res = super().action_archive()
+        if filtered_products:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                'title': _("Note that product(s): '%s' is/are still linked to active Bill of Materials, "
+                            "which means that the product can still be used on it/them.", filtered_products),
+                'type': 'warning',
+                'sticky': True,  #True/False will display for few seconds if false
+                'next': {'type': 'ir.actions.act_window_close'},
+                },
+            }
+        return res
 
     def action_archive(self):
         filtered_products = self.env['mrp.bom.line'].search([('product_id', 'in', self.product_variant_ids.ids)]).product_id.mapped('display_name')
@@ -180,7 +185,7 @@ class ProductProduct(models.Model):
     def _compute_mrp_product_qty(self):
         date_from = fields.Datetime.to_string(fields.datetime.now() - timedelta(days=365))
         #TODO: state = done?
-        domain = [('state', '=', 'done'), ('product_id', 'in', self.ids), ('date_planned_start', '>', date_from)]
+        domain = [('state', '=', 'done'), ('product_id', 'in', self.ids), ('date_start', '>', date_from)]
         read_group_res = self.env['mrp.production']._read_group(domain, ['product_id', 'product_uom_qty'], ['product_id'])
         mapped_data = dict([(data['product_id'][0], data['product_uom_qty']) for data in read_group_res])
         for product in self:
@@ -301,15 +306,6 @@ class ProductProduct(models.Model):
             res['context']['single_product'] = False
             res['context'].pop('default_product_tmpl_id', None)
         return res
-
-    def action_compute_bom_days(self):
-        bom_by_products = self.env['mrp.bom']._bom_find(self)
-        company_id = self.env.context.get('default_company_id', self.env.company.id)
-        warehouse = self.env['stock.warehouse'].search([('company_id', '=', company_id)], limit=1)
-        for product in self:
-            bom_data = self.env['report.mrp.report_bom_structure'].with_context(minimized=True)._get_bom_data(bom_by_products[product], warehouse, product, ignore_stock=True)
-            availability_delay = bom_data.get('resupply_avail_delay')
-            product.days_to_prepare_mo = availability_delay - bom_data.get('lead_time', 0) if availability_delay else 0
 
     def _match_all_variant_values(self, product_template_attribute_value_ids):
         """ It currently checks that all variant values (`product_template_attribute_value_ids`)

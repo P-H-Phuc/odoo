@@ -75,7 +75,7 @@ class WebsiteVisitor(models.Model):
     create_date = fields.Datetime('First Connection', readonly=True)
     last_connection_datetime = fields.Datetime('Last Connection', default=fields.Datetime.now, help="Last page view date", readonly=True)
     time_since_last_action = fields.Char('Last action', compute="_compute_time_statistics", help='Time since last page view. E.g.: 2 minutes ago')
-    is_connected = fields.Boolean('Is connected ?', compute='_compute_time_statistics', help='A visitor is considered as connected if his last page view was within the last 5 minutes.')
+    is_connected = fields.Boolean('Is connected?', compute='_compute_time_statistics', help='A visitor is considered as connected if his last page view was within the last 5 minutes.')
 
     _sql_constraints = [
         ('access_token_unique', 'unique(access_token)', 'Access token should be unique.'),
@@ -167,7 +167,7 @@ class WebsiteVisitor(models.Model):
     def _prepare_message_composer_context(self):
         return {
             'default_model': 'res.partner',
-            'default_res_id': self.partner_id.id,
+            'default_res_ids': self.partner_id.ids,
             'default_partner_ids': [self.partner_id.id],
         }
 
@@ -178,7 +178,6 @@ class WebsiteVisitor(models.Model):
         visitor_composer_ctx = self._prepare_message_composer_context()
         compose_form = self.env.ref('mail.email_compose_message_wizard_form', False)
         compose_ctx = dict(
-            default_use_template=False,
             default_composition_mode='comment',
         )
         compose_ctx.update(**visitor_composer_ctx)

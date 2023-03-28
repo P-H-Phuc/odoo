@@ -1,44 +1,46 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
-import { FloatField } from "../float/float_field";
+import { floatField, FloatField } from "../float/float_field";
 
+<<<<<<< HEAD
 import { Component } from "@odoo/owl";
 export class FloatFactorField extends Component {
     get factor() {
         return this.props.factor;
+=======
+export class FloatFactorField extends FloatField {
+    static props = {
+        ...FloatField.props,
+        factor: { type: Number, optional: true },
+    };
+    static defaultProps = {
+        ...FloatField.defaultProps,
+        factor: 1,
+    };
+
+    parse(value) {
+        let factorValue = value / this.props.factor;
+        if (this.props.inputType !== "number") {
+            factorValue = factorValue.toString();
+        }
+        return super.parse(factorValue);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 
-    get floatFieldProps() {
-        const result = {
-            ...this.props,
-            value: this.props.value * this.factor,
-            update: (value) => this.props.update(value / this.factor),
-        };
-        delete result.factor;
-        return result;
+    get value() {
+        return this.props.record.data[this.props.name] * this.props.factor;
     }
 }
 
-FloatFactorField.template = "web.FloatFactorField";
-FloatFactorField.components = { FloatField };
-FloatFactorField.props = {
-    ...FloatField.props,
-    factor: { type: Number, optional: true },
-};
-FloatFactorField.defaultProps = {
-    ...FloatField.defaultProps,
-    factor: 1,
-};
-
-FloatFactorField.supportedTypes = ["float"];
-
-FloatFactorField.isEmpty = () => false;
-FloatFactorField.extractProps = ({ attrs, field }) => {
-    return {
-        ...FloatField.extractProps({ attrs, field }),
-        factor: attrs.options.factor,
-    };
+export const floatFactorField = {
+    ...floatField,
+    component: FloatFactorField,
+    extractProps({ options }) {
+        const props = floatField.extractProps(...arguments);
+        props.factor = options.factor;
+        return props;
+    },
 };
 
-registry.category("fields").add("float_factor", FloatFactorField);
+registry.category("fields").add("float_factor", floatFactorField);

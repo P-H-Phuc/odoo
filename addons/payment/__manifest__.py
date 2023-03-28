@@ -7,7 +7,7 @@
     'summary': "The payment engine used by payment provider modules.",
     'depends': ['portal'],
     'data': [
-        'data/payment_icon_data.xml',
+        'data/payment_method_data.xml',
         'data/payment_provider_data.xml',
         'data/payment_cron.xml',
 
@@ -15,7 +15,7 @@
         'views/payment_templates.xml',
 
         'views/payment_provider_views.xml',
-        'views/payment_icon_views.xml',
+        'views/payment_method_views.xml',
         'views/payment_transaction_views.xml',
         'views/payment_token_views.xml',  # Depends on `action_payment_transaction_linked_to_token`
         'views/res_partner_views.xml',
@@ -23,11 +23,9 @@
         'security/ir.model.access.csv',
         'security/payment_security.xml',
 
+        'wizards/payment_capture_wizard_views.xml',
         'wizards/payment_link_wizard_views.xml',
         'wizards/payment_onboarding_views.xml',
-    ],
-    'demo': [
-        'data/payment_demo.xml',
     ],
     'assets': {
         'web.assets_frontend': [

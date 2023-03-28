@@ -2,18 +2,16 @@ odoo.define('website_sale.tour_shop_cart_recovery', function (require) {
 'use strict';
 
 var localStorage = require('web.local_storage');
-var tour = require('web_tour.tour');
+const { registry } = require("@web/core/registry");
 const tourUtils = require('website_sale.tour_utils');
-require('web.dom_ready');
 
 var orderIdKey = 'website_sale.tour_shop_cart_recovery.orderId';
 var recoveryLinkKey = 'website_sale.tour_shop_cart_recovery.recoveryLink';
 
-tour.register('shop_cart_recovery', {
+registry.category("web_tour.tours").add('shop_cart_recovery', {
     test: true,
     url: '/shop?search=Acoustic Bloc Screens',
-},
-[
+    steps: [
     {
         content: "select Acoustic Bloc Screens",
         trigger: '.oe_product_cart a:containsExact("Acoustic Bloc Screens")',
@@ -59,9 +57,9 @@ tour.register('shop_cart_recovery', {
     },
     {
         content: "check the mail is sent, grab the recovery link, and logout",
-        trigger: '.o_Message_content a:containsExact("Resume order")',
+        trigger: '.o-mail-Message-body a:containsExact("Resume order")',
         run: function () {
-            var link = $('.o_Message_content a:containsExact("Resume order")').attr('href');
+            var link = $('.o-mail-Message-body a:containsExact("Resume order")').attr('href');
             localStorage.setItem(recoveryLinkKey, link);
             window.location.href = "/web/session/logout?redirect=/";
         }
@@ -83,5 +81,5 @@ tour.register('shop_cart_recovery', {
         trigger: 'td.td-product_name:contains("Acoustic Bloc Screens")',
         run: function () {},
     },
-]);
+]});
 });

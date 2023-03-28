@@ -8,6 +8,22 @@ import { useService } from "@web/core/utils/hooks";
 import { capitalize } from "../utils/strings";
 
 import { Component, useState } from "@odoo/owl";
+<<<<<<< HEAD
+=======
+
+// This props are added by the error handler
+export const standardErrorDialogProps = {
+    traceback: { type: [String, { value: null }], optional: true },
+    message: { type: String, optional: true },
+    name: { type: String, optional: true },
+    exceptionName: { type: [String, { value: null }], optional: true },
+    data: { type: [Object, { value: null }], optional: true },
+    subType: { type: [String, { value: null }], optional: true },
+    code: { type: [Number, String, { value: null }], optional: true },
+    type: { type: [String, { value: null }], optional: true },
+    close: Function, // prop added by the Dialog service
+};
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 export const odooExceptionTitleMap = new Map(
     Object.entries({
@@ -41,6 +57,7 @@ export class ErrorDialog extends Component {
 ErrorDialog.template = "web.ErrorDialog";
 ErrorDialog.components = { Dialog };
 ErrorDialog.title = _lt("Odoo Error");
+ErrorDialog.props = { ...standardErrorDialogProps };
 
 // -----------------------------------------------------------------------------
 // Client Error Dialog
@@ -118,6 +135,10 @@ export class WarningDialog extends Component {
 }
 WarningDialog.template = "web.WarningDialog";
 WarningDialog.components = { Dialog };
+WarningDialog.props = {
+    ...standardErrorDialogProps,
+    title: { type: String, optional: true },
+};
 
 // -----------------------------------------------------------------------------
 // Redirect Warning Dialog
@@ -144,6 +165,7 @@ export class RedirectWarningDialog extends Component {
 }
 RedirectWarningDialog.template = "web.RedirectWarningDialog";
 RedirectWarningDialog.components = { Dialog };
+RedirectWarningDialog.props = { ...standardErrorDialogProps };
 
 // -----------------------------------------------------------------------------
 // Error 504 Dialog
@@ -152,6 +174,7 @@ export class Error504Dialog extends Component {}
 Error504Dialog.template = "web.Error504Dialog";
 Error504Dialog.components = { Dialog };
 Error504Dialog.title = _lt("Request timeout");
+Error504Dialog.props = { ...standardErrorDialogProps };
 
 // -----------------------------------------------------------------------------
 // Expired Session Error Dialog
@@ -164,6 +187,7 @@ export class SessionExpiredDialog extends Component {
 SessionExpiredDialog.template = "web.SessionExpiredDialog";
 SessionExpiredDialog.components = { Dialog };
 SessionExpiredDialog.title = _lt("Odoo Session Expired");
+SessionExpiredDialog.props = { ...standardErrorDialogProps };
 
 registry
     .category("error_dialogs")

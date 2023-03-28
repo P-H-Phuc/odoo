@@ -1,12 +1,13 @@
 /** @odoo-module **/
 
-import tour from 'web_tour.tour';
+import { registry } from "@web/core/registry";
+import { stepUtils } from "@web_tour/tour_service/tour_utils";
 
-tour.register('mass_mailing_snippets_menu_tabs', {
+registry.category("web_tour.tours").add('mass_mailing_snippets_menu_tabs', {
     test: true,
     url: '/web',
-}, [
-    tour.stepUtils.showAppsMenuItem(), {
+    steps: [
+    stepUtils.showAppsMenuItem(), {
         content: "Select the 'Email Marketing' app.",
         trigger: '.o_app[data-menu-xmlid="mass_mailing.mass_mailing_menu_root"]',
     },
@@ -48,6 +49,7 @@ tour.register('mass_mailing_snippets_menu_tabs', {
         trigger: 'iframe .o_we_customize_panel .snippet-option-DesignTab',
         run: () => null, // it's a check
     },
+<<<<<<< HEAD
     ...tour.stepUtils.discardForm(),
 ]);
 
@@ -57,6 +59,18 @@ tour.register('mass_mailing_snippets_menu_toolbar_new_mailing_mobile', {
     url: '/web',
 }, [
     tour.stepUtils.showAppsMenuItem(), {
+=======
+    ...stepUtils.discardForm(),
+]});
+
+
+
+registry.category("web_tour.tours").add('mass_mailing_snippets_menu_toolbar_new_mailing_mobile', {
+    test: true,
+    url: '/web',
+    steps: [
+    stepUtils.showAppsMenuItem(), {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         content: "Select the 'Email Marketing' app.",
         trigger: '.o_app[data-menu-xmlid="mass_mailing.mass_mailing_menu_root"]',
     },
@@ -108,6 +122,7 @@ tour.register('mass_mailing_snippets_menu_toolbar_new_mailing_mobile', {
         mobile: true,
     },
     {
+<<<<<<< HEAD
         content: "Make sure the toolbar is there, with the tables formating tool",
         trigger: 'iframe #toolbar.oe-floating #table:not(.d-none)',
         run: () => null, // it's a check
@@ -120,6 +135,22 @@ tour.register('mass_mailing_snippets_menu_toolbar', {
     url: '/web',
 }, [
     tour.stepUtils.showAppsMenuItem(), {
+=======
+        content: "Make sure the toolbar is there",
+        trigger: 'iframe #toolbar.oe-floating',
+        run: () => null, // it's a check
+        mobile: true,
+    },
+    ...stepUtils.discardForm().map(command => ({...command, mobile: true})),
+    ]
+});
+
+registry.category("web_tour.tours").add('mass_mailing_snippets_menu_toolbar', {
+    test: true,
+    url: '/web',
+    steps: [
+    stepUtils.showAppsMenuItem(), {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         content: "Select the 'Email Marketing' app.",
         trigger: '.o_app[data-menu-xmlid="mass_mailing.mass_mailing_menu_root"]',
     },
@@ -185,5 +216,11 @@ tour.register('mass_mailing_snippets_menu_toolbar', {
         trigger: 'iframe #oe_snippets .o_we_customize_panel #toolbar',
         run: () => null,
     },
+<<<<<<< HEAD
     ...tour.stepUtils.discardForm(),
 ]);
+=======
+    ...stepUtils.discardForm(),
+    ],
+});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

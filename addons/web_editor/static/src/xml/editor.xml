@@ -9,9 +9,14 @@
         <div id="toolbar" class="oe-toolbar oe-floating">
             <div id="style" class="btn-group dropdown">
                 <button type="button" class="btn dropdown-toggle"
+<<<<<<< HEAD
                     data-bs-toggle="dropdown" title="Text style" tabindex="-1"
                     data-bs-original-title="Style" aria-expanded="false">
                     <span>Normal</span>
+=======
+                    data-bs-toggle="dropdown" data-bs-original-title="Text style" tabindex="-1" aria-expanded="false">
+                    <span title="Text style">Normal</span>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 </button>
                 <ul class="dropdown-menu">
                     <li id="paragraph-dropdown-item">
@@ -57,9 +62,8 @@
             <div id="colorInputButtonGroup" class="btn-group">
                 <div class="colorpicker-group note-fore-color-preview" data-name="color">
                     <div id="oe-text-color" class="btn color-button dropdown-toggle editor-ignore"
-                        data-bs-toggle="dropdown" title="Font Color" tabindex="-1"
-                        data-bs-original-title="Font Color">
-                        <i class="fa fa-font color-indicator fore-color"></i>
+                        data-bs-toggle="dropdown" tabindex="-1">
+                        <i class="fa fa-font color-indicator fore-color" title="Font Color"></i>
                     </div>
                     <ul class="dropdown-menu colorpicker-menu">
                         <li><div data-event-name="foreColor" class="colorPalette"></div></li>
@@ -67,9 +71,8 @@
                 </div>
                 <div class="colorpicker-group note-back-color-preview" data-name="color">
                     <button id="oe-fore-color" type="button" class="btn dropdown-toggle editor-ignore"
-                        data-bs-toggle="dropdown" title="Background Color" tabindex="-1"
-                        data-bs-original-title="Background Color">
-                        <i class="fa fa-paint-brush color-indicator hilite-color"></i>
+                        data-bs-toggle="dropdown" tabindex="-1">
+                        <i class="fa fa-paint-brush color-indicator hilite-color" title="Background Color"></i>
                     </button>
                     <ul class="dropdown-menu colorpicker-menu">
                         <li><div data-event-name="backColor" class="colorPalette"></div></li>
@@ -77,6 +80,7 @@
                 </div>
             </div>
 
+<<<<<<< HEAD
             <div id="font-size" class="btn-group dropdown">
                 <button type="button" class="btn dropdown-toggle"
                     data-bs-toggle="dropdown" title="Font size" tabindex="-1"
@@ -99,12 +103,37 @@
                     <li><a class="dropdown-item" href="#" data-call="setFontSize" data-arg1="62px">62</a></li>
                 </ul>
             </div>
+=======
+            <t t-if="widget.isMobile()"></t>  
+            <t t-else="">
+                <div id="font-size" class="btn-group dropdown">
+                    <button type="button" class="btn dropdown-toggle"
+                        data-bs-toggle="dropdown" title="Font size" tabindex="-1"
+                        data-bs-original-title="Font Size" aria-expanded="false">
+                        <span id="fontSizeCurrentValue"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" data-call="setFontSize">default</a></li>
+                        <li><a class="dropdown-item" href="#" data-call="setFontSize" data-arg1="8px">8</a></li>
+                        <li><a class="dropdown-item" href="#" data-call="setFontSize" data-arg1="9px">9</a></li>
+                        <li><a class="dropdown-item" href="#" data-call="setFontSize" data-arg1="10px">10</a></li>
+                        <li><a class="dropdown-item" href="#" data-call="setFontSize" data-arg1="11px">11</a></li>
+                        <li><a class="dropdown-item" href="#" data-call="setFontSize" data-arg1="12px">12</a></li>
+                        <li><a class="dropdown-item" href="#" data-call="setFontSize" data-arg1="14px">14</a></li>
+                        <li><a class="dropdown-item" href="#" data-call="setFontSize" data-arg1="18px">18</a></li>
+                        <li><a class="dropdown-item" href="#" data-call="setFontSize" data-arg1="24px">24</a></li>
+                        <li><a class="dropdown-item" href="#" data-call="setFontSize" data-arg1="36px">36</a></li>
+                        <li><a class="dropdown-item" href="#" data-call="setFontSize" data-arg1="48px">48</a></li>
+                        <li><a class="dropdown-item" href="#" data-call="setFontSize" data-arg1="62px">62</a></li>
+                    </ul>
+                </div>
+            </t>    
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
             <div id="justify" class="btn-group dropdown">
                 <button type="button" class="btn dropdown-toggle"
-                    data-bs-toggle="dropdown" title="Text align" tabindex="-1"
-                    data-bs-original-title="Paragraph" aria-expanded="false">
-                    <i id="paragraphDropdownButton" class="fa fa-align-left fa-fw"></i>
+                    data-bs-toggle="dropdown" tabindex="-1" data-bs-original-title="Paragraph" aria-expanded="false">
+                    <i id="paragraphDropdownButton" class="fa fa-align-left fa-fw" title="Text align"></i>
                 </button>
                 <div class="dropdown-menu">
                     <div class="btn-group">
@@ -116,46 +145,37 @@
                 </div>
             </div>
 
-            <div id="list" class="btn-group">
-                <div id="unordered" data-call="toggleList" data-arg1="UL" title="Toggle unordered list" class="oe-toggle-unordered fa fa-list-ul fa-fw btn"></div>
-                <div id="ordered" data-call="toggleList" data-arg1="OL" title="Toggle ordered list" class="oe-toggle-ordered fa fa-list-ol fa-fw btn"></div>
-                <div id="checklist" data-call="toggleList" data-arg1="CL" title="Toggle checklist" class="oe-toggle-checklist btn fa fa-fw">
-                    <div class="small">
-                        <div class="fa fa-square-o d-block small"/>
-                        <div class="fa fa-check-square d-block small"/>
+            <t t-if="widget.isMobile()"> 
+                <button type="button" class="btn dropdown-toggle"
+                    data-bs-toggle="dropdown" title="Text align" tabindex="-1"
+                    data-bs-original-title="Paragrap" aria-expanded="false">
+                    <i id="paragraphDropdownButton" class="fa fa-list fa-fw"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <div id="list" class="btn-group">
+                        <div id="unordered" data-call="toggleList" data-arg1="UL" title="Toggle unordered list" class="oe-toggle-unordered fa fa-list-ul fa-fw btn"></div>
+                        <div id="ordered" data-call="toggleList" data-arg1="OL" title="Toggle ordered list" class="oe-toggle-ordered fa fa-list-ol fa-fw btn"></div>
+                        <div id="checklist" data-call="toggleList" data-arg1="CL" title="Toggle checklist" class="oe-toggle-checklist btn fa fa-fw">
+                            <div class="small">
+                                <div class="fa fa-square-o d-block small"/>
+                                <div class="fa fa-check-square d-block small"/>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div id="table" class="btn-group">
-                <div class="dropdown">
-                    <button type="button" class="btn dropdown-toggle"
-                        data-bs-toggle="dropdown" title="Insert table" tabindex="-1"
-                        data-bs-original-title="Table" aria-expanded="false"
-                        id="tableDropdownButton">
-                        <i class="fa fa-table fa-fw"></i>
-                    </button>
-                    <div class="dropdown-menu">
-                        <div class="btn-group oe-tablepicker-dropdown"></div>
+            </t>
+            <t t-else="">
+                <div id="list" class="btn-group">
+                    <div id="unordered" data-call="toggleList" data-arg1="UL" title="Toggle unordered list" class="oe-toggle-unordered fa fa-list-ul fa-fw btn"></div>
+                    <div id="ordered" data-call="toggleList" data-arg1="OL" title="Toggle ordered list" class="oe-toggle-ordered fa fa-list-ol fa-fw btn"></div>
+                    <div id="checklist" data-call="toggleList" data-arg1="CL" title="Toggle checklist" class="oe-toggle-checklist btn fa fa-fw">
+                        <div class="small">
+                            <div class="fa fa-square-o d-block small"/>
+                            <div class="fa fa-check-square d-block small"/>
+                        </div>
                     </div>
                 </div>
-                <div class="dropdown">
-                    <button type="button" class="btn dropdown-toggle toolbar-edit-table"
-                        data-bs-toggle="dropdown" title="Table tools" tabindex="-1"
-                        data-bs-original-title="Edit table" aria-expanded="false">
-                        <i class="fa fa-columns fa-fw"></i>
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#" id="table-add-column-left" data-call="addColumn" data-arg1="before">Add a column left</a></li>
-                        <li><a class="dropdown-item" href="#" id="table-add-column-right" data-call="addColumn" data-arg1="after">Add a column right</a></li>
-                        <li><a class="dropdown-item" href="#" id="table-add-row-above" data-call="addRow" data-arg1="before">Add a row above</a></li>
-                        <li><a class="dropdown-item" href="#" id="table-add-row-below" data-call="addRow" data-arg1="after">Add a row below</a></li>
-                        <li><a class="dropdown-item" href="#" id="table-remove-column" data-call="removeColumn">Remove current column</a></li>
-                        <li><a class="dropdown-item" href="#" id="table-remove-row" data-call="removeRow">Remove current row</a></li>
-                        <li><a class="dropdown-item" href="#" id="table-delete-table" data-call="deleteTable">Delete current table</a></li>
-                    </ul>
-                </div>
-            </div>
+            </t>
 
             <div id="link" class="btn-group">
                 <div id="media-insert" title="Insert media" class="fa fa-file-image-o fa-fw btn editor-ignore"></div>
@@ -173,9 +193,8 @@
 
             <div id="image-padding" class="btn-group dropdown">
                 <button type="button" class="btn dropdown-toggle"
-                    data-bs-toggle="dropdown" title="Image padding" tabindex="-1"
-                    data-bs-original-title="Image padding" aria-expanded="false">
-                    <span class="fa fa-plus-square-o"></span>
+                    data-bs-toggle="dropdown" tabindex="-1" aria-expanded="false">
+                    <span class="fa fa-plus-square-o" title="Image padding"></span>
                 </button>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item editor-ignore" href="#" data-class="">None</a></li>
@@ -212,7 +231,7 @@
             </div>
 
             <div class="btn-group only_fa">
-                <div id="fa-spin" title="Toggle icon spin" class="editor-ignore btn fa fa-refresh"></div>
+                <div id="fa-spin" title="Toggle icon spin" class="editor-ignore btn fa fa-play"></div>
             </div>
         </div>
     </t>

@@ -4,6 +4,7 @@ from odoo.osv import expression
 from odoo.exceptions import UserError, ValidationError
 from odoo.addons.base.models.res_bank import sanitize_account_number
 from odoo.tools import remove_accents
+from collections import defaultdict
 import logging
 import re
 
@@ -36,7 +37,7 @@ class AccountJournal(models.Model):
     _name = "account.journal"
     _description = "Journal"
     _order = 'sequence, type, code'
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread', 'mail.activity.mixin', 'portal.mixin']
     _check_company_auto = True
     _rec_names_search = ['name', 'code']
 
@@ -62,8 +63,15 @@ class AccountJournal(models.Model):
                     return model
         return 'odoo'
 
-    name = fields.Char(string='Journal Name', required=True)
-    code = fields.Char(string='Short Code', size=5, required=True, help="Shorter name used for display. The journal entries of this journal will also be named using this prefix by default.")
+    name = fields.Char(string='Journal Name', required=True, translate=True)
+    code = fields.Char(
+        string='Short Code',
+        size=5,
+        compute='_compute_code', readonly=False, store=True,
+        required=True, precompute=True,
+        help="Shorter name used for display. "
+             "The journal entries of this journal will also be named using this prefix by default."
+    )
     active = fields.Boolean(default=True, help="Set active to false to hide the Journal without removing it.")
     type = fields.Selection([
             ('sale', 'Sales'),
@@ -79,7 +87,7 @@ class AccountJournal(models.Model):
         "Select 'General' for miscellaneous operations journals.")
     account_control_ids = fields.Many2many('account.account', 'journal_account_control_rel', 'journal_id', 'account_id', string='Allowed accounts',
         check_company=True,
-        domain="[('deprecated', '=', False), ('company_id', '=', company_id), ('is_off_balance', '=', False)]")
+        domain="[('deprecated', '=', False), ('company_id', '=', company_id), ('account_type', '!=', 'off_balance')]")
     default_account_type = fields.Char(string='Default Account Type', compute="_compute_default_account_type")
     default_account_id = fields.Many2one(
         comodel_name='account.account', check_company=True, copy=False, ondelete='restrict',
@@ -207,6 +215,18 @@ class AccountJournal(models.Model):
         ('code_company_uniq', 'unique (company_id, code)', 'Journal codes must be unique per company.'),
     ]
 
+    @api.depends('type', 'company_id')
+    def _compute_code(self):
+        cache = defaultdict(list)
+        for record in self:
+            if not record.code and record.type in ('bank', 'cash'):
+                record.code = self.get_next_bank_cash_default_code(
+                    record.type,
+                    record.company_id,
+                    cache.get(record.company_id)
+                )
+                cache[record.company_id].append(record.code)
+
     @api.depends('outbound_payment_method_line_ids', 'inbound_payment_method_line_ids')
     def _compute_available_payment_method_ids(self):
         """
@@ -264,14 +284,18 @@ class AccountJournal(models.Model):
                     if vals['mode'] == 'unique' and (already_used or is_protected):
                         continue
 
-                    # Only the manual payment method can be used multiple time on a single journal.
-                    if payment_method.code != "manual" and already_used:
+                    # Some payment methods can be used multiple times on a single journal.
+                    if payment_method.code not in self._get_reusable_payment_methods() and already_used:
                         continue
 
                     pay_method_ids_commands_x_journal[journal].append(Command.link(payment_method.id))
 
         for journal, pay_method_ids_commands in pay_method_ids_commands_x_journal.items():
             journal.available_payment_method_ids = pay_method_ids_commands
+
+    @api.model
+    def _get_reusable_payment_methods(self):
+        return {'manual'}
 
     @api.depends('type')
     def _compute_default_account_type(self):
@@ -572,13 +596,20 @@ class AccountJournal(models.Model):
         return result
 
     @api.model
-    def get_next_bank_cash_default_code(self, journal_type, company):
+    def get_next_bank_cash_default_code(self, journal_type, company, cache=None):
         journal_code_base = (journal_type == 'cash' and 'CSH' or 'BNK')
+<<<<<<< HEAD
         journals = self.env['account.journal'].with_context(active_test=False).search([('code', 'like', journal_code_base + '%'), ('company_id', '=', company.id)])
+=======
+        existing_codes = set(self.env['account.journal'].with_context(active_test=False).search([
+            ('code', 'like', journal_code_base + '%'),
+            ('company_id', '=', company.id),
+        ]).mapped('code') + (cache or []))
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         for num in range(1, 100):
             # journal_code has a maximal size of 5, hence we can enforce the boundary num < 100
             journal_code = journal_code_base + str(num)
-            if journal_code not in journals.mapped('code'):
+            if journal_code not in existing_codes:
                 return journal_code
 
     @api.model
@@ -607,7 +638,7 @@ class AccountJournal(models.Model):
         company = self.env['res.company'].browse(vals['company_id']) if vals.get('company_id') else self.env.company
         vals['company_id'] = company.id
 
-        # Don't get the digits on 'chart_template_id' since the chart template could be a custom one.
+        # Don't get the digits on 'chart_template' since the chart template could be a custom one.
         random_account = self.env['account.account'].search([('company_id', '=', company.id)], limit=1)
         digits = len(random_account.code) if random_account else 6
 
@@ -623,12 +654,6 @@ class AccountJournal(models.Model):
 
             # === Fill missing name ===
             vals['name'] = vals.get('name') or vals.get('bank_acc_number')
-
-            # === Fill missing code ===
-            if 'code' not in vals:
-                vals['code'] = self.get_next_bank_cash_default_code(journal_type, company)
-                if not vals['code']:
-                    raise UserError(_("Cannot generate an unused journal code. Please fill the 'Shortcode' field."))
 
             # === Fill missing accounts ===
             if not has_liquidity_accounts:
@@ -692,14 +717,37 @@ class AccountJournal(models.Model):
         # We simply call the setup bar function.
         return self.env['res.company'].setting_init_bank_account_action()
 
+<<<<<<< HEAD
     def _create_document_from_attachment(self, attachment_ids=None):
         """
         Create invoices from the attachments (for instance a Factur-X XML file)
         """
+=======
+    def action_new_transaction(self):
+        action = self.env['ir.actions.act_window']._for_xml_id('account.action_bank_statement_tree')
+        action['context'] = {'default_journal_id': self.id}
+        return action
+
+    def _create_document_from_attachment(self, attachment_ids):
+        """ Create the invoices from files."""
+        move_type = self._context.get("default_move_type", "entry")
+        if not self:
+            if move_type in self.env['account.move'].get_sale_types():
+                journal_type = "sale"
+            elif move_type in self.env['account.move'].get_purchase_types():
+                journal_type = "purchase"
+            else:
+                raise UserError(_("The journal in which to upload the invoice is not specified. "))
+            self = self.env['account.journal'].search([
+                ('company_id', '=', self.env.company.id), ('type', '=', journal_type)
+            ], limit=1)
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         attachments = self.env['ir.attachment'].browse(attachment_ids)
         if not attachments:
             raise UserError(_("No attachment was provided"))
 
+<<<<<<< HEAD
         invoices = self.env['account.move']
         with invoices._disable_discount_precision():
             for attachment in attachments:
@@ -722,6 +770,36 @@ class AccountJournal(models.Model):
         and redirect the user to the newly created invoice(s).
         :param attachment_ids: list of attachment ids
         :return: action to open the created invoices
+=======
+        if not self:
+            raise UserError(_("No journal found"))
+
+        # As we are coming from the journal, we assume that each attachments
+        # will create an invoice with a tentative to enhance with EDI / OCR..
+        all_invoices = self.env['account.move']
+        for attachment in attachments:
+            invoice = self.env['account.move'].create({
+                'journal_id': self.id,
+                'move_type': move_type,
+            })
+
+            invoice._extend_with_attachments(attachment, new=True)
+
+            all_invoices |= invoice
+
+            invoice.with_context(
+                account_predictive_bills_disable_prediction=True,
+                no_new_invoice=True,
+            ).message_post(attachment_ids=attachment.ids)
+
+            attachment.write({'res_model': 'account.move', 'res_id': invoice.id})
+
+        return all_invoices
+
+    def create_document_from_attachment(self, attachment_ids):
+        """ Create the invoices from files.
+         :return: A action redirecting to account.move tree/form view.
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         """
         invoices = self._create_document_from_attachment(attachment_ids)
         action_vals = {

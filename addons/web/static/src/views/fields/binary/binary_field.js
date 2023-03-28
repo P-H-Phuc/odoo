@@ -10,6 +10,19 @@ import { _lt } from "@web/core/l10n/translation";
 
 import { Component, onWillUpdateProps, useState } from "@odoo/owl";
 export class BinaryField extends Component {
+    static template = "web.BinaryField";
+    static components = {
+        FileUploader,
+    };
+    static props = {
+        ...standardFieldProps,
+        acceptedFileExtensions: { type: String, optional: true },
+        fileNameField: { type: String, optional: true },
+    };
+    static defaultProps = {
+        acceptedFileExtensions: "*",
+    };
+
     setup() {
         this.notification = useService("notification");
         this.state = useState({
@@ -21,7 +34,7 @@ export class BinaryField extends Component {
     }
 
     get fileName() {
-        return this.state.fileName || this.props.value || "";
+        return this.state.fileName || this.props.record.data[this.props.name] || "";
     }
 
     update({ data, name }) {
@@ -43,34 +56,23 @@ export class BinaryField extends Component {
                 filename_field: this.fileName,
                 filename: this.fileName || "",
                 download: true,
-                data: isBinarySize(this.props.value) ? null : this.props.value,
+                data: isBinarySize(this.props.record.data[this.props.name])
+                    ? null
+                    : this.props.record.data[this.props.name],
             },
             url: "/web/content",
         });
     }
 }
 
-BinaryField.template = "web.BinaryField";
-BinaryField.components = {
-    FileUploader,
-};
-BinaryField.props = {
-    ...standardFieldProps,
-    acceptedFileExtensions: { type: String, optional: true },
-    fileNameField: { type: String, optional: true },
-};
-BinaryField.defaultProps = {
-    acceptedFileExtensions: "*",
-};
-
-BinaryField.displayName = _lt("File");
-BinaryField.supportedTypes = ["binary"];
-
-BinaryField.extractProps = ({ attrs }) => {
-    return {
-        acceptedFileExtensions: attrs.options.accepted_file_extensions,
+export const binaryField = {
+    component: BinaryField,
+    displayName: _lt("File"),
+    supportedTypes: ["binary"],
+    extractProps: ({ attrs, options }) => ({
+        acceptedFileExtensions: options.accepted_file_extensions,
         fileNameField: attrs.filename,
-    };
+    }),
 };
 
-registry.category("fields").add("binary", BinaryField);
+registry.category("fields").add("binary", binaryField);

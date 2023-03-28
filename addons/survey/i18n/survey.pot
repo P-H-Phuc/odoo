@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-12-15 12:49+0000\n"
 "PO-Revision-Date: 2022-12-15 12:49+0000\n"
+=======
+"Project-Id-Version: Odoo Server saas~16.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-17 08:00+0000\n"
+"PO-Revision-Date: 2023-01-17 08:00+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -346,6 +353,13 @@ msgstr ""
 #. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.question_result_number_or_date_or_datetime
 msgid "<i class=\"fa fa-list-ol me-1\"/>Most Common"
+msgstr ""
+
+#. module: survey
+#: model_terms:ir.ui.view,arch_db:survey.survey_question_form
+msgid ""
+"<i class=\"fa fa-long-arrow-right mx-2\" aria-label=\"Arrow icon\" "
+"title=\"Arrow\"/>"
 msgstr ""
 
 #. module: survey
@@ -713,11 +727,14 @@ msgid "<span>Which is yellow?</span><br/>"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question,title:survey.survey_demo_quiz_p3_q4
 msgid "A \"Citrus\" could give you ..."
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_question.py:0
 #, python-format
@@ -821,13 +838,6 @@ msgid "Activity Type Icon"
 msgstr ""
 
 #. module: survey
-#: model_terms:ir.ui.view,arch_db:survey.survey_invite_view_form
-msgid ""
-"Add a list of email recipients (separated by commas, semicolons or line "
-"breaks). They will not be converted into contacts."
-msgstr ""
-
-#. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.survey_survey_view_form
 msgid "Add a question"
 msgstr ""
@@ -889,8 +899,22 @@ msgid ""
 msgstr ""
 
 #. module: survey
+#: model:ir.model.constraint,message:survey.constraint_survey_question_conditional_questions_have_triggering_question
+msgid ""
+"All conditional display questions need a triggering question.\n"
+"Please disable \"Conditional Display\" or specify a triggering question."
+msgstr ""
+
+#. module: survey
 #: model:ir.model.fields.selection,name:survey.selection__survey_survey__questions_selection__all
 msgid "All questions"
+msgstr ""
+
+#. module: survey
+#: model:ir.model.constraint,message:survey.constraint_survey_question_triggered_questions_have_triggering_answer
+msgid ""
+"All questions triggered by another need a triggering answer.\n"
+"Please disable \"Conditional Display\" or specify a triggering answer."
 msgstr ""
 
 #. module: survey
@@ -899,8 +923,13 @@ msgid "All surveys"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_burger_quiz_p3_q2_sug2
 msgid "Amenhotep"
+=======
+#: model:ir.model.fields,field_description:survey.field_survey_question__allowed_triggering_question_ids
+msgid "Allowed Triggering Questions"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: survey
@@ -1105,6 +1134,7 @@ msgid "Badge"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_quiz_p3_q3_sug3
 msgid "Baobab Trees"
 msgstr ""
@@ -1120,6 +1150,8 @@ msgid "Beware of leap years !"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -1127,6 +1159,7 @@ msgid "Blue Pen"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_quiz_p3_q4_sug4
 msgid "Bricks"
 msgstr ""
@@ -1147,6 +1180,8 @@ msgid "Burger Quiz"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -1169,6 +1204,7 @@ msgid "Can Edit Body"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question,title:survey.survey_demo_burger_quiz_p4_q3
 msgid "Can Humans ever directly see a photon ?"
 msgstr ""
@@ -1179,6 +1215,8 @@ msgid "Cancel"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #: model_terms:ir.actions.act_window,help:survey.action_survey_form
@@ -1325,6 +1363,7 @@ msgstr ""
 #. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.survey_button_form_view
 #: model_terms:ir.ui.view,arch_db:survey.survey_fill_form
+#: model_terms:ir.ui.view,arch_db:survey.survey_invite_view_form
 #: model_terms:ir.ui.view,arch_db:survey.survey_survey_view_form
 msgid "Close"
 msgstr ""
@@ -1400,8 +1439,17 @@ msgid "Conditional Display"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.vendor_certification_page_1_question_2_choice_3
 msgid "Conference chair"
+=======
+#. odoo-javascript
+#: code:addons/survey/static/src/views/widgets/survey_question_trigger/survey_question_trigger.js:0
+#: model_terms:ir.ui.view,arch_db:survey.survey_question_form
+#, python-format
+msgid ""
+"Conditional display is not available when questions are randomly picked."
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: survey
@@ -1453,11 +1501,14 @@ msgid "Continue here"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_quiz_p3_q3_sug4
 msgid "Cookies"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/survey/static/src/js/survey_session_manage.js:0
 #, python-format
@@ -1465,6 +1516,7 @@ msgid "Copied !"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_quiz_p4_q1_sug3
 msgid "Cornaceae"
 msgstr ""
@@ -1477,6 +1529,10 @@ msgstr ""
 #. module: survey
 #. odoo-javascript
 #. odoo-python
+=======
+#. odoo-python
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/survey/models/survey_user_input.py:0
 #: code:addons/survey/static/src/js/survey_result.js:0
 #: model:ir.model.fields,field_description:survey.field_survey_question_answer__is_correct
@@ -1527,6 +1583,7 @@ msgid "Correctly priced"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_quiz_p3_q4_sug3
 msgid "Cosmic rays"
 msgstr ""
@@ -1537,6 +1594,8 @@ msgid "Create Live Session"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:survey.field_survey_invite__create_uid
 #: model:ir.model.fields,field_description:survey.field_survey_question__create_uid
 #: model:ir.model.fields,field_description:survey.field_survey_question_answer__create_uid
@@ -1708,6 +1767,7 @@ msgid "Display Progress as"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question,title:survey.vendor_certification_page_1_question_1
 msgid "Do we sell Acoustic Bloc Screens?"
 msgstr ""
@@ -1750,6 +1810,17 @@ msgstr ""
 #. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.survey_survey_view_kanban
 msgid "Dropdown menu"
+=======
+#. odoo-javascript
+#: code:addons/survey/static/src/views/widgets/survey_question_trigger/survey_question_trigger.js:0
+#, python-format
+msgid "Displayed if \"%s: %s\""
+msgstr ""
+
+#. module: survey
+#: model_terms:ir.ui.view,arch_db:survey.survey_question_form
+msgid "Displayed when the answer entered is not valid."
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: survey
@@ -1820,11 +1891,14 @@ msgid "Existing emails"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_burger_quiz_p2_q3_sug2
 msgid "Eyjafjallajökull (Iceland)"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey.py:0
 #: model_terms:ir.ui.view,arch_db:survey.survey_user_input_view_form
@@ -1838,11 +1912,14 @@ msgid "Failed only"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.vendor_certification_page_1_question_2_choice_2
 msgid "Fanta"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #: model:survey.survey,title:survey.survey_feedback
@@ -1931,12 +2008,15 @@ msgstr ""
 #. module: survey
 #: model_terms:ir.actions.act_window,help:survey.action_survey_form
 msgid "Gather feedbacks from your employees and customers"
+<<<<<<< HEAD
 msgstr ""
 
 #. module: survey
 #: model:survey.question,title:survey.survey_demo_burger_quiz_p2
 #: model:survey.question.answer,value:survey.survey_demo_burger_quiz_p1_q1_sug1
 msgid "Geography"
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: survey
@@ -1945,6 +2025,7 @@ msgid "Give Badge"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question,title:survey.survey_demo_quiz_p2_q3
 msgid "Give the list of all types of wood we sell."
 msgstr ""
@@ -1955,6 +2036,8 @@ msgid "Good"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -1994,11 +2077,14 @@ msgstr ""
 #. module: survey
 #: model_terms:ir.actions.act_window,help:survey.action_survey_form
 msgid "Handle quiz &amp; certifications"
+<<<<<<< HEAD
 msgstr ""
 
 #. module: survey
 #: model:survey.question.answer,value:survey.survey_demo_quiz_p4_q3_sug1
 msgid "Hard"
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: survey
@@ -2018,11 +2104,14 @@ msgid "Help Participants know what to write"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_burger_quiz_p3_q2_sug3
 msgid "Hemiunu"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/survey/static/src/js/tours/survey_tour.js:0
 #, python-format
@@ -2030,6 +2119,7 @@ msgid "Here, you can overview all the participations."
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_feedback_p2_q1_sug1
 msgid "High quality"
 msgstr ""
@@ -2046,6 +2136,8 @@ msgid "How frequently do you buy products online ?"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -2067,6 +2159,7 @@ msgid "How likely are you to recommend the following products to a friend?"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question,title:survey.survey_demo_burger_quiz_p2_q1
 msgid "How long is the White Nile river?"
 msgstr ""
@@ -2083,6 +2176,8 @@ msgid "How many days is our money-back guarantee?"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -2322,8 +2417,13 @@ msgid ""
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #. odoo-javascript
 #. odoo-python
+=======
+#. odoo-python
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/survey/models/survey_user_input.py:0
 #: code:addons/survey/static/src/js/survey_result.js:0
 #, python-format
@@ -2378,6 +2478,11 @@ msgid "Is in a Session"
 msgstr ""
 
 #. module: survey
+#: model:ir.model.fields,field_description:survey.field_survey_question__is_placed_before_trigger
+msgid "Is misplaced?"
+msgstr ""
+
+#. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.survey_survey_view_search
 msgid "Is not a Certification"
 msgstr ""
@@ -2388,6 +2493,7 @@ msgid "Is that user input part of a survey session or not."
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question,title:survey.survey_demo_quiz_p4_q3
 msgid "Is the wood of a coniferous hard or soft ?"
 msgstr ""
@@ -2395,6 +2501,10 @@ msgstr ""
 #. module: survey
 #: model:survey.question.answer,value:survey.survey_demo_burger_quiz_p2_q2_sug4
 msgid "Istanbul"
+=======
+#: model:ir.model.fields,help:survey.field_survey_question__is_placed_before_trigger
+msgid "Is this question placed before its trigger question?"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: survey
@@ -2433,11 +2543,14 @@ msgid "It is an option that can be different for each Survey"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_feedback_p2_q2_row2
 msgid "It is easy to find the product that I want"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -2506,6 +2619,7 @@ msgid "Language"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.vendor_certification_page_2_question_2_choice_4
 msgid "Large Desk"
 msgstr ""
@@ -2521,6 +2635,8 @@ msgid "Last Modified on"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:survey.field_survey_invite__write_uid
 #: model:ir.model.fields,field_description:survey.field_survey_question__write_uid
 #: model:ir.model.fields,field_description:survey.field_survey_question_answer__write_uid
@@ -2567,6 +2683,7 @@ msgid "Leaderboard"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.vendor_certification_page_1_question_3_choice_4
 msgid "Legs"
 msgstr ""
@@ -2577,6 +2694,8 @@ msgid "Lemon Trees"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/survey/static/src/js/tours/survey_tour.js:0
 #, python-format
@@ -2706,6 +2825,7 @@ msgstr ""
 
 #. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.question_result_number_or_date_or_datetime
+#: model_terms:ir.ui.view,arch_db:survey.survey_question_form
 msgid "Maximum"
 msgstr ""
 
@@ -2747,7 +2867,13 @@ msgid "Messages"
 msgstr ""
 
 #. module: survey
+#: model_terms:ir.ui.view,arch_db:survey.survey_question_form
+msgid "Min/Max Limits"
+msgstr ""
+
+#. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.question_result_number_or_date_or_datetime
+#: model_terms:ir.ui.view,arch_db:survey.survey_question_form
 msgid "Minimum"
 msgstr ""
 
@@ -2848,6 +2974,7 @@ msgid "My Activity Deadline"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:gamification.badge,name:survey.vendor_certification_badge
 msgid "MyCompany Vendor"
 msgstr ""
@@ -2858,6 +2985,8 @@ msgid "MyCompany Vendor Certification"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -3073,11 +3202,14 @@ msgid "Odoo Certification"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.vendor_certification_page_2_question_2_choice_5
 msgid "Office Chair Black"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -3264,8 +3396,13 @@ msgid "Partial"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #. odoo-javascript
 #. odoo-python
+=======
+#. odoo-python
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/survey/models/survey_user_input.py:0
 #: code:addons/survey/static/src/js/survey_result.js:0
 #, python-format
@@ -3280,6 +3417,13 @@ msgstr ""
 #. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.survey_survey_view_form
 msgid "Participants"
+msgstr ""
+
+#. module: survey
+#. odoo-python
+#: code:addons/survey/wizard/survey_invite.py:0
+#, python-format
+msgid "Participate to %(survey_name)s"
 msgstr ""
 
 #. module: survey
@@ -3336,6 +3480,7 @@ msgid "Performance by Section"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_quiz_p4_q6_sug3
 msgid "Perhaps"
 msgstr ""
@@ -3346,6 +3491,8 @@ msgid "Peter W. Higgs"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model_terms:ir.ui.view,arch_db:survey.survey_survey_view_form
 msgid "Pick a Badge..."
 msgstr ""
@@ -3361,8 +3508,13 @@ msgid "Pick a Template..."
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question,title:survey.survey_demo_burger_quiz_p1_q1
 msgid "Pick a subject"
+=======
+#: model_terms:ir.ui.view,arch_db:survey.survey_question_form
+msgid "Pick a previous multiple-choice question"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: survey
@@ -3404,6 +3556,7 @@ msgid ""
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question,title:survey.vendor_certification_page_3
 msgid "Policies"
 msgstr ""
@@ -3419,6 +3572,8 @@ msgid "Poor quality"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -3825,6 +3980,19 @@ msgid "Send"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
+=======
+#: model:ir.model.fields,field_description:survey.field_survey_invite__send_email
+msgid "Send Email"
+msgstr ""
+
+#. module: survey
+#: model_terms:ir.ui.view,arch_db:survey.survey_invite_view_form
+msgid "Send by Email"
+msgstr ""
+
+#. module: survey
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:mail.template,description:survey.mail_template_certification
 msgid "Sent to participant if they succeeded the certification"
 msgstr ""
@@ -3916,11 +4084,14 @@ msgid "Skipped"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_quiz_p4_q3_sug2
 msgid "Soft"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/wizard/survey_invite.py:0
 #, python-format
@@ -3938,6 +4109,7 @@ msgid "Sorry, you have not been fast enough."
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_quiz_p4_q4_sug4
 msgid "South America"
 msgstr ""
@@ -3953,6 +4125,8 @@ msgid "Space stations"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -4110,6 +4284,14 @@ msgid "Survey Label"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
+=======
+#: model_terms:ir.ui.view,arch_db:survey.survey_invite_view_form
+msgid "Survey Link"
+msgstr ""
+
+#. module: survey
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_user_input.py:0
 #, python-format
@@ -4178,11 +4360,14 @@ msgid "Surveys"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_burger_quiz_p4_q1_sug3
 msgid "Takaaki Kajita"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model_terms:ir.ui.view,arch_db:survey.survey_button_retake
 msgid "Take Again"
 msgstr ""
@@ -4254,7 +4439,6 @@ msgstr ""
 #: code:addons/survey/models/survey_question.py:0
 #: code:addons/survey/models/survey_question.py:0
 #: model_terms:ir.ui.view,arch_db:survey.question_container
-#: model_terms:ir.ui.view,arch_db:survey.survey_question_form
 #, python-format
 msgid "The answer you entered is not valid."
 msgstr ""
@@ -4387,11 +4571,14 @@ msgid ""
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_feedback_p2_q2_row3
 msgid "The tool to compare the products is useful to make a choice"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/controllers/main.py:0
 #, python-format
@@ -4458,8 +4645,13 @@ msgid "This is a Test Survey."
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #. odoo-javascript
 #. odoo-python
+=======
+#. odoo-python
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/survey/models/survey_question.py:0
 #: code:addons/survey/static/src/js/survey_form.js:0
 #: code:addons/survey/tests/test_survey.py:0
@@ -4476,21 +4668,16 @@ msgid "This is not a number"
 msgstr ""
 
 #. module: survey
-#: model:ir.model.fields,help:survey.field_survey_invite__emails
-msgid ""
-"This list of emails of recipients will not be converted in contacts.        "
-"Emails must be separated by commas, semicolons or newline."
-msgstr ""
-
-#. module: survey
 #: model:ir.model.fields,help:survey.field_survey_survey__description_done
 msgid "This message will be displayed when survey is completed"
 msgstr ""
 
 #. module: survey
-#: model_terms:ir.ui.view,arch_db:survey.survey_question_tree
-#: model_terms:ir.ui.view,arch_db:survey.survey_survey_view_form
-msgid "This question depends on another question's answer."
+#. odoo-javascript
+#: code:addons/survey/static/src/views/widgets/survey_question_trigger/survey_question_trigger.js:0
+#, python-format
+msgid ""
+"This question is positioned before its trigger (\"%s\") and will be skipped."
 msgstr ""
 
 #. module: survey
@@ -4628,11 +4815,14 @@ msgid "Types of answers"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_demo_quiz_p4_q1_sug2
 msgid "Ulmaceae"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/wizard/survey_invite.py:0
 #, python-format
@@ -4640,8 +4830,13 @@ msgid "Unable to post message, please configure the sender's email address."
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #. odoo-javascript
 #. odoo-python
+=======
+#. odoo-python
+#. odoo-javascript
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/survey/models/survey_user_input.py:0
 #: code:addons/survey/static/src/js/survey_result.js:0
 #, python-format
@@ -4666,11 +4861,14 @@ msgid "Unfortunately, you have failed the test."
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question.answer,value:survey.survey_feedback_p2_q1_sug3
 msgid "Unique"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -4771,7 +4969,10 @@ msgid "Validate entry"
 msgstr ""
 
 #. module: survey
+#. odoo-javascript
+#: code:addons/survey/static/src/question_page/question_page_one2many_field.js:0
 #: model:ir.model.fields,field_description:survey.field_survey_question__validation_error_msg
+<<<<<<< HEAD
 msgid "Validation Error message"
 msgstr ""
 
@@ -4788,6 +4989,10 @@ msgstr ""
 #. module: survey
 #: model:survey.question.answer,value:survey.survey_demo_quiz_p4_q2_sug3
 msgid "Vietnam"
+=======
+#, python-format
+msgid "Validation Error"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: survey
@@ -4819,6 +5024,7 @@ msgid ""
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question,title:survey.vendor_certification_page_3_question_5
 msgid ""
 "What day and time do you think most customers are most likely to call "
@@ -4848,6 +5054,8 @@ msgid "What do you think about this survey ?"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -4876,6 +5084,7 @@ msgid "What is the best way to catch the attention of an audience?"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question,title:survey.survey_demo_burger_quiz_p2_q2
 msgid "What is the biggest city in the world ?"
 msgstr ""
@@ -4921,6 +5130,8 @@ msgid "When is your date of birth ?"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/survey/static/src/js/tours/survey_tour.js:0
 #, python-format
@@ -4944,6 +5155,7 @@ msgid ""
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question,title:survey.survey_demo_burger_quiz_p5_q1
 msgid "Which Musician is not in the 27th Club ?"
 msgstr ""
@@ -4996,6 +5208,8 @@ msgid ""
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -5107,11 +5321,14 @@ msgid "You scored"
 msgstr ""
 
 #. module: survey
+<<<<<<< HEAD
 #: model:survey.question,title:survey.survey_demo_quiz_p5
 msgid "Your feeling"
 msgstr ""
 
 #. module: survey
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/survey/models/survey_survey_template.py:0
 #, python-format
@@ -5166,6 +5383,12 @@ msgstr ""
 #. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.survey_results_filters
 msgid "dropdown-item d-flex align-items-center justify-content-between"
+msgstr ""
+
+#. module: survey
+#: model_terms:ir.ui.view,arch_db:survey.survey_invite_view_form
+msgid ""
+"e.g.  'Rick Sanchez' <rick_sanchez@example.com>, hictor_vugo@example.com"
 msgstr ""
 
 #. module: survey
@@ -5291,4 +5514,9 @@ msgstr ""
 #. module: survey
 #: model_terms:ir.ui.view,arch_db:survey.survey_survey_view_form
 msgid "to"
+msgstr ""
+
+#. module: survey
+#: model_terms:ir.ui.view,arch_db:survey.survey_question_form
+msgid "⚠️ This question is positioned before its trigger and will be skipped."
 msgstr ""

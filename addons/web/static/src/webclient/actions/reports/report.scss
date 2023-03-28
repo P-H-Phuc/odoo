@@ -138,6 +138,7 @@ ol {
 }
 
 /* Checklist */
+<<<<<<< HEAD
 ul {
     .o_checklist {
         > li {
@@ -146,6 +147,15 @@ ul {
             margin-left: 20px;
         }
         > li:not(.oe-nested):before {
+=======
+ul.o_checklist {
+    > li {
+        list-style: none;
+        position: relative;
+        margin-left: 20px;
+
+        &:not(.oe-nested):before {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             content: '';
             position: absolute;
             left: -20px;
@@ -156,7 +166,11 @@ ul {
             border: 1px solid;
             cursor: pointer;
         }
+<<<<<<< HEAD
         > li.o_checked:after {
+=======
+        &.o_checked:after {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             content: "✓";
             transition: opacity .5s;
             position: absolute;

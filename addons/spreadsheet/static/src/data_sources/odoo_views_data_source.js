@@ -12,7 +12,7 @@ import { omit } from "@web/core/utils/objects";
 /**
  * @typedef {Object} OdooModelMetaData
  * @property {string} resModel
- * @property {Array<Object>|undefined} fields
+ * @property {Array<Field>|undefined} fields
  */
 
 export class OdooViewsDataSource extends LoadableDataSource {

@@ -45,6 +45,7 @@
     <field name="mode">primary</field>
     <field name="inherit_id" ref="product_template_view_kanban_website_sale"/>
     <field name="arch" type="xml">
+<<<<<<< HEAD
         <xpath expr="//kanban" position="attributes">
             <attribute name="js_class">website_pages_kanban</attribute>
             <attribute name="type">object</attribute>
@@ -54,12 +55,27 @@
             <field name="website_url"/>
         </xpath>
         <xpath expr="//field[@name='name']" position="after">
+=======
+        <kanban position="attributes">
+            <attribute name="js_class">website_pages_kanban</attribute>
+            <attribute name="type">object</attribute>
+            <attribute name="action">open_website_url</attribute>
+        </kanban>
+        <kanban position="inside">
+            <field name="website_url"/>
+        </kanban>
+        <field name="name" position="after">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             <div class="text-muted" t-if="record.website_id.value" groups="website.group_multi_website">
                 <i class="fa fa-globe me-1" title="Website"/>
                 <field name="website_id"/>
             </div>
             <div class="text-primary" t-esc="record.website_url.value"/>
+<<<<<<< HEAD
         </xpath>
+=======
+        </field>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         <xpath expr="//div[hasclass('oe_kanban_details')]" position="inside">
             <div class="o_kanban_footer">
                 <div class="position-absolute bottom-0 end-0 m-1">
@@ -83,11 +99,5 @@
     ]"/>
     <field name="context">{'create_action': 'website_sale.product_product_action_add'}</field>
 </record>
-
-<menuitem id="menu_product_pages"
-    parent="website.menu_content"
-    sequence="30"
-    name="Products"
-    action="action_product_pages_list"/>
 
 </odoo>

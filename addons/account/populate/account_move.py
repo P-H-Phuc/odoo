@@ -202,7 +202,7 @@ class AccountMove(models.Model):
             return False
 
         company_ids = self.env['res.company'].search([
-            ('chart_template_id', '!=', False),
+            ('chart_template', '!=', False),
             ('id', 'in', self.env.registry.populated_models['res.company']),
         ])
         currencies = self.env['res.currency'].search([
@@ -228,14 +228,4 @@ class AccountMove(models.Model):
         _logger.info('Posting Journal Entries')
         to_post = records.filtered(lambda r: r.date < fields.Date.today())
         to_post.action_post()
-
-        # TODO add some reconciliations. Not done initially because of perfs.
-        # _logger.info('Registering Payments for Invoices and Bills')
-        # random = populate.Random('account.move+register_payment')
-        # for invoice in to_post:
-        #     if invoice.is_invoice() and random.uniform(0, 1) < 0.9:  # 90% of invoices are at least partialy paid
-        #         payment_wizard = self.env['account.payment.register'].with_context(active_model='account.move', active_ids=invoice.ids).create({})
-        #         if random.uniform(0, 1) > 0.9:  # 90% of paid invoices have the exact amount, others vary a little
-        #             payment_wizard.amount *= random.uniform(0.5, 1.5)
-        #         payment_wizard._create_payments()
         return records

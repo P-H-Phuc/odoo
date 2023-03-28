@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+from random import randint
+
 from odoo import api, fields, models, _
 from odoo.tools import html2plaintext
 from odoo.addons.web_editor.controllers.main import handle_history_divergence
@@ -16,17 +18,24 @@ class Stage(models.Model):
     user_id = fields.Many2one('res.users', string='Owner', required=True, ondelete='cascade', default=lambda self: self.env.uid)
     fold = fields.Boolean('Folded by Default')
 
+    @api.autovacuum
+    def _gc_personal_stages(self):
+        self.env['note.stage'].search([('user_id.active', '=', False)], limit=1000).unlink()
+
 
 class Tag(models.Model):
 
     _name = "note.tag"
     _description = "Note Tag"
 
+    def _get_default_color(self):
+        return randint(1, 11)
+
     name = fields.Char('Tag Name', required=True, translate=True)
-    color = fields.Integer('Color Index')
+    color = fields.Integer('Color Index', default=_get_default_color)
 
     _sql_constraints = [
-        ('name_uniq', 'unique (name)', "Tag name already exists !"),
+        ('name_uniq', 'unique (name)', "Tag name already exists!"),
     ]
 
 

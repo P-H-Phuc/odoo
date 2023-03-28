@@ -285,6 +285,7 @@ class TestPurchaseRequisition(TestPurchaseRequisitionCommon):
             po_1.order_line.price_unit, 16,
             "Line's unit price from the original PO shouldn't be changed")
 
+<<<<<<< HEAD
     def test_10_alternative_po_line_price_unit_different_uom(self):
         """ Check that the uom is copied in the alternative PO, and the "unit_price"
         is calculated according to this uom and not that of the product """
@@ -311,6 +312,8 @@ class TestPurchaseRequisition(TestPurchaseRequisitionCommon):
         self.assertEqual(po_2.order_line[0].product_uom, po_1.order_line[0].product_uom)
         self.assertEqual(po_2.order_line[0].price_unit, 120)
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def test_11_alternative_po_from_po_with_requisition_id(self):
         """Create a purchase order from a blanket order, then check that the alternative purchase order
             can be created and that the requisition_id is not set on it.

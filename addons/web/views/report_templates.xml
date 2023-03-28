@@ -15,14 +15,6 @@
                 <meta name="viewport" content="initial-scale=1"/>
                 <title><t t-esc="title or 'Odoo Report'"/></title>
                 <t t-call-assets="web.report_assets_common" t-js="false"/>
-                <!--The following is kind of a hack-->
-                <!--in an iframe, we don't want the session to perform qweb_templates rpc-->
-                <script type="text/javascript">
-                    window.odoo = {};
-                    window.odoo.__session_info__ = {is_report: true};
-                </script>
-                <t t-call-assets="web.assets_common" t-css="false"/>
-                <t t-call-assets="web.report_assets_common" t-css="false"/>
             </head>
             <body t-att-class="'container' if not full_width else 'container-fluid'">
                 <div id="wrapwrap">
@@ -47,7 +39,6 @@
                 <meta name="viewport" content="initial-scale=1"/>
                 <title><t t-esc="title or 'Odoo Report'"/></title>
                 <t t-call-assets="web.report_assets_common" t-js="false"/>
-                <t t-call-assets="web.assets_common" t-css="false"/>
                 <style>
                     <t t-out="preview_css"/>
 
@@ -230,7 +221,7 @@
                            </div>
                        </div>
                        <p>
-                           Please use the following communication for your payment : <b><span>
+                           Please use the following communication for your payment: <b><span>
                            INV/2020/07/0003</span></b>
                        </p>
                        <p name="payment_term">

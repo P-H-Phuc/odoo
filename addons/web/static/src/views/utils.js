@@ -25,6 +25,11 @@ export const BUTTON_CLICK_PARAMS = [
     "context",
     "close",
     "confirm",
+<<<<<<< HEAD
+=======
+    "confirm-title",
+    "confirm-label",
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     "special",
     "effect",
     "help",
@@ -43,10 +48,11 @@ export const BUTTON_CLICK_PARAMS = [
  * @param {Object} activeFields
  * @param {Object} [dependencies={}]
  */
-export function addFieldDependencies(activeFields, fields, dependencies = {}) {
-    for (const [name, dependency] of Object.entries(dependencies)) {
+export function addFieldDependencies(activeFields, fields, dependencies = []) {
+    for (const dependency of dependencies) {
+        const { name } = dependency;
         if (!(name in activeFields)) {
-            activeFields[name] = Object.assign({ name, rawAttrs: {} }, dependency, {
+            activeFields[name] = Object.assign({ name, attrs: {} }, dependency, {
                 modifiers: { invisible: true },
             });
         }
@@ -240,6 +246,10 @@ export function processButton(node) {
         string: node.getAttribute("string") || undefined,
         options: JSON.parse(node.getAttribute("options") || "{}"),
         modifiers: JSON.parse(node.getAttribute("modifiers") || "{}"),
+<<<<<<< HEAD
+=======
+        display: node.getAttribute("display") || "selection",
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         clickParams,
     };
 }
@@ -264,6 +274,20 @@ export function processMeasure(measure) {
         return measure.map(processMeasure);
     }
     return measure === "__count__" ? "__count" : measure;
+}
+
+/**
+ * @typedef {Object} OrderTerm ?
+ * @property {string} name
+ * @property {boolean} asc
+ */
+
+/**
+ * @param {OrderTerm[]} orderBy
+ * @returns {string}
+ */
+export function orderByToString(orderBy) {
+    return orderBy.map((o) => `${o.name} ${o.asc ? "ASC" : "DESC"}`).join(", ");
 }
 
 /**

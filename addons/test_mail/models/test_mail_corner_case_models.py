@@ -72,8 +72,15 @@ class MailTestLang(models.Model):
     def _mail_get_partner_fields(self):
         return ['customer_id']
 
+<<<<<<< HEAD
     def _notify_get_recipients_groups(self, msg_vals=None):
         groups = super(MailTestLang, self)._notify_get_recipients_groups(msg_vals=msg_vals)
+=======
+    def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
+        groups = super()._notify_get_recipients_groups(
+            message, model_description, msg_vals=msg_vals
+        )
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         local_msg_vals = dict(msg_vals or {})
 
@@ -145,10 +152,11 @@ class MailTestTrackAll(models.Model):
 # ------------------------------------------------------------
 
 class MailTestMultiCompany(models.Model):
-    """ This model can be used in multi company tests"""
+    """ This model can be used in multi company tests, with attachments support
+    for checking record update in MC """
     _name = 'mail.test.multi.company'
     _description = "Test Multi Company Mail"
-    _inherit = 'mail.thread'
+    _inherit = 'mail.thread.main.attachment'
 
     name = fields.Char()
     company_id = fields.Many2one('res.company')

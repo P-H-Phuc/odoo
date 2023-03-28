@@ -1,0 +1,23 @@
+// ------------------------------------------------------------------
+// Layout
+// ------------------------------------------------------------------
+
+<<<<<<< HEAD:addons/mail/static/src/components/call_view/call_view.scss
+.o_CallView {
+    height: 50%; // ensures that the view returns to the right height when resized
+    min-height: 50%;
+    background: var(--CallView-background-color, #{$dark});
+
+    &.o-isMinimized {
+        height: 20%; // ensures that the view returns to the right height when resized
+        min-height: #{"max(20%, 130px)"};
+    }
+=======
+.o-mail-CallMenu-buttonContent {
+    max-width: 150px;
+}
+
+.o-mail-CallMenu-dot {
+    animation: flash 3s ease infinite;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6:addons/mail/static/src/rtc/call_menu.scss
+}

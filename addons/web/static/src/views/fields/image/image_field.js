@@ -26,7 +26,7 @@ const placeholder = "/web/static/img/placeholder.png";
  * fetch requests with the url as key).
  *
  * For records, a not-so-bad approximation is to compute that key on the basis
- * of the record's __last_update field.
+ * of the record's write_date field.
  */
 export function imageCacheKey(value) {
     if (value instanceof DateTime) {
@@ -36,6 +36,23 @@ export function imageCacheKey(value) {
 }
 
 export class ImageField extends Component {
+    static template = "web.ImageField";
+    static components = {
+        FileUploader,
+    };
+    static props = {
+        ...standardFieldProps,
+        enableZoom: { type: Boolean, optional: true },
+        zoomDelay: { type: Number, optional: true },
+        previewImage: { type: String, optional: true },
+        acceptedFileExtensions: { type: String, optional: true },
+        width: { type: Number, optional: true },
+        height: { type: Number, optional: true },
+    };
+    static defaultProps = {
+        acceptedFileExtensions: "image/*",
+    };
+
     setup() {
         this.notification = useService("notification");
         this.isMobile = isMobileOS();
@@ -43,12 +60,12 @@ export class ImageField extends Component {
             isValid: true,
         });
 
-        this.rawCacheKey = this.props.record.data.__last_update;
+        this.rawCacheKey = this.props.record.data.write_date;
         onWillUpdateProps((nextProps) => {
             const { record } = this.props;
             const { record: nextRecord } = nextProps;
             if (record.resId !== nextRecord.resId || nextRecord.mode === "readonly") {
-                this.rawCacheKey = nextRecord.data.__last_update;
+                this.rawCacheKey = nextRecord.data.write_date;
             }
         });
     }
@@ -64,7 +81,9 @@ export class ImageField extends Component {
         return style;
     }
     get hasTooltip() {
-        return this.props.enableZoom && this.props.readonly && this.props.value;
+        return (
+            this.props.enableZoom && this.props.readonly && this.props.record.data[this.props.name]
+        );
     }
     get tooltipAttributes() {
         return {
@@ -74,10 +93,17 @@ export class ImageField extends Component {
     }
 
     getUrl(previewFieldName) {
+<<<<<<< HEAD
         if (this.state.isValid && this.props.value) {
             if (isBinarySize(this.props.value)) {
                 if (!this.rawCacheKey) {
                     this.rawCacheKey = this.props.record.data.__last_update;
+=======
+        if (this.state.isValid && this.props.record.data[this.props.name]) {
+            if (isBinarySize(this.props.record.data[this.props.name])) {
+                if (!this.rawCacheKey) {
+                    this.rawCacheKey = this.props.record.data.write_date;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 }
                 return url("/web/image", {
                     model: this.props.record.resModel,
@@ -87,21 +113,26 @@ export class ImageField extends Component {
                 });
             } else {
                 // Use magic-word technique for detecting image type
-                const magic = fileTypeMagicWordMap[this.props.value[0]] || "png";
-                return `data:image/${magic};base64,${this.props.value}`;
+                const magic =
+                    fileTypeMagicWordMap[this.props.record.data[this.props.name][0]] || "png";
+                return `data:image/${magic};base64,${this.props.record.data[this.props.name]}`;
             }
         }
         return placeholder;
     }
     onFileRemove() {
         this.state.isValid = true;
-        this.props.update(false);
+        this.props.record.update({ [this.props.name]: false });
     }
     onFileUploaded(info) {
         this.state.isValid = true;
         // Invalidate the `rawCacheKey`.
         this.rawCacheKey = null;
+<<<<<<< HEAD
         this.props.update(info.data);
+=======
+        this.props.record.update({ [this.props.name]: info.data });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
     onLoadFailed() {
         this.state.isValid = false;
@@ -111,23 +142,22 @@ export class ImageField extends Component {
     }
 }
 
-ImageField.template = "web.ImageField";
-ImageField.components = {
-    FileUploader,
-};
-ImageField.props = {
-    ...standardFieldProps,
-    enableZoom: { type: Boolean, optional: true },
-    zoomDelay: { type: Number, optional: true },
-    previewImage: { type: String, optional: true },
-    acceptedFileExtensions: { type: String, optional: true },
-    width: { type: Number, optional: true },
-    height: { type: Number, optional: true },
-};
-ImageField.defaultProps = {
-    acceptedFileExtensions: "image/*",
+export const imageField = {
+    component: ImageField,
+    displayName: _lt("Image"),
+    supportedTypes: ["binary"],
+    fieldDependencies: [{ name: "write_date", type: "datetime" }],
+    extractProps: ({ attrs, options }) => ({
+        enableZoom: options.zoom,
+        zoomDelay: options.zoom_delay,
+        previewImage: options.preview_image,
+        acceptedFileExtensions: options.accepted_file_extensions,
+        width: options.size && Boolean(options.size[0]) ? options.size[0] : attrs.width,
+        height: options.size && Boolean(options.size[1]) ? options.size[1] : attrs.height,
+    }),
 };
 
+<<<<<<< HEAD
 ImageField.displayName = _lt("Image");
 ImageField.supportedTypes = ["binary"];
 
@@ -154,3 +184,6 @@ ImageField.extractProps = ({ attrs }) => {
 
 registry.category("fields").add("image", ImageField);
 registry.category("fields").add("kanban.image", ImageField); // FIXME WOWL: s.t. we don't use the legacy one
+=======
+registry.category("fields").add("image", imageField);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

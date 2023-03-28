@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0+e\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-07 08:56+0000\n"
 "PO-Revision-Date: 2023-02-07 08:56+0000\n"
+=======
+"Project-Id-Version: Odoo Server saas~16.1+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-07 13:49+0000\n"
+"PO-Revision-Date: 2023-02-07 13:49+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -172,7 +179,7 @@ msgstr ""
 
 #. module: website_event
 #: model_terms:ir.ui.view,arch_db:website_event.index_topbar
-msgid "<span class=\"navbar-brand h4 my-0 me-auto\">Events</span>"
+msgid "<span class=\"navbar-brand h4 my-0 me-auto pe-sm-4\">Events</span>"
 msgstr ""
 
 #. module: website_event
@@ -669,11 +676,6 @@ msgid "John DOE"
 msgstr ""
 
 #. module: website_event
-#: model:ir.model.fields,field_description:website_event.field_website_event_menu____last_update
-msgid "Last Modified on"
-msgstr ""
-
-#. module: website_event
 #: model:ir.model.fields,field_description:website_event.field_website_event_menu__write_uid
 msgid "Last Updated by"
 msgstr ""
@@ -854,8 +856,13 @@ msgid "Ref:"
 msgstr ""
 
 #. module: website_event
+<<<<<<< HEAD
 #. odoo-python
 #. odoo-javascript
+=======
+#. odoo-javascript
+#. odoo-python
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/website_event/models/event_event.py:0
 #: code:addons/website_event/static/src/js/register_toaster_widget.js:0
 #: model:ir.model.fields.selection,name:website_event.selection__website_event_menu__menu_type__register

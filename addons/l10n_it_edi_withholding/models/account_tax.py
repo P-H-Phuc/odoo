@@ -79,6 +79,7 @@ PENSION_FUND_TYPE_SELECTION = [
 ]
 
 
+<<<<<<< HEAD
 class AccountTaxTemplate(models.Model):
     _inherit = 'account.tax.template'
 
@@ -95,6 +96,8 @@ class AccountTaxTemplate(models.Model):
         })
         return values
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 class AccountTax(models.Model):
     _inherit = 'account.tax'
 

@@ -16,9 +16,15 @@
                     <t t-set-slot="control-panel-action-menu">
                         <t t-if="props.info.actionMenus">
                             <ActionMenus
+<<<<<<< HEAD
                                 getActiveIds="() => model.root.isVirtual ? [] : [model.root.resId]"
                                 context="props.context"
                                 items="getActionMenuItems()"
+=======
+                                getActiveIds="() => model.root.isNew ? [] : [model.root.resId]"
+                                context="props.context"
+                                items="actionMenuItems"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                 isDomainSelected="model.root.isDomainSelected"
                                 resModel="model.root.resModel"
                                 domain="props.domain"
@@ -29,7 +35,11 @@
                     </t>
                     <t t-set-slot="control-panel-status-indicator">
                         <t t-if="canEdit">
+<<<<<<< HEAD
                             <FormStatusIndicator model="model" discard.bind="discard" save.bind="saveButtonClicked" isDisabled="state.isDisabled" fieldIsDirty="state.fieldIsDirty" />
+=======
+                            <FormStatusIndicator model="model" discard.bind="discard" save.bind="saveButtonClicked" isDisabled="state.isDisabled" />
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         </t>
                     </t>
                     <t t-set-slot="control-panel-create-button">
@@ -37,7 +47,11 @@
                             <button type="button" class="btn btn-outline-primary o_form_button_create" data-hotkey="c" t-on-click.stop="create" t-att-disabled="state.isDisabled">New</button>
                         </t>
                     </t>
+<<<<<<< HEAD
                     <t t-component="props.Renderer" record="model.root" Compiler="props.Compiler" archInfo="archInfo" setFieldAsDirty.bind="setFieldAsDirty" enableViewButtons.bind="enableButtons" disableViewButtons.bind="disableButtons" onNotebookPageChange.bind="onNotebookPageChange" activeNotebookPages="props.state and props.state.activeNotebookPages"/>
+=======
+                    <t t-component="props.Renderer" record="model.root" Compiler="props.Compiler" archInfo="archInfo" enableViewButtons.bind="enableButtons" disableViewButtons.bind="disableButtons" onNotebookPageChange.bind="onNotebookPageChange" activeNotebookPages="props.state and props.state.activeNotebookPages"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 </Layout>
             </div>
         </div>

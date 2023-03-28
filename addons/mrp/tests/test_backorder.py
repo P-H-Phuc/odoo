@@ -291,9 +291,6 @@ class TestMrpProductionBackorder(TestMrpCommon):
         self.env['stock.quant']._update_available_quantity(p2, self.stock_location_components, 2.0)
         mo.action_assign()
         res_dict = mo.button_mark_done()
-        self.assertEqual(res_dict.get('res_model'), 'mrp.immediate.production')
-        immediate_wizard = Form(self.env[res_dict['res_model']].with_context(res_dict['context'])).save()
-        res_dict = immediate_wizard.process()
         self.assertEqual(res_dict.get('res_model'), 'mrp.production.backorder')
         backorder_wizard = Form(self.env[res_dict['res_model']].with_context(res_dict['context']))
 
@@ -302,10 +299,7 @@ class TestMrpProductionBackorder(TestMrpCommon):
         self.assertEqual(action.get('res_model'), 'mrp.production')
         backorder_mo_form = Form(self.env[action['res_model']].with_context(action['context']).browse(action['res_id']))
         backorder_mo = backorder_mo_form.save()
-        res_dict = backorder_mo.button_mark_done()
-        self.assertEqual(res_dict.get('res_model'), 'mrp.immediate.production')
-        immediate_wizard = Form(self.env[res_dict['res_model']].with_context(res_dict['context'])).save()
-        immediate_wizard.process()
+        backorder_mo.button_mark_done()
 
         self.assertEqual(self.env['stock.quant']._get_available_quantity(p_final, self.stock_location), 2, "Incorrect number of final product produced.")
         self.assertEqual(len(self.env['stock.lot'].search([('product_id', '=', p_final.id)])), 2, "Serial Numbers were not correctly produced.")
@@ -397,13 +391,13 @@ class TestMrpProductionBackorder(TestMrpCommon):
         The MO and the backorder should be assigned according to the reservation method
         defined in the default manufacturing operation type
         """
-        def create_mo(date_planned_start=False):
+        def create_mo(date_start=False):
             mo_form = Form(self.env['mrp.production'])
             mo_form.product_id = self.bom_1.product_id
             mo_form.bom_id = self.bom_1
             mo_form.product_qty = 2
-            if date_planned_start:
-                mo_form.date_planned_start = date_planned_start
+            if date_start:
+                mo_form.date_start = date_start
             mo = mo_form.save()
             mo.action_confirm()
             return mo

@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+<<<<<<< HEAD
 from odoo import api, fields, models, _
+=======
+from odoo import api, Command, fields, models, _
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 from odoo.tools.float_utils import float_round, float_is_zero, float_compare
 from odoo.exceptions import UserError
 
@@ -12,19 +16,24 @@ class StockMove(models.Model):
     purchase_line_id = fields.Many2one(
         'purchase.order.line', 'Purchase Order Line',
         ondelete='set null', index='btree_not_null', readonly=True)
-    created_purchase_line_id = fields.Many2one(
-        'purchase.order.line', 'Created Purchase Order Line',
-        ondelete='set null', index='btree_not_null', readonly=True, copy=False)
+    created_purchase_line_ids = fields.Many2many(
+        'purchase.order.line', 'stock_move_created_purchase_line_rel',
+        'move_id', 'created_purchase_line_id', 'Created Purchase Order Lines', copy=False)
 
     @api.model
     def _prepare_merge_moves_distinct_fields(self):
         distinct_fields = super(StockMove, self)._prepare_merge_moves_distinct_fields()
-        distinct_fields += ['purchase_line_id', 'created_purchase_line_id']
+        distinct_fields += ['purchase_line_id', 'created_purchase_line_ids']
         return distinct_fields
 
     @api.model
     def _prepare_merge_negative_moves_excluded_distinct_fields(self):
-        return super()._prepare_merge_negative_moves_excluded_distinct_fields() + ['created_purchase_line_id']
+        return super()._prepare_merge_negative_moves_excluded_distinct_fields() + ['created_purchase_line_ids']
+
+    def _compute_partner_id(self):
+        # dropshipped moves should have their partner_ids directly set
+        not_dropshipped_moves = self.filtered(lambda m: not m._is_dropshipped())
+        super(StockMove, not_dropshipped_moves)._compute_partner_id()
 
     def _get_price_unit(self):
         """ Returns the unit price for the move"""
@@ -155,12 +164,12 @@ class StockMove(models.Model):
 
     def _clean_merged(self):
         super(StockMove, self)._clean_merged()
-        self.write({'created_purchase_line_id': False})
+        self.write({'created_purchase_line_ids': [Command.clear()]})
 
     def _get_upstream_documents_and_responsibles(self, visited):
-        if self.created_purchase_line_id and self.created_purchase_line_id.state not in ('done', 'cancel') \
-                and (self.created_purchase_line_id.state != 'draft' or self._context.get('include_draft_documents')):
-            return [(self.created_purchase_line_id.order_id, self.created_purchase_line_id.order_id.user_id, visited)]
+        created_pl = self.created_purchase_line_ids.filtered(lambda cpl: cpl.state not in ('done', 'cancel') and (cpl.state != 'draft' or self._context.get('include_draft_documents')))
+        if created_pl:
+            return [(pl.order_id, pl.order_id.user_id, visited) for pl in created_pl]
         elif self.purchase_line_id and self.purchase_line_id.state not in ('done', 'cancel'):
             return[(self.purchase_line_id.order_id, self.purchase_line_id.order_id.user_id, visited)]
         else:

@@ -2,26 +2,39 @@
 <templates xml:space="preserve">
 
     <t t-name="web.StateSelectionField" owl="1">
+<<<<<<< HEAD
         <t t-if="isReadonly">
+=======
+        <t t-if="props.readonly">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             <button class="d-flex align-items-center btn fw-normal p-0">
                 <span t-attf-class="o_status {{ statusColor(currentValue) }} "/>
-                <span t-if="showLabel" class="o_status_label ms-1" t-esc="label"/>
+                <span t-if="props.showLabel" class="o_status_label ms-1" t-esc="label"/>
             </button>
         </t>
         <t t-else="">
-            <Dropdown tooltip="label" togglerClass="'btn btn-link d-flex p-0'">
+            <Dropdown togglerClass="'btn btn-link d-flex p-0'">
                 <t t-set-slot="toggler">
                     <div class="d-flex align-items-center">
                         <span t-attf-class="o_status {{ statusColor(currentValue) }} "/>
-                        <span t-if="showLabel" class="o_status_label ms-1" t-esc="label"/>
+                        <span t-if="props.showLabel" class="o_status_label ms-1" t-esc="label"/>
                     </div>
                 </t>
+<<<<<<< HEAD
                 <t t-foreach="availableOptions" t-as="option" t-key="option[0]">
                     <DropdownItem onSelected="() => props.update(option[0], { save: true })">
                         <div class="d-flex align-items-center">
                             <span t-attf-class="o_status {{ statusColor(option[0]) }} "/>
                             <span class="ms-2" t-esc="option[1]"/>
                         </div>
+=======
+                <t t-foreach="options" t-as="option" t-key="option[0]">
+                    <DropdownItem
+                        class="`d-flex align-items-center ${option[0] === currentValue ? 'active' : ''}`"
+                        onSelected="() => this.updateRecord(option[0])">
+                            <span t-attf-class="o_status ms-3 {{ statusColor(option[0]) }} "/>
+                            <span t-esc="option[1]"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     </DropdownItem>
                 </t>
             </Dropdown>

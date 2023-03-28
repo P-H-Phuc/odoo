@@ -56,7 +56,13 @@ class TestMailThreadInternals(TestMailThreadInternalsCommon):
                         'By default access tokens are False with portal'
                     )
 
+<<<<<<< HEAD
                 groups = test_record._notify_get_recipients_groups()
+=======
+                groups = test_record._notify_get_recipients_groups(
+                    self.env['mail.message'], False,
+                )
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 portal_customer_group = next(
                     (group for group in groups if group[0] == 'portal_customer'),
                     False

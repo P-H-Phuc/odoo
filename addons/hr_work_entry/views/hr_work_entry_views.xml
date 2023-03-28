@@ -96,7 +96,9 @@
         <field name="model">hr.work.entry</field>
         <field name="arch" type="xml">
             <pivot string="Work Entries" sample="1">
-                <field name="duration" widget="float_time" readonly="1"/>
+                <field name="duration" widget="float_time" type="measure"/>
+                <field name="employee_id" type="row"/>
+                <field name="work_entry_type_id" type="col"/>
             </pivot>
         </field>
     </record>
@@ -176,7 +178,12 @@
                         <group name="identification" class="o_form_fw_labels">
                             <field name="active" invisible="1"/>
                             <field name="code"/>
+<<<<<<< HEAD
                             <field name="sequence"/>
+=======
+                            <field name="external_code"/>
+                            <field name="sequence" groups="base.group_no_one"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                             <field name="color" widget="color_picker"/>
                         </group>
                     </group>
@@ -195,16 +202,11 @@
             <kanban>
                 <field name="color"/>
                 <templates>
+                    <t t-name="kanban-menu" t-if="!selection_mode">
+                        <ul class="oe_kanban_colorpicker" data-field="color"/>
+                    </t>
                     <t t-name="kanban-box">
                         <div t-attf-class="#{!selection_mode ? kanban_color(record.color.raw_value) : ''} oe_kanban_global_click">
-                            <div class="o_dropdown_kanban dropdown" t-if="!selection_mode">
-                                <a class="dropdown-toggle o-no-caret btn" role="button" data-bs-toggle="dropdown" href="#" aria-label="Dropdown menu" title="Dropdown menu">
-                                    <span class="fa fa-ellipsis-v"/>
-                                </a>
-                                <div class="dropdown-menu" role="menu">
-                                    <ul class="oe_kanban_colorpicker" data-field="color"/>
-                                </div>
-                            </div>
                             <div class="oe_kanban_content">
                                 <div>
                                     <strong class="o_kanban_record_title"><span><field name="name"/></span></strong>

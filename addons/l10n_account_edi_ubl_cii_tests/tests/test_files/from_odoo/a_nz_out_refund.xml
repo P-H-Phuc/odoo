@@ -10,8 +10,19 @@
   <cbc:DocumentCurrencyCode>USD</cbc:DocumentCurrencyCode>
   <cbc:BuyerReference>ref_partner_2</cbc:BuyerReference>
   <cac:OrderReference>
+<<<<<<< HEAD
     <cbc:ID>ref_move</cbc:ID>
   </cac:OrderReference>
+=======
+    <cbc:ID>___ignore___</cbc:ID>
+  </cac:OrderReference>
+  <cac:AdditionalDocumentReference>
+    <cbc:ID>___ignore___</cbc:ID>
+    <cbc:Attachment>
+      <cbc:EmbeddedDocumentBinaryObject>___ignore___</cbc:EmbeddedDocumentBinaryObject>
+    </cbc:Attachment>
+  </cac:AdditionalDocumentReference>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
   <cac:AccountingSupplierParty>
     <cac:Party>
       <cbc:EndpointID schemeID="0151">83914571673</cbc:EndpointID>
@@ -72,6 +83,21 @@
       </cac:Contact>
     </cac:Party>
   </cac:AccountingCustomerParty>
+<<<<<<< HEAD
+=======
+  <cac:Delivery>
+    <cac:DeliveryLocation>
+      <cac:Address>
+        <cbc:StreetName>Parliament Dr</cbc:StreetName>
+        <cbc:CityName>Canberra</cbc:CityName>
+        <cbc:PostalZone>2600</cbc:PostalZone>
+        <cac:Country>
+          <cbc:IdentificationCode>AU</cbc:IdentificationCode>
+        </cac:Country>
+      </cac:Address>
+    </cac:DeliveryLocation>
+  </cac:Delivery>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
   <cac:PaymentMeans>
     <cbc:PaymentMeansCode name="credit transfer">30</cbc:PaymentMeansCode>
     <cbc:PaymentID>RINV/2017/00001</cbc:PaymentID>

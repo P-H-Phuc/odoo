@@ -123,7 +123,11 @@ class Slide(models.Model):
     tag_ids = fields.Many2many('slide.tag', 'rel_slide_tag', 'slide_id', 'tag_id', string='Tags')
     is_preview = fields.Boolean('Allow Preview', default=False, help="The course is accessible by anyone : the users don't need to join the channel to access the content of the course.")
     is_new_slide = fields.Boolean('Is New Slide', compute='_compute_is_new_slide')
+<<<<<<< HEAD
     completion_time = fields.Float('Duration', digits=(10, 4))
+=======
+    completion_time = fields.Float('Duration', digits=(10, 4), compute='_compute_category_completion_time', recursive=True, readonly=False, store=True)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     # Categories
     is_category = fields.Boolean('Is a category', default=False)
     category_id = fields.Many2one('slide.slide', string="Section", compute="_compute_category_id", store=True)
@@ -253,6 +257,9 @@ class Slide(models.Model):
         for slide in self:
             slide.is_new_slide = slide.date_published > fields.Datetime.now() - relativedelta(days=7) if slide.is_published else False
 
+    def _get_placeholder_filename(self, field):
+        return self.channel_id._get_placeholder_filename(field)
+
     @api.depends('channel_id.slide_ids.is_category', 'channel_id.slide_ids.sequence')
     def _compute_category_id(self):
         """ Will take all the slides of the channel for which the index is higher
@@ -375,7 +382,7 @@ class Slide(models.Model):
         for slide in self:
             slide.embed_count = mapped_data.get(slide.id, 0)
 
-    @api.depends('slide_ids.sequence', 'slide_ids.slide_category', 'slide_ids.is_published', 'slide_ids.is_category')
+    @api.depends('slide_ids.sequence', 'slide_ids.active', 'slide_ids.slide_category', 'slide_ids.is_published', 'slide_ids.is_category')
     def _compute_slides_statistics(self):
         # Do not use dict.fromkeys(self.ids, dict()) otherwise it will use the same dictionnary for all keys.
         # Therefore, when updating the dict of one key, it updates the dict of all keys.
@@ -389,7 +396,7 @@ class Slide(models.Model):
 
         category_stats = self._compute_slides_statistics_category(res)
 
-        for record in self:
+        for record in self.filtered(lambda slide: slide.is_category):
             record.update(category_stats.get(record._origin.id, default_vals))
 
     def _compute_slides_statistics_category(self, read_group_res):
@@ -402,9 +409,18 @@ class Slide(models.Model):
             slide_category = res_group.get('slide_category')
             if slide_category:
                 slide_category_count = res_group.get('__count', 0)
-                result[cid]['nbr_%s' % slide_category] = slide_category_count
+                result[cid]['nbr_%s' % slide_category] += slide_category_count
                 result[cid]['total_slides'] += slide_category_count
+
         return result
+
+    @api.depends('slide_ids.sequence', 'slide_ids.active', 'slide_ids.completion_time', 'slide_ids.is_published', 'slide_ids.is_category')
+    def _compute_category_completion_time(self):
+        # We don't use read_group() function, otherwise we will have issue with flushing the
+        # data as completion_time is recursive and when it'll try to flush data before it is calculated
+        for category in self.filtered(lambda slide: slide.is_category):
+            filtered_slides = category.slide_ids.filtered(lambda slide: slide.is_published)
+            category.completion_time = sum(filtered_slides.mapped("completion_time"))
 
     @api.depends('slide_category', 'source_type', 'video_source_type')
     def _compute_slide_type(self):
@@ -723,9 +739,11 @@ class Slide(models.Model):
             }
         return super(Slide, self)._get_access_action(access_uid=access_uid, force_website=force_website)
 
-    def _notify_get_recipients_groups(self, msg_vals=None):
+    def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
         """ Add access button to everyone if the document is active. """
-        groups = super(Slide, self)._notify_get_recipients_groups(msg_vals=msg_vals)
+        groups = super()._notify_get_recipients_groups(
+            message, model_description, msg_vals=msg_vals
+        )
         if not self:
             return groups
 
@@ -838,31 +856,18 @@ class Slide(models.Model):
         ])
         slide_id = slide_partners.mapped('slide_id')
         new_slides = self_sudo - slide_id
-        channel = slide_id.channel_id
-        karma_to_add = 0
 
         for slide_partner in slide_partners:
             if upvote:
-                new_vote = 0 if slide_partner.vote == 1 else 1
+                slide_partner.vote = 0 if slide_partner.vote == 1 else 1
             else:
-                new_vote = 0 if slide_partner.vote == -1 else -1
-            # 2 if the disliked slide was liked by the user
-            # 1 if the slide was liked OR if the dislike was removed
-            # -1 if the slide was disliked OR if the like was removed
-            # -2 if the liked slide was disliked by the user
-            vote_diff = new_vote - slide_partner.vote
-            karma_to_add += channel.karma_gen_slide_vote * vote_diff
-            slide_partner.vote = new_vote
+                slide_partner.vote = 0 if slide_partner.vote == -1 else -1
 
         for new_slide in new_slides:
             new_vote = 1 if upvote else -1
             new_slide.write({
                 'slide_partner_ids': [(0, 0, {'vote': new_vote, 'partner_id': self.env.user.partner_id.id})]
             })
-            karma_to_add += new_slide.channel_id.karma_gen_slide_vote * (1 if upvote else -1)
-
-        if karma_to_add:
-            self.env.user.add_karma(karma_to_add)
 
     def action_set_viewed(self, quiz_attempts_inc=False):
         if any(not slide.channel_id.is_member for slide in self):
@@ -956,12 +961,16 @@ class Slide(models.Model):
                      slide.quiz_second_attempt_reward,
                      slide.quiz_third_attempt_reward,
                      slide.quiz_fourth_attempt_reward]
-            points += gains[user_membership_sudo.quiz_attempts_count - 1] if user_membership_sudo.quiz_attempts_count <= len(gains) else gains[-1]
+            points = gains[min(user_membership_sudo.quiz_attempts_count, len(gains)) - 1]
+            if points:
+                if completed:
+                    reason = _('Quiz Completed')
+                else:
+                    points *= -1
+                    reason = _('Quiz Set Uncompleted')
+                self.env.user.sudo()._add_karma(points, slide, reason)
 
-        if not completed:
-            points *= -1
-
-        return self.env.user.sudo().add_karma(points)
+        return True
 
     def action_view_embeds(self):
         self.ensure_one()
@@ -1080,7 +1089,7 @@ class Slide(models.Model):
             if parsed_duration:
                 slide_metadata['completion_time'] = (int(parsed_duration.group(1) or 0)) + \
                                                     (int(parsed_duration.group(2) or 0) / 60) + \
-                                                    (int(parsed_duration.group(3) or 0) / 3600)
+                                                    (round(int(parsed_duration.group(3) or 0) /60) / 60)
 
         if youtube_values.get('snippet'):
             snippet = youtube_values['snippet']
@@ -1220,9 +1229,9 @@ class Slide(models.Model):
                 slide_metadata['slide_type'] = 'google_drive_video'
 
         elif self.slide_category == 'video':
-            completion_time = float(
+            completion_time = round(float(
                 google_drive_values.get('videoMediaMetadata', {}).get('durationMillis', 0)
-                ) / (60 * 60 * 1000)  # millis to hours conversion
+                ) / (60 * 1000)) / 60  # millis to hours conversion rounded to the minute
             if completion_time:
                 slide_metadata['completion_time'] = completion_time
 
@@ -1282,7 +1291,7 @@ class Slide(models.Model):
 
         if vimeo_values.get('duration'):
             # seconds to hours conversion
-            slide_metadata['completion_time'] = vimeo_values.get('duration') / (60 * 60)
+            slide_metadata['completion_time'] = round(vimeo_values.get('duration') / 60) / 60
 
         thumbnail_url = vimeo_values.get('thumbnail_url')
         if thumbnail_url:

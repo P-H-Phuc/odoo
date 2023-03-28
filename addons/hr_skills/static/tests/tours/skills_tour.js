@@ -1,12 +1,13 @@
 /** @odoo-module **/
 
-import tour from 'web_tour.tour';
+import { registry } from "@web/core/registry";
+import { stepUtils } from "@web_tour/tour_service/tour_utils";
 
-tour.register('hr_skills_tour', {
+registry.category("web_tour.tours").add('hr_skills_tour', {
     test: true,
     url: '/web',
-}, [
-    tour.stepUtils.showAppsMenuItem(),
+    steps: [
+    stepUtils.showAppsMenuItem(),
     {
         content: "Open Employees app",
         trigger: ".o_app[data-menu-xmlid='hr.menu_hr_root']",
@@ -106,6 +107,11 @@ tour.register('hr_skills_tour', {
         run: "click",
     },
     {
+        content: "Check if item is added",
+        trigger: ".o_data_row td.o_data_cell:contains('Fortunate Son')",
+        run: () => {},
+    },
+    {
         content: "Add a new Skill",
         trigger: ".o_field_skills_one2many button:contains('ADD')",
     },
@@ -135,10 +141,15 @@ tour.register('hr_skills_tour', {
         in_modal: true,
         run: "click",
     },
-    ...tour.stepUtils.saveForm(),
+    {
+        content: "Check if item is added",
+        trigger: ".o_data_row td.o_data_cell:contains('Oh Mary')",
+        run: () => {},
+    },
+    ...stepUtils.saveForm(),
     {
         content: "Go back to employees",
         trigger: 'a[data-menu-xmlid="hr.menu_hr_root"]',
         run: "click",
     }
-]);
+]});

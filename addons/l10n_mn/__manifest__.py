@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
 {
-    "name" : "Mongolia - Accounting",
-    "version" : "1.0",
+    'name': 'Mongolia - Accounting',
+    'version': '1.0',
     'category': 'Accounting/Localizations/Account Charts',
-    "author" : "BumanIT LLC, Odoo S.A.",
-    "description": """
+    'author': 'BumanIT LLC, Odoo S.A.',
+    'description': """
 This is the module to manage the accounting chart for Mongolia.
 ===============================================================
 
@@ -16,10 +14,12 @@ This is the module to manage the accounting chart for Mongolia.
 
 Financial requirement contributor: Baskhuu Lodoikhuu. BumanIT LLC
 """,
-    "depends": ['account'],
+    'depends': [
+        'account',
+    ],
     'data': [
-        'data/account_chart_template_data.xml',
         'data/account.account.tag.csv',
+<<<<<<< HEAD
         'data/account.account.template.csv',
         'data/account.tax.group.csv',
         'data/account_tax_template_data.xml',
@@ -27,6 +27,8 @@ Financial requirement contributor: Baskhuu Lodoikhuu. BumanIT LLC
         'data/account.chart.template.csv',
         'data/account_chart_template_configuration_data.xml',
         'data/l10n_mn_chart_template_data.xml',
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     ],
     'demo': [
         'demo/demo_company.xml',

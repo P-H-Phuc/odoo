@@ -225,7 +225,11 @@
                 <field name="name" string="Batch Transfer"/>
                 <field name="picking_type_id" invisible="1"/>
                 <field name="user_id"/>
+<<<<<<< HEAD
                 <filter name="to_do_transfers" string="To Do" domain="[('user_id', 'in', [uid, False])]"/>
+=======
+                <filter name="to_do_transfers" string="To Do" domain="['&amp;',('user_id', 'in', [uid, False]),('state','not in',['done','cancel'])]"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 <filter name="my_transfers" string="My Transfers" domain="[('user_id', '=', uid)]"/>
                 <separator/>
                 <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
@@ -248,7 +252,6 @@
     </record>
     <record id="stock_picking_batch_action" model="ir.actions.act_window">
         <field name="name">Batch Transfers</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">stock.picking.batch</field>
         <field name="view_mode">tree,kanban,form</field>
         <field name="domain">[('is_wave', '=', False)]</field>
@@ -265,7 +268,7 @@
           </p>
         </field>
     </record>
-    <menuitem action="stock_picking_batch_action" id="stock_picking_batch_menu" parent="stock.menu_stock_warehouse_mgmt" sequence="21"/>
+    <menuitem action="stock_picking_batch_action" id="stock_picking_batch_menu" parent="stock.menu_stock_transfers" sequence="30"/>
 
     <record id="vpicktree_inherit_stock_picking_batch" model="ir.ui.view">
         <field name="name">stock.picking.tree</field>
@@ -314,5 +317,5 @@
                 <filter string="Batch Transfer" name="by_batch_id" context="{'group_by': 'batch_id'}"/>
             </xpath>
         </field>
-    </record>    
+    </record>
 </odoo>

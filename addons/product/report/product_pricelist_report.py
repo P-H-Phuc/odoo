@@ -39,7 +39,11 @@ class ProductPricelistReport(models.AbstractModel):
         return {
             'is_html_type': report_type == 'html',
             'is_product_tmpl': is_product_tmpl,
+<<<<<<< HEAD
             'is_visible_title': data.get('is_visible_title', False) and bool(data['is_visible_title']),
+=======
+            'display_pricelist_title': data.get('display_pricelist_title', False) and bool(data['display_pricelist_title']),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'pricelist': pricelist,
             'products': products_data,
             'quantities': quantities,

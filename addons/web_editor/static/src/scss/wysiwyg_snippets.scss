@@ -203,6 +203,7 @@
 
 // SNIPPET PANEL
 #oe_snippets {
+    @include o-input-number-no-arrows();
     @include o-position-absolute(var(--o-we-toolbar-height), 0, 0, auto);
     position: fixed;
     z-index: $o-we-zindex;
@@ -1088,13 +1089,13 @@
 
                 we-button img {
                     height: $o-we-sidebar-content-field-dropdown-grid-item-height;
-                    width: $o-we-sidebar-content-field-dropdown-grid-item-width;
+                    width: $o-we-sidebar-content-field-dropdown-grid-item-height;
                 }
                 &.active {
                     display: flex;
                     flex-wrap: wrap;
                     we-button {
-                        width: percentage(1 / 3);
+                        width: percentage(1 / 4);
                         padding: 0;
                         justify-content: center;
                         img {
@@ -1400,13 +1401,15 @@
                 width: 100%;
                 max-height: 200px;
                 overflow-y: auto;
-                margin-bottom: $o-we-sidebar-content-field-spacing / 2;
 
                 table {
-                    @include o-input-number-no-arrows();
                     table-layout: auto;
                     width: 100%;
+                    margin-bottom: $o-we-sidebar-content-field-spacing / 2;
 
+                    &:empty {
+                        margin-bottom: 0;
+                    }
                     input {
                         width: 100%;
                         border: $o-we-sidebar-content-field-border-width solid $o-we-sidebar-content-field-border-color;
@@ -1512,6 +1515,12 @@
             we-list, we-list > div, we-list we-select {
                 margin-top: 0;
                 max-width: 100%;
+<<<<<<< HEAD
+=======
+            }
+            we-title {
+                align-self: flex-start;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }
         }
 
@@ -2223,7 +2232,7 @@
                 &, > .o_overlay_move_options, .o_overlay_edit_options {
                     display: flex;
                 }
-                .o_overlay_move_options > *, .o_overlay_edit_options > *, > we-button {
+                .o_overlay_move_options > *, .o_overlay_edit_options > *:not(span), .o_overlay_edit_options > span > *, > we-button {
                     @extend %we-generic-button;
                     margin: 0 1px 0;
                     min-width: 22px;
@@ -2261,8 +2270,9 @@
                     background-repeat: no-repeat;
                 }
                 &:hover {
-                    .o_overlay_move_options > *, .o_overlay_edit_options > *, > we-button {
+                    .o_overlay_move_options > *, .o_overlay_edit_options > *:not(span), > we-button {
                         @include o-hover-opacity(.6);
+<<<<<<< HEAD
 
                         &:hover {
                             border-color: mix($o-we-handles-accent-color, $o-we-sidebar-content-field-pressed-bg, .4);
@@ -2278,6 +2288,8 @@
                                 }
                             }
                         }
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     }
                 }
             }

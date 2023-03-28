@@ -2,7 +2,11 @@
 <templates>
 
     <t t-name="account.OpenMoveWidget" owl="1">
+<<<<<<< HEAD
         <a href="#" t-esc="props.value" t-on-click.prevent.stop="(ev) => this.openMove()"/>
+=======
+        <a href="#" t-out="props.record.data[props.name]" t-on-click.prevent.stop="(ev) => this.openMove()"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     </t>
 
 </templates>

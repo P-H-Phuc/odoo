@@ -22,8 +22,7 @@
         <t t-out="object.event_id.user_id.signature or ''">--<br/>Mitchell Admin</t>
     </t>
 </div></field>
-            <field name="report_template" ref="action_report_event_registration_foldable_badge"/>
-            <field name="report_name">Foldable Badge - {{ (object.event_id.name or 'Event').replace('/','_') }}</field>
+            <field name="report_template_ids" eval="[(4, ref('event.action_report_event_registration_foldable_badge'))]"/>
             <field name="lang">{{ object.partner_id.lang }}</field>
             <field name="auto_delete" eval="True"/>
         </record>
@@ -226,7 +225,14 @@
                             <div>
                                 <i class="fa fa-map-marker"/>
                                 <a t-attf-href="https://maps.google.com/maps?q={{ location }}" target="new">
+<<<<<<< HEAD
                                     See location on Google Maps
+=======
+                                    <img t-if="event_address.static_map_url and event_address.static_map_url_is_valid"
+                                         t-att-src="event_address.static_map_url"
+                                         style="vertical-align:bottom; width: 100%;" alt="Google Maps"/>
+                                    <t t-else="">See location on Google Maps</t>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                 </a>
                             </div>
                         </td></tr></table>
@@ -254,8 +260,7 @@
 </td></tr>
 </table>
             </field>
-            <field name="report_template" ref="action_report_event_registration_full_page_ticket"/>
-            <field name="report_name">Full Page Ticket - {{ (object.event_id.name or 'Event').replace('/','') }}</field>
+            <field name="report_template_ids" eval="[(4, ref('event.action_report_event_registration_full_page_ticket'))]"/>
             <field name="lang">{{ object.partner_id.lang }}</field>
         </record>
 
@@ -444,11 +449,18 @@
 
                 <tr><td valign="top" style="font-size: 14px;">
                     <!-- GOOGLE MAPS LINK -->
-                    <table t-if="event_address" style="width:100%;"><tr><td>
+                    <table t-if="event_address and location" style="width:100%;"><tr><td>
                         <div>
                             <i class="fa fa-map-marker"/>
                             <a t-attf-href="https://maps.google.com/maps?q={{ location }}" target="new">
+<<<<<<< HEAD
                                 See location on Google Maps
+=======
+                                <img t-if="event_address.static_map_url and event_address.static_map_url_is_valid"
+                                     t-attf-src="{{ event_address.static_map_url }}"
+                                     style="vertical-align:bottom; width: 100%;" alt="Google Maps"/>
+                                <span t-else="">See location on Google Maps</span>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                             </a>
                         </div>
                     </td></tr></table>

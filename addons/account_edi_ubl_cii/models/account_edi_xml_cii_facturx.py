@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, _
-from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, float_repr, is_html_empty, html2plaintext, cleanup_xml_node
+from odoo.tools import DEFAULT_SERVER_DATE_FORMAT, float_repr, is_html_empty, html2plaintext, cleanup_xml_node, find_xml_value
 from lxml import etree
 
 from datetime import datetime
@@ -205,10 +205,10 @@ class AccountEdiXmlCII(models.AbstractModel):
     # IMPORT
     # -------------------------------------------------------------------------
 
-    def _import_fill_invoice_form(self, journal, tree, invoice, qty_factor):
+    def _import_fill_invoice_form(self, invoice, tree, qty_factor):
 
         def _find_value(xpath, element=tree):
-            return self.env['account.edi.format']._find_value(xpath, element, tree.nsmap)
+            return find_xml_value(xpath, element, tree.nsmap)
 
         logs = []
 
@@ -217,14 +217,19 @@ class AccountEdiXmlCII(models.AbstractModel):
 
         # ==== partner_id ====
 
-        partner_type = invoice.journal_id.type == 'purchase' and 'SellerTradeParty' or 'BuyerTradeParty'
-        invoice.partner_id = self.env['account.edi.format']._retrieve_partner(
+        partner_type = 'SellerTradeParty' if invoice.journal_id.type == 'purchase' else 'BuyerTradeParty'
+        invoice.partner_id = self.env['res.partner']._retrieve_partner(
             name=_find_value(f"//ram:{partner_type}/ram:Name"),
             mail=_find_value(f"//ram:{partner_type}//ram:URIID[@schemeID='SMTP']"),
             vat=_find_value(f"//ram:{partner_type}/ram:SpecifiedTaxRegistration/ram:ID"),
+            company=invoice.company_id,
         )
         if not invoice.partner_id:
+<<<<<<< HEAD
             logs.append(_("Could not retrieve the %s.", _("customer") if invoice.move_type in ('out_invoice', 'out_refund') else _("vendor")))
+=======
+            logs.append(_("Could not retrieve the %s.", _("customer") if invoice.is_sale_document() else _("vendor")))
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         # ==== currency_id ====
 
@@ -239,7 +244,7 @@ class AccountEdiXmlCII(models.AbstractModel):
                 invoice.currency_id = currency
             else:
                 logs.append(_("Could not retrieve currency: %s. Did you enable the multicurrency option and "
-                              "activate the currency ?", currency_code_node.text))
+                              "activate the currency?", currency_code_node.text))
 
         # ==== Reference ====
 
@@ -290,7 +295,7 @@ class AccountEdiXmlCII(models.AbstractModel):
 
         # ==== invoice_line_ids: AllowanceCharge (document level) ====
 
-        logs += self._import_fill_invoice_allowance_charge(tree, invoice, journal, qty_factor)
+        logs += self._import_fill_invoice_allowance_charge(tree, invoice, qty_factor)
 
         # ==== Down Payment (prepaid amount) ====
 
@@ -304,7 +309,7 @@ class AccountEdiXmlCII(models.AbstractModel):
         if line_nodes is not None:
             for invl_el in line_nodes:
                 invoice_line = invoice.invoice_line_ids.create({'move_id': invoice.id})
-                invl_logs = self._import_fill_invoice_line_form(journal, invl_el, invoice, invoice_line, qty_factor)
+                invl_logs = self._import_fill_invoice_line_form(invoice.journal_id, invl_el, invoice, invoice_line, qty_factor)
                 logs += invl_logs
 
         return logs
@@ -313,11 +318,11 @@ class AccountEdiXmlCII(models.AbstractModel):
         logs = []
 
         def _find_value(xpath, element=tree):
-            return self.env['account.edi.format']._find_value(xpath, element, tree.nsmap)
+            return find_xml_value(xpath, element, tree.nsmap)
 
         # Product.
         name = _find_value('.//ram:SpecifiedTradeProduct/ram:Name', tree)
-        invoice_line.product_id = self.env['account.edi.format']._retrieve_product(
+        invoice_line.product_id = self.env['product.product']._retrieve_product(
             default_code=_find_value('.//ram:SpecifiedTradeProduct/ram:SellerAssignedID', tree),
             name=_find_value('.//ram:SpecifiedTradeProduct/ram:Name', tree),
             barcode=_find_value('.//ram:SpecifiedTradeProduct/ram:GlobalID', tree)
@@ -343,13 +348,17 @@ class AccountEdiXmlCII(models.AbstractModel):
         inv_line_vals = self._import_fill_invoice_line_values(tree, xpath_dict, invoice_line, qty_factor)
         # retrieve tax nodes
         tax_nodes = tree.findall('.//{*}ApplicableTradeTax/{*}RateApplicablePercent')
+<<<<<<< HEAD
         return self._import_fill_invoice_line_taxes(journal, tax_nodes, invoice_line, inv_line_vals, logs)
+=======
+        return self._import_fill_invoice_line_taxes(tax_nodes, invoice_line, inv_line_vals, logs)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     # -------------------------------------------------------------------------
     # IMPORT : helpers
     # -------------------------------------------------------------------------
 
-    def _get_import_document_amount_sign(self, filename, tree):
+    def _get_import_document_amount_sign(self, tree):
         """
         In factur-x, an invoice has code 380 and a credit note has code 381. However, a credit note can be expressed
         as an invoice with negative amounts. For this case, we need a factor to take the opposite of each quantity
@@ -359,9 +368,18 @@ class AccountEdiXmlCII(models.AbstractModel):
         if move_type_code is None:
             return None, None
         if move_type_code.text == '381':
+<<<<<<< HEAD
             return ('in_refund', 'out_refund'), 1
         if move_type_code.text == '380':
             amount_node = tree.find('.//{*}SpecifiedTradeSettlementHeaderMonetarySummation/{*}TaxBasisTotalAmount')
             if amount_node is not None and float(amount_node.text) < 0:
                 return ('in_refund', 'out_refund'), -1
             return ('in_invoice', 'out_invoice'), 1
+=======
+            return 'refund', 1
+        if move_type_code.text == '380':
+            amount_node = tree.find('.//{*}SpecifiedTradeSettlementHeaderMonetarySummation/{*}TaxBasisTotalAmount')
+            if amount_node is not None and float(amount_node.text) < 0:
+                return 'refund', -1
+            return 'invoice', 1
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

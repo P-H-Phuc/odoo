@@ -33,7 +33,11 @@ Step 4: Repeat steps 1,2,3 for all GSTIN you have in odoo. If you have a multi-c
         "demo/account_invoice_demo.xml",
     ],
     "installable": True,
+<<<<<<< HEAD
     # not applicable when company is related to service industry so auto install is False
     "auto_install": False,
+=======
+    # not auto_install because the company can be related to the service industry
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     "license": "LGPL-3",
 }

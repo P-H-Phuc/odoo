@@ -21,9 +21,15 @@
                 onUploadComplete.bind="onUploadComplete">
                 <t t-set-slot="toggler">
                     <t t-if="props.togglerTemplate" t-call="{{ props.togglerTemplate }}"/>
+<<<<<<< HEAD
                     <t t-else="" t-slot="default"/>
                 </t>
                 <t t-slot="extra"/>
+=======
+                    <t t-else="" t-slot="toggler"/>
+                </t>
+                <t t-slot="default"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             </FileUploader>
         </div>
     </t>
@@ -65,7 +71,11 @@
     <t t-name="account.AccountViewUploadButton" owl="1">
         <!-- No record is available so rely on the action context to contain the default_move_type -->
         <AccountFileUploader>
+<<<<<<< HEAD
             <t t-set-slot="default">
+=======
+            <t t-set-slot="toggler">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 <button type="button" class="btn btn-secondary o_button_upload_bill">
                     Upload
                 </button>
@@ -83,6 +93,7 @@
             t-on-dragenter.stop.prevent="() => state.dropzoneVisible = true"
             t-ref="root">
             <AccountFileUploader record="props.record">
+<<<<<<< HEAD
                 <t t-set-slot="extra">
                     <AccountDropZone
                         visible="state.dropzoneVisible"
@@ -90,6 +101,16 @@
                     <t t-call="{{ templates['kanban-box'] }}"/>
                 </t>
             </AccountFileUploader>
+=======
+                <t t-set-slot="default">
+                    <AccountDropZone
+                        visible="state.dropzoneVisible"
+                        hideZone="() => state.dropzoneVisible = false"/>
+                    <t t-call="{{ templates[this.constructor.KANBAN_BOX_ATTRIBUTE] }}" t-call-context="renderingContext"/>
+                </t>
+            </AccountFileUploader>
+            <t t-call="{{ this.constructor.menuTemplate }}"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         </div>
     </t>
 

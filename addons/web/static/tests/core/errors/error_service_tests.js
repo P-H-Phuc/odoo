@@ -6,6 +6,7 @@ import {
     ClientErrorDialog,
     RPCErrorDialog,
     NetworkErrorDialog,
+    standardErrorDialogProps,
 } from "@web/core/errors/error_dialogs";
 import { errorService, UncaughtPromiseError } from "@web/core/errors/error_service";
 import { ConnectionLostError, RPCError } from "@web/core/network/rpc_service";
@@ -117,6 +118,7 @@ QUnit.test(
         class CustomDialog extends Component {}
         CustomDialog.template = xml`<RPCErrorDialog title="'Strange Error'"/>`;
         CustomDialog.components = { RPCErrorDialog };
+        CustomDialog.props = { ...standardErrorDialogProps };
         const error = new RPCError();
         error.code = 701;
         error.message = "Some strange error occured";
@@ -223,7 +225,7 @@ QUnit.test("handle CONNECTION_LOST_ERROR", async (assert) => {
         }
     };
     await makeTestEnv({ mockRPC });
-    const error = new ConnectionLostError();
+    const error = new ConnectionLostError("/fake_url");
     const errorEvent = new PromiseRejectionEvent("error", {
         reason: error,
         promise: null,

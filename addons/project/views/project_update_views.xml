@@ -38,7 +38,7 @@
                         <group>
                             <field name="project_id" invisible="1"/>
                             <field name="color" invisible="1"/>
-                            <field name="status" widget="status_with_color" options="{'color_field': 'color'}"/>
+                            <field name="status" widget="status_with_color"/>
                             <field name="progress" widget="progressbar" options="{'editable': true}"/>
                         </group>
                         <group>
@@ -66,7 +66,7 @@
         <field name="name">project.update.view.kanban</field>
         <field name="model">project.update</field>
         <field name="arch" type="xml">
-            <kanban class="o_pupdate_kanban" sample="1" js_class="project_update_kanban">
+            <kanban sample="1" js_class="project_update_kanban">
                 <field name="color"/>
                 <templates>
                     <t t-name="kanban-box">
@@ -82,7 +82,7 @@
                                 </div>
                                 <div class="col-sm-2 text-sm-start col-6 align-end">
                                     <field name="color" invisible="1"/>
-                                    <b><field name="status" widget="status_with_color" options="{'color_field': 'color'}"/></b>
+                                    <b><field name="status" widget="status_with_color"/></b>
                                 </div>
                                 <div class="col-sm-2 col-6 pb-0">
                                     <b><field name="progress_percentage" widget="percentage"/></b>
@@ -110,14 +110,13 @@
                 <field name="date" optional="show"/>
                 <field name="progress_percentage" string="Progress" widget="percentage" optional="show"/>
                 <field name="color" invisible="1"/>
-                <field name="status" widget="status_with_color" options="{'color_field': 'color'}"/>
+                <field name="status" widget="status_with_color"/>
             </tree>
         </field>
     </record>
 
     <record id="project_update_all_action" model="ir.actions.act_window">
         <field name="name">Project Updates</field>
-        <field name="type">ir.actions.act_window</field>
         <field name="res_model">project.update</field>
         <field name="view_mode">kanban,tree,form</field>
         <field name="domain">[('project_id', '=', active_id)]</field>
@@ -130,5 +129,4 @@
             </p>
         </field>
     </record>
-
 </odoo>

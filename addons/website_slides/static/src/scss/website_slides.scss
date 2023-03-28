@@ -238,8 +238,8 @@ $line-height-truncate: 1.25em;
 // **************************************************
 .o_wslides_home_main {
     .o_wslides_home_aside_loggedin {
+        background: none;
         @include media-breakpoint-up(lg) {
-            background: none;
             border: none;
         }
     }
@@ -527,6 +527,7 @@ $line-height-truncate: 1.25em;
             background-position: center;
             padding-bottom: 35%;
         }
+
     }
     .o_wslides_lesson_card {
         .o_wslides_background_image img {
@@ -534,6 +535,7 @@ $line-height-truncate: 1.25em;
             width: 100%;
             object-fit: cover;
         }
+
     }
 }
 

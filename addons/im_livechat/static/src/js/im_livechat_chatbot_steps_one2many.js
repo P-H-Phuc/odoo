@@ -2,6 +2,7 @@
 
 import { ListRenderer } from "@web/views/list/list_renderer";
 import { registry } from "@web/core/registry";
+<<<<<<< HEAD
 import { patch } from '@web/core/utils/patch';
 import { useX2ManyCrud, useOpenX2ManyRecord, X2ManyFieldDialog } from "@web/views/fields/relational_utils";
 import { X2ManyField } from "@web/views/fields/x2many/x2many_field";
@@ -9,10 +10,24 @@ import { X2ManyField } from "@web/views/fields/x2many/x2many_field";
 const fieldRegistry = registry.category("fields");
 
 patch(X2ManyFieldDialog.prototype, 'chatbot_script_step_sequence', {
+=======
+import { patch } from "@web/core/utils/patch";
+import {
+    useX2ManyCrud,
+    useOpenX2ManyRecord,
+    X2ManyFieldDialog,
+} from "@web/views/fields/relational_utils";
+import { X2ManyField, x2ManyField } from "@web/views/fields/x2many/x2many_field";
+
+const fieldRegistry = registry.category("fields");
+
+patch(X2ManyFieldDialog.prototype, "chatbot_script_step_sequence", {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     /**
      * Dirty patching of the 'X2ManyFieldDialog'.
      * It is done to force the "save and new" to close the dialog first, and then click again on
      * the "Add a line" link.
+<<<<<<< HEAD
      * 
      * This is the only way (or at least the least complicated) to correctly compute the sequence
      * field, which is crucial when creating chatbot.steps, as they depend on each other.
@@ -20,6 +35,15 @@ patch(X2ManyFieldDialog.prototype, 'chatbot_script_step_sequence', {
      */
     async save({ saveAndNew }) {
         if (this.record.resModel !== 'chatbot.script.step') {
+=======
+     *
+     * This is the only way (or at least the least complicated) to correctly compute the sequence
+     * field, which is crucial when creating chatbot.steps, as they depend on each other.
+     *
+     */
+    async save({ saveAndNew }) {
+        if (this.record.resModel !== "chatbot.script.step") {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             return this._super(...arguments);
         }
 
@@ -30,12 +54,20 @@ patch(X2ManyFieldDialog.prototype, 'chatbot_script_step_sequence', {
         }
 
         if (saveAndNew) {
+<<<<<<< HEAD
             document.querySelector('.o_field_x2many_list_row_add a').click();
+=======
+            document.querySelector(".o_field_x2many_list_row_add a").click();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
         this.props.close();
 
         return true;
+<<<<<<< HEAD
     }
+=======
+    },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 });
 
 export class ChatbotStepsOne2manyRenderer extends ListRenderer {
@@ -65,10 +97,14 @@ export class ChatbotStepsOne2many extends X2ManyField {
     setup() {
         super.setup();
 
+<<<<<<< HEAD
         const { saveRecord, updateRecord } = useX2ManyCrud(
             () => this.list,
             this.isMany2Many
         );
+=======
+        const { saveRecord, updateRecord } = useX2ManyCrud(() => this.list, this.isMany2Many);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         const openRecord = useOpenX2ManyRecord({
             resModel: this.list.resModel,
@@ -77,7 +113,11 @@ export class ChatbotStepsOne2many extends X2ManyField {
             getList: () => this.list,
             saveRecord: async (record) => {
                 await saveRecord(record);
+<<<<<<< HEAD
                 await this.props.record.save({stayInEdition: true});
+=======
+                await this.props.record.save({ stayInEdition: true });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             },
             updateRecord: updateRecord,
         });
@@ -94,6 +134,7 @@ export class ChatbotStepsOne2many extends X2ManyField {
             });
         };
     }
+<<<<<<< HEAD
 };
 
 fieldRegistry.add("chatbot_steps_one2many", ChatbotStepsOne2many);
@@ -101,4 +142,18 @@ fieldRegistry.add("chatbot_steps_one2many", ChatbotStepsOne2many);
 ChatbotStepsOne2many.components = {
     ...X2ManyField.components,
     ListRenderer: ChatbotStepsOne2manyRenderer
+=======
+}
+
+export const chatbotStepsOne2many = {
+    ...x2ManyField,
+    component: ChatbotStepsOne2many,
+};
+
+fieldRegistry.add("chatbot_steps_one2many", chatbotStepsOne2many);
+
+ChatbotStepsOne2many.components = {
+    ...X2ManyField.components,
+    ListRenderer: ChatbotStepsOne2manyRenderer,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 };

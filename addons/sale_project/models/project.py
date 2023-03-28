@@ -155,7 +155,10 @@ class Project(models.Model):
     def action_open_project_invoices(self):
         query = self.env['account.move.line']._search([('move_id.move_type', 'in', ['out_invoice', 'out_refund'])])
         query.add_where('analytic_distribution ? %s', [str(self.analytic_account_id.id)])
+<<<<<<< HEAD
         query.order = None
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         query_string, query_param = query.select('DISTINCT move_id')
         self._cr.execute(query_string, query_param)
         invoice_ids = [line.get('move_id') for line in self._cr.dictfetchall()]
@@ -540,7 +543,10 @@ class Project(models.Model):
     def action_open_project_vendor_bills(self):
         query = self.env['account.move.line']._search([('move_id.move_type', 'in', ['in_invoice', 'in_refund'])])
         query.add_where('analytic_distribution ? %s', [str(self.analytic_account_id.id)])
+<<<<<<< HEAD
         query.order = None
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         query_string, query_param = query.select('DISTINCT move_id')
         self._cr.execute(query_string, query_param)
         vendor_bill_ids = [line.get('move_id') for line in self._cr.dictfetchall()]
@@ -559,6 +565,13 @@ class Project(models.Model):
             action_window['res_id'] = vendor_bill_ids[0]
         return action_window
 
+    def action_project_sharing(self):
+        action = super().action_project_sharing()
+        action['context'].update({
+            'sale_show_partner_name': True,
+        })
+        return action
+
 class ProjectTask(models.Model):
     _inherit = "project.task"
 
@@ -573,34 +586,46 @@ class ProjectTask(models.Model):
              "Remove the sales order item in order to make this task non billable. You can also change or remove the sales order item of each timesheet entry individually.")
     project_sale_order_id = fields.Many2one('sale.order', string="Project's sale order", related='project_id.sale_order_id')
     task_to_invoice = fields.Boolean("To invoice", compute='_compute_task_to_invoice', search='_search_task_to_invoice', groups='sales_team.group_sale_salesman_all_leads')
+    allow_billable = fields.Boolean(related="project_id.allow_billable")
 
     # Project sharing  fields
     display_sale_order_button = fields.Boolean(string='Display Sales Order', compute='_compute_display_sale_order_button')
 
     @property
     def SELF_READABLE_FIELDS(self):
-        return super().SELF_READABLE_FIELDS | {'sale_order_id', 'sale_line_id', 'display_sale_order_button'}
+        return super().SELF_READABLE_FIELDS | {'allow_billable', 'sale_order_id', 'sale_line_id', 'display_sale_order_button'}
 
-    @api.depends('sale_line_id', 'project_id', 'commercial_partner_id')
+    @api.depends('sale_line_id', 'project_id', 'partner_id.commercial_partner_id', 'allow_billable')
     def _compute_sale_order_id(self):
         for task in self:
+            if not task.allow_billable:
+                task.sale_order_id = False
+                continue
             sale_order_id = task.sale_order_id or self.env["sale.order"]
             if task.sale_line_id:
                 sale_order_id = task.sale_line_id.sudo().order_id
             elif task.project_id.sale_order_id:
                 sale_order_id = task.project_id.sale_order_id
-            if task.commercial_partner_id != sale_order_id.partner_id.commercial_partner_id:
+            if task.partner_id.commercial_partner_id != sale_order_id.partner_id.commercial_partner_id:
                 sale_order_id = False
             if sale_order_id and not task.partner_id:
                 task.partner_id = sale_order_id.partner_id
             task.sale_order_id = sale_order_id
 
-    @api.depends('commercial_partner_id', 'sale_line_id.order_partner_id', 'parent_id.sale_line_id', 'project_id.sale_line_id', 'milestone_id.sale_line_id')
+    @api.depends('partner_id.commercial_partner_id', 'sale_line_id.order_partner_id', 'parent_id.sale_line_id', 'project_id.sale_line_id', 'milestone_id.sale_line_id', 'allow_billable')
     def _compute_sale_line(self):
         for task in self:
+            if not task.allow_billable:
+                task.sale_line_id = False
+                continue
             if not task.sale_line_id:
-                # if the display_project_id is set then it means the task is classic task or a subtask with another project than its parent.
-                task.sale_line_id = task.display_project_id.sale_line_id or task.parent_id.sale_line_id or task.project_id.sale_line_id or task.milestone_id.sale_line_id
+                # if the project_id is set then it means the task is classic task or a subtask with another project than its parent.
+                sale_line = False
+                if task.project_id.sale_line_id and task.project_id.partner_id.commercial_partner_id == task.partner_id.commercial_partner_id:
+                    sale_line = task.project_id.sale_line_id
+                elif task.parent_id.sale_line_id and task.parent_id.partner_id.commercial_partner_id == task.partner_id.commercial_partner_id:
+                    sale_line = task.parent_id.sale_line_id
+                task.sale_line_id = sale_line or task.milestone_id.sale_line_id
             # check sale_line_id and customer are coherent
             if task.sale_line_id.order_partner_id.commercial_partner_id != task.partner_id.commercial_partner_id:
                 task.sale_line_id = False
@@ -694,11 +719,6 @@ class ProjectTask(models.Model):
 class ProjectTaskRecurrence(models.Model):
     _inherit = 'project.task.recurrence'
 
-    def _new_task_values(self, task):
-        values = super(ProjectTaskRecurrence, self)._new_task_values(task)
-        task = self.sudo().task_ids[0]
-        values['sale_line_id'] = self._get_sale_line_id(task)
-        return values
-
-    def _get_sale_line_id(self, task):
-        return task.sale_line_id.id
+    @api.model
+    def _get_recurring_fields_to_copy(self):
+        return super(ProjectTaskRecurrence, self)._get_recurring_fields_to_copy() + ['sale_line_id']

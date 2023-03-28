@@ -898,12 +898,20 @@ class TestAccountMove(AccountTestInvoicingCommon):
         ])
         moves.action_post()
 
+<<<<<<< HEAD
         res = moves.line_ids\
             .filtered(lambda x: x.account_id == self.company_data['default_account_receivable'])\
             .reconcile()
 
         self.assertTrue(res.get('partials'))
         exchange_diff = res['partials'].exchange_move_id
+=======
+        moves.line_ids\
+            .filtered(lambda x: x.account_id == self.company_data['default_account_receivable'])\
+            .reconcile()
+
+        exchange_diff = moves.line_ids.matched_debit_ids.exchange_move_id
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         self.assertTrue(exchange_diff)
         with self.assertRaises(UserError), self.cr.savepoint():
             exchange_diff.button_draft()

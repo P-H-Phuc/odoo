@@ -7,7 +7,6 @@ import { objectToQuery } from "../core/browser/router_service";
 import { useDebugCategory } from "../core/debug/debug_context";
 import { Dialog } from "../core/dialog/dialog";
 import { useService } from "@web/core/utils/hooks";
-import { ViewNotFoundError } from "@web/views/view";
 import { cleanDomFromBootstrap, wrapSuccessOrFail, useLegacyRefs } from "./utils";
 import { mapDoActionOptionAPI } from "./backend_utils";
 
@@ -16,10 +15,8 @@ import {
     onMounted,
     onWillUnmount,
     onWillUpdateProps,
-    status,
     useEffect,
     useExternalListener,
-    useComponent,
     xml,
 } from "@odoo/owl";
 
@@ -245,6 +242,7 @@ export class ClientActionAdapter extends ActionAdapter {
         this.pushState(state);
     }
 }
+<<<<<<< HEAD
 
 const magicReloadSymbol = Symbol("magicReload");
 
@@ -424,3 +422,5 @@ export class ViewAdapter extends ActionAdapter {
         }
     }
 }
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
+import heapq
 import logging
+from collections import namedtuple
 
 from ast import literal_eval
+from collections import defaultdict
 from psycopg2 import Error
 
 from odoo import _, api, fields, models
@@ -439,6 +441,24 @@ class StockQuant(models.Model):
         self._apply_inventory()
         self.inventory_quantity_set = False
 
+    def action_inventory_at_date(self):
+        #  Handler called when the user clicked on the 'Inventory at Date' button.
+        #  Opens wizard to display, at choice, the products inventory or a computed
+        #  inventory at a given date.
+        context = {}
+        if ("default_product_id" in self.env.context):
+            context['product_id'] = self.env.context["default_product_id"]
+        elif ("default_product_tmpl_id" in self.env.context):
+            context['product_tmpl_id'] = self.env.context["default_product_tmpl_id"]
+
+        return {
+            "res_model": "stock.quantity.history",
+            "views": [[False, "form"]],
+            "target": "new",
+            "type": "ir.actions.act_window",
+            "context": context,
+        }
+
     def action_inventory_history(self):
         self.ensure_one()
         action = {
@@ -545,20 +565,126 @@ class StockQuant(models.Model):
             loc = loc.location_id
         return 'fifo'
 
+    def _run_least_packages_removal_strategy_astar(self, domain, qty):
+        # Fetch the available packages and contents
+        query = self._where_calc(domain)
+        query_str, params = query.select('package_id', 'SUM(quantity - reserved_quantity) AS available_qty')
+        query_str += ' GROUP BY package_id ORDER BY available_qty DESC'
+        self._cr.execute(query_str, params)
+        qty_by_package = self._cr.fetchall()
+
+        pkg_found = False
+        # Items that do not belong to a package are added individually to the list, any empty packages get removed.
+        for idx, elem in enumerate(qty_by_package):
+            if elem[0] is None:
+                del qty_by_package[idx]
+                qty_by_package.extend([(None, 1) for _ in range(int(elem[1]))])
+            elif elem[1] == 0:
+                del qty_by_package[idx]
+            else:
+                pkg_found = True
+
+        if not pkg_found:
+            return domain
+        size = len(qty_by_package)
+
+        class PriorityQueue:
+            def __init__(self):
+                self.elements = []
+
+            def empty(self) -> bool:
+                return not self.elements
+
+            def put(self, item, priority):
+                heapq.heappush(self.elements, (priority, item))
+
+            def get(self):
+                return heapq.heappop(self.elements)[1]
+
+        def heuristic(node):
+            if node.next_index < size:
+                return len(node.taken_packages) + node.count_remaining / qty_by_package[node.next_index][1]
+            return len(node.taken_packages)
+
+        def generate_domain(node):
+            selected_single_items = []
+            single_item_ids = False
+            for pkg in node.taken_packages:
+                if pkg[0] is None:
+                    # Lazily retrieve ids for single items
+                    if not single_item_ids:
+                        single_item_ids = self.search(expression.AND([[('package_id', '=', None)], domain])).mapped('id')
+                    selected_single_items.append(single_item_ids.pop())
+
+            expr = [('package_id', 'in', [elem[0] for elem in node.taken_packages if elem[0] is not None])]
+            if selected_single_items:
+                expr = expression.OR([expr, [('id', 'in', selected_single_items)]])
+            return expression.AND([expr, domain])
+
+        Node = namedtuple("Node", "count_remaining taken_packages next_index")
+
+        frontier = PriorityQueue()
+        frontier.put(Node(qty, (), 0), 0)
+
+        best_leaf = Node(qty, (), 0)
+
+        try:
+            while not frontier.empty():
+                current = frontier.get()
+
+                if current.count_remaining <= 0:
+                    return generate_domain(current)
+
+                # Keep track of processed package amounts to only generate one branch for the same amount
+                last_count = None
+                i = current.next_index
+                while i < size:
+                    pkg = qty_by_package[i]
+                    i += 1
+                    if pkg[1] == last_count:
+                        continue
+                    last_count = pkg[1]
+
+                    count = current.count_remaining - pkg[1]
+                    taken = current.taken_packages + (pkg,)
+                    node = Node(count, taken, i)
+
+                    if count < 0:
+                        # Overselect case
+                        if best_leaf.count_remaining > 0 or len(node.taken_packages) < len(best_leaf.taken_packages) or (len(node.taken_packages) == len(best_leaf.taken_packages) and node.count_remaining > best_leaf.count_remaining):
+                            best_leaf = node
+                        continue
+
+                    if i >= size and count != 0:
+                        # Not enough packages case
+                        if node.count_remaining < best_leaf.count_remaining:
+                            best_leaf = node
+                        continue
+
+                    frontier.put(node, heuristic(node))
+        except MemoryError:
+            _logger.info('Ran out of memory while trying to use the least_packages strategy to get quants. Domain: %s', domain)
+            return domain
+
+        # no exact matching possible, use best leaf
+        return generate_domain(best_leaf)
+
     @api.model
-    def _get_removal_strategy_order(self, removal_strategy):
+    def _get_removal_strategy_domain_order(self, domain, removal_strategy, qty):
         if removal_strategy == 'fifo':
-            return 'in_date ASC, id'
+            return domain, 'in_date ASC, id'
         elif removal_strategy == 'lifo':
-            return 'in_date DESC, id DESC'
+            return domain, 'in_date DESC, id DESC'
         elif removal_strategy == 'closest':
-            return 'location_id ASC, id DESC'
+            return domain, 'location_id ASC, id DESC'
+        elif removal_strategy == 'least_packages':
+            if qty > 0:
+                return self._run_least_packages_removal_strategy_astar(domain, qty), 'in_date ASC, id'
+            return domain, 'in_date ASC, id'
         raise UserError(_('Removal strategy %s not implemented.') % (removal_strategy,))
 
-    def _gather(self, product_id, location_id, lot_id=None, package_id=None, owner_id=None, strict=False):
+    def _gather(self, product_id, location_id, lot_id=None, package_id=None, owner_id=None, strict=False, qty=0):
         removal_strategy = self._get_removal_strategy(product_id, location_id)
-        removal_strategy_order = self._get_removal_strategy_order(removal_strategy)
-
         domain = [('product_id', '=', product_id.id)]
         if not strict:
             if lot_id:
@@ -574,7 +700,8 @@ class StockQuant(models.Model):
             domain = expression.AND([[('owner_id', '=', owner_id and owner_id.id or False)], domain])
             domain = expression.AND([[('location_id', '=', location_id.id)], domain])
 
-        return self.search(domain, order=removal_strategy_order).sorted(lambda q: not q.lot_id)
+        domain, order = self._get_removal_strategy_domain_order(domain, removal_strategy, qty)
+        return self.search(domain, order=order).sorted(lambda q: not q.lot_id)
 
     @api.model
     def _get_available_quantity(self, product_id, location_id, lot_id=None, package_id=None, owner_id=None, strict=False, allow_negative=False):
@@ -615,6 +742,62 @@ class StockQuant(models.Model):
                 return sum(availaible_quantities.values())
             else:
                 return sum([available_quantity for available_quantity in availaible_quantities.values() if float_compare(available_quantity, 0, precision_rounding=rounding) > 0])
+
+    def _get_reserve_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None, strict=False):
+        """ Get the quantity available to reserve for the set of quants
+        sharing the combination of `product_id, location_id` if `strict` is set to False or sharing
+        the *exact same characteristics* otherwise. Typically, this method is called before the
+        `stock.move.line` creation to know the reserved_qty that could be use. It's also call by
+        `_update_reserve_quantity` to find the quant to reserve.
+
+        :return: a list of tuples (quant, quantity_reserved) showing on which quant the reservation
+            could be done and how much the system is able to reserve on it
+        """
+        self = self.sudo()
+        rounding = product_id.uom_id.rounding
+        quants = self or self._gather(product_id, location_id, lot_id=lot_id, package_id=package_id, owner_id=owner_id, strict=strict, qty=quantity)
+        reserved_quants = []
+
+        if float_compare(quantity, 0, precision_rounding=rounding) > 0:
+            # if we want to reserve
+            available_quantity = sum(quants.filtered(lambda q: float_compare(q.quantity, 0, precision_rounding=rounding) > 0).mapped('quantity')) - sum(quants.mapped('reserved_quantity'))
+        elif float_compare(quantity, 0, precision_rounding=rounding) < 0:
+            # if we want to unreserve
+            available_quantity = sum(quants.mapped('reserved_quantity'))
+            if float_compare(abs(quantity), available_quantity, precision_rounding=rounding) > 0:
+                raise UserError(_('It is not possible to unreserve more products of %s than you have in stock.', product_id.display_name))
+        else:
+            return reserved_quants
+
+        negative_reserved_quantity = defaultdict(float)
+        for quant in quants:
+            if float_compare(quant.quantity - quant.reserved_quantity, 0, precision_rounding=rounding) < 0:
+                negative_reserved_quantity[(quant.location_id, quant.lot_id, quant.package_id, quant.owner_id)] += quant.quantity - quant.reserved_quantity
+        for quant in quants:
+            if float_compare(quantity, 0, precision_rounding=rounding) > 0:
+                max_quantity_on_quant = quant.quantity - quant.reserved_quantity
+                if float_compare(max_quantity_on_quant, 0, precision_rounding=rounding) <= 0:
+                    continue
+                negative_quantity = negative_reserved_quantity[(quant.location_id, quant.lot_id, quant.package_id, quant.owner_id)]
+                if negative_quantity:
+                    negative_qty_to_remove = min(abs(negative_quantity), max_quantity_on_quant)
+                    negative_reserved_quantity[(quant.location_id, quant.lot_id, quant.package_id, quant.owner_id)] += negative_qty_to_remove
+                    max_quantity_on_quant -= negative_qty_to_remove
+                if float_compare(max_quantity_on_quant, 0, precision_rounding=rounding) <= 0:
+                    continue
+                max_quantity_on_quant = min(max_quantity_on_quant, quantity)
+                reserved_quants.append((quant, max_quantity_on_quant))
+                quantity -= max_quantity_on_quant
+                available_quantity -= max_quantity_on_quant
+            else:
+                max_quantity_on_quant = min(quant.reserved_quantity, abs(quantity))
+                reserved_quants.append((quant, -max_quantity_on_quant))
+                quantity += max_quantity_on_quant
+                available_quantity += max_quantity_on_quant
+
+            if float_is_zero(quantity, precision_rounding=rounding) or float_is_zero(available_quantity, precision_rounding=rounding):
+                break
+        return reserved_quants
 
     @api.onchange('location_id', 'product_id', 'lot_id', 'package_id', 'owner_id')
     def _onchange_location_or_product_id(self):
@@ -764,7 +947,6 @@ class StockQuant(models.Model):
             })
         return self._get_available_quantity(product_id, location_id, lot_id=lot_id, package_id=package_id, owner_id=owner_id, strict=False, allow_negative=True), in_date
 
-    @api.model
     def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None, strict=False):
         """ Increase the reserved quantity, i.e. increase `reserved_quantity` for the set of quants
         sharing the combination of `product_id, location_id` if `strict` is set to False or sharing
@@ -778,43 +960,10 @@ class StockQuant(models.Model):
             was done and how much the system was able to reserve on it
         """
         self = self.sudo()
-        rounding = product_id.uom_id.rounding
-        quants = self._gather(product_id, location_id, lot_id=lot_id, package_id=package_id, owner_id=owner_id, strict=strict)
-        reserved_quants = []
-
-        if float_compare(quantity, 0, precision_rounding=rounding) > 0:
-            # if we want to reserve
-            available_quantity = sum(quants.filtered(lambda q: float_compare(q.quantity, 0, precision_rounding=rounding) > 0).mapped('quantity')) - sum(quants.mapped('reserved_quantity'))
-            if float_compare(quantity, available_quantity, precision_rounding=rounding) > 0:
-                raise UserError(_('It is not possible to reserve more products of %s than you have in stock.', product_id.display_name))
-        elif float_compare(quantity, 0, precision_rounding=rounding) < 0:
-            # if we want to unreserve
-            available_quantity = sum(quants.mapped('reserved_quantity'))
-            if float_compare(abs(quantity), available_quantity, precision_rounding=rounding) > 0:
-                raise UserError(_('It is not possible to unreserve more products of %s than you have in stock.', product_id.display_name))
-        else:
-            return reserved_quants
-
-        for quant in quants:
-            if float_compare(quantity, 0, precision_rounding=rounding) > 0:
-                max_quantity_on_quant = quant.quantity - quant.reserved_quantity
-                if float_compare(max_quantity_on_quant, 0, precision_rounding=rounding) <= 0:
-                    continue
-                max_quantity_on_quant = min(max_quantity_on_quant, quantity)
-                quant.reserved_quantity += max_quantity_on_quant
-                reserved_quants.append((quant, max_quantity_on_quant))
-                quantity -= max_quantity_on_quant
-                available_quantity -= max_quantity_on_quant
-            else:
-                max_quantity_on_quant = min(quant.reserved_quantity, abs(quantity))
-                quant.reserved_quantity -= max_quantity_on_quant
-                reserved_quants.append((quant, -max_quantity_on_quant))
-                quantity += max_quantity_on_quant
-                available_quantity += max_quantity_on_quant
-
-            if float_is_zero(quantity, precision_rounding=rounding) or float_is_zero(available_quantity, precision_rounding=rounding):
-                break
-        return reserved_quants
+        quants_to_reserve = self._get_reserve_quantity(product_id, location_id, quantity, lot_id=lot_id, package_id=package_id, owner_id=owner_id, strict=strict)
+        for quant, qty_to_reserve in quants_to_reserve:
+            quant.reserved_quantity += qty_to_reserve
+        return quants_to_reserve
 
     @api.model
     def _unlink_zero_quants(self):
@@ -967,7 +1116,6 @@ class StockQuant(models.Model):
         ctx.pop('group_by', None)
         action = {
             'name': _('Locations'),
-            'view_type': 'tree',
             'view_mode': 'list,form',
             'res_model': 'stock.quant',
             'type': 'ir.actions.act_window',

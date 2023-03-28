@@ -137,6 +137,10 @@ from urllib.parse import urlparse
 from zlib import adler32
 
 import babel.core
+import geoip2.database
+import geoip2.models
+import geoip2.errors
+import maxminddb
 import psycopg2
 import werkzeug.datastructures
 import werkzeug.exceptions
@@ -166,7 +170,6 @@ from .modules.registry import Registry
 from .service import security, model as service_model
 from .tools import (config, consteq, date_utils, file_path, parse_version,
                     profiler, submap, unique, ustr,)
-from .tools.geoipresolver import GeoIPResolver
 from .tools.func import filter_kwargs, lazy_property
 from .tools.mimetypes import guess_mimetype
 from .tools._vendor import sessions
@@ -221,6 +224,15 @@ def get_default_session():
         'profile_collectors': None,
         'profile_params': None,
     }
+<<<<<<< HEAD
+=======
+
+# Two empty objects used when the geolocalization failed. They have the
+# sames attributes as real countries/cities except that accessing them
+# evaluates to None.
+GEOIP_EMPTY_COUNTRY = geoip2.models.Country({})
+GEOIP_EMPTY_CITY = geoip2.models.City({})
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 # The request mimetypes that transport JSON in their body.
 JSON_MIMETYPES = ('application/json', 'application/json-rpc')
@@ -479,7 +491,7 @@ class Stream:
         elif attachment.db_datas:
             self.type = 'data'
             self.data = attachment.raw
-            self.last_modified = attachment['__last_update']
+            self.last_modified = attachment.write_date
             self.size = len(self.data)
 
         elif attachment.url:
@@ -512,7 +524,7 @@ class Stream:
             type='data',
             data=data,
             etag=request.env['ir.attachment']._compute_checksum(data),
-            last_modified=record['__last_update'] if record._log_access else None,
+            last_modified=record.write_date if record._log_access else None,
             size=len(data),
         )
 
@@ -789,13 +801,7 @@ def _generate_routing_rules(modules, nodb_only, converters=None):
                     _logger.warning("The endpoint %s is not decorated by @route(), decorating it myself.", f'{cls.__module__}.{cls.__name__}.{method_name}')
                     submethod = route()(submethod)
 
-                # Ensure "type" is defined on each method's own routing,
-                # also ensure overrides don't change the routing type.
-                default_type = submethod.original_routing.get('type', 'http')
-                routing_type = merged_routing.setdefault('type', default_type)
-                if submethod.original_routing.get('type') not in (None, routing_type):
-                    _logger.warning("The endpoint %s changes the route type, using the original type: %r.", f'{cls.__module__}.{cls.__name__}.{method_name}', routing_type)
-                submethod.original_routing['type'] = routing_type
+                _check_and_complete_route_definition(cls, submethod, merged_routing)
 
                 merged_routing.update(submethod.original_routing)
 
@@ -818,6 +824,24 @@ def _generate_routing_rules(modules, nodb_only, converters=None):
 
                 yield (url, endpoint)
 
+
+def _check_and_complete_route_definition(controller_cls, submethod, merged_routing):
+    """Verify and complete the route definition.
+
+    * Ensure 'type' is defined on each method's own routing.
+    * also ensure overrides don't change the routing type.
+
+    :param submethod: route method
+    :param dict merged_routing: accumulated routing values (defaults + submethod ancestor methods)
+    """
+    default_type = submethod.original_routing.get('type', 'http')
+    routing_type = merged_routing.setdefault('type', default_type)
+    if submethod.original_routing.get('type') not in (None, routing_type):
+        _logger.warning(
+            "The endpoint %s changes the route type, using the original type: %r.",
+            f'{controller_cls.__module__}.{controller_cls.__name__}.{submethod.__name__}',
+            routing_type)
+    submethod.original_routing['type'] = routing_type
 
 # =========================================================
 # Session
@@ -994,9 +1018,120 @@ class Session(collections.abc.MutableMapping):
         self.context['lang'] = request.default_lang() if request else DEFAULT_LANG
         self.should_rotate = True
 
+        if request and request.env:
+            request.env['ir.http']._post_logout()
+
     def touch(self):
         self.is_dirty = True
 
+
+
+# =========================================================
+# GeoIP
+# =========================================================
+
+class GeoIP(collections.abc.Mapping):
+    """
+    Ip Geolocalization utility, determine information such as the
+    country or the timezone of the user based on their IP Address.
+
+    The instances share the same API as `:class:`geoip2.models.City`
+    <https://geoip2.readthedocs.io/en/latest/#geoip2.models.City>`_.
+
+    When the IP couldn't be geolocalized (missing database, bad address)
+    then an empty object is returned. This empty object can be used like
+    a regular one with the exception that all info are set None.
+
+    :param str ip: The IP Address to geo-localize
+
+    .. note:
+
+        The geoip info the the current request are available at
+        :attr:`~odoo.http.request.geoip`.
+
+    .. code-block:
+
+        >>> GeoIP('127.0.0.1').country.iso_code
+        >>> odoo_ip = socket.gethostbyname('odoo.com')
+        >>> GeoIP(odoo_ip).country.iso_code
+        'FR'
+    """
+
+    def __init__(self, ip):
+        self.ip = ip
+
+    @lazy_property
+    def _city_record(self):
+        try:
+            return root.geoip_city_db.city(self.ip)
+        except (OSError, maxminddb.InvalidDatabaseError):
+            return GEOIP_EMPTY_CITY
+        except geoip2.errors.AddressNotFoundError:
+            return GEOIP_EMPTY_CITY
+
+    @lazy_property
+    def _country_record(self):
+        if '_city_record' in vars(self):
+            # the City class inherits from the Country class and the
+            # city record is in cache already, save a geolocalization
+            return self._city_record
+        try:
+            return root.geoip_country_db.country(self.ip)
+        except (OSError, maxminddb.InvalidDatabaseError):
+            return self._city_record
+        except geoip2.errors.AddressNotFoundError:
+            return GEOIP_EMPTY_COUNTRY
+
+    @property
+    def country_name(self):
+        return self.country.name or self.continent.name
+
+    @property
+    def country_code(self):
+        return self.country.iso_code or self.continent.code
+
+    def __getattr__(self, attr):
+        # Be smart and determine whether the attribute exists on the
+        # country object or on the city object.
+        if hasattr(GEOIP_EMPTY_COUNTRY, attr):
+            return getattr(self._country_record, attr)
+        if hasattr(GEOIP_EMPTY_CITY, attr):
+            return getattr(self._city_record, attr)
+        raise AttributeError(f"{self} has no attribute {attr!r}")
+
+    def __bool__(self):
+        return self.country_name is not None
+
+    # Old dict API, undocumented for now, will be deprecated some day
+    def __getitem__(self, item):
+        if item == 'country_name':
+            return self.country_name
+
+        if item == 'country_code':
+            return self.country_code
+
+        if item == 'city':
+            return self.city.name
+
+        if item == 'latitude':
+            return self.location.latitude
+
+        if item == 'longitude':
+            return self.location.longitude
+
+        if item == 'region':
+            return self.subdivisions[0].iso_code if self.subdivisions else None
+
+        if item == 'time_zone':
+            return self.location.time_zone
+
+        raise KeyError(item)
+
+    def __iter__(self):
+        raise NotImplementedError("The dictionnary GeoIP API is deprecated.")
+
+    def __len__(self):
+        raise NotImplementedError("The dictionnary GeoIP API is deprecated.")
 
 # =========================================================
 # Request and Response
@@ -1138,6 +1273,10 @@ class Request:
         self.dispatcher = _dispatchers['http'](self)  # until we match
         #self.params = {}  # set by the Dispatcher
 
+<<<<<<< HEAD
+=======
+        self.geoip = GeoIP(httprequest.remote_addr)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         self.registry = None
         self.env = None
 
@@ -1239,11 +1378,13 @@ class Request:
 
     _cr = cr
 
-    @property
-    def geoip(self):
-        """
-        Get the remote address geolocalisation.
+    @lazy_property
+    def best_lang(self):
+        lang = self.httprequest.accept_languages.best
+        if not lang:
+            return None
 
+<<<<<<< HEAD
         When geolocalization is successful, the return value is a
         dictionary whose format is:
 
@@ -1259,6 +1400,17 @@ class Request:
                                    if self.db else self._geoip_resolve())
             self.session.is_dirty = was_dirty
         return self.session._geoip
+=======
+        try:
+            code, territory, _, _ = babel.core.parse_locale(lang, sep='-')
+            if territory:
+                lang = f'{code}_{territory}'
+            else:
+                lang = babel.core.LOCALE_ALIASES[code]
+            return lang
+        except (ValueError, KeyError):
+            return None
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     @lazy_property
     def best_lang(self):
@@ -1339,11 +1491,14 @@ class Request:
         :rtype: str
         """
         return self.best_lang or DEFAULT_LANG
+<<<<<<< HEAD
 
     def _geoip_resolve(self):
         if not (root.geoip_resolver and self.httprequest.remote_addr):
             return {}
         return root.geoip_resolver.resolve(self.httprequest.remote_addr) or {}
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     def get_http_params(self):
         """
@@ -1492,10 +1647,8 @@ class Request:
             return
 
         if sess.should_rotate:
-            sess['_geoip'] = self.geoip
             root.session_store.rotate(sess, self.env)  # it saves
         elif sess.is_dirty:
-            sess['_geoip'] = self.geoip
             root.session_store.save(sess)
 
         # We must not set the cookie if the session id was specified
@@ -1922,20 +2075,34 @@ class Application:
         _logger.debug('HTTP sessions stored in: %s', path)
         return FilesystemSessionStore(path, session_class=Session, renew_missing=True)
 
-    @lazy_property
-    def geoip_resolver(self):
-        try:
-            return GeoIPResolver.open(config.get('geoip_database'))
-        except Exception as e:
-            _logger.warning('Cannot load GeoIP: %s', e)
-
     def get_db_router(self, db):
         if not db:
             return self.nodb_routing_map
         return request.registry['ir.http'].routing_map()
 
+    @lazy_property
+    def geoip_city_db(self):
+        try:
+            return geoip2.database.Reader(config['geoip_city_db'])
+        except (OSError, maxminddb.InvalidDatabaseError):
+            _logger.debug(
+                "Couldn't load Geoip City file at %s. IP Resolver disabled.",
+                config['geoip_city_db'], exc_info=True
+            )
+            raise
+
+    @lazy_property
+    def geoip_country_db(self):
+        try:
+            return geoip2.database.Reader(config['geoip_country_db'])
+        except (OSError, maxminddb.InvalidDatabaseError) as exc:
+            _logger.debug("Couldn't load Geoip Country file (%s). Fallbacks on Geoip City.", exc,)
+            raise
+
     def set_csp(self, response):
         headers = response.headers
+        headers['X-Content-Type-Options'] = 'nosniff'
+
         if 'Content-Security-Policy' in headers:
             return
 
@@ -1944,7 +2111,6 @@ class Application:
             return
 
         headers['Content-Security-Policy'] = "default-src 'none'"
-        headers['X-Content-Type-Options'] = 'nosniff'
 
     def __call__(self, environ, start_response):
         """

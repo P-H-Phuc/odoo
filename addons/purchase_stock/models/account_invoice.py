@@ -42,8 +42,19 @@ class AccountMove(models.Model):
                     continue
 
                 # Retrieve accounts needed to generate the price difference.
+<<<<<<< HEAD
                 debit_expense_account = line._get_price_diff_account()
                 if not debit_expense_account:
+=======
+                debit_pdiff_account = False
+                if line.product_id.cost_method == 'standard':
+                    debit_pdiff_account = line.product_id.property_account_creditor_price_difference \
+                        or line.product_id.categ_id.property_account_creditor_price_difference_categ
+                    debit_pdiff_account = move.fiscal_position_id.map_account(debit_pdiff_account)
+                else:
+                    debit_pdiff_account = line.product_id.product_tmpl_id.get_product_accounts(fiscal_pos=move.fiscal_position_id)['expense']
+                if not debit_pdiff_account:
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     continue
                 # Retrieve stock valuation moves.
                 valuation_stock_moves = self.env['stock.move'].search([
@@ -74,7 +85,10 @@ class AccountMove(models.Model):
                         move.company_id, valuation_date, round=False
                     )
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 price_unit = line._get_gross_unit_price()
 
                 price_unit_val_dif = price_unit - valuation_price_unit
@@ -110,7 +124,11 @@ class AccountMove(models.Model):
                             line.company_currency_id,
                             line.company_id, fields.Date.today(),
                         ),
+<<<<<<< HEAD
                         'account_id': debit_expense_account.id,
+=======
+                        'account_id': debit_pdiff_account.id,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         'analytic_distribution': line.analytic_distribution,
                         'display_type': 'cogs',
                     }

@@ -120,7 +120,7 @@ class TestEventFullCommon(EventCrmCase, TestSalesCommon, MockVisitor):
         # ------------------------------------------------------------
         test_registration_report = cls.env.ref('test_event_full.event_registration_report_test')
         subscription_template = cls.env.ref('event.event_subscription')
-        subscription_template.write({'report_template': test_registration_report.id})
+        subscription_template.write({'report_template_ids': [(6, 0, test_registration_report.ids)]})
         cls.test_event_type = cls.env['event.type'].create({
             'auto_confirm': True,
             'default_timezone': 'Europe/Paris',
@@ -336,7 +336,7 @@ class TestWEventCommon(HttpCaseWithUserDemo, HttpCaseWithUserPortal, MockVisitor
             'color': 8,
         })
         self.env['event.event'].search(
-            [('name', 'like', '%Online Reveal%')]
+            [('name', 'like', 'Online Reveal')]
         ).write(
             {'name': 'Do not click on me'}
         )
@@ -433,7 +433,7 @@ class TestWEventCommon(HttpCaseWithUserDemo, HttpCaseWithUserPortal, MockVisitor
             'partner_id': self.event_speaker.id,
         })
         self.track_2 = self.env['event.track'].create({
-            'name': 'Our Last Day Together !',
+            'name': 'Our Last Day Together!',
             'event_id': self.event.id,
             'stage_id': self.env.ref('website_event_track.event_track_stage3').id,
             'date': self.reference_now + timedelta(days=1),

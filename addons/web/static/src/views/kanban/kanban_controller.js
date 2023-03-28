@@ -5,9 +5,10 @@ import { Layout } from "@web/search/layout";
 import { usePager } from "@web/search/pager_hook";
 import { useModel } from "@web/views/model";
 import { standardViewProps } from "@web/views/standard_view_props";
-import { useSetupView } from "@web/views/view_hook";
+import { MultiRecordViewButton } from "@web/views/view_button/multi_record_view_button";
 import { useViewButtons } from "@web/views/view_button/view_button_hook";
-import { KanbanRenderer } from "./kanban_renderer";
+import { useSetupView } from "@web/views/view_hook";
+import { canQuickCreate, KanbanRenderer } from "./kanban_renderer";
 
 import { Component, useRef } from "@odoo/owl";
 
@@ -35,14 +36,20 @@ export class KanbanController extends Component {
             tooltipInfo: archInfo.tooltipInfo,
             rootState,
         });
+        this.headerButtons = archInfo.headerButtons;
 
+<<<<<<< HEAD
         const rootRef = useRef("root");
         useViewButtons(this.model, rootRef, {
+=======
+        this.rootRef = useRef("root");
+        useViewButtons(this.model, this.rootRef, {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             beforeExecuteAction: this.beforeExecuteActionButton.bind(this),
             afterExecuteAction: this.afterExecuteActionButton.bind(this),
         });
         useSetupView({
-            rootRef,
+            rootRef: this.rootRef,
             getGlobalState: () => {
                 return {
                     resIds: this.model.root.records.map((rec) => rec.resId), // WOWL: ask LPE why?
@@ -92,7 +99,7 @@ export class KanbanController extends Component {
     async createRecord(group) {
         const { activeActions, onCreate } = this.props.archInfo;
         const { root } = this.model;
-        if (activeActions.quickCreate && onCreate === "quick_create" && root.canQuickCreate()) {
+        if (activeActions.quickCreate && onCreate === "quick_create" && canQuickCreate(root)) {
             await root.quickCreate(group);
         } else if (onCreate && onCreate !== "quick_create") {
             const options = {
@@ -116,6 +123,19 @@ export class KanbanController extends Component {
             return false;
         }
         return list.isGrouped ? list.groups.length > 0 || !createGroup : true;
+<<<<<<< HEAD
+=======
+    }
+
+    async beforeExecuteActionButton(clickParams) {}
+
+    async afterExecuteActionButton(clickParams) {}
+
+    async onUpdatedPager() {}
+
+    scrollTop() {
+        this.rootRef.el.querySelector(".o_content").scrollTo({ top: 0 });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 
     async beforeExecuteActionButton(clickParams) {}
@@ -126,7 +146,7 @@ export class KanbanController extends Component {
 }
 
 KanbanController.template = `web.KanbanView`;
-KanbanController.components = { Layout, KanbanRenderer };
+KanbanController.components = { Layout, KanbanRenderer, MultiRecordViewButton };
 KanbanController.props = {
     ...standardViewProps,
     defaultGroupBy: { validate: (dgb) => !dgb || typeof dgb === "string", optional: true },

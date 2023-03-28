@@ -2,7 +2,11 @@
 <odoo>
     <record id="partner_demo_company_rs" model="res.partner">
         <field name="name">RS Company</field>
+<<<<<<< HEAD
         <field name="vat"></field>
+=======
+        <field name="vat"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         <field name="street">Pasterova 2</field>
         <field name="city">Beograd</field>
         <field name="country_id" ref="base.rs"/>
@@ -27,7 +31,12 @@
     </function>
 
     <function model="account.chart.template" name="try_loading">
+<<<<<<< HEAD
         <value eval="[ref('l10n_rs.l10n_rs_chart_template')]"/>
+=======
+        <value eval="[]"/>
+        <value>rs</value>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         <value model="res.company" eval="obj().env.ref('l10n_rs.demo_company_rs')"/>
     </function>
 </odoo>

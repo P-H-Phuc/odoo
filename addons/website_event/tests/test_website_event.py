@@ -23,7 +23,11 @@ class TestUi(HttpCaseWithUserDemo):
             'website_menu': True,
         })
         intro_event_menu = event.introduction_menu_ids
+<<<<<<< HEAD
         url = intro_event_menu.menu_id.clean_url()
+=======
+        url = intro_event_menu.menu_id._clean_url()
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         self.start_tour(self.env['website'].get_client_action_url(url), 'website_event_pages_seo', login='admin')
         self.assertEqual(intro_event_menu.view_id.website_meta_title, "Hello, world!")
         self.assertEqual(event.website_meta_title, False)

@@ -22,7 +22,6 @@
 
         <record id="action_view_base_module_upgrade" model="ir.actions.act_window">
             <field name="name">Apply Schedule Upgrade</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">base.module.upgrade</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
@@ -42,7 +41,7 @@
             <field name="priority" eval="20"/>
             <field name="arch" type="xml">
                 <form string="Apply Schedule Upgrade">
-                    <div><span class="o_form_label">The selected modules have been updated / installed !</span></div>
+                    <div><span class="o_form_label">The selected modules have been updated/installed!</span></div>
                     <div><span class="o_form_label">We suggest to reload the menu tab to see the new menus (Ctrl+T then Ctrl+R)."</span></div>
                     <footer>
                         <button name="config" string="Start configuration" type="object" class="btn-primary" data-hotkey="q"/>
@@ -54,7 +53,6 @@
 
         <record id="action_view_base_module_upgrade_install" model="ir.actions.act_window">
             <field name="name">Module Upgrade Install</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">base.module.upgrade</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="view_base_module_upgrade_install"/>

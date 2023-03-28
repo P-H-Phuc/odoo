@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
+from psycopg2 import IntegrityError
+
 from odoo.addons.onboarding.tests.common import TestOnboardingCommon
+from odoo.tools import mute_logger
 
 
 class TestOnboarding(TestOnboardingCommon):
@@ -131,6 +134,7 @@ class TestOnboarding(TestOnboardingCommon):
 
         self.assert_onboarding_is_not_done(self.onboarding_1)
 
+<<<<<<< HEAD
     def test_no_crash_on_multiple_progress_records(self):
         existing_progress = self.env['onboarding.progress'].search([
             ('onboarding_id', '=', self.onboarding_1.id), ('company_id', '=', False)
@@ -164,3 +168,36 @@ class TestOnboarding(TestOnboardingCommon):
         # Same with onboarding progress
         _ = self.onboarding_1.current_progress_id
         self.onboarding_1.action_close()
+=======
+    @mute_logger('odoo.sql_db')
+    def test_progress_no_company_uniqueness(self):
+        """Check that there cannot be two progress records created for
+        the same onboarding when it is configured to be completed only
+        once for the whole db and not per-company (is_per_company=False).
+        NB: Postgresql UNIQUE constraint failures raise IntegrityErrors.
+        """
+        self.assertFalse(self.onboarding_1.current_progress_id.company_id)
+        with self.assertRaises(IntegrityError):
+            self.env['onboarding.progress'].create({
+                'onboarding_id': self.onboarding_1.id,
+                'company_id': False
+            })
+
+    @mute_logger('odoo.sql_db')
+    def test_progress_per_company_uniqueness(self):
+        """Check that there cannot be two progress records created for
+        the same company and the same onboarding when the onboarding is
+        configured to be completed per-company.
+        See also ``test_progress_no_company_uniqueness``
+        """
+        # Updating onboarding to per-company
+        self.onboarding_1.is_per_company = True
+        # Required after progress reset (simulate role of controller)
+        self.onboarding_1._search_or_create_progress()
+
+        with self.assertRaises(IntegrityError):
+            self.env['onboarding.progress'].create({
+                'onboarding_id': self.onboarding_1.id,
+                'company_id': self.env.company.id
+            })
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

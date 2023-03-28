@@ -1,13 +1,18 @@
 odoo.define('mass_mailing.mass_mailing_editor_tour', function (require) {
     "use strict";
 
+<<<<<<< HEAD
     var tour = require('web_tour.tour');
     const { boundariesIn, setSelection } = require('@web_editor/js/editor/odoo-editor/src/utils/utils');
+=======
+    const { registry } = require("@web/core/registry");
+    const { stepUtils } = require('@web_tour/tour_service/tour_utils');
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
-    tour.register('mass_mailing_editor_tour', {
+    registry.category("web_tour.tours").add('mass_mailing_editor_tour', {
         url: '/web',
         test: true,
-    }, [tour.stepUtils.showAppsMenuItem(), {
+        steps: [stepUtils.showAppsMenuItem(), {
         trigger: '.o_app[data-menu-xmlid="mass_mailing.mass_mailing_menu_root"]',
     }, {
         trigger: 'button.o_list_button_add',
@@ -52,6 +57,7 @@ odoo.define('mass_mailing.mass_mailing_editor_tour', function (require) {
     }, {
         trigger: '.o_form_view', // blur previous input
     },
+<<<<<<< HEAD
     ...tour.stepUtils.saveForm(),
     {
         trigger: 'iframe .o_editable',
@@ -152,4 +158,11 @@ odoo.define('mass_mailing.mass_mailing_editor_tour', function (require) {
         },
         ...tour.stepUtils.discardForm(),
     ]);
+=======
+    ...stepUtils.saveForm(),
+    {
+        trigger: 'iframe .o_editable',
+        run: () => {},
+    }]});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 });

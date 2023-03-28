@@ -152,7 +152,11 @@ export class PropertyDefinition extends Component {
      * @param {event} event
      */
     onPropertyLabelKeypress(event) {
+<<<<<<< HEAD
         if (event.key !== 'Enter') {
+=======
+        if (event.key !== "Enter") {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             return;
         }
         this.props.close();
@@ -189,8 +193,13 @@ export class PropertyDefinition extends Component {
 
         this.props.onChange(propertyDefinition);
         this.state.propertyDefinition = propertyDefinition;
+<<<<<<< HEAD
         this.state.resModel = '';
         this.state.resModelDescription = '';
+=======
+        this.state.resModel = "";
+        this.state.resModelDescription = "";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.state.typeLabel = this._typeLabel(newType);
     }
 
@@ -256,7 +265,11 @@ export class PropertyDefinition extends Component {
      * @param {string} direction, either 'up' or 'down'
      */
     onPropertyMove(direction) {
+<<<<<<< HEAD
         if (direction === 'up') {
+=======
+        if (direction === "up") {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             this.state.propertyIndex--;
         } else {
             this.state.propertyIndex++;
@@ -334,7 +347,7 @@ export class PropertyDefinition extends Component {
                     return;
                 }
                 this.state.resModelDescription = result[0].display_name;
-            } catch (_) {
+            } catch {
                 // can not read the ir.model
                 this.state.resModelDescription = sprintf(
                     _lt('You do not have access to the model "%s".'),

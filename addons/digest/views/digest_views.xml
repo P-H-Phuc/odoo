@@ -57,7 +57,11 @@
                                 <group name="custom" string="Custom" groups="base.group_system">
                                     <div colspan="2">
                                         <p>Want to add your own KPIs?<br />
+<<<<<<< HEAD
                                         <a href="https://www.odoo.com/documentation/16.0/applications/general/digest_emails.html#custom-digest-emails" target="_blank"><i class="fa fa-arrow-right"></i> Check our Documentation</a></p>
+=======
+                                        <a href="https://www.odoo.com/documentation/master/applications/general/digest_emails.html#custom-digest-emails" target="_blank"><i class="fa fa-arrow-right"></i> Check our Documentation</a></p>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                     </div>
                                 </group>
                             </group>

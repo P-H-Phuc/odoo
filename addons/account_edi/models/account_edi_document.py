@@ -258,3 +258,29 @@ class AccountEdiDocument(models.Model):
         # Mark the CRON to be triggered again asap since there is some remaining jobs to process.
         if nb_remaining_jobs > 0:
             self.env.ref('account_edi.ir_cron_edi_network')._trigger()
+
+    def _filter_edi_attachments_for_mailing(self):
+        """
+        Will either return the information about the attachment of the edi document for adding the attachment in the
+        mail, or the attachment id to be linked to the 'send & print' wizard.
+        Can be overridden where e.g. a zip-file needs to be sent with the individual files instead of the entire zip
+        IMPORTANT:
+        * If the attachment's id is returned, no new attachment will be created, the existing one on the move is linked
+        to the wizard (see computed attachment_ids field in mail.compose.message).
+        * If the attachment's content is returned, a new one is created and linked to the wizard. Thus, when sending
+        the mail (clicking on 'send & print' in the wizard), a new attachment is added to the move (see
+        _action_send_mail in mail.compose.message).
+        :param document: an edi document
+        :return: dict {
+            'attachments': tuple with the name and base64 content of the attachment}
+            'attachment_ids': list containing the id of the attachment
+        }
+        """
+        self.ensure_one()
+        attachment_sudo = self.sudo().attachment_id
+        if not attachment_sudo:
+            return {}
+        if not (attachment_sudo.res_model and attachment_sudo.res_id):
+            # do not return system attachment not linked to a record
+            return {}
+        return {'attachment_ids': attachment_sudo.ids}

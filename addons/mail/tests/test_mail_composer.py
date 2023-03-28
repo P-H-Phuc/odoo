@@ -84,7 +84,11 @@ class TestMailComposerForm(TestMailComposer):
         form = Form(self.env['mail.compose.message'].with_context({
             'default_partner_ids': partner_classic.ids,
             'default_model': test_record._name,
+<<<<<<< HEAD
             'default_res_id': test_record.id,
+=======
+            'default_res_ids': test_record.ids,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }))
         form.body = '<p>Hello</p>'
         self.assertEqual(
@@ -103,7 +107,11 @@ class TestMailComposerForm(TestMailComposer):
         message = self.test_record.message_ids[0]
         self.assertEqual(message.body, '<p>Hello</p>')
         self.assertEqual(message.partner_ids, partner_classic)
+<<<<<<< HEAD
         self.assertEqual(message.subject, f'Re: {test_record.name}')
+=======
+        self.assertEqual(message.subject, f'{test_record.name}')
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     @mute_logger('odoo.addons.mail.models.mail_mail')
     @users('employee')
@@ -116,7 +124,11 @@ class TestMailComposerForm(TestMailComposer):
         form = Form(self.env['mail.compose.message'].with_context({
             'default_partner_ids': (partner_private + partner_classic).ids,
             'default_model': test_record._name,
+<<<<<<< HEAD
             'default_res_id': test_record.id,
+=======
+            'default_res_ids': test_record.ids,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }))
         form.body = '<p>Hello</p>'
         self.assertEqual(
@@ -136,7 +148,11 @@ class TestMailComposerForm(TestMailComposer):
         message = self.test_record.message_ids[0]
         self.assertEqual(message.body, '<p>Hello</p>')
         self.assertEqual(message.partner_ids, partner_private + partner_classic)
+<<<<<<< HEAD
         self.assertEqual(message.subject, f'Re: {test_record.name}')
+=======
+        self.assertEqual(message.subject, f'{test_record.name}')
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     @mute_logger('odoo.addons.base.models.ir_rule', 'odoo.addons.mail.models.mail_mail')
     @users('employee')
@@ -156,7 +172,11 @@ class TestMailComposerForm(TestMailComposer):
             _form = Form(self.env['mail.compose.message'].with_context({
                 'default_partner_ids': (self.partner_private + partner_classic).ids,
                 'default_model': test_record._name,
+<<<<<<< HEAD
                 'default_res_id': test_record.id,
+=======
+                'default_res_ids': test_record.ids,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             }))
 
     @mute_logger('odoo.addons.mail.models.mail_mail')
@@ -177,7 +197,11 @@ class TestMailComposerForm(TestMailComposer):
 
         form = Form(self.env['mail.compose.message'].with_context({
             'default_model': test_record._name,
+<<<<<<< HEAD
             'default_res_id': test_record.id,
+=======
+            'default_res_ids': test_record.ids,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'default_template_id': template.id,
         }))
 
@@ -229,7 +253,7 @@ class TestMailComposerRendering(TestMailComposer):
             'subject': 'MSO FTW',
         })
 
-        values = mail_compose_message.get_mail_values(self.partner_employee.ids)
+        values = mail_compose_message._prepare_mail_values(self.partner_employee.ids)
 
         self.assertIn(
             self.body_html,
@@ -254,7 +278,7 @@ class TestMailComposerRendering(TestMailComposer):
         with self.mock_mail_gateway(mail_unlink_sent=True):
             composer._action_send_mail()
 
-        values = composer.get_mail_values(self.partner_employee.ids)
+        values = composer._prepare_mail_values(self.partner_employee.ids)
 
         self.assertIn(
             self.body_html,

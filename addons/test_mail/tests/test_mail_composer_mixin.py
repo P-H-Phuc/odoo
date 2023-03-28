@@ -41,6 +41,7 @@ class TestMailComposerMixin(TestMailCommon, TestRecipients):
     def test_content_sync(self):
         """ Test updating template updates the dynamic fields accordingly. """
         source = self.test_record.with_env(self.env)
+<<<<<<< HEAD
         composer = self.env['mail.test.composer.mixin'].create({
             'name': 'Invite',
             'template_id': self.mail_template.id,
@@ -54,6 +55,57 @@ class TestMailComposerMixin(TestMailCommon, TestRecipients):
         self.assertEqual(subject, f'EnglishSubject for {source.name}')
         body = composer._render_field('body', source.ids)[source.id]
         self.assertEqual(body, f'<p>EnglishBody for {source.name}</p>')
+=======
+        template = self.mail_template.with_env(self.env)
+        template_void = template.copy()
+        template_void.write({
+            'body_html': '<p><br /></p>',
+            'lang': False,
+            'subject': False,
+        })
+
+        composer = self.env['mail.test.composer.mixin'].create({
+            'name': 'Invite',
+            'template_id': template.id,
+            'source_ids': [(4, source.id)],
+        })
+        self.assertEqual(composer.body, template.body_html)
+        self.assertTrue(composer.body_has_template_value)
+        self.assertEqual(composer.lang, template.lang)
+        self.assertEqual(composer.subject, template.subject)
+
+        # check rendering
+        body = composer._render_field('body', source.ids)[source.id]
+        self.assertEqual(body, f'<p>EnglishBody for {source.name}</p>')
+        subject = composer._render_field('subject', source.ids)[source.id]
+        self.assertEqual(subject, f'EnglishSubject for {source.name}')
+
+        # manual values > template default values
+        composer.write({
+            'body': '<p>CustomBody for <t t-out="object.name"/></p>',
+            'subject': 'CustomSubject for {{ object.name }}',
+        })
+        self.assertFalse(composer.body_has_template_value)
+
+        body = composer._render_field('body', source.ids)[source.id]
+        self.assertEqual(body, f'<p>CustomBody for {source.name}</p>')
+        subject = composer._render_field('subject', source.ids)[source.id]
+        self.assertEqual(subject, f'CustomSubject for {source.name}')
+
+        # template with void values: should not force void (TODO)
+        composer.template_id = template_void.id
+        self.assertEqual(composer.body, '<p>CustomBody for <t t-out="object.name"/></p>')
+        self.assertFalse(composer.body_has_template_value)
+        self.assertEqual(composer.lang, template.lang)
+        self.assertEqual(composer.subject, 'CustomSubject for {{ object.name }}')
+
+        # reset template TOOD should reset
+        composer.write({'template_id': False})
+        self.assertFalse(composer.body)
+        self.assertFalse(composer.body_has_template_value)
+        self.assertFalse(composer.lang)
+        self.assertFalse(composer.subject)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     @users("employee")
     def test_rendering_custom(self):
@@ -84,7 +136,10 @@ class TestMailComposerMixin(TestMailCommon, TestRecipients):
         source = self.test_record.with_env(self.env)
         composer = self.env['mail.test.composer.mixin'].create({
             'description': '<p>Description for <t t-esc="object.name"/></p>',
+<<<<<<< HEAD
             'lang': '{{ object.customer_id.lang }}',
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'name': 'Invite',
             'template_id': self.mail_template.id,
             'source_ids': [(4, source.id)],
@@ -103,11 +158,19 @@ class TestMailComposerMixin(TestMailCommon, TestRecipients):
 
         # ask for dynamic language computation
         subject = composer._render_field('subject', source.ids, compute_lang=True)[source.id]
+<<<<<<< HEAD
         self.assertEqual(subject, f'EnglishSubject for {source.name}',
                          'Fixme: translations are not done, as taking composer translations and not template one')
         body = composer._render_field('body', source.ids, compute_lang=True)[source.id]
         self.assertEqual(body, f'<p>EnglishBody for {source.name}</p>',
                          'Fixme: translations are not done, as taking composer translations and not template one'
         )
+=======
+        self.assertEqual(subject, f'SpanishSubject for {source.name}',
+                         'Translation comes from the template, as both values equal')
+        body = composer._render_field('body', source.ids, compute_lang=True)[source.id]
+        self.assertEqual(body, f'<p>SpanishBody for {source.name}</p>',
+                         'Translation comes from the template, as both values equal')
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         description = composer._render_field('description', source.ids)[source.id]
         self.assertEqual(description, f'<p>Description for {source.name}</p>')

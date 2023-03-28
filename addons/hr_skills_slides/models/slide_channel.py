@@ -56,8 +56,13 @@ class SlideChannelPartner(models.Model):
 class Channel(models.Model):
     _inherit = 'slide.channel'
 
+<<<<<<< HEAD
     def _action_add_members(self, target_partners, **member_values):
         res = super()._action_add_members(target_partners, **member_values)
+=======
+    def _action_add_members(self, target_partners):
+        res = super()._action_add_members(target_partners)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         for channel in self:
             channel._message_employee_chatter(
                 _('The employee subscribed to the course <a href="%(link)s">%(course)s</a>', link=channel.website_url, course=channel.name),

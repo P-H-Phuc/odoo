@@ -33,9 +33,15 @@ import { getFirstListFunction, getNumberOfListFormulas } from "../list_helpers";
 const { CorePlugin } = spreadsheet;
 
 export default class ListCorePlugin extends CorePlugin {
+<<<<<<< HEAD
     constructor(getters, history, range, dispatch, config, uuidGenerator) {
         super(getters, history, range, dispatch, config, uuidGenerator);
         this.dataSources = config.dataSources;
+=======
+    constructor(config) {
+        super(config);
+        this.dataSources = config.custom.dataSources;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         this.nextId = 1;
         /** @type {Object.<string, List>} */
@@ -87,20 +93,16 @@ export default class ListCorePlugin extends CorePlugin {
     handle(cmd) {
         switch (cmd.type) {
             case "INSERT_ODOO_LIST": {
-                const {
-                    sheetId,
-                    col,
-                    row,
-                    id,
-                    definition,
-                    dataSourceId,
-                    linesNumber,
-                    columns,
-                } = cmd;
+                const { sheetId, col, row, id, definition, dataSourceId, linesNumber, columns } =
+                    cmd;
                 const anchor = [col, row];
                 this._addList(id, definition, dataSourceId, linesNumber);
                 this._insertList(sheetId, anchor, id, linesNumber, columns);
+<<<<<<< HEAD
                 this.history.update("nextId", parseInt(id, 10) + 1)
+=======
+                this.history.update("nextId", parseInt(id, 10) + 1);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 break;
             }
             case "RE_INSERT_ODOO_LIST": {
@@ -157,7 +159,11 @@ export default class ListCorePlugin extends CorePlugin {
                 for (const sheetId of this.getters.getSheetIds()) {
                     const cells = this.getters.getCells(sheetId);
                     for (const cell of Object.values(cells)) {
+<<<<<<< HEAD
                         if (cell.isFormula()) {
+=======
+                        if (cell.isFormula) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                             this._addListPositionToDataSource(cell.content);
                         }
                     }

@@ -159,7 +159,6 @@ QUnit.module("ActionManager", (hooks) => {
         await testUtils.dom.click(`button[name="some_method"]`);
         assert.verifySteps([
             "/web/dataset/call_kw/partner/create",
-            "/web/dataset/call_kw/partner/read",
             "/web/dataset/call_button",
             "/web/dataset/call_kw/partner/read",
         ]);
@@ -389,7 +388,7 @@ QUnit.module("ActionManager", (hooks) => {
             target.querySelector(".modal-body .o_error_detail").textContent.includes("my error")
         );
 
-        await click(target, ".modal-footer button");
+        await click(target, ".modal-footer .btn-primary");
         assert.containsNone(target, ".modal");
 
         await doAction(webClient, {

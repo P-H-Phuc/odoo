@@ -1,25 +1,34 @@
-odoo.define('point_of_sale.ActionpadWidget', function(require) {
-    'use strict';
+/** @odoo-module */
 
-    const PosComponent = require('point_of_sale.PosComponent');
-    const Registries = require('point_of_sale.Registries');
+import { usePos } from "@point_of_sale/app/pos_hook";
+import { Component } from "@odoo/owl";
 
-    /**
-     * @props partner
-     * @emits click-partner
-     * @emits click-pay
-     */
-    class ActionpadWidget extends PosComponent {
-        get isLongName() {
-            return this.props.partner && this.props.partner.name.length > 10;
+/**
+ * @props partner
+ */
+export class ActionpadWidget extends Component {
+    static template = "ActionpadWidget";
+    static defaultProps = {
+        isActionButtonHighlighted: false,
+    };
+
+    setup() {
+        this.pos = usePos();
+    }
+
+    get isLongName() {
+        return this.props.partner && this.props.partner.name.length > 10;
+    }
+
+    clickPay() {
+        const order = this.pos.globalState.get_order();
+
+        if (order.orderlines.length) {
+            order.pay();
         }
     }
-    ActionpadWidget.template = 'ActionpadWidget';
-    ActionpadWidget.defaultProps = {
-        isActionButtonHighlighted: false,
+
+    get highlightPay() {
+        return this.pos.globalState.get_order()?.orderlines?.length;
     }
-
-    Registries.Component.add(ActionpadWidget);
-
-    return ActionpadWidget;
-});
+}

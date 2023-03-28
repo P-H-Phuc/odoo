@@ -521,13 +521,16 @@ class Challenge(models.Model):
 
                 domain.append(('user_id', '=', user.id))
 
-                goal = Goals.search(domain, limit=1)
+                goal = Goals.search_fetch(domain, ['current', 'completeness', 'state'], limit=1)
                 if not goal:
                     continue
 
                 if goal.state != 'reached':
                     return []
-                line_data.update(goal.read(['id', 'current', 'completeness', 'state'])[0])
+                line_data.update({
+                    fname: goal[fname]
+                    for fname in ['id', 'current', 'completeness', 'state']
+                })
                 res_lines.append(line_data)
                 continue
 
@@ -705,7 +708,7 @@ class Challenge(models.Model):
                     (first_user, second_user, third_user) = challenge._get_topN_users(MAX_VISIBILITY_RANKING)
                     if first_user:
                         challenge._reward_user(first_user, challenge.reward_first_id)
-                        message_body += _("<br/>Special rewards were sent to the top competing users. The ranking for this challenge is :")
+                        message_body += _("<br/>Special rewards were sent to the top competing users. The ranking for this challenge is:")
                         message_body += reward_message % {
                             'rank': 1,
                             'user_name': first_user.name,

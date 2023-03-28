@@ -499,11 +499,16 @@ class BaseAutomation(models.Model):
             if model not in patched_models[name]:
                 patched_models[name].add(model)
                 ModelClass = type(model)
+<<<<<<< HEAD
                 origin = getattr(ModelClass, name)
                 method.origin = origin
                 wrapped = api.propagate(origin, method)
                 wrapped.origin = origin
                 setattr(ModelClass, name, wrapped)
+=======
+                method.origin = getattr(ModelClass, name)
+                setattr(ModelClass, name, method)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         # retrieve all actions, and patch their corresponding model
         for action_rule in self.with_context({}).search([]):

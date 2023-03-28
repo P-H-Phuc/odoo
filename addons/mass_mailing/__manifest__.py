@@ -4,7 +4,7 @@
 {
     'name': 'Email Marketing',
     'summary': 'Design, send and track emails',
-    'version': '2.5',
+    'version': '2.6',
     'sequence': 60,
     'website': 'https://www.odoo.com/app/email-marketing',
     'category': 'Marketing/Email Marketing',
@@ -14,7 +14,6 @@
         'utm',
         'link_tracker',
         'web_editor',
-        'web_kanban_gauge',
         'social_media',
         'web_tour',
         'digest',
@@ -95,16 +94,23 @@
             'mass_mailing/static/src/scss/mass_mailing_mobile.scss',
             'mass_mailing/static/src/scss/mass_mailing_mobile_preview.scss',
             'mass_mailing/static/src/css/email_template.css',
+<<<<<<< HEAD
             'mass_mailing/static/src/views/*.js',
             'mass_mailing/static/src/js/mailing_m2o_filter.js',
             'mass_mailing/static/src/js/mass_mailing.js',
+=======
+            'mass_mailing/static/src/js/mailing_m2o_filter.js',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'mass_mailing/static/src/js/mass_mailing_design_constants.js',
             'mass_mailing/static/src/js/mass_mailing_mobile_preview.js',
             'mass_mailing/static/src/js/mass_mailing_html_field.js',
             'mass_mailing/static/src/js/mailing_mailing_view_form_full_width.js',
             'mass_mailing/static/src/xml/mailing_filter_widget.xml',
             'mass_mailing/static/src/xml/mass_mailing.xml',
+<<<<<<< HEAD
             'mass_mailing/static/src/views/*.xml',
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         ],
         'mass_mailing.assets_mail_themes': [
             'mass_mailing/static/src/scss/themes/**/*',

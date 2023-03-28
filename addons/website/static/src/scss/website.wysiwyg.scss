@@ -62,6 +62,7 @@ html[data-edit_translations="1"] {
     &:not(.d-md-none):not(.d-lg-none)::before {
         height: 30px;
         -webkit-mask: url("/website/static/src/img/snippets_options/mobile_invisible.svg") no-repeat 100% 100%;
+<<<<<<< HEAD
     }
 }
 
@@ -71,9 +72,12 @@ $i: 1;
 @each $font-name, $font-config in $o-theme-font-configs {
     we-toggler.o_we_option_font_#{$i}, we-button.o_we_option_font_#{$i} > div {
         font-family: o-safe-get($font-config, 'family', $font-family-base);
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
-    $i: $i + 1;
 }
+
+// SNIPPET PANEL
 .o_we_add_google_font_btn {
     border-top: 1px solid currentColor !important;
 }

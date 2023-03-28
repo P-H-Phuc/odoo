@@ -3,6 +3,9 @@ import json
 
 from lxml import etree
 
+from lxml import etree
+
+from odoo.tests import users
 from odoo.tests.common import TransactionCase
 from odoo.exceptions import UserError
 
@@ -152,6 +155,7 @@ class TestProjectBase(TestProjectCommon):
         user2 = self.user_projectuser.copy()
         user1.notification_type = 'email'
         user2.notification_type = 'inbox'
+<<<<<<< HEAD
         for user, filter_invisible_expected in ((user1, True), (user2, None)):
             Task = self.env['project.task'].with_user(user)
             arch = Task.get_view(self.env.ref('project.view_task_search_form').id, 'search')['arch']
@@ -159,3 +163,50 @@ class TestProjectBase(TestProjectCommon):
             node = tree.xpath('//filter[@name="message_needaction"]')[0]
             modifiers = json.loads(node.get('modifiers') or '{}')
             self.assertEqual(modifiers.get('invisible'), filter_invisible_expected)
+=======
+        for user, filter_visible_expected in ((user1, False), (user2, True)):
+            Task = self.env['project.task'].with_user(user)
+            arch = Task.get_view(self.env.ref('project.view_task_search_form').id)['arch']
+            tree = etree.fromstring(arch)
+            self.assertEqual(bool(tree.xpath('//filter[@name="message_needaction"]')), filter_visible_expected)
+
+    @users('bastien')
+    def test_search_favorite_order(self):
+        """ Test the search method, ordering by favorite projects.
+        """
+        self.project_goats.favorite_user_ids += self.user_projectmanager
+        self.env.cr.flush()
+
+        Project = self.env['project.project']
+        project_ids = [self.project_pigs.id, self.project_goats.id]
+        domain = [('id', 'in', project_ids)]
+
+        self.assertEqual(Project.search(domain, order='is_favorite desc')[0], self.project_goats)
+        self.assertEqual(Project.search(domain, order='is_favorite')[-1], self.project_goats)
+
+        self.assertTrue(self.project_pigs.id < self.project_goats.id)
+        self.assertEqual(Project.search(domain, order='id').ids, project_ids)
+
+    def test_change_project_or_partner_company(self):
+        """ Tests that it is impossible to change the company of a project
+            if the company of the partner is different and vice versa.
+        """
+        company_1 = self.env.company
+        company_2 = self.env['res.company'].create({'name': 'Company 2'})
+        partner = self.env['res.partner'].create({
+            'name': 'Partner',
+        })
+        self.project_pigs.partner_id = partner
+        # Can change the company of a project if the company of the partner is not set
+        self.assertFalse(partner.company_id)
+        self.project_pigs.company_id = company_2
+        self.project_pigs.partner_id.company_id = company_2
+
+        with self.assertRaises(UserError):
+            # Cannot change the company of a partner if the company of the project is different
+            partner.company_id = company_1
+
+        with self.assertRaises(UserError):
+            # Cannot change the company of a project if the company of the partner is different
+            self.project_pigs.company_id = company_1
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

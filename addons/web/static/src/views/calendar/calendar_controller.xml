@@ -10,13 +10,20 @@
 
                 <div class="o_calendar_container">
                     <MobileFilterPanel t-if="env.isSmall" t-props="mobileFilterPanelProps" />
+<<<<<<< HEAD
                     <t t-if="showCalendar" t-component="props.Renderer" t-props="rendererProps" />
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     <div t-if="showSideBar" class="o_calendar_sidebar_container d-md-block">
                         <div class="o_calendar_sidebar">
                             <DatePicker t-if="!env.isSmall" t-props="datePickerProps" />
                             <FilterPanel t-props="filterPanelProps" />
                         </div>
                     </div>
+<<<<<<< HEAD
+=======
+                    <t t-if="showCalendar" t-component="props.Renderer" t-props="rendererProps" />
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 </div>
             </Layout>
         </div>
@@ -48,6 +55,7 @@
                     <i class="fa fa-arrow-right" />
                 </button>
             </span>
+<<<<<<< HEAD
             <span class="o_calendar_scale_buttons">
                 <Dropdown class="'btn-group'" togglerClass="'btn btn-secondary scale_button_selection text-uppercase'" hotkey="'v'" showCaret="true">
                     <t t-set-slot="toggler">
@@ -64,6 +72,9 @@
                     </t>
                 </Dropdown>
             </span>
+=======
+            <ViewScaleSelector scales="scales" currentScale="model.scale" setScale.bind="setScale" />
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             <button t-if="env.isSmall" class="o_cp_today_button btn btn-sm btn-link" t-on-click="() => this.setDate('today')">
                 <span class="fa-stack o_calendar_button_today">
                     <i class="fa fa-calendar-o fa-stack-2x" role="img" aria-label="Today" title="Today" />

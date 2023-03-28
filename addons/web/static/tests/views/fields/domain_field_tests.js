@@ -595,7 +595,7 @@ QUnit.module("Fields", (hooks) => {
                 "2 record(s)"
             );
 
-            await editInput(target, ".o_domain_debug_input", "[['abc']]");
+            await editInput(target, ".o_domain_debug_input", "[['abc', '=', 1]]");
             // the count should not be re-computed when editing with the textarea
             assert.strictEqual(
                 target.querySelector(".o_domain_show_selection_button").textContent.trim(),
@@ -603,6 +603,12 @@ QUnit.module("Fields", (hooks) => {
             );
             assert.verifySteps([]);
 
+<<<<<<< HEAD
+=======
+            await editInput(target, ".o_domain_debug_input", "[['abc']]");
+            assert.verifySteps([]);
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             await clickSave(target);
             assert.hasClass(
                 target.querySelector(".o_field_domain"),
@@ -614,7 +620,7 @@ QUnit.module("Fields", (hooks) => {
                 ".o_form_view .o_form_editable",
                 "the view is still in edit mode"
             );
-            assert.verifySteps(['[["abc"]]']);
+            assert.verifySteps([]);
         }
     );
 
@@ -812,7 +818,7 @@ QUnit.module("Fields", (hooks) => {
         assert.verifySteps(["/web/webclient/load_menus"]);
 
         await doAction(webClient, 1);
-        assert.verifySteps(["/web/action/load", "get_views", "read", "search_count", "fields_get"]);
+        assert.verifySteps(["/web/action/load", "get_views", "read", "search_count"]);
 
         assert.strictEqual(target.querySelector(".o_domain_debug_input").value, rawDomain);
         assert.containsOnce(target, ".o_datepicker", "there should be a datepicker");

@@ -1,18 +1,23 @@
 /** @odoo-module **/
-import tour from 'web_tour.tour';
 import { _t } from 'web.core';
+<<<<<<< HEAD
+=======
+
+import { registry } from "@web/core/registry";
+import { stepUtils } from "@web_tour/tour_service/tour_utils";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 const leaveType = "NotLimitedHR";
 const leaveDateFrom = "01/17/2022";
 const leaveDateTo = "01/17/2022";
 const description = 'Days off';
 
-tour.register('hr_holidays_tour', {
+registry.category("web_tour.tours").add('hr_holidays_tour', {
     url: '/web',
     rainbowManMessage: _t("Congrats, we can see that your request has been validated."),
-    test: false
-}, [
-    tour.stepUtils.showAppsMenuItem(), 
+    test: false,
+    steps: [
+    stepUtils.showAppsMenuItem(), 
     {
         trigger: '.o_app[data-menu-xmlid="hr_holidays.menu_hr_holidays_root"]',
         content: _t("Let's discover the Time Off application"),
@@ -86,4 +91,4 @@ tour.register('hr_holidays_tour', {
         content: _t("State is now confirmed. We can go back to the calendar"),
         position: 'bottom'
     }
-]);
+]});

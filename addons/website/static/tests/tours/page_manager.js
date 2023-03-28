@@ -47,7 +47,11 @@ const deleteSelectedPage = [
     },
     {
         content: "Click on OK",
+<<<<<<< HEAD
         trigger: '.modal-content footer button.btn-primary',
+=======
+        trigger: '.modal-content footer button.btn-primary:not(:disabled)',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 ];
 const homePage = 'tr:contains("Home")';
@@ -58,7 +62,11 @@ wTourUtils.registerWebsitePreviewTour('website_page_manager', {
 }, [
     {
         content: "Click on Site",
+<<<<<<< HEAD
         trigger: 'button.dropdown-toggle[title="Site"]',
+=======
+        trigger: 'button.dropdown-toggle[data-menu-xmlid="website.menu_site"]',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
     {
         content: "Click on Pages",

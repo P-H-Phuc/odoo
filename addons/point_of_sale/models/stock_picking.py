@@ -117,7 +117,11 @@ class StockPicking(models.Model):
 
     def _action_done(self):
         res = super()._action_done()
+<<<<<<< HEAD
         if self.pos_order_id.to_ship and not self.pos_order_id.to_invoice:
+=======
+        if self.pos_order_id.shipping_date and not self.pos_order_id.to_invoice:
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             order_cost = sum(line.total_cost for line in self.pos_order_id.lines)
             move_vals = {
                 'journal_id': self.pos_order_id.sale_journal.id,

@@ -7,8 +7,9 @@
 		<field name="priority" eval="25"/>
 		<field name="inherit_id" ref="purchase.res_config_settings_view_form_purchase"/>
 		<field name="arch" type="xml">
-			<xpath expr="//div[@data-key='purchase']" position="inside">
+			<xpath expr="//app[@name='purchase']" position="inside">
 				<field name="is_installed_sale" invisible="1"/>
+<<<<<<< HEAD
 				<h2 attrs="{'invisible': [('is_installed_sale', '=', False)]}">Logistics</h2>
 				<div class="row mt16 o_settings_container" name="request_vendor_setting_container">
 					<div class="col-12 col-lg-6 o_setting_box" attrs="{'invisible': [('is_installed_sale', '=', False)]}" title="This adds a dropshipping route to apply on products in order to request your vendors to deliver to your customers. A product to dropship will generate a purchase request for quotation once the sales order confirmed. This is a on-demand flow. The requested delivery address will be the customer delivery address and not your warehouse.">
@@ -24,6 +25,14 @@
 						</div>
 					</div>
 				</div>
+=======
+				<block title="Logistics" attrs="{'invisible': [('is_installed_sale', '=', False)]}" name="request_vendor_setting_container">
+					<setting title="This adds a dropshipping route to apply on products in order to request your vendors to deliver to your customers. A product to dropship will generate a purchase request for quotation once the sales order confirmed. This is a on-demand flow. The requested delivery address will be the customer delivery address and not your warehouse." help="Request your vendors to deliver to your customers"
+							 documentation="/applications/inventory_and_mrp/inventory/management/delivery/dropshipping.html">
+						<field name="module_stock_dropshipping"/>
+					</setting>
+				</block>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 			</xpath>
 		</field>
 	</record>
@@ -33,10 +42,11 @@
 		<field name="model">res.config.settings</field>
 		<field name="inherit_id" ref="stock.res_config_settings_view_form"/>
 		<field name="arch" type="xml">
-			<xpath expr="//h2[@id='schedule_info']" position="attributes">
+			<xpath expr="//block[@id='schedule_info']" position="attributes">
 				<attribute name="invisible">0</attribute>
 			</xpath>
 			<div id="purchase_po_lead" position="replace">
+<<<<<<< HEAD
 				<div class="col-12 col-lg-6 o_setting_box"
                                     title="Margin of error for vendor lead times. When the system generates Purchase Orders for reordering products,they will be scheduled that many days earlier to cope with unexpected vendor delays."
                                     name="schedule_receivings_setting_container">
@@ -71,6 +81,19 @@
 						</div>
 					</div>
 				</div>
+=======
+				<setting company_dependent="1" help="Schedule request for quotations earlier to avoid delays" documentation="/applications/inventory_and_mrp/inventory/management/planning/scheduled_dates.html" title="Margin of error for vendor lead times. When the system generates Purchase Orders for reordering products,they will be scheduled that many days earlier to cope with unexpected vendor delays." name="schedule_receivings_setting_container">
+					<field name="use_po_lead"/>
+					<div class="content-group">
+						<div class="mt16" attrs="{'invisible': [('use_po_lead','=',False)]}">
+							<span>Move forward expected request creation date by <field name="po_lead" class="oe_inline"/> days</span>
+						</div>
+					</div>
+				</setting>
+				<setting company_dependent="1" help="Days needed to confirm a PO">
+					<field name="days_to_purchase" class="oe_inline"/><span> days</span>
+				</setting>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 			</div>
 		</field>
 	</record>

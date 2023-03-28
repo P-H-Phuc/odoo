@@ -188,14 +188,14 @@ class Groups(models.Model):
         return where
 
     @api.model
-    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+    def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
         # add explicit ordering if search is sorted on full_name
         if order and order.startswith('full_name'):
-            groups = super(Groups, self).search(args)
+            groups = super().search(domain)
             groups = groups.sorted('full_name', reverse=order.endswith('DESC'))
             groups = groups[offset:offset+limit] if limit else groups[offset:]
-            return len(groups) if count else groups.ids
-        return super(Groups, self)._search(args, offset=offset, limit=limit, order=order, count=count, access_rights_uid=access_rights_uid)
+            return groups._as_query(order)
+        return super()._search(domain, offset, limit, order, access_rights_uid)
 
     def copy(self, default=None):
         self.ensure_one()
@@ -276,7 +276,7 @@ class Users(models.Model):
         return [
             'signature', 'company_id', 'login', 'email', 'name', 'image_1920',
             'image_1024', 'image_512', 'image_256', 'image_128', 'lang', 'tz',
-            'tz_offset', 'groups_id', 'partner_id', '__last_update', 'action_id',
+            'tz_offset', 'groups_id', 'partner_id', 'write_date', 'action_id',
             'avatar_1920', 'avatar_1024', 'avatar_512', 'avatar_256', 'avatar_128',
             'share',
         ]
@@ -338,7 +338,7 @@ class Users(models.Model):
                                   compute='_compute_accesses_count', compute_sudo=True)
 
     _sql_constraints = [
-        ('login_key', 'UNIQUE (login)',  'You can not have two users with the same login !')
+        ('login_key', 'UNIQUE (login)', 'You can not have two users with the same login!')
     ]
 
     def init(self):
@@ -458,19 +458,14 @@ class Users(models.Model):
     def onchange_parent_id(self):
         return self.partner_id.onchange_parent_id()
 
-    def _read(self, fields):
-        super(Users, self)._read(fields)
-        if set(USER_PRIVATE_FIELDS).intersection(fields):
+    def _fetch_query(self, query, fields):
+        records = super()._fetch_query(query, fields)
+        if not set(USER_PRIVATE_FIELDS).isdisjoint(field.name for field in fields):
             if self.check_access_rights('write', raise_exception=False):
-                return
-            for record in self:
-                for f in USER_PRIVATE_FIELDS:
-                    try:
-                        record._cache[f]
-                        record._cache[f] = '********'
-                    except Exception:
-                        # skip SpecialValue (e.g. for missing record or access right)
-                        pass
+                return records
+            for fname in USER_PRIVATE_FIELDS:
+                self.env.cache.update(records, self._fields[fname], repeat('********'))
+        return records
 
     @api.constrains('company_id', 'company_ids', 'active')
     def _check_company(self):
@@ -561,13 +556,12 @@ class Users(models.Model):
         return super(Users, self).read_group(domain, fields, groupby, offset=offset, limit=limit, orderby=orderby, lazy=lazy)
 
     @api.model
-    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
-        if not self.env.su and args:
-            domain_fields = {term[0] for term in args if isinstance(term, (tuple, list))}
+    def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
+        if not self.env.su and domain:
+            domain_fields = {term[0] for term in domain if isinstance(term, (tuple, list))}
             if domain_fields.intersection(USER_PRIVATE_FIELDS):
                 raise AccessError(_('Invalid search criterion'))
-        return super(Users, self)._search(args, offset=offset, limit=limit, order=order, count=count,
-                                          access_rights_uid=access_rights_uid)
+        return super()._search(domain, offset, limit, order, access_rights_uid)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -652,17 +646,17 @@ class Users(models.Model):
         self.clear_caches()
 
     @api.model
-    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
-        args = args or []
+    def _name_search(self, name, domain=None, operator='ilike', limit=None, order=None, name_get_uid=None):
+        domain = domain or []
         user_ids = []
         if operator not in expression.NEGATIVE_TERM_OPERATORS:
             if operator == 'ilike' and not (name or '').strip():
-                domain = []
+                name_domain = []
             else:
-                domain = [('login', '=', name)]
-            user_ids = self._search(expression.AND([domain, args]), limit=limit, access_rights_uid=name_get_uid)
+                name_domain = [('login', '=', name)]
+            user_ids = self._search(expression.AND([name_domain, domain]), limit=limit, order=order, access_rights_uid=name_get_uid)
         if not user_ids:
-            user_ids = self._search(expression.AND([[('name', operator, name)], args]), limit=limit, access_rights_uid=name_get_uid)
+            user_ids = self._search(expression.AND([[('name', operator, name)], domain]), limit=limit, order=order, access_rights_uid=name_get_uid)
         return user_ids
 
     def copy(self, default=None):
@@ -1812,6 +1806,32 @@ class UsersView(models.Model):
             })
         return res
 
+    def action_change_password(self):
+        if len(self) == 1:
+            view_id = self.env.ref('base.change_password_user_form_view').id
+            return {
+                'name': _('Change Password'),
+                'view_mode': 'form',
+                'target': 'new',
+                'res_model': 'change.password.user',
+                'type': 'ir.actions.act_window',
+                'view_id': view_id,
+                'views': [(view_id, 'form')],
+                'context': {
+                    'default_user_id': self.id,
+                    'default_user_login': self.login,
+                },
+            }
+        else:
+            return {
+                'name': _('Change Passwords'),
+                'view_mode': 'form',
+                'target': 'new',
+                'res_model': 'change.password.wizard',
+                'type': 'ir.actions.act_window',
+                'views': [[False, 'form']],
+            }
+
 class CheckIdentity(models.TransientModel):
     """ Wizard used to re-check the user's credentials (password)
 
@@ -1870,7 +1890,7 @@ class ChangePasswordUser(models.TransientModel):
     _name = 'change.password.user'
     _description = 'User, Change Password Wizard'
 
-    wizard_id = fields.Many2one('change.password.wizard', string='Wizard', required=True, ondelete='cascade')
+    wizard_id = fields.Many2one('change.password.wizard', string='Wizard', ondelete='cascade')
     user_id = fields.Many2one('res.users', string='User', required=True, ondelete='cascade')
     user_login = fields.Char(string='User Login', readonly=True)
     new_passwd = fields.Char(string='New Password', default='')
@@ -1979,7 +1999,7 @@ class APIKeys(models.Model):
         CREATE TABLE IF NOT EXISTS {table} (
             id serial primary key,
             name varchar not null,
-            user_id integer not null REFERENCES res_users(id),
+            user_id integer not null REFERENCES res_users(id) ON DELETE CASCADE,
             scope varchar,
             index varchar({index_size}) not null CHECK (char_length(index) = {index_size}),
             key varchar not null,

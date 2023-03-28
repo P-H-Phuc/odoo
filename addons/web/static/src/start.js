@@ -40,6 +40,7 @@ export async function startWebClient(Webclient) {
         env,
         templates,
         dev: env.debug,
+        warnIfNoStaticProps: true,
         translatableAttributes: ["data-tooltip"],
         translateFn: env._t,
     });
@@ -66,11 +67,7 @@ export async function startWebClient(Webclient) {
     // Update Favicons
     const favicon = `/web/image/res.company/${env.services.company.currentCompany.id}/favicon`;
     const icons = document.querySelectorAll("link[rel*='icon']");
-    const msIcon = document.querySelector("meta[name='msapplication-TileImage']");
     for (const icon of icons) {
         icon.href = favicon;
-    }
-    if (msIcon) {
-        msIcon.content = favicon;
     }
 }

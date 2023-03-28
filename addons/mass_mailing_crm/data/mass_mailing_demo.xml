@@ -3,7 +3,11 @@
     <data noupdate="1">
     <record id="mass_mail_lead_0" model="mailing.mailing">
         <field name="name">Lead Recall</field>
+<<<<<<< HEAD
         <field name="subject">We want to hear from you !</field>
+=======
+        <field name="subject">We want to hear from you!</field>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         <field name="state">draft</field>
         <field name="user_id" ref="base.user_admin"/>
         <field name="schedule_date" eval="(DateTime.today() + relativedelta(days=5)).strftime('%Y-%m-%d %H:%M:%S')"/>

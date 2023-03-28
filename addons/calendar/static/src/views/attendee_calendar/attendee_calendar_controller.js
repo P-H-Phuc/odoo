@@ -32,7 +32,15 @@ export class AttendeeCalendarController extends CalendarController {
      */
     deleteRecord(record) {
         if (this.user.partnerId === record.attendeeId && this.user.partnerId === record.rawRecord.partner_id[0]) {
+<<<<<<< HEAD
             super.deleteRecord(...arguments);
+=======
+            if (record.rawRecord.recurrency) {
+                this.openRecurringDeletionWizard(record);
+            } else {
+                super.deleteRecord(...arguments);
+            }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         } else {
             // Decline event
             this.orm.call(
@@ -43,6 +51,25 @@ export class AttendeeCalendarController extends CalendarController {
         }
     }
 
+<<<<<<< HEAD
+=======
+    openRecurringDeletionWizard(record) {
+        this.actionService.doAction({
+            type: 'ir.actions.act_window',
+            res_model: 'calendar.popover.delete.wizard',
+            views: [[false, 'form']],
+            view_mode: "form",
+            name: 'Delete Recurring Event',
+            context: {'default_record': record.id},
+            target: 'new'
+        }, {
+            onClose: () => {
+                location.reload();
+            },
+        });
+    }
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     configureCalendarProviderSync(providerName) {
         this.actionService.doAction({
             name: this.env._t('Connect your Calendar'),

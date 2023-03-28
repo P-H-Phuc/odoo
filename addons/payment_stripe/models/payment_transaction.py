@@ -66,6 +66,7 @@ class PaymentTransaction(models.Model):
             return linked_pmts_
 
         # Filter payment method types by available payment method
+<<<<<<< HEAD
         existing_pms = [pm.name.lower() for pm in self.env['payment.icon'].search([])] + ['card']
         linked_pms = [pm.name.lower() for pm in self.provider_id.payment_icon_ids]
         pm_filtered_pmts = filter(
@@ -73,6 +74,16 @@ class PaymentTransaction(models.Model):
             # PMT because the user couldn't even have linked it to the provider in the first place.
             lambda pmt: pmt.name in get_linked_pmts(linked_pms) or pmt.name not in existing_pms,
             PAYMENT_METHOD_TYPES,
+=======
+        existing_pms = [pm.name.lower() for pm in self.env['payment.method'].search([])]
+        linked_pms = [pm.name.lower() for pm in self.provider_id.payment_method_ids]
+        pm_filtered_pmts = filter(
+            lambda pmt: pmt.name == 'card'
+            # If the PM record related to a PMT doesn't exist, don't filter out the PMT because the
+            # user couldn't even have linked it to the provider in the first place.
+            or (pmt.name in linked_pms or pmt.name not in existing_pms),
+            PAYMENT_METHOD_TYPES
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         )
         # Filter payment method types by country code
         country_code = self.partner_country_id and self.partner_country_id.code.lower()
@@ -310,16 +321,11 @@ class PaymentTransaction(models.Model):
 
         return refund_tx
 
-    def _send_capture_request(self):
-        """ Override of payment to send a capture request to Stripe.
-
-        Note: self.ensure_one()
-
-        :return: None
-        """
-        super()._send_capture_request()
+    def _send_capture_request(self, amount_to_capture=None):
+        """ Override of `payment` to send a capture request to Stripe. """
+        child_capture_tx = super()._send_capture_request(amount_to_capture=amount_to_capture)
         if self.provider_code != 'stripe':
-            return
+            return child_capture_tx
 
         # Make the capture request to Stripe
         payment_intent = self.provider_id._stripe_make_request(
@@ -337,16 +343,13 @@ class PaymentTransaction(models.Model):
         )
         self._handle_notification_data('stripe', notification_data)
 
-    def _send_void_request(self):
-        """ Override of payment to send a void request to Stripe.
+        return child_capture_tx
 
-        Note: self.ensure_one()
-
-        :return: None
-        """
-        super()._send_void_request()
+    def _send_void_request(self, amount_to_void=None):
+        """ Override of `payment` to send a void request to Stripe. """
+        child_void_tx = super()._send_void_request(amount_to_void=amount_to_void)
         if self.provider_code != 'stripe':
-            return
+            return child_void_tx
 
         # Make the void request to Stripe
         payment_intent = self.provider_id._stripe_make_request(
@@ -363,6 +366,8 @@ class PaymentTransaction(models.Model):
             payment_intent, notification_data
         )
         self._handle_notification_data('stripe', notification_data)
+
+        return child_void_tx
 
     def _get_tx_from_notification_data(self, provider_code, notification_data):
         """ Override of payment to find the transaction based on Stripe data.
@@ -462,7 +467,11 @@ class PaymentTransaction(models.Model):
                 self._set_error(_(
                     "The refund did not go through. Please log into your Stripe Dashboard to get "
                     "more information on that matter, and address any accounting discrepancies."
+<<<<<<< HEAD
                 ))
+=======
+                ), extra_allowed_states=('done',))
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         else:  # Classify unknown intent statuses as `error` tx state
             _logger.warning(
                 "received invalid payment status (%s) for transaction with reference %s",

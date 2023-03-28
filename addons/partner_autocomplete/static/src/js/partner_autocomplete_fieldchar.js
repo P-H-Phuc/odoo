@@ -5,7 +5,11 @@ import { AutoComplete } from "@web/core/autocomplete/autocomplete";
 import { useChildRef } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
+<<<<<<< HEAD
 import { CharField } from "@web/views/fields/char/char_field";
+=======
+import { CharField, charField } from "@web/views/fields/char/char_field";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { useInputField } from "@web/views/fields/input_field_hook";
 import { loadJS } from "@web/core/assets";
 
@@ -18,7 +22,11 @@ export class PartnerAutoCompleteCharField extends CharField {
         this.partner_autocomplete = usePartnerAutocomplete();
 
         this.inputRef = useChildRef();
+<<<<<<< HEAD
         useInputField({ getValue: () => this.props.value || "", parse: (v) => this.parse(v), ref: this.inputRef});
+=======
+        useInputField({ getValue: () => this.props.record.data[this.props.name] || "", parse: (v) => this.parse(v), ref: this.inputRef});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 
     sanitizeVAT(request) {
@@ -97,4 +105,13 @@ PartnerAutoCompleteCharField.components = {
     AutoComplete,
 };
 
+<<<<<<< HEAD
 registry.category("fields").add("field_partner_autocomplete", PartnerAutoCompleteCharField);
+=======
+export const partnerAutoCompleteCharField = {
+    ...charField,
+    component: PartnerAutoCompleteCharField,
+};
+
+registry.category("fields").add("field_partner_autocomplete", partnerAutoCompleteCharField);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

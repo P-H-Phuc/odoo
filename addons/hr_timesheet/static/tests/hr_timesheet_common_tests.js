@@ -7,6 +7,10 @@ import { companyService } from "@web/webclient/company_service";
 import { patchWithCleanup } from "@web/../tests/helpers/utils";
 import { setupViewRegistries } from "@web/../tests/views/helpers";
 
+<<<<<<< HEAD
+=======
+import { timesheetUOMService } from "@hr_timesheet/services/timesheet_uom_service";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 export const getServerData = () => JSON.parse(JSON.stringify({
     models: {
@@ -122,9 +126,22 @@ export function setupTestEnv() {
                 rounding: 0.01,
                 timesheet_widget: 'float_toggle',
             },
+<<<<<<< HEAD
+=======
+            3: {
+                id: 3,
+                name: "foo",
+                rounding: 0.01,
+                timesheet_widget: "float_factor",
+            },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         },
     });
 
     const serviceRegistry = registry.category("services");
     serviceRegistry.add("company", companyService, { force: true });
+<<<<<<< HEAD
+=======
+    serviceRegistry.add("timesheet_uom", timesheetUOMService, { force: true });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 }

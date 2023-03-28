@@ -16,6 +16,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_si.1_gd_taxp_1
 #: model:account.tax,name:l10n_si.2_gd_taxp_1
 #: model:account.tax.group,name:l10n_si.tax_group_0
@@ -46,20 +47,32 @@ msgstr "0% DDV brez odbitka"
 
 #. module: l10n_si
 #: model:account.report.line,tag_name:l10n_si.tax_report_11
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_11
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "11"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_11
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_11
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "11. Supplies of goods and services"
 msgstr "11. Dobave blaga in storitev"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_11a
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_11a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "11a"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_11a
 msgid ""
 "11a. Supplies of goods and services in Slovenia, of which VAT is charged by "
@@ -68,60 +81,113 @@ msgstr "11a. Dobave blaga in storitev v Sloveniji, od katerih obračunava DDV do
 
 #. module: l10n_si
 #: model:account.report.line,tag_name:l10n_si.tax_report_12
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_11a
+msgid ""
+"11a. Supplies of goods and services in Slovenia, of which VAT is charged by "
+"the recipient"
+msgstr ""
+"11a. Dobave blaga in storitev v Sloveniji, od katerih obračunava DDV do "
+"prejemnik"
+
+#. module: l10n_si
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_12
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "12"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_12
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_12
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "12. Deliveries of goods and services to other EU Member States"
 msgstr "12. Dobave blaga in storitev v druge države članice EU"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_13
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_13
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "13"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_13
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_13
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "13. Sale of goods at a distance"
 msgstr "13. Prodaja blaga na daljavo"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_14
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_14
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "14"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_14
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_14
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "14. Assembly and installation of goods in another Member State"
 msgstr "14. Montaža in montaža blaga v drugi državi članici"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_15
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_15
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "15"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_15
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_15
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "15. Exempt supplies without the right to deduct VAT"
 msgstr "15. Oproščene dobave brez pravice do odbitka DDV"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_21
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_21
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "21"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_21
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_21
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "21. At a rate of 22%"
 msgstr "21. Po stopnji 22 %"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_22
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_22
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "22"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_si.1_gd_taxp_3
 #: model:account.tax,name:l10n_si.1_gd_taxr_3
 #: model:account.tax,name:l10n_si.2_gd_taxp_3
@@ -214,90 +280,154 @@ msgstr "22% samoobdavčitev DDV"
 
 #. module: l10n_si
 #: model:account.report.line,name:l10n_si.tax_report_22
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_22
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "22. At a rate of 9,5%"
 msgstr "22. Po stopnji 9,5 %"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_22a
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_22a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "22a"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_22a
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_22a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "22a. At a rate of 5%"
 msgstr "22a. Po stopnji 5 %"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_23
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_23
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "23"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_23
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_23
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "23. 22% of acquisitions of goods from other EU Member States"
 msgstr "23. 22 % nabav blaga iz drugih držav članic EU"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_23a
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_23a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "23a"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_23a
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_23a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid ""
 "23a. Of the services received from other EU Member States at a rate of 22%"
 msgstr "23a. Prejetih storitev iz drugih držav članic EU po stopnji 22 %."
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_24
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_24
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "24"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_24
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_24
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "24. 9,5% of acquisitions of goods from other EU Member States"
 msgstr "24. 9,5 % nabav blaga iz drugih držav članic EU"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_24a
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_24a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "24a"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_24a
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_24a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid ""
 "24a. Of the services received from other EU Member States at the rate of "
 "9,5%"
 msgstr "24a. Prejetih storitev iz drugih držav članic EU po stopnji 9,5 %."
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_24b
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_24b
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "24b"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_24b
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_24b
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid ""
 "24b. Acquisitions of goods from other EU Member States at the rate of 5%"
 msgstr "24b. Pridobitve blaga iz drugih držav članic EU po stopnji 5 %"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_24c
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_24c
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "24c"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_24c
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_24c
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid ""
 "24c. Of the services received from other EU Member States at the rate of 5%"
 msgstr "24c. Prejetih storitev iz drugih držav članic EU po stopnji 5 %."
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_25
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_25
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "25"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_25
 msgid ""
 "25. On the basis of self-assessment as a recipient of goods and services at "
@@ -306,10 +436,22 @@ msgstr "25. Na podlagi samoocenitve kot prejemnik blaga in storitev po stopnji 2
 
 #. module: l10n_si
 #: model:account.report.line,tag_name:l10n_si.tax_report_25a
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_25
+msgid ""
+"25. On the basis of self-assessment as a recipient of goods and services at "
+"a rate of 22%"
+msgstr ""
+"25. Na podlagi samoocenitve kot prejemnik blaga in storitev po stopnji 22 %."
+
+#. module: l10n_si
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_25a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "25a"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_25a
 msgid ""
 "25a. On the basis of self-assessment as a recipient of goods and services at"
@@ -318,10 +460,23 @@ msgstr "25a. Na podlagi samoocenitve kot prejemnik blaga in storitev po stopnji 
 
 #. module: l10n_si
 #: model:account.report.line,tag_name:l10n_si.tax_report_25b
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_25a
+msgid ""
+"25a. On the basis of self-assessment as a recipient of goods and services at"
+" a rate of 9,5%"
+msgstr ""
+"25a. Na podlagi samoocenitve kot prejemnik blaga in storitev po stopnji 9,5 "
+"%."
+
+#. module: l10n_si
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_25b
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "25b"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_25b
 msgid ""
 "25b. On the basis of self-assessment as a recipient of goods and services at"
@@ -330,30 +485,59 @@ msgstr "25b. Na podlagi samoobdavčitve kot prejemnik blaga in storitev po stopn
 
 #. module: l10n_si
 #: model:account.report.line,tag_name:l10n_si.tax_report_26
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_25b
+msgid ""
+"25b. On the basis of self-assessment as a recipient of goods and services at"
+" a rate of 5%"
+msgstr ""
+"25b. Na podlagi samoobdavčitve kot prejemnik blaga in storitev po stopnji 5 "
+"%."
+
+#. module: l10n_si
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_26
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "26"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_26
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_26
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "26. On the basis of self-assessment of imports"
 msgstr "26. Na podlagi samoocenitve uvoza"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_31
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_31
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "31"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_31
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_31
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "31. Purchases of goods and services"
 msgstr "31. Nakupi blaga in storitev"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_31a
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_31a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "31a"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_31a
 msgid ""
 "31a. Purchases of goods and services in Slovenia, of which the recipient "
@@ -362,61 +546,113 @@ msgstr "31a. Nakupi blaga in storitev v Sloveniji, od katerih prejemnik obračun
 
 #. module: l10n_si
 #: model:account.report.line,tag_name:l10n_si.tax_report_32
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_31a
+msgid ""
+"31a. Purchases of goods and services in Slovenia, of which the recipient "
+"charges VAT"
+msgstr ""
+"31a. Nakupi blaga in storitev v Sloveniji, od katerih prejemnik obračuna DDV"
+
+#. module: l10n_si
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_32
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "32"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_32
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_32
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "32. Acquisitions of goods from other EU Member States"
 msgstr "32. Pridobitve blaga iz drugih držav članic EU"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_32a
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_32a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "32a"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_32a
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_32a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "32a. Services received from other EU Member States"
 msgstr "32a. Storitve, prejete iz drugih držav članic EU"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_33
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_33
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "33"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_33
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_33
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid ""
 "33. Exempt purchases of goods and services and exempt acquisitions of goods"
 msgstr "33. Oproščeni nakupi blaga in storitev ter oproščene pridobitve blaga"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_34
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_34
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "34"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_34
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_34
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "34. Purchase value of real estate"
 msgstr "34. Nabavna vrednost nepremičnine"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_35
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_35
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "35"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_35
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_35
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "35. Cost of other fixed assets"
 msgstr "35. Nabavna vrednost drugih osnovnih sredstev"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,tag_name:l10n_si.tax_report_41
+=======
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_41
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "41"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_41
 msgid ""
 "41. From purchases of goods and services, acquisition of goods and services "
@@ -425,10 +661,23 @@ msgstr "41. Od nabave blaga in storitev, pridobitve blaga in storitev, prejetih 
 
 #. module: l10n_si
 #: model:account.report.line,tag_name:l10n_si.tax_report_42
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_41
+msgid ""
+"41. From purchases of goods and services, acquisition of goods and services "
+"received from other EU Member States and from imports at a rate of 22%"
+msgstr ""
+"41. Od nabave blaga in storitev, pridobitve blaga in storitev, prejetih iz "
+"drugih držav članic EU in od uvoza po stopnji 22 %."
+
+#. module: l10n_si
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_42
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "42"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_42
 msgid ""
 "42. From purchases of goods and services, acquisition of goods and services "
@@ -437,10 +686,23 @@ msgstr "42. Od nabave blaga in storitev, pridobitve blaga in storitev, prejetih 
 
 #. module: l10n_si
 #: model:account.report.line,tag_name:l10n_si.tax_report_42a
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_42
+msgid ""
+"42. From purchases of goods and services, acquisition of goods and services "
+"received from other EU Member States and from imports at a rate of 9,5%"
+msgstr ""
+"42. Od nabave blaga in storitev, pridobitve blaga in storitev, prejetih iz "
+"drugih držav članic EU ter od uvoza po stopnji 9,5 %."
+
+#. module: l10n_si
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_42a
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "42a"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_42a
 msgid ""
 "42a. From purchases of goods and services, acquisition of goods and services"
@@ -449,15 +711,32 @@ msgstr "42a. Od nabave blaga in storitev, pridobitve blaga in storitev, prejetih
 
 #. module: l10n_si
 #: model:account.report.line,tag_name:l10n_si.tax_report_43
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_42a
+msgid ""
+"42a. From purchases of goods and services, acquisition of goods and services"
+" received from other EU Member States and from imports at a rate of 5%"
+msgstr ""
+"42a. Od nabave blaga in storitev, pridobitve blaga in storitev, prejetih iz "
+"drugih držav članic EU ter od uvoza po stopnji 5 %."
+
+#. module: l10n_si
+#: model:account.tax.report.line,tag_name:l10n_si.tax_report_43
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "43"
 msgstr ""
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_43
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_43
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "43. Of the flat-rate compensation at the rate of 8%"
 msgstr "43. Od pavšalnega nadomestila po stopnji 8 %."
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_si.1_l10n_si_vat_5_purchase
 #: model:account.tax,name:l10n_si.1_l10n_si_vat_5_sale
 #: model:account.tax,name:l10n_si.2_l10n_si_vat_5_purchase
@@ -547,15 +826,23 @@ msgstr "5% samoobdavčitev DDV"
 
 #. module: l10n_si
 #: model:account.report.line,name:l10n_si.tax_report_51
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_51
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "51. VAT liability"
 msgstr "51. Obveznost za DDV"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_52
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_52
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "52. VAT surplus"
 msgstr "52. Presežek DDV"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_si.1_gd_taxp_2
 #: model:account.tax,name:l10n_si.1_gd_taxr_2
 #: model:account.tax,name:l10n_si.2_gd_taxp_2
@@ -1678,25 +1965,41 @@ msgstr "Pobrani pridelki po pošteni vrednosti"
 
 #. module: l10n_si
 #: model:account.report.line,name:l10n_si.tax_report_I
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_I
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "I. Supplies of goods and services (values excluding VAT)"
 msgstr "I. Dobave blaga in storitev (vrednosti brez DDV)"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_II
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_II
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "II. VAT charged"
 msgstr "II. Obračunan DDV"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_III
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_III
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "III. Purchases of goods and services (values excluding VAT)"
 msgstr "III. Nakupi blaga in storitev (vrednosti brez DDV)"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.report.line,name:l10n_si.tax_report_IV
+=======
+#: model:account.tax.report.line,name:l10n_si.tax_report_IV
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "IV. VAT deduction"
 msgstr "IV. Odbitek DDV"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.group,name:l10n_si.1_gd_acc_group_03
 #: model:account.group,name:l10n_si.2_gd_acc_group_03
 #: model:account.group.template,name:l10n_si.gd_acc_group_03
@@ -4004,11 +4307,14 @@ msgid "Shorthand passive time relations"
 msgstr "Stenografske pasivne časovne relacije"
 
 #. module: l10n_si
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.ui.menu,name:l10n_si.account_reports_si_statements_menu
 msgid "Slovenia"
 msgstr "Slovenija"
 
 #. module: l10n_si
+<<<<<<< HEAD
 #: model:account.chart.template,name:l10n_si.gd_chart
 msgid "Slovenia - National Chart of Accounts"
 msgstr "Slovenija - Nacionalni kontni načrt"
@@ -4720,3 +5026,8 @@ msgstr "Umetniška dela in drugi predmeti kulturne in/ali zgodovinske vrednosti,
 #: model:account.account.template,name:l10n_si.gd_acc_404000
 msgid "Write-off of small inventory and packaging"
 msgstr "Odpis drobnega inventarja in embalaže"
+=======
+#: model:account.tax.report,name:l10n_si.tax_report
+msgid "Tax Report"
+msgstr "Davčno poročilo"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

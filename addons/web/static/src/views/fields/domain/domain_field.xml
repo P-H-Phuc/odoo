@@ -10,7 +10,11 @@
                     readonly="props.readonly or props.editInDialog"
                     update.bind="update"
                     isDebugMode="!!env.debug"
+<<<<<<< HEAD
                     debugValue="props.value || '[]'"
+=======
+                    debugValue="props.record.data[props.name] || '[]'"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     className="props.readonly ? 'o_read_mode' : 'o_edit_mode'"
                 />
                 <div class="o_field_domain_panel">

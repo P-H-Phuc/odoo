@@ -40,6 +40,12 @@ wTourUtils.registerWebsitePreviewTour('snippet_table_of_content', {
     checkTOCNavBar(1, 1),
     wTourUtils.clickOnEdit(),
     {
+<<<<<<< HEAD
+=======
+        trigger: "#oe_snippets.o_loaded",
+    },
+    {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         content: "Click on the first TOC's title",
         trigger: 'iframe .s_table_of_content:eq(0) h1',
         extra_trigger: "#oe_snippets.o_loaded",

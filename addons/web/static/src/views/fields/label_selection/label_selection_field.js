@@ -8,32 +8,32 @@ import { formatSelection } from "../formatters";
 import { Component } from "@odoo/owl";
 
 export class LabelSelectionField extends Component {
+    static template = "web.LabelSelectionField";
+    static props = {
+        ...standardFieldProps,
+        classesObj: { type: Object, optional: true },
+    };
+    static defaultProps = {
+        classesObj: {},
+    };
+
     get className() {
-        return this.props.classesObj[this.props.value] || "primary";
+        return this.props.classesObj[this.props.record.data[this.props.name]] || "primary";
     }
     get string() {
-        return formatSelection(this.props.value, {
+        return formatSelection(this.props.record.data[this.props.name], {
             selection: Array.from(this.props.record.fields[this.props.name].selection),
         });
     }
 }
 
-LabelSelectionField.template = "web.LabelSelectionField";
-LabelSelectionField.props = {
-    ...standardFieldProps,
-    classesObj: { type: Object, optional: true },
-};
-LabelSelectionField.defaultProps = {
-    classesObj: {},
-};
-
-LabelSelectionField.displayName = _lt("Label Selection");
-LabelSelectionField.supportedTypes = ["selection"];
-
-LabelSelectionField.extractProps = ({ attrs }) => {
-    return {
-        classesObj: attrs.options.classes,
-    };
+export const labelSelectionField = {
+    component: LabelSelectionField,
+    displayName: _lt("Label Selection"),
+    supportedTypes: ["selection"],
+    extractProps: ({ options }) => ({
+        classesObj: options.classes,
+    }),
 };
 
-registry.category("fields").add("label_selection", LabelSelectionField);
+registry.category("fields").add("label_selection", labelSelectionField);

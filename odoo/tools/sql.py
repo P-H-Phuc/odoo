@@ -3,15 +3,14 @@
 
 # pylint: disable=sql-injection
 
+from binascii import crc32
 import logging
 import json
 import re
 import psycopg2
 from psycopg2.sql import SQL, Identifier
 
-import odoo.sql_db
 from collections import defaultdict
-from contextlib import closing
 
 _schema = logging.getLogger('odoo.schema')
 
@@ -129,7 +128,7 @@ def convert_column(cr, tablename, columnname, columntype):
 
 def convert_column_translatable(cr, tablename, columnname, columntype):
     """ Convert the column from/to a 'jsonb' translated field column. """
-    drop_index(cr, f"{tablename}_{columnname}_index", tablename)
+    drop_index(cr, make_index_name(tablename, columnname), tablename)
     if columntype == "jsonb":
         using = f"""CASE WHEN "{columnname}" IS NOT NULL THEN jsonb_build_object('en_US', "{columnname}"::varchar) END"""
     else:
@@ -427,3 +426,23 @@ def pattern_to_translated_trigram_pattern(pattern):
 
     # replace the original wildcard characters by %
     return f"%{'%'.join(wildcard_escaped)}%" if wildcard_escaped else "%"
+<<<<<<< HEAD
+=======
+
+
+def make_identifier(identifier: str) -> str:
+    """ Return ``identifier``, possibly modified to fit PostgreSQL's identifier size limitation.
+    If too long, ``identifier`` is truncated and padded with a hash to make it mostly unique.
+    """
+    # if length exceeds the PostgreSQL limit of 63 characters.
+    if len(identifier) > 63:
+        # We have to fit a crc32 hash and one underscore into a 63 character
+        # alias. The remaining space we can use to add a human readable prefix.
+        return f"{identifier[:54]}_{crc32(identifier.encode()):08x}"
+    return identifier
+
+
+def make_index_name(table_name: str, column_name: str) -> str:
+    """ Return an index name according to conventions for the given table and column. """
+    return make_identifier(f"{table_name}__{column_name}_index")
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

@@ -1,9 +1,14 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 {
+<<<<<<< HEAD
     "name": "Ecuadorian Accounting",
     "version": "3.4",
     "description": """
+=======
+    'name': 'Ecuadorian Accounting',
+    'version': '3.3',
+    'description': """
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 Functional
 ----------
 
@@ -32,6 +37,7 @@ Master Data:
 * Ecuador banks
 * Partners: Consumidor Final, SRI, IESS, and also basic VAT validation
     """,
+<<<<<<< HEAD
     "author": "TRESCLOUD, OPA CONSULTING",
     "category": "Accounting/Localizations/Account Charts",
     "maintainer": "TRESCLOUD",
@@ -75,9 +81,36 @@ Master Data:
         "views/account_journal_view.xml",
         # Try loading CoA
         "data/account_chart_template_configure_data.xml",
+=======
+    'author': 'OPA CONSULTING & TRESCLOUD',
+    'category': 'Accounting/Localizations/Account Charts',
+    'maintainer': 'OPA CONSULTING',
+    'website': 'https://opa-consulting.com',
+    'license': 'LGPL-3',
+    'depends': [
+        'base',
+        'base_iban',
+        'account_debit_note',
+        'l10n_latam_invoice_document',
+        'l10n_latam_base',
+        'account',
     ],
-    "demo": [
-        "demo/demo_company.xml",
+    'data': [
+        'data/account_tax_report_data.xml',
+        'data/res.bank.csv',
+        'data/l10n_latam_identification_type_data.xml',
+        'data/res_partner_data.xml',
+        'data/l10n_latam.document.type.csv',
+        'data/l10n_ec.sri.payment.csv',
+        'views/account_tax_view.xml',
+        'views/l10n_latam_document_type_view.xml',
+        'views/l10n_ec_sri_payment.xml',
+        'views/account_journal_view.xml',
+        'security/ir.model.access.csv',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     ],
-    "installable": True,
+    'demo': [
+        'demo/demo_company.xml',
+    ],
+    'installable': True,
 }

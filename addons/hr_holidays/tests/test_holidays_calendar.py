@@ -8,7 +8,11 @@ from odoo.tests.common import users
 
 from odoo.addons.hr_holidays.tests.common import TestHrHolidaysCommon
 
+<<<<<<< HEAD
 @tagged('post_install', '-at_install')
+=======
+@tagged('post_install', '-at_install', 'holiday_calendar')
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 class TestHolidaysCalendar(HttpCase, TestHrHolidaysCommon):
 
     @users('admin')
@@ -19,8 +23,13 @@ class TestHolidaysCalendar(HttpCase, TestHrHolidaysCommon):
         """
         self.env.user.tz = 'UTC'
         calendar = self.env.user.employee_id.resource_calendar_id.attendance_ids
+<<<<<<< HEAD
         expected_start_thursday = calendar[6].hour_from
         expected_end_thursday = calendar[7].hour_to
+=======
+        expected_start_thursday = calendar[9].hour_from
+        expected_end_thursday = calendar[11].hour_to
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         self.start_tour('/', 'time_off_request_calendar_view', login='admin')
 

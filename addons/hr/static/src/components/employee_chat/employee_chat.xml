@@ -11,6 +11,7 @@
             <i class="fa fa-comments align-middle fs-6"/>
         </a>
     </t>
+<<<<<<< HEAD
 
     <!-- TODO KBA: remove when Studio converted to owl -->
     <t t-name="hr.OpenChatLegacy">
@@ -23,4 +24,6 @@
             <i class="fa fa-comments align-middle fs-6"/>
         </a>
     </t>
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 </templates>

@@ -73,8 +73,11 @@
             class="o_calendar_filter_item w-100 position-relative mb-2"
             t-att-class="getFilterColor(filter)"
             t-att-data-value="filter.value"
+<<<<<<< HEAD
             t-on-mouseenter="(ev) => this.onFilterMouseEnter(section, filter, ev)"
             t-on-mouseleave="() => this.onFilterMouseLeave(section, filter)"
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         >
             <input
                 type="checkbox"
@@ -128,6 +131,7 @@
         </div>
     </t>
 
+<<<<<<< HEAD
     <t t-name="web.CalendarFilterPanel.tooltip" owl="1">
         <div class="card">
             <h6
@@ -143,4 +147,6 @@
         </div>
     </t>
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 </templates>

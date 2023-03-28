@@ -65,3 +65,11 @@ export class SettingsPage extends Component {
 }
 SettingsPage.template = "web.SettingsPage";
 SettingsPage.components = { ActionSwiper };
+<<<<<<< HEAD
+=======
+SettingsPage.props = {
+    modules: Array,
+    initialTab: { type: String, optional: 1 },
+    slots: Object,
+};
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

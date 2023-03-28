@@ -1,20 +1,14 @@
-odoo.define('point_of_sale.ProductsWidgetControlPanel', function(require) {
-    'use strict';
+/** @odoo-module */
 
-    const { identifyError } = require('point_of_sale.utils');
-    const { ConnectionLostError, ConnectionAbortedError } = require('@web/core/network/rpc_service');
-    const PosComponent = require('point_of_sale.PosComponent');
-    const Registries = require('point_of_sale.Registries');
-    const { debounce } = require("@web/core/utils/timing");
+import { debounce } from "@web/core/utils/timing";
+import { usePos } from "@point_of_sale/app/pos_hook";
 
-    const { onMounted, onWillUnmount, useRef } = owl;
+import { CategoryButton } from "./CategoryButton";
 
-    class ProductsWidgetControlPanel extends PosComponent {
-        setup() {
-            super.setup();
-            this.searchWordInput = useRef('search-word-input-product');
-            this.updateSearch = debounce(this.updateSearch, 100);
+import { Component, useState } from "@odoo/owl";
+import { useService } from "@web/core/utils/hooks";
 
+<<<<<<< HEAD
             onMounted(() => {
                 this.env.posbus.on('search-product-from-info-popup', this, this.searchProductFromInfo)
             });
@@ -86,11 +80,76 @@ odoo.define('point_of_sale.ProductsWidgetControlPanel', function(require) {
                     throw error;
                 }
             }
+=======
+export class ProductsWidgetControlPanel extends Component {
+    static components = { CategoryButton };
+    static template = "ProductsWidgetControlPanel";
+
+    setup() {
+        super.setup();
+        this.pos = usePos();
+        this.notification = useService("pos_notification");
+        this.orm = useService("orm");
+        this.updateSearch = debounce(this.updateSearch, 100);
+        this.state = useState({ mobileSearchBarIsShown: false });
+    }
+    toggleMobileSearchBar() {
+        this.state.mobileSearchBarIsShown = !this.state.mobileSearchBarIsShown;
+    }
+    _clearSearch() {
+        this.env.pos.searchProductWord = "";
+        this.props.clearSearch();
+    }
+    get displayCategImages() {
+        return (
+            Object.values(this.env.pos.db.category_by_id).some((categ) => categ.has_image) &&
+            !this.env.isMobile
+        );
+    }
+    updateSearch(event) {
+        this.props.updateSearch(this.env.pos.searchProductWord);
+        if (event.key === "Enter") {
+            this._onPressEnterKey();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
     }
-    ProductsWidgetControlPanel.template = 'ProductsWidgetControlPanel';
+    async _onPressEnterKey() {
+        if (!this.env.pos.searchProductWord) {
+            return;
+        }
+        const result = await this.loadProductFromDB();
+        this.notification.add(
+            _.str.sprintf(
+                this.env._t('%s product(s) found for "%s".'),
+                result.length,
+                this.env.pos.searchProductWord
+            ),
+            3000
+        );
+    }
+    searchProductFromInfo(productName) {
+        this.env.pos.searchProductWord = productName;
+        this.props.switchCategory(0);
+        this.props.updateSearch(productName);
+    }
+    async loadProductFromDB() {
+        if (!this.env.pos.searchProductWord) {
+            return;
+        }
 
-    Registries.Component.add(ProductsWidgetControlPanel);
-
-    return ProductsWidgetControlPanel;
-});
+        const ProductIds = await this.orm.search("product.product", [
+            "&",
+            ["available_in_pos", "=", true],
+            "|",
+            "|",
+            ["name", "ilike", this.env.pos.searchProductWord],
+            ["default_code", "ilike", this.env.pos.searchProductWord],
+            ["barcode", "ilike", this.env.pos.searchProductWord],
+        ]);
+        if (ProductIds.length) {
+            await this.env.pos._addProducts(ProductIds, false);
+        }
+        this.props.updateProductList();
+        return ProductIds;
+    }
+}

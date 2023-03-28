@@ -54,7 +54,11 @@ QUnit.module("Widgets", (hooks) => {
             mockRPC(route, args) {
                 if (args.method === "create") {
                     assert.deepEqual(args.model, "ir.attachment", "create ir.attachment")
+<<<<<<< HEAD
                     return 99;
+=======
+                    return [99];
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 }
                 if (args.method === "create_document_from_attachment" && args.model === "account.journal") {
                     assert.equal(args.kwargs.context.default_journal_id, 7, "create documents in correct journal");

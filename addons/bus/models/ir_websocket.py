@@ -12,7 +12,11 @@ class IrWebsocket(models.AbstractModel):
     def _get_im_status(self, im_status_ids_by_model):
         im_status = {}
         if 'res.partner' in im_status_ids_by_model:
+<<<<<<< HEAD
             im_status['partners'] = self.env['res.partner'].with_context(active_test=False).search_read(
+=======
+            im_status['Partner'] = self.env['res.partner'].with_context(active_test=False).search_read(
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 [('id', 'in', im_status_ids_by_model['res.partner'])],
                 ['im_status']
             )
@@ -40,14 +44,18 @@ class IrWebsocket(models.AbstractModel):
 
     def _update_bus_presence(self, inactivity_period, im_status_ids_by_model):
         if self.env.user and not self.env.user._is_public():
-            self.env['bus.presence'].update(
+            self.env['bus.presence'].update_presence(
                 inactivity_period,
                 identity_field='user_id',
                 identity_value=self.env.uid
             )
             im_status_notification = self._get_im_status(im_status_ids_by_model)
             if im_status_notification:
+<<<<<<< HEAD
                 self.env['bus.bus']._sendone(self.env.user.partner_id, 'bus/im_status', im_status_notification)
+=======
+                self.env['bus.bus']._sendone(self.env.user.partner_id, 'mail.record/insert', im_status_notification)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     @classmethod
     def _authenticate(cls):

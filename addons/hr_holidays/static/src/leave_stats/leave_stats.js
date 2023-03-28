@@ -102,4 +102,12 @@ export class LeaveStatsComponent extends Component {
 }
 
 LeaveStatsComponent.template = 'hr_holidays.LeaveStatsComponent';
+<<<<<<< HEAD
 registry.category('view_widgets').add('hr_leave_stats', LeaveStatsComponent);
+=======
+
+export const leaveStatsComponent = {
+    component: LeaveStatsComponent,
+};
+registry.category('view_widgets').add('hr_leave_stats', leaveStatsComponent);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

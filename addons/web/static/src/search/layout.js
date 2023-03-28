@@ -1,15 +1,28 @@
 /** @odoo-module **/
 
+<<<<<<< HEAD
 import { pick } from "@web/core/utils/objects";
 
 import { Component, useRef } from "@odoo/owl";
+=======
+import { Component, useRef } from "@odoo/owl";
+import { ControlPanel } from "@web/search/control_panel/control_panel";
+import { SearchPanel } from "@web/search/search_panel/search_panel";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 /**
  * @param {Object} params
  * @returns {Object}
  */
 export function extractLayoutComponents(params) {
-    return pick(params, "ControlPanel", "SearchPanel", "Banner");
+    const layoutComponents = {
+        ControlPanel: params.ControlPanel || ControlPanel,
+        SearchPanel: params.SearchPanel || SearchPanel,
+    };
+    if (params.Banner) {
+        layoutComponents.Banner = params.Banner;
+    }
+    return layoutComponents;
 }
 
 export class Layout extends Component {

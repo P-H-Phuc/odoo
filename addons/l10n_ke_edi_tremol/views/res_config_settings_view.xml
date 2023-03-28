@@ -5,6 +5,7 @@
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="account.res_config_settings_view_form"/>
         <field name="arch" type="xml">
+<<<<<<< HEAD
             <xpath expr="//div[@id='account_vendor_bills']" position="after">
                 <div attrs="{'invisible':[('country_code', '!=', 'KE')]}">
                     <h2>Kenya TIMS Integration</h2>
@@ -17,15 +18,29 @@
                                     The tremol device makes use of a proxy server, which can be running locally on your computer or on an IoT Box.
                                     The proxy server must be on the same network as the fiscal device.
                                 </div>
+=======
+            <xpath expr="//block[@id='account_vendor_bills']" position="after">
+                <div attrs="{'invisible':[('country_code', '!=', 'KE')]}">
+                    <block title="Kenya TIMS Integration" id="l10n_ke_cu_details">
+                        <setting
+                            string="Tremol Device Settings"
+                            help="The tremol device makes use of a proxy server, which can be running locally on your computer or on an IoT Box. The proxy server must be on the same network as the fiscal device."
+                            company_dependent="1">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                 <div class="content-group">
                                     <div class="row mt8">
                                         <label for="l10n_ke_cu_proxy_address" class="col-lg-5 o_light_label"/>
                                         <field name="l10n_ke_cu_proxy_address"/>
                                     </div>
                                 </div>
+<<<<<<< HEAD
                             </div>
                         </div>
                     </div>
+=======
+                        </setting>
+                    </block>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 </div>
             </xpath>
         </field>

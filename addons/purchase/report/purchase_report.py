@@ -5,11 +5,15 @@
 # Please note that these reports are not multi-currency !!!
 #
 
+<<<<<<< HEAD
 import re
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from odoo.osv.expression import AND, expression
+=======
+from odoo import fields, models
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 
 class PurchaseReport(models.Model):
@@ -37,10 +41,6 @@ class PurchaseReport(models.Model):
     delay = fields.Float('Days to Confirm', digits=(16, 2), readonly=True, group_operator='avg', help="Amount of time between purchase approval and order by date.")
     delay_pass = fields.Float('Days to Receive', digits=(16, 2), readonly=True, group_operator='avg',
                               help="Amount of time between date planned and order by date for each purchase order line.")
-    avg_days_to_purchase = fields.Float(
-        'Average Days to Purchase', digits=(16, 2), readonly=True, store=False,  # needs store=False to prevent showing up as a 'measure' option
-        help="Amount of time between purchase approval and document creation date. Due to a hack needed to calculate this, \
-              every record will show the same average value, therefore only use this as an aggregated value with group_operator=avg")
     price_total = fields.Float('Total', readonly=True)
     price_average = fields.Float('Average Cost', readonly=True, group_operator="avg")
     nbr_lines = fields.Integer('# of Lines', readonly=True)
@@ -148,6 +148,7 @@ class PurchaseReport(models.Model):
                 currency_table.rate
         """
         return group_by_str
+<<<<<<< HEAD
 
     @api.model
     def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
@@ -191,3 +192,5 @@ class PurchaseReport(models.Model):
                 avg_days_to_purchase.split(':')[0]: self.env.cr.fetchall()[0][0],
             })
         return res
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

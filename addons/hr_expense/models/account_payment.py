@@ -7,6 +7,7 @@ from odoo.exceptions import UserError
 class AccountPayment(models.Model):
     _inherit = "account.payment"
 
+<<<<<<< HEAD
     def action_cancel(self):
         # EXTENDS account
         for payment in self:
@@ -23,6 +24,8 @@ class AccountPayment(models.Model):
             self.reconciled_bill_ids.expense_sheet_id.write({'state': 'post'})
         return super().action_draft()
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def action_open_expense_report(self):
         self.ensure_one()
         return {

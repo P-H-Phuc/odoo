@@ -29,7 +29,10 @@
         'data/website_blog_demo.xml'
     ],
     'installable': True,
+<<<<<<< HEAD
     'application': False,
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     'assets': {
         'website.assets_wysiwyg': [
             'website_blog/static/src/js/options.js',

@@ -1829,11 +1829,41 @@ var SnippetsMenu = Widget.extend({
         this.$el = this.window.$(this.$el);
         this.$el.data('snippetMenu', this);
 
+        this.folded = !!this.options.foldSnippets;
+
         this.customizePanel = document.createElement('div');
         this.customizePanel.classList.add('o_we_customize_panel', 'd-none');
-        this._addToolbar();
+        // adds toolbar if not folded
+        this.setFolded(this.folded);
         this._checkEditorToolbarVisibilityCallback = this._checkEditorToolbarVisibility.bind(this);
         $(this.options.wysiwyg.odooEditor.document.body).on('click', this._checkEditorToolbarVisibilityCallback);
+
+        // Add tooltips on we-title elements whose text overflows and on all
+        // elements with available tooltip text. Note that the tooltips of the
+        // blocks should not be taken into account here because they have
+        // tooltips with a particular behavior (see _showSnippetTooltip).
+        this.tooltips = new Tooltip(this.el, {
+            selector: 'we-title, [title]:not(.oe_snippet)',
+            placement: 'bottom',
+            delay: 100,
+            // Ensure the tooltips have a good position when in iframe.
+            container: this.el,
+            // Prevent horizontal scroll when tooltip is displayed.
+            boundary: this.el.ownerDocument.body,
+            title: function () {
+                const el = this;
+                if (el.tagName !== 'WE-TITLE') {
+                    return el.title;
+                }
+                // On Firefox, el.scrollWidth is equal to el.clientWidth when
+                // overflow: hidden, so we need to update the style before to
+                // get the right values.
+                el.style.setProperty('overflow', 'scroll', 'important');
+                const tipContent = el.scrollWidth > el.clientWidth ? el.innerHTML : '';
+                el.style.removeProperty('overflow');
+                return tipContent;
+            },
+        });
 
         if (this.options.enableTranslation) {
             // Load the sidebar with the style tab only.
@@ -1972,6 +2002,7 @@ var SnippetsMenu = Widget.extend({
         const $autoFocusEls = $('.o_we_snippet_autofocus');
         this._activateSnippet($autoFocusEls.length ? $autoFocusEls.first() : false);
 
+<<<<<<< HEAD
         // Add tooltips on we-title elements whose text overflows
         new Tooltip(this.el, {
             selector: 'we-title',
@@ -1996,6 +2027,8 @@ var SnippetsMenu = Widget.extend({
             },
         });
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return Promise.all(defs).then(() => {
             const $undoButton = this.$('.o_we_external_history_buttons button[data-action="undo"]');
             const $redoButton = this.$('.o_we_external_history_buttons button[data-action="redo"]');
@@ -2043,6 +2076,8 @@ var SnippetsMenu = Widget.extend({
         core.bus.off('deactivate_snippet', this, this._onDeactivateSnippet);
         $(document.body).off('click', this._checkEditorToolbarVisibilityCallback);
         this.el.ownerDocument.body.classList.remove('editor_has_snippets');
+        // Dispose BS tooltips.
+        this.tooltips.dispose();
     },
 
     //--------------------------------------------------------------------------
@@ -2123,6 +2158,11 @@ var SnippetsMenu = Widget.extend({
         this.el.classList.toggle('d-none', foldState);
         this.el.ownerDocument.body.classList.toggle('editor_has_snippets', !foldState);
         this.folded = !!foldState;
+<<<<<<< HEAD
+=======
+        // "add" toolbar to set it inside the snippet menu/in the body
+        this._addToolbar();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
     /**
      * Get the editable area.
@@ -2785,7 +2825,11 @@ var SnippetsMenu = Widget.extend({
 
             var target = $style.data('target');
             var noCheck = $style.data('no-check');
-            var optionID = $style.data('js') || $style.data('option-name'); // used in tour js as selector
+            // Note that the optionID will be used to add a class
+            // `snippet-option-XXX` (XXX being the optionID) on the related
+            // option DOM. This is used in JS tours. The data-js attribute can
+            // be used without a corresponding JS class being defined.
+            const optionID = $style.data('js');
             var option = {
                 'option': optionID,
                 'base_selector': selector,
@@ -3372,6 +3416,7 @@ var SnippetsMenu = Widget.extend({
      * @param {this.tabs.VALUE} [tab='blocks'] - the tab to select
      */
     _updateRightPanelContent: function ({content, tab, ...options}) {
+        this._hideActiveTooltip();
         this._closeWidgets();
 
         this._currentTab = tab || this.tabs.BLOCKS;
@@ -3497,6 +3542,28 @@ var SnippetsMenu = Widget.extend({
             tab: this.tabs.OPTIONS,
             forceEmptyTab: true,
         });
+    },
+    /**
+     * Hides the active tooltip.
+     *
+     * @private
+     */
+    _hideActiveTooltip() {
+        // The BS documentation says that "Tooltips that use delegation (which
+        // are created using the selector option) cannot be individually
+        // destroyed on descendant trigger elements". So we remove the active
+        // tooltips manually.
+        // For instance, without this, clicking on "Hide in Desktop" on a
+        // snippet will leave the tooltip "forever" visible even if the "Hide in
+        // Desktop" button is gone.
+        const tooltipClass = 'aria-describedby';
+        const tooltippedEl = this.el.querySelector(`[${tooltipClass}^="tooltip"]`);
+        if (tooltippedEl) {
+            const tooltipEl = document.getElementById(tooltippedEl.getAttribute(tooltipClass));
+            if (tooltipEl) {
+                Tooltip.getInstance(tooltipEl).hide();
+            }
+        }
     },
 
     //--------------------------------------------------------------------------
@@ -3766,7 +3833,7 @@ var SnippetsMenu = Widget.extend({
         new Dialog(this, {
             size: 'medium',
             title: _t('Confirmation'),
-            $content: $('<div><p>' + _.str.sprintf(_t("Are you sure you want to delete the snippet: %s ?"), $snippet.attr('name')) + '</p></div>'),
+            $content: $('<div><p>' + _.str.sprintf(_t("Are you sure you want to delete the snippet: %s?"), $snippet.attr('name')) + '</p></div>'),
             buttons: [{
                 text: _t("Yes"),
                 close: true,
@@ -4101,6 +4168,10 @@ var SnippetsMenu = Widget.extend({
     },
     _addToolbar(toolbarMode = "text") {
         if (this.folded) {
+<<<<<<< HEAD
+=======
+            this._addToolbarToOriginalPosition();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             return;
         }
         let titleText = _t("Inline Text");
@@ -4117,6 +4188,7 @@ var SnippetsMenu = Widget.extend({
         }
 
         this.options.wysiwyg.toolbar.el.classList.remove('oe-floating');
+<<<<<<< HEAD
         // Create toolbar custom container.
         this._$toolbarContainer = $('<WE-CUSTOMIZEBLOCK-OPTIONS id="o_we_editor_toolbar_container"/>');
         const $title = $("<we-title><span>" + titleText + "</span></we-title>");
@@ -4133,8 +4205,36 @@ var SnippetsMenu = Widget.extend({
         $title.append(this._$removeFormatButton);
         this._$toolbarContainer.append(this.options.wysiwyg.toolbar.$el);
         this.options.wysiwyg.toolbar.$el.find('#table').remove();
+=======
+        if (!this._$toolbarContainer) {
+            // Create toolbar custom container.
+            this._$toolbarContainer = $('<WE-CUSTOMIZEBLOCK-OPTIONS id="o_we_editor_toolbar_container"/>');
+            const $title = $("<we-title><span>" + titleText + "</span></we-title>");
+            this._$toolbarContainer.append($title);
+            this._$toolbarContainer.append(this.options.wysiwyg.toolbar.$el);
+            $(this.customizePanel).append(this._$toolbarContainer);
+
+            // Create table-options custom container.
+            const $customizeTableBlock = $(QWeb.render('web_editor.toolbar.table-options'));
+            this.options.wysiwyg.odooEditor.bindExecCommand($customizeTableBlock[0]);
+            $(this.customizePanel).append($customizeTableBlock);
+            this._$removeFormatButton = this.options.wysiwyg.toolbar.$el.find('#removeFormat');
+            $title.append(this._$removeFormatButton);
+            this._$toolbarContainer.append(this.options.wysiwyg.toolbar.$el);
+        }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         this._checkEditorToolbarVisibility();
+    },
+    _addToolbarToOriginalPosition: function () {
+        const toolbar = this.options.wysiwyg.toolbar.el;
+        toolbar.classList.add('oe-floating');
+        if (this.options.wysiwyg.odooEditor.isMobile) {
+            const editorEditable = this.options.wysiwyg.odooEditor.editable;
+            editorEditable.before(toolbar);
+        } else if (this.options.autohideToolbar) {
+            document.body.appendChild(toolbar);
+        }
     },
     /**
      * Update editor UI visibility based on the current range.
@@ -4276,6 +4376,9 @@ var SnippetsMenu = Widget.extend({
         }
         this._buttonAction = true;
         let removeLoadingEffect;
+        // Remove the tooltip now, because the button will be disabled and so,
+        // the tooltip will not be removable (see BS doc).
+        this._hideActiveTooltip();
         if (addLoadingEffect) {
             removeLoadingEffect = dom.addButtonLoadingEffect(button);
         }

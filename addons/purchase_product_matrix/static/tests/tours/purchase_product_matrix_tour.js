@@ -1,12 +1,13 @@
 odoo.define('purchase_product_matrix.purchase_matrix_tour', function (require) {
 "use strict";
 
-var tour = require('web_tour.tour');
+const { registry } = require("@web/core/registry");
+const { stepUtils } = require('@web_tour/tour_service/tour_utils');
 
-tour.register('purchase_matrix_tour', {
+registry.category("web_tour.tours").add('purchase_matrix_tour', {
     url: "/web",
     test: true,
-}, [tour.stepUtils.showAppsMenuItem(), {
+    steps: [stepUtils.showAppsMenuItem(), {
     trigger: '.o_app[data-menu-xmlid="purchase.menu_purchase_root"]',
 }, {
     trigger: ".o_list_button_add",
@@ -25,13 +26,13 @@ tour.register('purchase_matrix_tour', {
 }, {
     trigger: 'ul.ui-autocomplete a:contains("Matrix")',
 }, {
-    trigger: '.o_product_variant_matrix',
+    trigger: '.o_matrix_input_table',
     run: function () {
         // fill the whole matrix with 1's
         $('.o_matrix_input').val(1);
     }
 }, {
-    trigger: 'span:contains("Confirm")',
+    trigger: 'button:contains("Confirm")',
     run: 'click'
 }, {
     trigger: '.o_form_button_save',
@@ -44,13 +45,13 @@ tour.register('purchase_matrix_tour', {
 }, {
     trigger: '[name=product_template_id] button.fa-pencil', // edit the matrix
 }, {
-    trigger: '.o_product_variant_matrix',
+    trigger: '.o_matrix_input_table',
     run: function () {
         // update some of the matrix values.
         $('.o_matrix_input').slice(8, 16).val(4);
     } // set the qty to 4 for half of the matrix products.
 }, {
-    trigger: 'span:contains("Confirm")',
+    trigger: 'button:contains("Confirm")',
     run: 'click' // apply the matrix
 }, {
     trigger: '.o_form_button_save',
@@ -73,10 +74,15 @@ tour.register('purchase_matrix_tour', {
         $("input[value='4']").slice(0, 4).val(8.2);
     }
 }, {
-    trigger: 'span:contains("Confirm")',
+    trigger: 'button:contains("Confirm")',
     run: 'click' // apply the matrix
+<<<<<<< HEAD
 }, ...tour.stepUtils.saveForm({ extra_trigger: '.o_field_cell.o_data_cell.o_list_number:contains("8.20")' })
 ]);
+=======
+}, ...stepUtils.saveForm({ extra_trigger: '.o_field_cell.o_data_cell.o_list_number:contains("8.20")' })
+]});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 
 });

@@ -475,22 +475,6 @@ class Environment(Mapping):
     names to models. It also holds a cache for records, and a data
     structure to manage recomputations.
     """
-    @classproperty
-    def envs(cls):
-        raise NotImplementedError(
-            "Since Odoo 15.0, Environment.envs no longer works; "
-            "use cr.transaction or env.transaction instead."
-        )
-
-    @classmethod
-    @contextmanager
-    def manage(cls):
-        warnings.warn(
-            "Since Odoo 15.0, Environment.manage() is useless.",
-            DeprecationWarning, stacklevel=2,
-        )
-        yield
-
     def reset(self):
         """ Reset the transaction, see :meth:`Transaction.reset`. """
         self.transaction.reset()
@@ -626,7 +610,7 @@ class Environment(Mapping):
 
         .. warning::
 
-            No sanity checks applied in sudo mode !
+            No sanity checks applied in sudo mode!
             When in sudo mode, a user can access any company,
             even if not in his allowed companies.
 
@@ -700,16 +684,6 @@ class Environment(Mapping):
         """
         lazy_property.reset_all(self)
         self.transaction.clear()
-
-    def clear_upon_failure(self):
-        """ Context manager that rolls back the environments (caches and pending
-            computations and updates) upon exception.
-        """
-        warnings.warn(
-            "Since Odoo 15.0, use cr.savepoint() instead of env.clear_upon_failure().",
-            DeprecationWarning, stacklevel=2,
-        )
-        return self.cr.savepoint()
 
     def invalidate_all(self, flush=True):
         """ Invalidate the cache of all records.
@@ -806,7 +780,8 @@ class Environment(Mapping):
 
     @contextmanager
     def norecompute(self):
-        """ Delay recomputations (deprecated: this is not the default behavior). """
+        """ Deprecated: It does nothing, recomputation is delayed by default. """
+        warnings.warn("`norecompute` is useless. Deprecated since 17.0.", DeprecationWarning, 2)
         yield
 
     def cache_key(self, field):

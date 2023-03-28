@@ -4,6 +4,10 @@ import { Dialog } from "@web/core/dialog/dialog";
 import { is24HourFormat } from "@web/core/l10n/dates";
 import { Field } from "@web/views/fields/field";
 import { Record } from "@web/views/record";
+<<<<<<< HEAD
+=======
+import { evalDomain } from "@web/views/utils";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 import { Component } from "@odoo/owl";
 
@@ -24,6 +28,14 @@ export class CalendarCommonPopover extends Component {
         return this.props.model.canDelete;
     }
 
+<<<<<<< HEAD
+=======
+    isInvisible(fieldName, record) {
+        const { invisible } = this.props.model.popoverFields[fieldName].modifiers;
+        return evalDomain(invisible, record.evalContext);
+    }
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     computeDateTimeAndDuration() {
         const record = this.props.record;
         const { start, end } = record;

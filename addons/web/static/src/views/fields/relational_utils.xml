@@ -3,7 +3,11 @@
 
 <t t-name="web.X2ManyFieldDialog" owl="1">
     <Dialog title="title" withBodyPadding="false" modalRef="modalRef" contentClass="'o_form_view'">
+<<<<<<< HEAD
         <FormRenderer record="record" fields="archInfo.fields" archInfo="archInfo"/>
+=======
+        <FormRenderer record="record" archInfo="archInfo"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         <t t-set-slot="footer">
             <t t-if="footerArchInfo">
                 <FormRenderer record="record" archInfo="footerArchInfo"/>
@@ -55,6 +59,14 @@
         />
         <a role="button" class="o_dropdown_button" draggable="false" />
     </div>
+</t>
+
+<t t-name="web.AvatarMany2XAutocomplete" owl="1">
+    <span class="o_avatar_many2x_autocomplete">
+        <img t-if="option.value" class="rounded-circle"
+             t-attf-src="/web/image/{{option.resModel}}/{{option.value}}/avatar_128" />
+        <t t-esc="option.label" />
+    </span>
 </t>
 
 </templates>

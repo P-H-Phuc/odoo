@@ -2,7 +2,7 @@
 
 {
     'name': 'Discuss',
-    'version': '1.10',
+    'version': '1.12',
     'category': 'Productivity/Discuss',
     'sequence': 145,
     'summary': 'Chat, mail gateway and private channels',
@@ -65,6 +65,7 @@ For more specific needs, you may also assign custom-defined actions
         'wizard/mail_blacklist_remove_views.xml',
         'wizard/mail_compose_message_views.xml',
         'wizard/mail_resend_message_views.xml',
+        'wizard/mail_resend_partner_views.xml',
         'wizard/mail_template_preview_views.xml',
         'wizard/mail_wizard_invite_views.xml',
         'wizard/mail_template_reset_views.xml',
@@ -91,6 +92,7 @@ For more specific needs, you may also assign custom-defined actions
         'data/mail_templates_mailgateway.xml',
         'data/mail_channel_data.xml',
         'data/mail_activity_data.xml',
+        'data/security_notifications_templates.xml',
         'data/ir_cron_data.xml',
         'security/mail_security.xml',
         'security/ir.model.access.csv',
@@ -114,6 +116,7 @@ For more specific needs, you may also assign custom-defined actions
     'installable': True,
     'application': True,
     'assets': {
+<<<<<<< HEAD
         'mail.assets_core_messaging': [
             'mail/static/src/model/*.js',
             'mail/static/src/core_models/*.js',
@@ -178,12 +181,16 @@ For more specific needs, you may also assign custom-defined actions
             'web/static/src/legacy/utils.js',
             'web/static/src/legacy/xml/base.xml',
         ],
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         'web._assets_primary_variables': [
             'mail/static/src/scss/variables/primary_variables.scss',
+            'mail/static/src/core_ui/primary_variables.scss',
         ],
         'web.assets_backend': [
             # depends on BS variables, can't be loaded in assets_primary or assets_secondary
             'mail/static/src/scss/variables/derived_variables.scss',
+<<<<<<< HEAD
             # defines mixins and variables used by multiple components
             'mail/static/src/components/notification_list/notification_list_item.scss',
             'mail/static/src/js/**/*.js',
@@ -210,11 +217,21 @@ For more specific needs, you may also assign custom-defined actions
         ],
         "web.dark_mode_assets_backend": [
             'mail/static/src/components/*/*.dark.scss',
+=======
+            'mail/static/src/scss/*.scss',
+            'mail/static/lib/**/*',
+            'mail/static/src/**/*',
+            ('remove', 'mail/static/src/worklets/**/*'),
+            ('remove', 'mail/static/src/public/**/*'),
+            ('remove', 'mail/static/src/**/*.dark.scss'),
+            ('remove', 'mail/static/src/emoji_picker/emoji_data.js'),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         ],
-        'web.assets_backend_prod_only': [
-            'mail/static/src/main.js',
+        "web.dark_mode_assets_backend": [
+            'mail/static/src/**/*.dark.scss',
         ],
         'mail.assets_discuss_public_test_tours': [
+            'web/static/tests/legacy/helpers/test_utils_file.js',
             'mail/static/tests/tours/discuss_public_tour.js',
             'mail/static/tests/tours/mail_channel_as_guest_tour.js',
         ],
@@ -222,15 +239,49 @@ For more specific needs, you may also assign custom-defined actions
             'mail/static/tests/tours/**/*',
         ],
         'web.tests_assets': [
-            'mail/static/tests/helpers/**/*.js',
-            'mail/static/tests/models/*.js',
+            'mail/static/tests/helpers/**/*',
         ],
         'web.qunit_suite_tests': [
-            'mail/static/tests/qunit_suite_tests/**/*.js',
+            'mail/static/tests/**/*',
+            ('remove', 'mail/static/tests/tours/**/*'),
+            ('remove', 'mail/static/tests/helpers/**/*'),
         ],
-        'web.qunit_mobile_suite_tests': [
-            'mail/static/tests/qunit_mobile_suite_tests/**/*.js',
+        'mail.assets_emoji': [
+            'mail/static/src/emoji_picker/emoji_data.js',
         ],
+        'mail.assets_public': [
+            ('include', 'web._assets_helpers'),
+            ('include', 'web._assets_backend_helpers'),
+            ('include', 'web.assets_common'),
+            ('include', 'web._assets_bootstrap'),
+            'web/static/src/scss/bootstrap_overridden.scss',
+            'web/static/src/webclient/webclient.scss',
+            'web/static/src/core/utils/transitions.scss',  # included early because used by other files
+            'web/static/src/core/**/*',
+            'web/static/src/env.js',
+            ('remove', 'web/static/src/legacy/js/services/ajax_service.js'),
+            'web/static/src/views/fields/formatters.js',
+            'web/static/src/views/fields/file_handler.*',
+            'web/static/src/views/fields/many2many_tags/tags_list.*',
+
+            'web/static/src/legacy/js/core/misc.js',
+            'web/static/src/legacy/js/env.js',
+            'web/static/src/legacy/js/owl_compatibility.js',
+            'web/static/src/legacy/js/services/data_manager.js',
+            'web/static/src/legacy/js/services/session.js',
+            'web/static/src/legacy/legacy_load_views.js',
+            'web/static/src/legacy/utils.js',
+
+            'mail/static/src/**/*',
+            ('remove', 'mail/static/src/js/**/*'),
+            ('remove', 'mail/static/src/scss/**/*'),
+            ('remove', 'mail/static/src/xml/**/*'),
+            ('remove', 'mail/static/src/worklets/**/*'),
+            ('remove', 'mail/static/src/views/**/*'),
+            ('remove', 'mail/static/src/web/**/*'),
+            ('remove', 'mail/static/src/emoji_picker/emoji_data.js'),
+            ('remove', 'mail/static/src/**/*.dark.scss'),
+        ]
     },
     'license': 'LGPL-3',
 }

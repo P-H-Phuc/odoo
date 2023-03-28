@@ -205,8 +205,7 @@ class TestSaleToInvoice(TestSaleCommon):
         self.sale_order.action_confirm()
         tax_downpayment = self.company_data['default_tax_sale'].copy({'price_include': True})
         # Let's do an invoice for a deposit of 100
-        product_id = self.env['ir.config_parameter'].sudo().get_param('sale.default_deposit_product_id')
-        product_id = self.env['product.product'].browse(int(product_id)).exists()
+        product_id = self.env.company.sale_down_payment_product_id
         product_id.taxes_id = tax_downpayment.ids
         payment = self.env['sale.advance.payment.inv'].with_context(self.context).create({
             'advance_payment_method': 'percentage',
@@ -249,8 +248,14 @@ class TestSaleToInvoice(TestSaleCommon):
         for line in self.sale_order.order_line:
             self.assertTrue(float_is_zero(line.untaxed_amount_invoiced, precision_digits=2), "The invoiced amount should be zero, as the line is in draft state")
 
-        self.assertEqual(self.sol_serv_order.untaxed_amount_to_invoice, 297, "The untaxed amount to invoice is wrong")
-        self.assertEqual(self.sol_serv_deliver.untaxed_amount_to_invoice, self.sol_serv_deliver.qty_delivered * self.sol_serv_deliver.price_reduce, "The untaxed amount to invoice should be qty deli * price reduce, so 4 * (180 - 36)")
+        self.assertEqual(
+            self.sol_serv_order.untaxed_amount_to_invoice,
+            297,
+            "The untaxed amount to invoice is wrong")
+        self.assertEqual(
+            self.sol_serv_deliver.untaxed_amount_to_invoice,
+            576,
+            "The untaxed amount to invoice should be qty deli * price reduce, so 4 * (180 - 36)")
         # 'untaxed_amount_to_invoice' is invalid when 'sale_stock' is installed.
         # self.assertEqual(self.sol_prod_deliver.untaxed_amount_to_invoice, 140, "The untaxed amount to invoice should be qty deli * price reduce, so 4 * (180 - 36)")
 
@@ -759,7 +764,10 @@ class TestSaleToInvoice(TestSaleCommon):
         # send quotation
         email_act = self.sale_order.action_quotation_send()
         email_ctx = email_act.get('context', {})
-        self.sale_order.with_context(**email_ctx).message_post_with_template(email_ctx.get('default_template_id'))
+        self.sale_order.with_context(**email_ctx).message_post_with_source(
+            self.env['mail.template'].browse(email_ctx.get('default_template_id')),
+            subtype_xmlid='mail.mt_comment',
+        )
         self.assertTrue(self.sale_order.state == 'sent', 'Sale: state after sending is wrong')
         self.sale_order.order_line._compute_product_updatable()
         self.assertTrue(self.sale_order.order_line[0].product_updatable)

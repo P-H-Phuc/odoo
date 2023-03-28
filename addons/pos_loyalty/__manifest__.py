@@ -17,6 +17,7 @@
         'views/pos_loyalty_menu_views.xml',
         'views/res_config_settings_view.xml',
         'views/loyalty_program_views.xml',
+        'views/res_partner_views.xml',
     ],
     'demo': [
         'data/pos_loyalty_demo.xml',
@@ -26,6 +27,10 @@
     'assets': {
         'point_of_sale.assets': [
             'pos_loyalty/static/src/css/Loyalty.scss',
+<<<<<<< HEAD
+=======
+            'pos_loyalty/static/src/app/**/*',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'pos_loyalty/static/src/js/**/*',
             'pos_loyalty/static/src/xml/**/*',
         ],

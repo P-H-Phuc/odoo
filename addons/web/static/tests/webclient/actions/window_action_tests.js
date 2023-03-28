@@ -1313,8 +1313,8 @@ QUnit.module("ActionManager", (hooks) => {
             </form>`;
         const mockRPC = async (route, args) => {
             assert.step(route);
-            if (args && args.method === "get_formview_id") {
-                return Promise.resolve(false);
+            if (args && args.method === "get_formview_action") {
+                return Promise.resolve(serverData.actions[24]);
             }
         };
         const webClient = await createWebClient({ serverData, mockRPC });
@@ -1329,7 +1329,7 @@ QUnit.module("ActionManager", (hooks) => {
             "/web/dataset/call_kw/partner/get_views",
             "/web/dataset/call_kw/partner/web_search_read",
             "/web/dataset/call_kw/partner/read",
-            "/web/dataset/call_kw/partner/get_formview_id",
+            "/web/dataset/call_kw/partner/get_formview_action",
             "/web/dataset/call_kw/partner/get_views",
             "/web/dataset/call_kw/partner/read",
         ]);
@@ -1965,8 +1965,12 @@ QUnit.module("ActionManager", (hooks) => {
                 res_id: 1,
                 views: [[44, "form"]],
             };
+<<<<<<< HEAD
             serverData.views["partner,44,form"] =
                 '<form><field name="m2o" open_target="current"/></form>';
+=======
+            serverData.views["partner,44,form"] = '<form><field name="m2o"/></form>';
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             const mockRPC = async (route, { method }) => {
                 if (method === "get_formview_action") {
                     return Promise.resolve({ ...serverData.actions[999], res_id: 3 });
@@ -2200,7 +2204,7 @@ QUnit.module("ActionManager", (hooks) => {
                 "Warning modal should be opened"
             );
 
-            await click(document.querySelector(".modal.o_technical_modal button.btn-close"));
+            await click(target.querySelector(".modal.o_technical_modal button.btn-primary"));
             assert.containsNone(
                 document.body,
                 ".modal.o_technical_modal",
@@ -2418,7 +2422,7 @@ QUnit.module("ActionManager", (hooks) => {
 
         await warningOpened;
         assert.containsOnce(target, ".modal");
-        assert.containsOnce(target, ".modal .o_dialog_warning");
+        assert.containsOnce(target, ".modal .o_error_dialog");
         assert.strictEqual(
             target.querySelector(".modal .modal-title").textContent,
             "Validation Error"
@@ -2429,6 +2433,7 @@ QUnit.module("ActionManager", (hooks) => {
         const mockRPC = async (route, args) => {
             assert.step(args.method || route);
         };
+        serverData.models["ir.actions.act_window"] = { fields: {}, records: [] };
         const webClient = await createWebClient({ serverData, mockRPC });
         assert.verifySteps(["/web/webclient/load_menus"]);
 
@@ -2440,6 +2445,12 @@ QUnit.module("ActionManager", (hooks) => {
         assert.containsOnce(target, ".o_kanban_view");
 
         assert.verifySteps(["web_search_read"]);
+
+        await webClient.env.services.orm.unlink("ir.actions.act_window", [333]);
+        assert.verifySteps(["unlink"]);
+        await doAction(webClient, 1);
+        // cache was cleared => reload the action
+        assert.verifySteps(["/web/action/load", "web_search_read"]);
     });
 
     QUnit.test("pushState also changes the title of the tab", async (assert) => {
@@ -2508,47 +2519,157 @@ QUnit.module("ActionManager", (hooks) => {
         assert.containsNone(target, ".o_view_nocontent");
     });
 
-    QUnit.test("process context.form_view_initial_mode", async function (assert) {
+    QUnit.test("load a tree", async function (assert) {
         serverData.views = {
-            "partner,false,form": `<form><field name="name"/></form>`,
+            "partner,false,list": `<list><field name="name"/></list>`,
             "partner,false,search": `<search/>`,
         };
-
         const webClient = await createWebClient({ serverData });
         await doAction(webClient, {
             res_id: 1,
             type: "ir.actions.act_window",
             target: "current",
             res_model: "partner",
-            views: [[false, "form"]],
-            context: {
-                form_view_initial_mode: "edit",
-            },
+            views: [[false, "tree"]],
         });
-
-        assert.containsOnce(target, ".o_form_view .o_form_editable");
+        assert.containsOnce(target, ".o_list_view");
     });
 
-    QUnit.test("process context.form_view_initial_mode (2)", async function (assert) {
+    QUnit.test("sample server: populate groups", async function (assert) {
+        serverData.models.partner.records = [];
         serverData.views = {
-            "partner,false,form": `<form><field name="name"/></form>`,
+            "partner,false,kanban": `
+                <kanban sample="1" default_group_by="write_date:month">
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div><field name="display_name"/></div>
+                        </t>
+                    </templates>
+                </kanban>
+            `,
+            "partner,false,pivot": `
+                <pivot sample="1">
+                    <field name="write_date" type="row"/>
+                </pivot>
+            `,
             "partner,false,search": `<search/>`,
         };
-
-        const webClient = await createWebClient({ serverData });
+        const webClient = await createWebClient({
+            serverData,
+            mockRPC(_, args) {
+                if (args.method === "web_read_group") {
+                    return {
+                        groups: [
+                            {
+                                date_count: 0,
+                                "write_date:month": "December 2022",
+                                __range: {
+                                    "write_date:month": {
+                                        from: "2022-12-01",
+                                        to: "2023-01-01",
+                                    },
+                                },
+                                __domain: [
+                                    ["write_date", ">=", "2022-12-01"],
+                                    ["write_date", "<", "2023-01-01"],
+                                ],
+                            },
+                        ],
+                        length: 1,
+                    };
+                }
+            },
+        });
         await doAction(webClient, {
             res_id: 1,
             type: "ir.actions.act_window",
-            target: "new",
+            target: "current",
             res_model: "partner",
-            views: [[false, "form"]],
-            context: {
-                form_view_initial_mode: "readonly",
-            },
+            views: [
+                [false, "kanban"],
+                [false, "pivot"],
+            ],
         });
 
-        // mode is "edit" because target="new"
-        assert.containsOnce(target, ".o_form_view .o_form_editable");
+        assert.containsOnce(target, ".o_kanban_view .o_view_sample_data");
+        assert.strictEqual(target.querySelector(".o_column_title").innerText, "December 2022");
+
+        await cpHelpers.switchView(target, "pivot");
+
+        assert.containsOnce(target, ".o_pivot_view .o_view_sample_data");
+    });
+
+    QUnit.test("click on breadcrumb of a deleted record", async function (assert) {
+        serviceRegistry.add("error", errorService);
+        // In tests we catch unhandledrejection of promises rejected with something that isn't an
+        // error (see tests/qunit.js). In this scenario, with the legacy basic_model, the promise
+        // is rejected with undefined, so without the following lines, we can't reproduce the issue,
+        // which was that the error handlers were executed in a wrong order, and one of them crashed.
+        const windowUnhandledReject = window.onunhandledrejection;
+        window.onunhandledrejection = null;
+        registerCleanup(() => {
+            window.onunhandledrejection = windowUnhandledReject;
+        });
+
+        const handler = (ev) => {
+            // need to preventDefault to remove error from console (so python test pass)
+            ev.preventDefault();
+        };
+        window.addEventListener("unhandledrejection", handler);
+        registerCleanup(() => window.removeEventListener("unhandledrejection", handler));
+        patchWithCleanup(QUnit, {
+            onUnhandledRejection: () => {},
+        });
+
+        serverData.views["partner,false,form"] = `
+            <form>
+                <button type="action" name="3" string="Open Action 3" class="my_btn"/>
+            </form>`;
+
+        const webClient = await createWebClient({ serverData });
+        await doAction(webClient, 3);
+        assert.containsOnce(target, ".o_list_view");
+
+        await click(target.querySelector(".o_data_row .o_data_cell"));
+        assert.containsOnce(target, ".o_form_view");
+
+        await click(target.querySelector(".my_btn"));
+        assert.containsOnce(target, ".o_list_view");
+
+        await click(target.querySelector(".o_data_row .o_data_cell"));
+        assert.containsOnce(target, ".o_form_view");
+        assert.deepEqual(getNodesTextContent(target.querySelectorAll(".breadcrumb-item")), [
+            "Partners",
+            "First record",
+            "Partners",
+            "First record",
+        ]);
+
+        // open action menu and delete
+        await cpHelpers.toggleActionMenu(target);
+        await cpHelpers.toggleMenuItem(target, "Delete");
+        assert.containsOnce(target, ".o_dialog");
+
+        // confirm
+        await click(target.querySelector(".o_dialog .modal-footer .btn-primary"));
+        assert.containsOnce(target, ".o_form_view");
+        assert.deepEqual(getNodesTextContent(target.querySelectorAll(".breadcrumb-item")), [
+            "Partners",
+            "First record",
+            "Partners",
+            "Second record",
+        ]);
+
+        // click on "First record" in breadcrumbs, which doesn't exist anymore
+        await click(target.querySelectorAll(".breadcrumb-item a")[1]);
+        await nextTick();
+        assert.containsOnce(target, ".o_form_view");
+        assert.deepEqual(getNodesTextContent(target.querySelectorAll(".breadcrumb-item")), [
+            "Partners",
+            "First record",
+            "Partners",
+            "Second record",
+        ]);
     });
 
     QUnit.test("load a tree", async function (assert) {

@@ -8,7 +8,6 @@
        This module integrate with the ETA Portal to automatically sign and send your invoices to the tax Authority.
        Special thanks to Plementus <info@plementus.com> for their help in developing this module.
     """,
-    'author': 'odoo',
     'website': 'https://www.odoo.com',
     'category': 'account',
     'version': '0.2',
@@ -32,7 +31,7 @@
     ],
     'assets': {
         'web.assets_backend': [
-            'l10n_eg_edi_eta/static/src/js/sign_invoice.js',
+            'l10n_eg_edi_eta/static/src/**/*.js',
         ],
     },
     'external_dependencies': {

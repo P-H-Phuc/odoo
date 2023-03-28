@@ -1,5 +1,5 @@
 // KANBAN VIEW
-.o_survey_survey_view_kanban {
+.o_survey_view_kanban_view .o_kanban_renderer {
     // Common: left semi-trophy icon for certifications
     .o_survey_kanban_card_certification {
         background-image:
@@ -141,6 +141,17 @@
     > td {
         background: transparent;
     }
+<<<<<<< HEAD
+=======
+}
+.o_survey_form table.o_section_list_view tr.o_data_row.o_is_section {
+    &:hover i {
+        visibility: visible;
+    }
+    &:not(:hover) i {
+        visibility: hidden;
+    }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 }
 
 // TOOLS
@@ -173,4 +184,9 @@
             }
         }
     }
+}
+
+.o_form_label.o_form_label_readonly.o_survey_label_survey_start_url{
+    opacity: 100;
+    font-weight: 500;
 }

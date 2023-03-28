@@ -20,7 +20,13 @@
                 <span t-if="o.move_type == 'out_invoice' and o.state == 'posted'">Tax Invoice</span>
                 <span t-elif="o.move_type == 'out_invoice' and o.state == 'draft'">Draft Tax Invoice</span>
                 <span t-elif="o.move_type == 'out_invoice' and o.state == 'cancel'">Cancelled Tax Invoice</span>
+<<<<<<< HEAD
                 <span t-elif="o.move_type == 'out_refund'">Tax Credit Note</span>
+=======
+                <span t-elif="o.move_type == 'out_refund' and o.state == 'posted'">Tax Credit Note</span>
+                <span t-elif="o.move_type == 'out_refund' and o.state == 'draft'">Draft Tax Credit Note</span>
+                <span t-elif="o.move_type == 'out_refund' and o.state == 'cancel'">Cancelled Tax Credit Note</span>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 <span t-elif="o.move_type == 'in_refund'">Tax Vendor Credit Note</span>
                 <span t-elif="o.move_type == 'in_invoice'">Tax Vendor Bill</span>
                 <span t-if="o.name != '/'" t-field="o.name"/>

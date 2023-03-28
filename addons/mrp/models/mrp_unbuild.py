@@ -2,7 +2,11 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
+<<<<<<< HEAD
 from odoo.exceptions import UserError, ValidationError
+=======
+from odoo.exceptions import UserError
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 from odoo.tools import float_compare, float_round
 from odoo.osv import expression
 
@@ -77,6 +81,10 @@ class MrpUnbuild(models.Model):
         ('draft', 'Draft'),
         ('done', 'Done')], string='Status', default='draft')
 
+    _sql_constraints = [
+        ('qty_positive', 'check (product_qty > 0)', 'The quantity to unbuild must be positive!'),
+    ]
+
     @api.depends('mo_id', 'product_id')
     def _compute_product_uom_id(self):
         for record in self:
@@ -114,12 +122,15 @@ class MrpUnbuild(models.Model):
             self.bom_id = self.env['mrp.bom']._bom_find(self.product_id, company_id=self.company_id.id)[self.product_id]
             self.product_uom_id = self.mo_id.product_id == self.product_id and self.mo_id.product_uom_id.id or self.product_id.uom_id.id
 
+<<<<<<< HEAD
     @api.constrains('product_qty')
     def _check_qty(self):
         for unbuild in self:
             if unbuild.product_qty <= 0:
                 raise ValidationError(_('Unbuild Order product quantity has to be strictly positive.'))
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -212,7 +223,8 @@ class MrpUnbuild(models.Model):
             )
             self.mo_id.message_post(
                 body=unbuild_msg,
-                subtype_id=self.env.ref('mail.mt_note').id)
+                subtype_xmlid='mail.mt_note',
+            )
         return self.write({'state': 'done'})
 
     def _generate_consume_moves(self):

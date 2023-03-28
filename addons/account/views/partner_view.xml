@@ -43,6 +43,7 @@
                             <field name="company_id" invisible="1"/>
                             <field name="states_count" invisible="1"/>
                             <field name="company_country_id" invisible="1"/>
+                            <field name="fiscal_country_codes" invisible="1"/>
                             <field name="foreign_vat_header_mode" invisible="1"/>
                             <field name="name"/>
                             <field name="company_id" options="{'no_create': True}" groups="base.group_multi_company"/>
@@ -192,6 +193,9 @@
             <field name="priority">2</field>
             <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='company_id']" position="after">
+                    <field name="fiscal_country_codes" invisible="1"/>
+                </xpath>
                 <xpath expr="//sheet" position="before">
                     <div groups="account.group_account_invoice,account.group_account_readonly" class="alert alert-warning" role="alert" style="margin-bottom:0px;"
                          attrs="{'invisible': [('duplicated_bank_account_partners_count', '=', 0)]}">
@@ -204,21 +208,15 @@
                         <field name="show_credit_limit" invisible="1"/>
                         <group>
                             <group string="Bank Accounts" name="banks" groups="account.group_account_invoice,account.group_account_readonly">
-                                <field name="bank_ids" nolabel="1" colspan="2" context="{'default_allow_out_payment': True}">
-                                    <tree editable="bottom">
+                                <field name="bank_ids" nolabel="1" colspan="2" context="{'default_partner_id': active_id}">
+                                    <tree>
                                         <field name="sequence" widget="handle"/>
-                                        <field name="bank_id"/>
                                         <field name="acc_number"/>
-                                        <field name="allow_out_payment" widget="boolean_toggle"/>
+                                        <field name="bank_id"/>
+                                        <field name="allow_out_payment"/>
                                         <field name="acc_holder_name" invisible="1"/>
                                     </tree>
                                 </field>
-                                <button type="action" class="btn-link"
-                                    name="%(base.action_res_partner_bank_account_form)d"
-                                    context="{'search_default_partner_id': active_id, 'default_partner_id': active_id}"
-                                    string="View accounts detail"
-                                    colspan="2"
-                                />
                             </group>
                             <group string="Accounting Entries" name="accounting_entries" groups="account.group_account_readonly">
                                 <field name="currency_id" invisible="1"/>
@@ -264,6 +262,7 @@
             <field name="inherit_id" ref="base.view_res_partner_filter"/>
             <field name="arch" type="xml">
                 <xpath expr="//filter[@name='inactive']" position="before">
+                   <field name="fiscal_country_codes" invisible="1"/>
                    <filter string="Customer Invoices" name="customer" domain="[('customer_rank','>', 0)]"/>
                    <filter string="Vendor Bills" name="supplier" domain="[('supplier_rank','>', 0)]"/>
                    <separator/>
@@ -273,7 +272,6 @@
 
         <record id="res_partner_action_customer" model="ir.actions.act_window">
             <field name="name">Customers</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="context">{'search_default_customer': 1,'res_partner_search_mode': 'customer', 'default_is_company': True, 'default_customer_rank': 1}</field>
@@ -288,7 +286,6 @@
 
         <record id="res_partner_action_supplier" model="ir.actions.act_window">
             <field name="name">Vendors</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">kanban,tree,form</field>
             <field name="context">{'search_default_supplier': 1,'res_partner_search_mode': 'supplier', 'default_is_company': True, 'default_supplier_rank': 1}</field>

@@ -14,6 +14,10 @@ import { uiService } from "@web/core/ui/ui_service";
 import { ConnectionAbortedError } from "../../src/core/network/rpc_service";
 
 import { Component, status } from "@odoo/owl";
+<<<<<<< HEAD
+=======
+import { ormService } from "@web/core/orm_service";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 // -----------------------------------------------------------------------------
 // Mock Services
@@ -59,14 +63,25 @@ function buildMockRPC(mockRPC) {
 export function makeFakeRPCService(mockRPC) {
     return {
         name: "rpc",
-        start() {
+        start(env) {
             const rpcService = buildMockRPC(mockRPC);
-            return function () {
+            let nextId = 1;
+            return function (route, params = {}, settings = {}) {
                 let rejectFn;
+                const data = {
+                    id: nextId++,
+                    jsonrpc: "2.0",
+                    method: "call",
+                    params: params,
+                };
+                env.bus.trigger("RPC:REQUEST", { data, settings });
                 const rpcProm = new Promise((resolve, reject) => {
                     rejectFn = reject;
                     rpcService(...arguments)
-                        .then(resolve)
+                        .then((result) => {
+                            env.bus.trigger("RPC:RESPONSE", { data, settings });
+                            resolve(result);
+                        })
                         .catch(reject);
                 });
                 rpcProm.abort = (rejectError = true) => {
@@ -110,13 +125,13 @@ export function makeMockXHR(response, sendCb, def) {
                     if (typeof data === "string") {
                         try {
                             data = JSON.parse(data);
-                        } catch (_e) {
+                        } catch {
                             // Ignore
                         }
                     }
                     try {
                         await sendCb.call(this, data);
-                    } catch (_e) {
+                    } catch {
                         listener = this._errorListener;
                     }
                 }
@@ -151,7 +166,7 @@ export function makeMockFetch(mockRPC) {
         try {
             res = await _rpc(route, params);
             status = 200;
-        } catch (_e) {
+        } catch {
             status = 500;
         }
         const blob = new Blob([JSON.stringify(res || {})], { type: "application/json" });
@@ -161,7 +176,6 @@ export function makeMockFetch(mockRPC) {
 
 /**
  * @param {Object} [params={}]
- * @param {Object} [params.onRedirect] hook on the "redirect" method
  * @returns {typeof routerService}
  */
 export function makeFakeRouterService(params = {}) {
@@ -173,14 +187,6 @@ export function makeFakeRouterService(params = {}) {
                 browser.location.hash = objectToUrlEncodedString(hash);
             });
             registerCleanup(router.cancelPushes);
-            patchWithCleanup(router, {
-                async redirect() {
-                    await this._super(...arguments);
-                    if (params.onRedirect) {
-                        params.onRedirect(...arguments);
-                    }
-                },
-            });
             return router;
         },
     };
@@ -316,6 +322,16 @@ export function makeFakeHTTPService(getResponse, postResponse) {
     };
 }
 
+function makeFakeActionService() {
+    return {
+        start() {
+            return {
+                doAction() {},
+            };
+        },
+    };
+}
+
 export const mocks = {
     color_scheme: () => fakeColorSchemeService,
     company: () => fakeCompanyService,
@@ -330,4 +346,6 @@ export const mocks = {
     ui: () => uiService,
     user: () => userService,
     dialog: makeFakeDialogService,
+    orm: () => ormService,
+    action: makeFakeActionService,
 };

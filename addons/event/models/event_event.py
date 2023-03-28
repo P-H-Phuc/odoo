@@ -52,7 +52,7 @@ class EventType(models.Model):
 
     name = fields.Char('Event Template', required=True, translate=True)
     note = fields.Html(string='Note')
-    sequence = fields.Integer()
+    sequence = fields.Integer(default=10)
     # tickets
     event_type_ticket_ids = fields.One2many('event.type.ticket', 'event_type_id', string='Tickets')
     tag_ids = fields.Many2many('event.tag', string="Tags")
@@ -63,7 +63,7 @@ class EventType(models.Model):
         readonly=False, store=True,
         help="It will select this default maximum value when you choose this event")
     auto_confirm = fields.Boolean(
-        'Automatically Confirm Registrations', default=True,
+        'Automatically Confirm Registrations', default=False,
         help="Events and registrations will automatically be confirmed "
              "upon creation, easing the flow for simple events.")
     default_timezone = fields.Selection(
@@ -88,7 +88,7 @@ class EventEvent(models.Model):
     _name = 'event.event'
     _description = 'Event'
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _order = 'date_begin'
+    _order = 'date_begin, id'
 
     @api.model
     def default_get(self, fields_list):
@@ -350,8 +350,7 @@ class EventEvent(models.Model):
             domain = [('date_begin', '<=', now), ('date_end', '>', now)]
         else:
             domain = ['|', ('date_begin', '>', now), ('date_end', '<=', now)]
-        event_ids = self.env['event.event']._search(domain)
-        return [('id', 'in', event_ids)]
+        return domain
 
     @api.depends('date_begin', 'date_end', 'date_tz')
     def _compute_field_is_one_day(self):
@@ -384,8 +383,7 @@ class EventEvent(models.Model):
             domain = [('date_end', '<=', now)]
         else:
             domain = [('date_end', '>', now)]
-        event_ids = self.env['event.event']._search(domain)
-        return [('id', 'in', event_ids)]
+        return domain
 
     @api.depends('event_type_id')
     def _compute_date_tz(self):

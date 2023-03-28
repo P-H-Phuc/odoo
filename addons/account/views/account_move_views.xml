@@ -30,10 +30,13 @@
                                         <field name="balance" readonly="1"/>
                                         <field name="quantity" readonly="1"/>
                                     </group>
+<<<<<<< HEAD
                                     <group string="Accounting Documents" colspan="2">
                                         <field name="move_id" readonly="1"/>
                                         <field name="statement_line_id" readonly="True" attrs="{'invisible': [('statement_line_id','=',False)]}"/>
                                     </group>
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                     <group string="Dates">
                                         <field name="date" groups="account.group_account_readonly"/>
                                         <field name="date_maturity"/>
@@ -43,7 +46,6 @@
                                         <field name="tax_line_id" readonly="1" attrs="{'invisible': [('tax_line_id','=',False)]}"/>
                                         <field name="tax_ids" widget="many2many_tags" readonly="1" attrs="{'invisible': [('tax_ids','=',[])]}"/>
                                         <field name="tax_tag_invert" readonly="1" groups="base.group_no_one"/>
-                                        <field name="tax_audit"/>
                                     </group>
                                     <group string="Matching" attrs="{'invisible':[('matched_debit_ids', '=', []),('matched_credit_ids', '=', [])]}">
                                         <label for="full_reconcile_id"/>
@@ -78,6 +80,14 @@
                             <page string="Analytic Lines" name="analytic_lines" groups="analytic.group_analytic_accounting">
                                 <field name="date" invisible="1"/>
                                 <field name="analytic_line_ids" context="{'tree_view_ref':'analytic.view_account_analytic_line_tree', 'default_general_account_id':account_id, 'default_name': name, 'default_date':date, 'amount': (debit or 0.0)-(credit or 0.0)}"/>
+                            </page>
+                            <page string="Accounting documents">
+                                <label for="move_id" string="Journal Entry"/>
+                                <field name="move_id" readonly="1" nolabel="1"/>
+                                <group readonly="1" attrs="{'invisible': [('statement_line_id','=',False)]}">
+                                    <label for="statement_line_id" string="Originator Statement Line"/>
+                                    <field name="statement_line_id"/>
+                                </group>
                             </page>
                         </notebook>
                     </sheet>
@@ -172,12 +182,12 @@
                     <field name="ref" optional="hide" readonly="False"/>
                     <field name="product_id" readonly="1" optional="hide"/>
                     <field name="name" optional="show"/>
-                    <field name="tax_ids" widget="many2many_tags" width="0.5" optional="hide" readonly="1"/>
+                    <field name="tax_ids" widget="many2many_tags" optional="hide" readonly="1"/>
                     <field name="amount_currency" groups="base.group_multi_currency" optional="show" readonly="1" attrs="{'invisible':[('is_same_currency', '=', True)]}"/>
                     <field name="currency_id" readonly="1" groups="base.group_multi_currency" optional="hide" string="Currency" attrs="{'invisible':[('is_same_currency', '=', True)]}"/>
                     <field name="debit" sum="Total Debit" readonly="1"/>
                     <field name="credit" sum="Total Credit" readonly="1"/>
-                    <field name="tax_tag_ids" string="Tax Grids" widget="many2many_tags" width="0.5" optional="hide"/>
+                    <field name="tax_tag_ids" string="Tax Grids" widget="many2many_tags" optional="hide"/>
                     <field name="discount_date" string="Discount Date" optional="hide" />
                     <field name="discount_amount_currency" string="Discount Amount" optional="hide" />
                     <field name="tax_line_id" string="Originator Tax" optional="hide" readonly="1"/>
@@ -271,7 +281,6 @@
                 <field name="matching_number" position="replace">
                     <field name="tax_line_id" string="Tax"/>
                     <field name="tax_base_amount" sum="Total Base Amount"/>
-                    <field name="tax_audit"/>
                 </field>
                 <field name="analytic_distribution" position="attributes">
                     <attribute name="optional">hide</attribute>
@@ -417,17 +426,19 @@
                     <field name="amount_untaxed_signed" string="Tax Excluded" sum="Total" optional="show"/>
                     <field name="amount_tax_signed" string="Tax" sum="Total" optional="hide"/>
                     <field name="amount_total_signed" string="Total" sum="Total" decoration-bf="1" optional="show"/>
-                    <field name="amount_total_in_currency_signed" string="Total in Currency" groups="base.group_multi_currency"  optional="show"/>
+                    <field name="amount_total_in_currency_signed" string="Total in Currency" optional="show" groups="base.group_multi_currency"/>
+                    <field name="amount_total_in_currency_signed" string="Total in Currency" optional="hide" groups="!base.group_multi_currency"/>
                     <field name="amount_residual_signed" string="Amount Due" sum="Amount Due" optional="hide"/>
-                    <field name="currency_id" groups="base.group_multi_currency" optional="hide"/>
+                    <field name="currency_id" optional="hide"/>
                     <field name="company_currency_id" invisible="1"/>
                     <field name="to_check" optional="hide" widget="boolean_toggle"/>
                     <field name="payment_state"
+                           string="Payment"
                            widget="badge"
                            decoration-danger="payment_state == 'not_paid'"
                            decoration-warning="payment_state in ('partial', 'in_payment')"
                            decoration-success="payment_state in ('paid', 'reversed')"
-                           attrs="{'invisible': [('payment_state', 'in', ('invoicing_legacy'))]}"
+                           attrs="{'invisible': ['|', '|', ('payment_state', 'in', ('invoicing_legacy')), ('state', '!=', 'posted'), ('move_type', '=', 'entry')]}"
                            optional="show"/>
                     <field name="state" widget="badge" decoration-success="state == 'posted'" decoration-info="state == 'draft'" optional="show"/>
                     <field name="move_type" invisible="context.get('default_move_type', True)"/>
@@ -533,7 +544,7 @@
                                         </strong>
                                     </div>
                                     <div class="col-6 text-end">
-                                        <strong><i class="fa fa-clock-o" aria-label="Date" role="img" title="Date"/> <t t-esc="record.date.value"/></strong>
+                                        <strong><i class="fa fa-clock-o" aria-label="Date" role="img" title="Date"/> <t t-out="record.date.value"/></strong>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -590,7 +601,7 @@
                         <button name="action_register_payment" id="account_invoice_payment_btn"
                                 type="object" class="oe_highlight"
                                 attrs="{'invisible': ['|', '|', ('state', '!=', 'posted'), ('payment_state', 'not in', ('not_paid', 'partial')), ('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt'))]}"
-                                context="{'dont_redirect_to_payments': True}"
+                                context="{'dont_redirect_to_payments': True, 'display_account_trust': True}"
                                 string="Register Payment" data-hotkey="g"
                                 groups="account.group_account_invoice"/>
                         <!-- Preview (only customer invoices) -->
@@ -601,7 +612,7 @@
                         <button name="%(action_view_account_move_reversal)d" string="Reverse Entry"
                                 type="action" groups="account.group_account_invoice" data-hotkey="z"
                                 attrs="{'invisible': ['|', ('move_type', '!=', 'entry'), '|', ('state', '!=', 'posted'), ('payment_state', '=', 'reversed')]}"/>
-                        <button name="action_reverse" string='Add Credit Note'
+                        <button name="action_reverse" string='Credit Note'
                                 type='object' groups="account.group_account_invoice"
                                 attrs="{'invisible': ['|', ('move_type', 'not in', ('out_invoice', 'in_invoice')), ('state', '!=', 'posted')]}"/>
                         <!-- Cancel -->
@@ -737,8 +748,10 @@
                         <field name="country_code" invisible="1"/>
                         <field name="display_inactive_currency_warning" invisible="1"/>
                         <field name="statement_line_id" invisible="1"/>
+                        <field name="statement_id" invisible="1"/>
                         <field name="payment_id" invisible="1"/>
                         <field name="tax_country_id" invisible="1"/>
+                        <field name="tax_calculation_rounding_method" invisible="1"/>
                         <field name="tax_cash_basis_created_move_ids" invisible="1"/>
                         <field name="quick_edit_mode" invisible="1"/>
                         <field name="hide_post_button" invisible="1"/>
@@ -808,7 +821,7 @@
                                 <field name="payment_reference"
                                        attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund', 'in_invoice', 'in_refund', 'out_receipt', 'in_receipt'))]}"/>
                                 <field name="partner_bank_id"
-                                       context="{'default_partner_id': bank_partner_id}"
+                                       context="{'default_partner_id': bank_partner_id, 'display_account_trust': True}"
                                        domain="[('partner_id', '=', bank_partner_id)]"
                                        attrs="{'invisible': [('move_type', 'not in', ('in_invoice', 'in_refund', 'in_receipt'))]}"/>
 
@@ -827,7 +840,12 @@
                                           attrs="{'invisible': ['|', ('state', '!=', 'draft'), ('invoice_payment_term_id', '!=', False)]}"> or </span>
                                     <field name="invoice_payment_term_id"
                                            context="{'example_date': invoice_date, 'example_amount': tax_totals['amount_total']}"
+<<<<<<< HEAD
                                            placeholder="Terms"/>
+=======
+                                           placeholder="Terms"
+                                           options="{'no_quick_create':True}"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                 </div>
 
                                 <label for="journal_id"
@@ -890,8 +908,8 @@
                                         <field name="account_id"
                                                context="{'partner_id': partner_id, 'move_type': parent.move_type}"
                                                groups="account.group_account_readonly"
-                                               options="{'no_create': True}"
-                                               domain="[('deprecated', '=', False), ('account_type', 'not in', ('asset_receivable', 'liability_payable')), ('company_id', '=', parent.company_id), ('is_off_balance', '=', False)]"
+                                               options="{'no_quick_create': True}"
+                                               domain="[('deprecated', '=', False), ('account_type', 'not in', ('asset_receivable', 'liability_payable', 'off_balance')), ('company_id', '=', parent.company_id)]"
                                                attrs="{'required': [('display_type', 'not in', ('line_note', 'line_section'))]}"/>
                                         <field name="analytic_distribution" widget="analytic_distribution"
                                                groups="analytic.group_analytic_accounting"
@@ -909,11 +927,11 @@
                                                options="{'no_create': True}"
                                                optional="show"/>
                                         <field name="price_subtotal"
-                                               string="Subtotal"
-                                               groups="account.group_show_line_subtotals_tax_excluded"/>
+                                               string="Tax excl."/>
                                         <field name="price_total"
-                                               string="Total"
-                                               groups="account.group_show_line_subtotals_tax_included"/>
+                                               string="Tax incl."
+                                               attrs="{'column_invisible': [('parent.tax_calculation_rounding_method', '=', 'round_globally')]}"
+                                               optional="hide"/>
 
                                         <!-- Others fields -->
                                         <field name="partner_id" invisible="1"/>
@@ -929,8 +947,12 @@
                                         <!-- Displayed fields -->
                                         <field name="name"/>
                                         <field name="product_id"/>
-                                        <field name="price_subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
-                                        <field name="price_total" groups="account.group_show_line_subtotals_tax_included"/>
+                                        <field name="price_subtotal"
+                                               string="Tax excl."/>
+                                        <field name="price_total"
+                                               string="Tax incl."
+                                               attrs="{'invisible': [('tax_calculation_rounding_method', '=', 'round_globally')]}"
+                                               optional="hide"/>
                                         <field name="quantity"/>
                                         <field name="product_uom_category_id" invisible="1"/>
                                         <field name="product_uom_id" groups="uom.group_uom"/>
@@ -946,23 +968,28 @@
                                                             <div class="col-10">
                                                                 <div class="row">
                                                                     <div class="col">
-                                                                        <strong t-esc="record.product_id.value"/>
+                                                                        <strong t-out="record.product_id.value"/>
                                                                     </div>
                                                                     <div class="col-auto">
                                                                         <strong class="float-end text-end">
-                                                                            <t t-esc="record.price_subtotal.value" groups="account.group_show_line_subtotals_tax_excluded"/>
-                                                                            <t t-esc="record.price_total.value" groups="account.group_show_line_subtotals_tax_included"/>
+                                                                            <t t-out="record.price_subtotal.value"/>
+                                                                            <t t-out="record.price_total.value" t-if="tax_calculation_rounding_method == 'round_per_line'"/>
                                                                         </strong>
                                                                     </div>
                                                                 </div>
                                                                 <div class="text-muted">
                                                                     Quantity:
+<<<<<<< HEAD
                                                                     <t t-esc="record.quantity.value"/>
                                                                     <t t-esc="record.product_uom_id.value" groups="uom.group_uom"/>
+=======
+                                                                    <t t-out="record.quantity.value"/>
+                                                                    <t t-out="record.product_uom_id.value" groups="uom.group_uom"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                                                 </div>
                                                                 <div class="text-muted">
                                                                     Unit Price:
-                                                                    <t t-esc="record.price_unit.value"/>
+                                                                    <t t-out="record.price_unit.value"/>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -970,7 +997,7 @@
                                                     <t t-if="record.display_type.raw_value === 'line_section' || record.display_type.raw_value === 'line_note'">
                                                         <div class="row">
                                                             <div class="col-12">
-                                                                <t t-esc="record.name.value"/>
+                                                                <t t-out="record.name.value"/>
                                                             </div>
                                                         </div>
                                                     </t>
@@ -979,6 +1006,7 @@
                                         </templates>
 
                                         <!-- Others fields -->
+                                        <field name="tax_calculation_rounding_method" invisible="1"/>
                                         <field name="currency_id" invisible="1"/>
                                         <field name="company_currency_id" invisible="1"/>
                                         <field name="display_type" force_save="1" invisible="1"/>
@@ -987,6 +1015,7 @@
                                     <!-- Form view to cover mobile use -->
                                     <form>
                                         <sheet>
+                                            <field name="tax_calculation_rounding_method" invisible="1"/>
                                             <field name="display_type" invisible="1"/>
                                             <field name="company_id" invisible="1"/>
                                             <field name="partner_id" invisible="1"/>
@@ -1008,8 +1037,12 @@
                                             <label for="name" string="Note" attrs="{'invisible': [('display_type', '!=', 'line_note')]}"/>
                                             <field name="name" widget="text"/>
                                             <group>
-                                                <field name="price_subtotal" string="Subtotal" groups="account.group_show_line_subtotals_tax_excluded"/>
-                                                <field name="price_total" string="Total" groups="account.group_show_line_subtotals_tax_included"/>
+                                                <field name="price_subtotal"
+                                                       string="Tax excl."/>
+                                                <field name="price_total"
+                                                       string="Tax incl."
+                                                       attrs="{'invisible': [('tax_calculation_rounding_method', '=', 'round_globally')]}"
+                                                       optional="hide"/>
                                             </group>
                                         </sheet>
                                     </form>
@@ -1175,7 +1208,7 @@
                                         <field name="invoice_user_id" domain="[('share', '=', False)]" widget="many2one_avatar_user"/>
                                         <field name="invoice_origin" string="Source Document" force_save="1" invisible="1"/>
                                         <field name="partner_bank_id"
-                                               context="{'default_partner_id': bank_partner_id}"
+                                               context="{'default_partner_id': bank_partner_id, 'display_account_trust': True}"
                                                domain="[('partner_id', '=', bank_partner_id)]"
                                                attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                         <field name="qr_code_method"
@@ -1207,7 +1240,7 @@
                                         <field name="auto_post"
                                                attrs="{'invisible': [('move_type', '!=', 'entry')], 'readonly': [('state','!=','draft')]}"/>
                                         <field name="reversed_entry_id"
-                                               attrs="{'invisible': [('move_type', '!=', 'entry')]}"/>
+                                               attrs="{'invisible': ['|', ('move_type', '!=', 'entry'), ('reversed_entry_id', '=', False)]}"/>
                                         <field name="auto_post_until"
                                                attrs="{'invisible': [('auto_post', 'in', ('no', 'at_date'))],
                                                        'readonly': [('state', '!=', 'draft')]}"/>
@@ -1477,7 +1510,7 @@
             <field name="view_id" ref="view_out_credit_note_tree"/>
             <field name="search_view_id" ref="view_account_invoice_filter"/>
             <field name="domain">[('move_type', '=', 'out_refund')]</field>
-            <field name="context">{'default_move_type': 'out_refund'}</field>
+            <field name="context">{'default_move_type': 'out_refund', 'display_account_trust': True}</field>
             <field name="help" type="html">
               <p class="o_view_nocontent_smiling_face">
                 Create a credit note
@@ -1495,7 +1528,7 @@
             <field name="view_id" ref="view_in_invoice_bill_tree"/>
             <field name="search_view_id" ref="view_account_invoice_filter"/>
             <field name="domain">[('move_type', '=', 'in_invoice')]</field>
-            <field name="context">{'default_move_type': 'in_invoice'}</field>
+            <field name="context">{'default_move_type': 'in_invoice', 'display_account_trust': True}</field>
             <field name="help" type="html">
               <p class="o_view_nocontent_smiling_face">
                 Create a vendor bill
@@ -1547,7 +1580,7 @@
             <field name="view_id" ref="view_in_invoice_receipt_tree"/>
             <field name="search_view_id" ref="view_account_invoice_filter"/>
             <field name="domain">[('move_type', '=', 'in_receipt')]</field>
-            <field name="context">{'default_move_type': 'in_receipt'}</field>
+            <field name="context">{'default_move_type': 'in_receipt', 'display_account_trust': True}</field>
             <field name="help" type="html">
               <p class="o_view_nocontent_smiling_face">
                 Register a new purchase receipt
@@ -1560,14 +1593,13 @@
 
         <record id="action_move_line_form" model="ir.actions.act_window">
             <field name="name">Entries</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">account.move</field>
             <field name="view_id" ref="view_move_tree"/>
             <field name="search_view_id" ref="view_account_move_filter"/>
         </record>
 
-        <record model="ir.actions.server" id="action_move_switch_invoice_to_credit_note">
-            <field name="name">Switch into refund/credit note</field>
+        <record model="ir.actions.server" id="action_move_switch_move_type">
+            <field name="name">Switch into invoice/credit note</field>
             <field name="model_id" ref="account.model_account_move"/>
             <field name="groups_id" eval="[(4, ref('account.group_account_invoice'))]"/>
             <field name="binding_model_id" ref="account.model_account_move" />
@@ -1575,14 +1607,13 @@
             <field name="binding_view_types">form</field>
             <field name="code">
 if records:
-    action = records.action_switch_invoice_into_refund_credit_note()
+    action = records.action_switch_move_type()
             </field>
         </record>
 
         <record model="ir.actions.server" id="action_check_hash_integrity">
             <field name="name">Data Inalterability Check</field>
             <field name="model_id" ref="account.model_res_company"/>
-            <field name="type">ir.actions.server</field>
             <field name="state">code</field>
             <field name="code">
                 action = env.company._action_check_hash_integrity()

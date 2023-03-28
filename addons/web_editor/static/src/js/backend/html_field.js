@@ -8,12 +8,17 @@ import { standardFieldProps } from "@web/views/fields/standard_field_props";
 import { getWysiwygClass } from 'web_editor.loader';
 import { QWebPlugin } from '@web_editor/js/backend/QWebPlugin';
 import { TranslationButton } from "@web/views/fields/translation_button";
+<<<<<<< HEAD
 import { useDynamicPlaceholder } from "@web/views/fields/dynamicplaceholder_hook";
+=======
+import { useDynamicPlaceholder } from "@web/views/fields/dynamic_placeholder_hook";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { QWeb } from 'web.core';
 import ajax from 'web.ajax';
 import {
     useBus,
     useService,
+    useSpellCheck,
 } from "@web/core/utils/hooks";
 import {
     getAdjacentPreviousSiblings,
@@ -23,7 +28,10 @@ import {
 import { toInline } from 'web_editor.convertInline';
 import { loadJS } from '@web/core/assets';
 import {
+<<<<<<< HEAD
     markup,
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     Component,
     useRef,
     useSubEnv,
@@ -91,8 +99,15 @@ export class HtmlField extends Component {
             iframeVisible: false,
         });
 
-        useBus(this.env.bus, "RELATIONAL_MODEL:WILL_SAVE_URGENTLY", () => this.commitChanges({ urgent: true }));
-        useBus(this.env.bus, "RELATIONAL_MODEL:NEED_LOCAL_CHANGES", ({detail}) => detail.proms.push(this.commitChanges()));
+        const { model } = this.props.record;
+        useBus(model.bus, "WILL_SAVE_URGENTLY", () =>
+            this.commitChanges({ urgent: true })
+        );
+        useBus(model.bus, "NEED_LOCAL_CHANGES", ({ detail }) =>
+            detail.proms.push(this.commitChanges())
+        );
+
+        useSpellCheck();
 
         this._onUpdateIframeId = 'onLoad_' + _.uniqueId('FieldHtml');
 
@@ -138,7 +153,11 @@ export class HtmlField extends Component {
                         // Ensure all external links are opened in a new tab.
                         retargetLinks(this.readonlyElementRef.el);
 
+<<<<<<< HEAD
                         const hasReadonlyModifiers = Boolean(this.props.record.isReadonly(this.props.fieldName));
+=======
+                        const hasReadonlyModifiers = this.props.hasReadonlyModifiers;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         if (!hasReadonlyModifiers) {
                             const $el = $(this.readonlyElementRef.el);
                             $el.off('.checklistBinding');
@@ -149,10 +168,13 @@ export class HtmlField extends Component {
                 } else {
                     const codeViewEl = this._getCodeViewEl();
                     if (codeViewEl) {
-                        codeViewEl.value = this.props.value;
+                        codeViewEl.value = this.props.record.data[this.props.name];
                     }
                 }
             })();
+        });
+        onMounted(() => {
+            this.dynamicPlaceholder?.setElementRef(this.wysiwyg);
         });
         onWillUnmount(() => {
             if (this._qwebPlugin) {
@@ -164,8 +186,11 @@ export class HtmlField extends Component {
         });
     }
 
+    get isTranslatable() {
+        return this.props.record.fields[this.props.name].translate;
+    }
     get markupValue () {
-        return markup(this.props.value);
+        return this.props.record.data[this.props.name];
     }
     get showIframe () {
         return this.props.readonly && this.props.cssReadonlyAssetId;
@@ -185,6 +210,7 @@ export class HtmlField extends Component {
                         fontawesome: 'fa-magic',
                         callback: () => {
                             this.wysiwygRangePosition = getRangePosition(document.createElement('x'), this.wysiwyg.options.document || document);
+<<<<<<< HEAD
                             const baseModel = this.props.record.data.mailing_model_real || this.props.record.data.model;
                             if (baseModel) {
                                 // The method openDynamicPlaceholder need to be triggered
@@ -201,6 +227,20 @@ export class HtmlField extends Component {
                                     );
                                 });
                             }
+=======
+                            this.dynamicPlaceholder.updateModel(this.props.dynamicPlaceholderModelReferenceField);
+                            // The method openDynamicPlaceholder need to be triggered
+                            // after the focus from powerBox prevalidate.
+                            setTimeout(async () => {
+                                await this.dynamicPlaceholder.open(
+                                    {
+                                        validateCallback: this.onDynamicPlaceholderValidate.bind(this),
+                                        closeCallback: this.onDynamicPlaceholderClose.bind(this),
+                                        positionCallback: this.positionDynamicPlaceholder.bind(this),
+                                    }
+                                );
+                            });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         },
                     }
                 ],
@@ -208,12 +248,25 @@ export class HtmlField extends Component {
             }
         }
 
+<<<<<<< HEAD
+=======
+        const wysiwygOptions = { ...this.props.wysiwygOptions };
+        const { sanitize_tags, sanitize } = this.props.record.fields[this.props.name];
+        if (sanitize_tags || (sanitize_tags === undefined && sanitize)) {
+            wysiwygOptions.allowCommandVideo = false; // Tag-sanitized fields remove videos.
+        }
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return {
-            value: this.props.value,
+            value: this.props.record.data[this.props.name],
             autostart: false,
             onAttachmentChange: this._onAttachmentChange.bind(this),
             onWysiwygBlur: this._onWysiwygBlur.bind(this),
+<<<<<<< HEAD
             ...this.props.wysiwygOptions,
+=======
+            ...wysiwygOptions,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             ...dynamicPlaceholderOptions,
             recordInfo: {
                 res_model: this.props.record.resModel,
@@ -221,7 +274,7 @@ export class HtmlField extends Component {
             },
             collaborationChannel: this.props.isCollaborative && {
                 collaborationModelName: this.props.record.resModel,
-                collaborationFieldName: this.props.fieldName,
+                collaborationFieldName: this.props.name,
                 collaborationResId: parseInt(this.props.record.resId),
             },
             mediaModalParams: {
@@ -277,15 +330,25 @@ export class HtmlField extends Component {
     }
     async updateValue() {
         const value = this.getEditingValue();
+<<<<<<< HEAD
         const lastValue = (this.props.value || "").toString();
+=======
+        const lastValue = (this.props.record.data[this.props.name] || "").toString();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         if (
             value !== null &&
             !(!lastValue && stripHistoryIds(value) === "<p><br></p>") &&
             stripHistoryIds(value) !== stripHistoryIds(lastValue)
         ) {
+<<<<<<< HEAD
             this.props.setDirty(false);
             this.currentEditingValue = value;
             await this.props.update(value);
+=======
+            this.props.record.model.bus.trigger("FIELD_IS_DIRTY", false);
+            this.currentEditingValue = value;
+            await this.props.record.update({ [this.props.name]: value });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
     }
     async startWysiwyg(wysiwyg) {
@@ -304,7 +367,11 @@ export class HtmlField extends Component {
             $codeviewButtonToolbar.click(this.toggleCodeView.bind(this));
         }
         this.wysiwyg.odooEditor.editable.addEventListener("input", () =>
+<<<<<<< HEAD
             this.props.setDirty(this._isDirty())
+=======
+            this.props.record.model.bus.trigger("FIELD_IS_DIRTY", this._isDirty())
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         );
 
         this.isRendered = true;
@@ -321,12 +388,12 @@ export class HtmlField extends Component {
         if (this.state.showCodeView) {
             this.wysiwyg.odooEditor.toolbarHide();
             const value = this.wysiwyg.getValue();
-            this.props.update(value);
+            this.props.record.update({ [this.props.name]: value });
         } else {
             this.wysiwyg.odooEditor.observerActive('toggleCodeView');
             const $codeview = $(this.codeViewRef.el);
             const value = $codeview.val();
-            this.props.update(value);
+            this.props.record.update({ [this.props.name]: value });
 
         }
     }
@@ -365,7 +432,11 @@ export class HtmlField extends Component {
             if (this.wysiwyg) {
                 // Avoid listening to changes made during the _toInline process.
                 this.wysiwyg.odooEditor.observerUnactive('commitChanges');
+<<<<<<< HEAD
                 await this.wysiwyg.saveModifiedImages();
+=======
+                await this.wysiwyg.savePendingImages();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 if (this.props.isInlineStyle) {
                     await this._toInline();
                 }
@@ -377,7 +448,11 @@ export class HtmlField extends Component {
         }
     }
     _isDirty() {
+<<<<<<< HEAD
         const strippedPropValue = stripHistoryIds(String(this.props.value));
+=======
+        const strippedPropValue = stripHistoryIds(String(this.props.record.data[this.props.name]));
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         const strippedEditingValue = stripHistoryIds(this.getEditingValue());
         return !this.props.readonly && strippedPropValue !== strippedEditingValue;
     }
@@ -387,13 +462,13 @@ export class HtmlField extends Component {
     async _setupReadonlyIframe() {
         const iframeTarget = this.iframeRef.el.contentDocument.querySelector('#iframe_target');
         if (this.iframePromise && iframeTarget) {
-            if (iframeTarget.innerHTML !== this.props.value) {
-                iframeTarget.innerHTML = this.props.value;
+            if (iframeTarget.innerHTML !== this.props.record.data[this.props.name]) {
+                iframeTarget.innerHTML = this.props.record.data[this.props.name];
             }
             return this.iframePromise;
         }
         this.iframePromise = new Promise((resolve) => {
-            let value = this.props.value;
+            let value = this.props.record.data[this.props.name];
             if (this.props.wrapper) {
                 value = this._wrap(value);
             }
@@ -423,7 +498,7 @@ export class HtmlField extends Component {
                 const cwindow = this.iframeRef.el.contentWindow;
                 try {
                     cwindow.document;
-                } catch (_e) {
+                } catch {
                     return;
                 }
                 cwindow.document
@@ -560,12 +635,12 @@ export class HtmlField extends Component {
         const value = await this.rpc('/web_editor/checklist', {
             res_model: this.props.record.resModel,
             res_id: this.props.record.resId,
-            filename: this.props.fieldName,
+            filename: this.props.name,
             checklistId: checklistId,
             checked: !checked,
         });
         if (value) {
-            this.props.update(value);
+            this.props.record.update({ [this.props.name]: value });
         }
     }
     async _onReadonlyClickStar(ev) {
@@ -588,12 +663,12 @@ export class HtmlField extends Component {
         const value = await this.rpc('/web_editor/stars', {
             res_model: this.props.record.resModel,
             res_id: this.props.record.resId,
-            filename: this.props.fieldName,
+            filename: this.props.name,
             starsId,
             rating,
         });
         if (value) {
-            this.props.update(value);
+            this.props.record.update({ [this.props.name]: value });
         }
     }
 }
@@ -603,25 +678,33 @@ HtmlField.components = {
     TranslationButton,
     HtmlFieldWysiwygAdapterComponent,
 };
+<<<<<<< HEAD
 HtmlField.defaultProps = {
     dynamicPlaceholder: false,
     setDirty: () => {},
 };
+=======
+HtmlField.defaultProps = { dynamicPlaceholder: false };
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 HtmlField.props = {
     ...standardFieldProps,
-    isTranslatable: { type: Boolean, optional: true },
     placeholder: { type: String, optional: true },
-    fieldName: { type: String, optional: true },
     codeview: { type: Boolean, optional: true },
     isCollaborative: { type: Boolean, optional: true },
     dynamicPlaceholder: { type: Boolean, optional: true, default: false },
+<<<<<<< HEAD
+=======
+    dynamicPlaceholderModelReferenceField: { type: String, optional: true },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     cssReadonlyAssetId: { type: String, optional: true },
     cssEditAssetId: { type: String, optional: true },
     isInlineStyle: { type: Boolean, optional: true },
     wrapper: { type: String, optional: true },
     wysiwygOptions: { type: Object },
+    hasReadonlyModifiers: { type: Boolean, optional: true },
 };
 
+<<<<<<< HEAD
 HtmlField.displayName = _lt("Html");
 HtmlField.supportedTypes = ["html"];
 
@@ -675,9 +758,68 @@ HtmlField.extractProps = ({ attrs, field }) => {
 
         wysiwygOptions,
     };
+=======
+export const htmlField = {
+    component: HtmlField,
+    displayName: _lt("Html"),
+    supportedTypes: ["html"],
+    extractProps({ attrs, options }, dynamicInfo) {
+        const wysiwygOptions = {
+            placeholder: attrs.placeholder,
+            noAttachment: options['no-attachment'],
+            inIframe: Boolean(options.cssEdit),
+            iframeCssAssets: options.cssEdit,
+            iframeHtmlClass: attrs.iframeHtmlClass,
+            snippets: options.snippets,
+            mediaModalParams: {
+                noVideos: 'noVideos' in options ? options.noVideos : true,
+                useMediaLibrary: true,
+            },
+            linkForceNewWindow: true,
+            tabsize: 0,
+            height: options.height,
+            minHeight: options.minHeight,
+            maxHeight: options.maxHeight,
+            resizable: 'resizable' in options ? options.resizable : false,
+            editorPlugins: [QWebPlugin],
+        };
+        if ('collaborative' in options) {
+            wysiwygOptions.collaborative = options.collaborative;
+        }
+        if ('allowCommandImage' in options) {
+            // Set the option only if it is explicitly set in the view so a default
+            // can be set elsewhere otherwise.
+            wysiwygOptions.allowCommandImage = Boolean(options.allowCommandImage);
+        }
+        if ('allowCommandVideo' in options) {
+            // Set the option only if it is explicitly set in the view so a default
+            // can be set elsewhere otherwise.
+            wysiwygOptions.allowCommandVideo = Boolean(options.allowCommandVideo);
+        }
+        return {
+            codeview: Boolean(odoo.debug && options.codeview),
+            placeholder: attrs.placeholder,
+
+            isCollaborative: options.collaborative,
+            cssReadonlyAssetId: options.cssReadonly,
+            dynamicPlaceholder: options?.dynamic_placeholder || false,
+            dynamicPlaceholderModelReferenceField: options?.dynamic_placeholder_model_reference_field || "",
+            cssEditAssetId: options.cssEdit,
+            isInlineStyle: options['style-inline'],
+            wrapper: options.wrapper,
+
+            wysiwygOptions,
+            hasReadonlyModifiers: dynamicInfo.readonly,
+        };
+    },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 };
 
-registry.category("fields").add("html", HtmlField, { force: true });
+registry.category("fields").add("html", htmlField, { force: true });
+
+function stripHistoryIds(value) {
+    return value && value.replace(/\sdata-last-history-steps="[^"]*?"/, '') || value;
+}
 
 function stripHistoryIds(value) {
     return value && value.replace(/\sdata-last-history-steps="[^"]*?"/, '') || value;

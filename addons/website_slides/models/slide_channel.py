@@ -4,7 +4,6 @@
 import logging
 import uuid
 from collections import defaultdict
-
 from dateutil.relativedelta import relativedelta
 import ast
 
@@ -104,24 +103,21 @@ class ChannelUsersRelation(models.Model):
             True if we make the slide as completed
             False if we remove user completion
         """
-        partner_karma = dict.fromkeys(self.mapped('partner_id').ids, 0)
-        for record in self:
-            record.completed = completed
-            partner_karma[record.partner_id.id] += record.channel_id.karma_gen_channel_finish
+        for channel, memberships in self.grouped("channel_id").items():
+            memberships.completed = completed
+            karma = channel.karma_gen_channel_finish
+            if karma <= 0:
+                continue
 
-        partner_karma = {
-            partner_id: karma_to_add
-            for partner_id, karma_to_add in partner_karma.items() if karma_to_add > 0
-        }
+            karma_per_users = {}
+            for user in memberships.sudo().partner_id.user_ids:
+                karma_per_users[user] = {
+                    'gain': karma if completed else karma * -1,
+                    'source': channel,
+                    'reason': _('Course Finished') if completed else _('Course Set Uncompleted'),
+                }
 
-        if partner_karma:
-            users = self.env['res.users'].sudo().search([('partner_id', 'in', list(partner_karma.keys()))])
-            for user in users:
-                karma = partner_karma[user.partner_id.id]
-                if not completed:
-                    # Mark the channel as not-completed, we remove the gained karma
-                    karma *= -1
-                users.add_karma(karma)
+            self.env['res.users']._add_karma_batch(karma_per_users)
 
     def _send_completed_mail(self):
         """ Send an email to the attendee when they have successfully completed a course. """
@@ -132,13 +128,35 @@ class ChannelUsersRelation(models.Model):
                 template_to_records.setdefault(template, self.env['slide.channel.partner'])
                 template_to_records[template] += record
 
-        record_email_values = dict()
+        record_email_values = {}
         for template, records in template_to_records.items():
-            record_email_values.update(template.generate_email(records.ids, ['subject', 'body_html', 'email_from', 'partner_to']))
+            record_values = template._generate_template(
+                records.ids,
+                ['attachment_ids',
+                 'body_html',
+                 'email_cc',
+                 'email_from',
+                 'email_to',
+                 'mail_server_id',
+                 'model',
+                 'partner_to',
+                 'reply_to',
+                 'report_template_ids',
+                 'res_id',
+                 'scheduled_date',
+                 'subject',
+                ]
+            )
+            for res_id, values in record_values.items():
+                # attachments specific not supported currently, only attachment_ids
+                values.pop('attachments', False)
+                values['body'] = values.get('body_html')  # keep body copy in chatter
+                record_email_values[res_id] = values
 
         mail_mail_values = []
         for record in self:
             email_values = record_email_values.get(record.id)
+
             if not email_values or not email_values.get('partner_ids'):
                 continue
 
@@ -165,7 +183,7 @@ class Channel(models.Model):
     _name = 'slide.channel'
     _description = 'Course'
     _inherit = [
-        'mail.thread', 'rating.mixin',
+        'rating.mixin',
         'mail.activity.mixin',
         'image.mixin',
         'website.cover_properties.mixin',
@@ -265,7 +283,8 @@ class Channel(models.Model):
         default=lambda self: self.env['ir.model.data']._xmlid_to_res_id('website_slides.mail_template_channel_completed'),
         domain=[('model', '=', 'slide.channel.partner')])
     enroll = fields.Selection([
-        ('public', 'Public'), ('invite', 'On Invitation')],
+        ('public', 'Open'), ('invite', 'On Invitation')],
+        compute='_compute_enroll', store=True, readonly=False,
         default='public', string='Enroll Policy', required=True,
         help='Defines how people can enroll to your Course.', copy=False)
     enroll_msg = fields.Html(
@@ -273,8 +292,10 @@ class Channel(models.Model):
         default=_get_default_enroll_msg, translate=tools.html_translate, sanitize_attributes=False)
     enroll_group_ids = fields.Many2many('res.groups', string='Auto Enroll Groups', help="Members of those groups are automatically added as members of the channel.")
     visibility = fields.Selection([
-        ('public', 'Open To All'), ('members', 'Members Only')],
-        default='public', string='Visibility', required=True,
+        ('public', 'Everyone'),
+        ('connected', 'Signed In'),
+        ('members', 'Course Attendees')
+    ], default='public', string='Show Course To', required=True,
         help='Defines who can access your courses and their content.')
     partner_ids = fields.Many2many(
         'res.partner', 'slide_channel_partner', 'channel_id', 'partner_id',
@@ -287,14 +308,13 @@ class Channel(models.Model):
     upload_group_ids = fields.Many2many(
         'res.groups', 'rel_upload_groups', 'channel_id', 'group_id', string='Upload Groups',
         help="Group of users allowed to publish contents on a documentation course.")
-    website_background_image_url = fields.Char('Background image URL', compute='_compute_website_background_image_url')
+    website_default_background_image_url = fields.Char('Background image URL', compute='_compute_website_default_background_image_url')
     # not stored access fields, depending on each user
     completed = fields.Boolean('Done', compute='_compute_user_statistics', compute_sudo=False)
     completion = fields.Integer('Completion', compute='_compute_user_statistics', compute_sudo=False)
     can_upload = fields.Boolean('Can Upload', compute='_compute_can_upload', compute_sudo=False)
     partner_has_new_content = fields.Boolean(compute='_compute_partner_has_new_content', compute_sudo=False)
     # karma generation
-    karma_gen_slide_vote = fields.Integer(string='Lesson voted', default=1)
     karma_gen_channel_rank = fields.Integer(string='Course ranked', default=5)
     karma_gen_channel_finish = fields.Integer(string='Course finished', default=10)
     # Karma based actions
@@ -304,6 +324,18 @@ class Channel(models.Model):
     can_review = fields.Boolean('Can Review', compute='_compute_action_rights', compute_sudo=False)
     can_comment = fields.Boolean('Can Comment', compute='_compute_action_rights', compute_sudo=False)
     can_vote = fields.Boolean('Can Vote', compute='_compute_action_rights', compute_sudo=False)
+
+    _sql_constraints = [
+        (
+            "check_enroll",
+            "CHECK(visibility != 'members' OR enroll = 'invite')",
+            "The Enroll Policy should be set to 'On Invitation' when visibility is set to 'Course Attendees'"
+        ),
+    ]
+
+    @api.depends('visibility')
+    def _compute_enroll(self):
+        self.filtered(lambda channel: channel.visibility == 'members').enroll = 'invite'
 
     @api.depends('slide_ids.is_published')
     def _compute_slide_last_update(self):
@@ -468,14 +500,10 @@ class Channel(models.Model):
             new_slides = new_published_slides.filtered(lambda slide: slide.channel_id == channel)
             channel.partner_has_new_content = any(slide not in slide_partner_completed for slide in new_slides)
 
-    @api.depends('image_1920', 'channel_type')
-    def _compute_website_background_image_url(self):
+    @api.depends('channel_type')
+    def _compute_website_default_background_image_url(self):
         for channel in self:
-            channel.website_background_image_url = (
-                channel.website_id.image_url(channel, 'image_256') if channel.image_1920
-                else '/website_slides/static/src/img/channel-%s-default.jpg'
-                     % ('training' if channel.channel_type == 'training' else 'documentation')
-            )
+            channel.website_default_background_image_url = f'website_slides/static/src/img/channel-{channel.channel_type}-default.jpg'
 
     @api.depends('name', 'website_id.domain')
     def _compute_website_url(self):
@@ -563,6 +591,20 @@ class Channel(models.Model):
 
         return res
 
+    def unlink(self):
+        """" Necessary override to avoid cache issues in the ORM.
+        This signals the ORM to remove slides first to avoid having the SQL cascade the deletion,
+        which attempts to recompute slide statistics of removed slides and creates a cache failure.
+
+        Indeed, slides statistics are computed using a read_group which will try to flush the records
+        first and fail with a "Could not find all values of slide.slide.category_id to flush them".
+        (Fix suggested by the ORM team).
+
+        (See '_compute_slides_statistics' and '_compute_category_completion_time'). """
+
+        self.slide_ids.unlink()
+        return super().unlink()
+
     def toggle_active(self):
         """ Archiving/unarchiving a channel does it on its slides, too.
         1. When archiving
@@ -639,7 +681,6 @@ class Channel(models.Model):
         local_context = dict(
             self.env.context,
             default_channel_id=self.id,
-            default_use_template=bool(template),
             default_template_id=template and template.id or False,
             default_email_layout_xmlid='website_slides.mail_notification_channel_invite',
         )
@@ -651,20 +692,20 @@ class Channel(models.Model):
             'context': local_context,
         }
 
-    def action_add_member(self, **member_values):
+    def _action_add_member(self):
         """ Adds the logged in user in the channel members.
         (see '_action_add_members' for more info)
 
         Returns True if added successfully, False otherwise."""
-        return bool(self._action_add_members(self.env.user.partner_id, **member_values))
+        return bool(self._action_add_members(self.env.user.partner_id))
 
-    def _action_add_members(self, target_partners, **member_values):
+    def _action_add_members(self, target_partners):
         """ Add the target_partner as a member of the channel (to its slide.channel.partner).
         This will make the content (slides) of the channel available to that partner.
 
         Returns the added 'slide.channel.partner's (! as sudo !)
         """
-        to_join = self._filter_add_members(target_partners, **member_values)
+        to_join = self._filter_add_members(target_partners)
         if to_join:
             existing = self.env['slide.channel.partner'].sudo().search([
                 ('channel_id', 'in', self.ids),
@@ -675,7 +716,7 @@ class Channel(models.Model):
                 existing_map[item.channel_id.id].append(item.partner_id.id)
 
             to_create_values = [
-                dict(channel_id=channel.id, partner_id=partner.id, **member_values)
+                dict(channel_id=channel.id, partner_id=partner.id)
                 for channel in to_join
                 for partner in target_partners if partner.id not in existing_map[channel.id]
             ]
@@ -684,7 +725,7 @@ class Channel(models.Model):
             return slide_partners_sudo
         return self.env['slide.channel.partner'].sudo()
 
-    def _filter_add_members(self, target_partners, **member_values):
+    def _filter_add_members(self, target_partners):
         allowed = self.filtered(lambda channel: channel.enroll == 'public')
         on_invite = self.filtered(lambda channel: channel.enroll == 'invite')
         if on_invite:
@@ -706,7 +747,7 @@ class Channel(models.Model):
         Warning: this count will not be accurate if the configuration has been
         modified after the completion of a course!
         """
-        total_karma = defaultdict(int)
+        total_karma = defaultdict(list)
 
         slide_completed = self.env['slide.slide.partner'].sudo().search([
             ('partner_id', 'in', partner_ids),
@@ -718,21 +759,29 @@ class Channel(models.Model):
             slide = partner_slide.slide_id
             if not slide.question_ids:
                 continue
-            gains = [slide.quiz_first_attempt_reward,
-                     slide.quiz_second_attempt_reward,
-                     slide.quiz_third_attempt_reward,
-                     slide.quiz_fourth_attempt_reward]
-            attempts = min(partner_slide.quiz_attempts_count - 1, 3)
-            total_karma[partner_slide.partner_id.id] += gains[attempts]
+            gains = [
+                slide.quiz_first_attempt_reward,
+                slide.quiz_second_attempt_reward,
+                slide.quiz_third_attempt_reward,
+                slide.quiz_fourth_attempt_reward,
+            ]
+            attempts = min(partner_slide.quiz_attempts_count, len(gains))
+            total_karma[partner_slide.partner_id.id].append({
+                'karma': gains[attempts - 1],
+                'channel_id': slide.channel_id,
+            })
 
         channel_completed = self.env['slide.channel.partner'].sudo().search([
             ('partner_id', 'in', partner_ids),
             ('channel_id', 'in', self.ids),
-            ('completed', '=', True)
+            ('completed', '=', True),
         ])
         for partner_channel in channel_completed:
             channel = partner_channel.channel_id
-            total_karma[partner_channel.partner_id.id] += channel.karma_gen_channel_finish
+            total_karma[partner_channel.partner_id.id].append({
+                'karma': channel.karma_gen_channel_finish,
+                'channel_id': channel,
+            })
 
         return total_karma
 
@@ -743,23 +792,29 @@ class Channel(models.Model):
         if not partner_ids:
             raise ValueError("Do not use this method with an empty partner_id recordset")
 
-        earned_karma = self._get_earned_karma(partner_ids)
-        users = self.env['res.users'].sudo().search([
-            ('partner_id', 'in', list(earned_karma)),
-        ])
-        for user in users:
-            if earned_karma[user.partner_id.id]:
-                user.add_karma(-1 * earned_karma[user.partner_id.id])
-
         removed_channel_partner_domain = []
         for channel in self:
+            earned_karma = channel._get_earned_karma(partner_ids)
+            users = self.env['res.users'].sudo().search([('partner_id', 'in', list(earned_karma))])
+
+            karma_values = {}
+            for user in users:
+                karma = sum(values['karma'] for values in earned_karma[user.partner_id.id])
+                if karma:
+                    karma_values[user] = {
+                        'gain': karma * -1,
+                        'source': channel,
+                        'reason': _('Membership Removed'),
+                    }
+            self.env['res.users']._add_karma_batch(karma_values)
+
             removed_channel_partner_domain = expression.OR([
                 removed_channel_partner_domain,
                 [('partner_id', 'in', partner_ids),
                  ('channel_id', '=', channel.id)]
             ])
-        self.message_unsubscribe(partner_ids=partner_ids)
 
+        self.message_unsubscribe(partner_ids=partner_ids)
         if removed_channel_partner_domain:
             self.env['slide.channel.partner'].sudo().search(removed_channel_partner_domain).unlink()
 
@@ -958,12 +1013,9 @@ class Channel(models.Model):
             except Exception:
                 tags = ChannelTag
             # Group by group_id
-            grouped_tags = defaultdict(list)
-            for tag in tags:
-                grouped_tags[tag.group_id].append(tag)
             # OR inside a group, AND between groups.
-            for group in grouped_tags:
-                domain.append([('tag_ids', 'in', [tag.id for tag in grouped_tags[group]])])
+            for tags in tags.grouped('group_id').values():
+                domain.append([('tag_ids', 'in', tags.ids)])
         if slide_category and 'nbr_%s' % slide_category in self:
             domain.append([('nbr_%s' % slide_category, '>', 0)])
         search_fields = ['name']
@@ -987,3 +1039,9 @@ class Channel(models.Model):
             'mapping': mapping,
             'icon': 'fa-graduation-cap',
         }
+
+    def _get_placeholder_filename(self, field):
+        image_fields = ['image_%s' % size for size in [1920, 1024, 512, 256, 128]]
+        if field in image_fields:
+            return self.website_default_background_image_url
+        return super()._get_placeholder_filename(field)

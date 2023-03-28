@@ -7,7 +7,11 @@ from unittest.mock import DEFAULT
 from odoo import exceptions
 from odoo.addons.test_mail.models.test_mail_models import MailTestSimple
 from odoo.addons.test_mail.tests.common import TestMailCommon, TestRecipients
+<<<<<<< HEAD
 from odoo.tests.common import tagged, users
+=======
+from odoo.tests.common import tagged, Form, users
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 from odoo.tools import mute_logger
 
 
@@ -295,16 +299,6 @@ class TestDiscuss(TestMailCommon, TestRecipients):
         self.assertFalse(msg.starred)
         self.assertTrue(msg_emp.starred)
 
-    @mute_logger('odoo.addons.mail.models.mail_mail')
-    def test_mail_cc_recipient_suggestion(self):
-        record = self.env['mail.test.cc'].create({'email_cc': 'cc1@example.com, cc2@example.com, cc3 <cc3@example.com>'})
-        suggestions = record._message_get_suggested_recipients()[record.id]
-        self.assertEqual(sorted(suggestions), [
-            (False, '"cc3" <cc3@example.com>', None, 'CC Email'),
-            (False, 'cc1@example.com', None, 'CC Email'),
-            (False, 'cc2@example.com', None, 'CC Email'),
-        ], 'cc should be in suggestions')
-
     def test_inbox_message_fetch_needaction(self):
         user1 = self.env['res.users'].create({'login': 'user1', 'name': 'User 1'})
         user1.notification_type = 'inbox'
@@ -356,16 +350,49 @@ class TestDiscuss(TestMailCommon, TestRecipients):
         self.assertEqual(len(threads_admin), 0)
 
     @users("employee")
+    def test_suggested_recipients_default_create_value(self):
+        """ Test default creation values returned for suggested recipient. """
+        email = 'newpartner@example.com'
+        data_from_record_mobile = '+33199001015'
+        record = self.env['mail.test.ticket'].create({
+            'email_from': email,
+            'mobile_number': data_from_record_mobile,
+        })
+        suggestions = record._message_get_suggested_recipients()[record.id]
+        self.assertEqual(
+            suggestions,
+            [(False, email, None, 'Customer Email', {'mobile': '+33199001015', 'phone': False})]
+        )
+
+    @users("employee")
+    @mute_logger('odoo.addons.mail.models.mail_mail')
+    def test_suggested_recipients_mail_cc(self):
+        """ MailThreadCC mixin adds its own suggested recipients management
+        coming from CC (carbon copy) management. """
+        record = self.env['mail.test.cc'].create({
+            'email_cc': 'cc1@example.com, cc2@example.com, cc3 <cc3@example.com>',
+        })
+        suggestions = record._message_get_suggested_recipients()[record.id]
+        self.assertEqual(
+            sorted(suggestions),
+            [
+                (False, '"cc3" <cc3@example.com>', None, 'CC Email', {}),
+                (False, 'cc1@example.com', None, 'CC Email', {}),
+                (False, 'cc2@example.com', None, 'CC Email', {}),
+            ],
+            'cc should be in suggestions'
+        )
+
+    @users("employee")
     def test_unlink_notification_message(self):
         channel = self.env['mail.channel'].create({'name': 'testChannel'})
         notification_msg = channel.with_user(self.user_admin).message_notify(
             body='test',
-            message_type='user_notification',
             partner_ids=[self.partner_2.id],
         )
 
         with self.assertRaises(exceptions.AccessError):
-            notification_msg.with_env(self.env)._message_format(['id', 'body', 'date', 'author_id', 'email_from'])
+            notification_msg.with_env(self.env).message_format(['id', 'body', 'date', 'author_id', 'email_from'])
 
         channel_message = self.env['mail.message'].sudo().search([('model', '=', 'mail.channel'), ('res_id', 'in', channel.ids)])
         self.assertEqual(len(channel_message), 1, "Test message should have been posted")
@@ -381,6 +408,8 @@ class TestNoThread(TestMailCommon, TestRecipients):
 
     @users('employee')
     def test_message_notify(self):
+        """ Test notifying using model / res_id linking to a model not being
+        mail.thread enabled. """
         test_record = self.env['mail.test.nothread'].create({
             'customer_id': self.partner_1.id,
             'name': 'Not A Thread',
@@ -389,6 +418,7 @@ class TestNoThread(TestMailCommon, TestRecipients):
                 'content': 'Hello Paulo',
                 'email_values': {
                     'reply_to': self.company_admin.catchall_formatted,
+                    'subject': 'Test Notify',
                 },
                 'message_type': 'user_notification',
                 'notif': [{
@@ -403,7 +433,93 @@ class TestNoThread(TestMailCommon, TestRecipients):
             _message = self.env['mail.thread'].message_notify(
                 body='<p>Hello Paulo</p>',
                 model=test_record._name,
+                partner_ids=self.partner_2.ids,
                 res_id=test_record.id,
                 subject='Test Notify',
-                partner_ids=self.partner_2.ids
+            )
+
+    @users('employee')
+    def test_message_notify_composer(self):
+        """ Test comment mode on composer which triggers a notify when model
+        does not inherit from mail thread. """
+        test_records, _test_partners = self._create_records_for_batch('mail.test.nothread', 2)
+
+        test_reports = self.env['ir.actions.report'].sudo().create([
+            {
+                'name': 'Test Report on Mail Test Ticket',
+                'model': test_records._name,
+                'print_report_name': "'TestReport for %s' % object.name",
+                'report_type': 'qweb-pdf',
+                'report_name': 'test_mail.mail_test_ticket_test_template',
+            }, {
+                'name': 'Test Report 2 on Mail Test Ticket',
+                'model': test_records._name,
+                'print_report_name': "'TestReport2 for %s' % object.name",
+                'report_type': 'qweb-pdf',
+                'report_name': 'test_mail.mail_test_ticket_test_template_2',
+            }
+        ])
+        test_template = self.env['mail.template'].create({
+            'auto_delete': True,
+            'body_html': '<p>TemplateBody <t t-esc="object.name"></t></p>',
+            'email_from': '{{ (user.email_formatted) }}',
+            'email_to': '',
+            'mail_server_id': self.mail_server_domain.id,
+            'partner_to': '{{ object.customer_id.id if object.customer_id else "" }}',
+            'name': 'TestTemplate',
+            'model_id': self.env['ir.model']._get(test_records._name).id,
+            'reply_to': '{{ ctx.get("custom_reply_to") or "info@test.example.com" }}',
+            'report_template_ids': [(6, 0, test_reports.ids)],
+            'scheduled_date': '{{ (object.create_date or datetime.datetime(2022, 12, 26, 18, 0, 0)) + datetime.timedelta(days=2) }}',
+            'subject': 'TemplateSubject {{ object.name }}',
+        })
+        attachment_data = self._generate_attachments_data(2, test_template._name, test_template.id)
+        test_template.write({'attachment_ids': [(0, 0, a) for a in attachment_data]})
+
+        ctx = {
+            'default_composition_mode': 'comment',
+            'default_model': test_records._name,
+            'default_res_domain': [('id', 'in', test_records.ids)],
+            'default_template_id': test_template.id,
+        }
+        # open a composer and run it in comment mode
+        composer_form = Form(self.env['mail.compose.message'].with_context(ctx))
+        composer = composer_form.save()
+
+        with self.mock_mail_gateway(mail_unlink_sent=False), self.mock_mail_app():
+            _, messages = composer._action_send_mail()
+
+        self.assertEqual(len(messages), 2)
+        for record, message in zip(test_records, messages):
+            self.assertEqual(
+                sorted(message.mapped('attachment_ids.name')),
+                sorted(['AttFileName_00.txt', 'AttFileName_01.txt',
+                        f'TestReport2 for {record.name}.html',
+                        f'TestReport for {record.name}.html'])
+            )
+        self.assertEqual(len(messages.attachment_ids), 8, 'No attachments should be shared')
+
+    @users('employee')
+    def test_message_notify_norecord(self):
+        """ Test notifying on no record, just using the abstract model itself. """
+        with self.assertPostNotifications([{
+                'content': 'Hello Paulo',
+                'email_values': {
+                    'reply_to': self.company_admin.catchall_formatted,
+                    'subject': 'Test Notify',
+                },
+                'message_type': 'user_notification',
+                'notif': [{
+                    'check_send': True,
+                    'is_read': True,
+                    'partner': self.partner_2,
+                    'status': 'sent',
+                    'type': 'email',
+                }],
+                'subtype': 'mail.mt_note',
+            }]):
+            _message = self.env['mail.thread'].message_notify(
+                body='<p>Hello Paulo</p>',
+                partner_ids=self.partner_2.ids,
+                subject='Test Notify',
             )

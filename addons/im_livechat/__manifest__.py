@@ -46,8 +46,8 @@ Help your customers with this chat, and analyse their feedback.
     'installable': True,
     'application': True,
     'assets': {
-        'mail.assets_discuss_public': [
-            'im_livechat/static/src/components/*/*',
+        'web._assets_primary_variables': [
+            'im_livechat/static/src/primary_variables.scss',
         ],
         'web.assets_frontend': [
             ('include', 'im_livechat.assets_public_livechat'),
@@ -56,29 +56,51 @@ Help your customers with this chat, and analyse their feedback.
             'im_livechat/static/src/legacy/public_livechat_chatbot.js',
             'im_livechat/static/src/legacy/public_livechat.scss',
             'im_livechat/static/src/legacy/public_livechat_chatbot.scss',
+<<<<<<< HEAD
             'mail/static/src/utils/*.js',
             'mail/static/src/js/utils.js',
             'mail/static/src/component_hooks/*.js',
             'mail/static/src/services/messaging_service.js',
+=======
+            'im_livechat/static/src/legacy/utils/*.js',
+            'mail/static/src/js/utils.js',
+            'im_livechat/static/src/legacy/component_hooks/*.js',
+            'im_livechat/static/src/legacy/services/messaging_service.js',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         ],
         'web.assets_backend': [
             'im_livechat/static/src/js/colors_reset_button/*',
             'im_livechat/static/src/js/im_livechat_chatbot_steps_one2many.js',
             'im_livechat/static/src/js/im_livechat_chatbot_script_answers_m2m.js',
+<<<<<<< HEAD
             'im_livechat/static/src/components/*/*.js',
+=======
+            'im_livechat/static/src/chat_window/**/*',
+            'im_livechat/static/src/composer/**/*',
+            'im_livechat/static/src/core/**/*',
+            'im_livechat/static/src/discuss/**/*',
+            'im_livechat/static/src/messaging_menu/**/*',
+            'im_livechat/static/src/web/**/*',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'im_livechat/static/src/scss/im_livechat_history.scss',
             'im_livechat/static/src/scss/im_livechat_form.scss',
-            'im_livechat/static/src/components/*/*.xml',
         ],
         'web.tests_assets': [
             'im_livechat/static/tests/helpers/**/*.js',
         ],
         'web.qunit_suite_tests': [
+<<<<<<< HEAD
             'im_livechat/static/tests/qunit_suite_tests/components/**/*.js',
+=======
+            'im_livechat/static/tests/**/*',
+            ('remove', 'im_livechat/static/tests/tours/**/*'),
+            ('remove', 'im_livechat/static/tests/helpers/**/*.js'),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         ],
         'web.assets_tests': [
             'im_livechat/static/tests/tours/**/*',
         ],
+<<<<<<< HEAD
         'mail.assets_messaging': [
             'im_livechat/static/src/models/*.js',
         ],
@@ -88,6 +110,17 @@ Help your customers with this chat, and analyse their feedback.
             'im_livechat/static/src/legacy/widgets/*',
             'im_livechat/static/src/legacy/widgets/*/*',
             'im_livechat/static/src/public_models/*.js',
+=======
+        'im_livechat.assets_public_livechat': [
+            'im_livechat/static/src/legacy/model.js',
+            'im_livechat/static/src/legacy/model/*',
+            'im_livechat/static/src/legacy/core_models/*',
+            'im_livechat/static/src/livechat_data.js',
+            'im_livechat/static/src/legacy/legacy_models/*',
+            'im_livechat/static/src/legacy/widgets/*',
+            'im_livechat/static/src/legacy/widgets/*/*',
+            'im_livechat/static/src/legacy/public_models/*.js',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         ],
         # Bundle of External Librairies of the Livechat (Odoo + required modules)
         'im_livechat.external_lib': [
@@ -180,10 +213,10 @@ Help your customers with this chat, and analyse their feedback.
             'web/static/src/legacy/js/services/ajax_service.js',
             'web/static/src/legacy/js/services/local_storage_service.js',
             # Bus, Mail, Livechat
+            'bus/static/src/bus_parameters_service.js',
             'bus/static/src/im_status_service.js',
             'bus/static/src/multi_tab_service.js',
             'bus/static/src/services/bus_service.js',
-            'bus/static/src/services/legacy/make_bus_service_to_legacy_env.js',
             'bus/static/src/workers/websocket_worker.js',
             'bus/static/src/workers/websocket_worker_utils.js',
             'mail/static/src/js/utils.js',
@@ -200,11 +233,18 @@ Help your customers with this chat, and analyse their feedback.
 
             'web/static/src/core/utils/transitions.scss',
 
+<<<<<<< HEAD
             'mail/static/src/utils/*.js',
             'mail/static/src/js/emojis.js',
             'mail/static/src/component_hooks/*.js',
             ('include', 'im_livechat.assets_public_livechat'),
             'mail/static/src/services/messaging_service.js',
+=======
+            'im_livechat/static/src/legacy/utils/*.js',
+            'im_livechat/static/src/legacy/component_hooks/*.js',
+            ('include', 'im_livechat.assets_public_livechat'),
+            'im_livechat/static/src/legacy/services/messaging_service.js',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             # Framework JS
             'bus/static/src/*.js',
             'bus/static/src/services/presence_service.js',

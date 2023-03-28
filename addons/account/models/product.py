@@ -2,9 +2,13 @@
 
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+<<<<<<< HEAD
+=======
+from odoo.osv import expression
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 from odoo.tools import format_amount
 
-ACCOUNT_DOMAIN = "['&', '&', '&', ('deprecated', '=', False), ('account_type', 'not in', ('asset_receivable','liability_payable','asset_cash','liability_credit_card')), ('company_id', '=', current_company_id), ('is_off_balance', '=', False)]"
+ACCOUNT_DOMAIN = "['&', '&', ('deprecated', '=', False), ('account_type', 'not in', ('asset_receivable','liability_payable','asset_cash','liability_credit_card','off_balance')), ('company_id', '=', current_company_id)]"
 
 class ProductCategory(models.Model):
     _inherit = "product.category"
@@ -42,6 +46,7 @@ class ProductTemplate(models.Model):
         comodel_name='account.account.tag',
         domain="[('applicability', '=', 'products')]",
         help="Tags to be set on the base and tax journal items created for this product.")
+    fiscal_country_codes = fields.Char(compute='_compute_fiscal_country_codes')
 
     def _get_product_accounts(self):
         return {
@@ -60,6 +65,13 @@ class ProductTemplate(models.Model):
         if not fiscal_pos:
             fiscal_pos = self.env['account.fiscal.position']
         return fiscal_pos.map_accounts(accounts)
+
+    @api.depends('company_id')
+    @api.depends_context('allowed_company_ids')
+    def _compute_fiscal_country_codes(self):
+        for record in self:
+            allowed_companies = record.company_id or self.env.companies
+            record.fiscal_country_codes = ",".join(allowed_companies.mapped('account_fiscal_country_id.code'))
 
     @api.depends('taxes_id', 'list_price')
     def _compute_tax_string(self):
@@ -191,3 +203,34 @@ class ProductProduct(models.Model):
     def _compute_tax_string(self):
         for record in self:
             record.tax_string = record.product_tmpl_id._construct_tax_string(record.lst_price)
+
+    # -------------------------------------------------------------------------
+    # EDI
+    # -------------------------------------------------------------------------
+
+    def _retrieve_product(self, name=None, default_code=None, barcode=None, company=None):
+        '''Search all products and find one that matches one of the parameters.
+
+        :param name:            The name of the product.
+        :param default_code:    The default_code of the product.
+        :param barcode:         The barcode of the product.
+        :param company:         The company of the product.
+        :returns:               A product or an empty recordset if not found.
+        '''
+        if name and '\n' in name:
+            # cut Sales Description from the name
+            name = name.split('\n')[0]
+        domains = []
+        for value, domain in (
+            (name, ('name', 'ilike', name)),
+            (default_code, ('default_code', '=', default_code)),
+            (barcode, ('barcode', '=', barcode)),
+        ):
+            if value is not None:
+                domains.append([domain])
+
+        domain = expression.AND([
+            expression.OR(domains),
+            [('company_id', 'in', [False, company or self.env.company.id])],
+        ])
+        return self.env['product.product'].search(domain, limit=1)

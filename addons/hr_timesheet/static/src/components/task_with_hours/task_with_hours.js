@@ -1,7 +1,11 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
+<<<<<<< HEAD
 import { Many2OneField } from "@web/views/fields/many2one/many2one_field";
+=======
+import { Many2OneField, many2OneField } from "@web/views/fields/many2one/many2one_field";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 
 class TaskWithHours extends Many2OneField {
@@ -48,4 +52,11 @@ class TaskWithHours extends Many2OneField {
 
 }
 
+<<<<<<< HEAD
 registry.category("fields").add("task_with_hours", TaskWithHours);
+=======
+registry.category("fields").add("task_with_hours", {
+    ...many2OneField,
+    component: TaskWithHours,
+});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

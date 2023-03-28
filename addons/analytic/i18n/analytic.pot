@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-02-02 10:33+0000\n"
 "PO-Revision-Date: 2023-02-02 10:33+0000\n"
+=======
+"Project-Id-Version: Odoo Server saas~16.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-17 08:01+0000\n"
+"PO-Revision-Date: 2023-01-17 08:01+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -61,11 +68,14 @@ msgid "Add a new analytic account"
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model:account.analytic.account,name:analytic.analytic_administratif
 msgid "Administrative"
 msgstr ""
 
 #. module: analytic
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_plan__all_account_count
 msgid "All Analytic Accounts Count"
 msgstr ""
@@ -79,8 +89,11 @@ msgstr ""
 #. module: analytic
 #. odoo-javascript
 #: code:addons/analytic/static/src/components/analytic_distribution/analytic_distribution.xml:0
+<<<<<<< HEAD
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_distribution_model__analytic_distribution
 #: model:ir.model.fields,field_description:analytic.field_analytic_mixin__analytic_distribution
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #, python-format
 msgid "Analytic"
 msgstr ""
@@ -113,6 +126,7 @@ msgid "Analytic Accounts Count"
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model:ir.model,name:analytic.model_account_analytic_distribution_model
 #: model_terms:ir.ui.view,arch_db:analytic.account_analytic_distribution_model_form_view
 #: model_terms:ir.ui.view,arch_db:analytic.account_analytic_distribution_model_tree_view
@@ -120,6 +134,21 @@ msgid "Analytic Distribution Model"
 msgstr ""
 
 #. module: analytic
+=======
+#: model:ir.model.fields,field_description:analytic.field_account_analytic_distribution_model__analytic_distribution
+#: model:ir.model.fields,field_description:analytic.field_analytic_mixin__analytic_distribution
+msgid "Analytic Distribution"
+msgstr ""
+
+#. module: analytic
+#: model:ir.model,name:analytic.model_account_analytic_distribution_model
+#: model_terms:ir.ui.view,arch_db:analytic.account_analytic_distribution_model_form_view
+#: model_terms:ir.ui.view,arch_db:analytic.account_analytic_distribution_model_tree_view
+msgid "Analytic Distribution Model"
+msgstr ""
+
+#. module: analytic
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.actions.act_window,name:analytic.action_analytic_distribution_model
 msgid "Analytic Distribution Models"
 msgstr ""
@@ -185,11 +214,14 @@ msgid "Analytic Precision"
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model_terms:ir.ui.view,arch_db:analytic.account_analytic_distribution_model_form_view
 msgid "Analytic distribution to apply"
 msgstr ""
 
 #. module: analytic
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-python
 #: code:addons/analytic/models/analytic_plan.py:0
 #, python-format
@@ -306,6 +338,11 @@ msgid "Complete Name"
 msgstr ""
 
 #. module: analytic
+#: model_terms:ir.ui.view,arch_db:analytic.account_analytic_distribution_model_form_view
+msgid "Conditions to meet"
+msgstr ""
+
+#. module: analytic
 #: model:ir.model,name:analytic.model_res_config_settings
 msgid "Config Settings"
 msgstr ""
@@ -378,21 +415,27 @@ msgid "Debit"
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model:account.analytic.account,name:analytic.analytic_agrolait
 msgid "Deco Addict"
 msgstr ""
 
 #. module: analytic
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_plan__default_applicability
 msgid "Default Applicability"
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model:account.analytic.account,name:analytic.analytic_deltapc
 msgid "Delta PC"
 msgstr ""
 
 #. module: analytic
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_line__name
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_plan__description
 msgid "Description"
@@ -413,6 +456,14 @@ msgid "Display Name"
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
+=======
+#: model_terms:ir.ui.view,arch_db:analytic.account_analytic_distribution_model_form_view
+msgid "Distribution to apply"
+msgstr ""
+
+#. module: analytic
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_applicability__business_domain
 msgid "Domain"
 msgstr ""
@@ -491,6 +542,7 @@ msgid "Is Follower"
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_account____last_update
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_applicability____last_update
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_distribution_model____last_update
@@ -500,6 +552,8 @@ msgid "Last Modified on"
 msgstr ""
 
 #. module: analytic
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_account__write_uid
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_applicability__write_uid
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_distribution_model__write_uid
@@ -525,6 +579,7 @@ msgid "Loading..."
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model:account.analytic.account,name:analytic.analytic_think_big_systems
 msgid "Lumber Inc"
 msgstr ""
@@ -535,6 +590,8 @@ msgid "Luminous Technologies"
 msgstr ""
 
 #. module: analytic
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_account__message_main_attachment_id
 msgid "Main Attachment"
 msgstr ""
@@ -559,11 +616,14 @@ msgid "Messages"
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model:account.analytic.account,name:analytic.analytic_millennium_industries
 msgid "Millennium Industries"
 msgstr ""
 
 #. module: analytic
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields.selection,name:analytic.selection__account_analytic_applicability__business_domain__general
 msgid "Miscellaneous"
 msgstr ""
@@ -575,11 +635,14 @@ msgid "Name"
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model:account.analytic.account,name:analytic.analytic_nebula
 msgid "Nebula"
 msgstr ""
 
 #. module: analytic
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/analytic/static/src/components/analytic_distribution/analytic_distribution.js:0
 #, python-format
@@ -638,11 +701,14 @@ msgid "One or more lines require a 100% analytic distribution."
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model:account.analytic.account,name:analytic.analytic_internal
 msgid "Operating Costs"
 msgstr ""
 
 #. module: analytic
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #. odoo-javascript
 #: code:addons/analytic/static/src/components/analytic_distribution/analytic_distribution.js:0
 #: model:ir.model.fields.selection,name:analytic.selection__account_analytic_applicability__applicability__optional
@@ -657,11 +723,14 @@ msgid "Other"
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model:account.analytic.account,name:analytic.analytic_our_super_product
 msgid "Our Super Product"
 msgstr ""
 
 #. module: analytic
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_plan__parent_id
 msgid "Parent"
 msgstr ""
@@ -717,11 +786,14 @@ msgstr ""
 #. module: analytic
 #: model:ir.model.fields,field_description:analytic.field_account_analytic_account__root_plan_id
 msgid "Root Plan"
+<<<<<<< HEAD
 msgstr ""
 
 #. module: analytic
 #: model:account.analytic.account,name:analytic.analytic_seagate_p2
 msgid "Seagate P2"
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: analytic
@@ -754,6 +826,7 @@ msgid ""
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model_terms:ir.ui.view,arch_db:analytic.account_analytic_distribution_model_form_view
 msgid "Simultaneous conditions to meet"
 msgstr ""
@@ -764,6 +837,8 @@ msgid "Spark Systems"
 msgstr ""
 
 #. module: analytic
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: model_terms:ir.ui.view,arch_db:analytic.account_analytic_plan_form_view
 msgid "Subplans"
 msgstr ""
@@ -778,13 +853,19 @@ msgid ""
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model:account.analytic.account,name:analytic.analytic_absences
 msgid "Time Off"
+=======
+#: model_terms:ir.ui.view,arch_db:analytic.view_account_analytic_line_tree
+msgid "Total"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: analytic
-#: model_terms:ir.ui.view,arch_db:analytic.view_account_analytic_line_tree
-msgid "Total"
+#: model:ir.model.fields.selection,name:analytic.selection__account_analytic_applicability__applicability__unavailable
+#: model:ir.model.fields.selection,name:analytic.selection__account_analytic_plan__default_applicability__unavailable
+msgid "Unavailable"
 msgstr ""
 
 #. module: analytic
@@ -809,12 +890,22 @@ msgid "User"
 msgstr ""
 
 #. module: analytic
+<<<<<<< HEAD
 #: model_terms:ir.ui.view,arch_db:analytic.account_analytic_distribution_model_tree_view
 msgid "View"
+=======
+#. odoo-python
+#: code:addons/analytic/models/analytic_account.py:0
+#, python-format
+msgid ""
+"You can't set a different company on your analytic account since there are "
+"some analytic items linked to it."
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgstr ""
 
 #. module: analytic
 #. odoo-python
+<<<<<<< HEAD
 #: code:addons/analytic/models/analytic_account.py:0
 #, python-format
 msgid ""
@@ -824,6 +915,8 @@ msgstr ""
 
 #. module: analytic
 #. odoo-python
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/analytic/models/analytic_distribution_model.py:0
 #, python-format
 msgid ""

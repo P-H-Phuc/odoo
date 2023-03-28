@@ -8,45 +8,62 @@ import { standardFieldProps } from "../standard_field_props";
 import { Component } from "@odoo/owl";
 
 export class UrlField extends Component {
+    static template = "web.UrlField";
+    static props = {
+        ...standardFieldProps,
+        placeholder: { type: String, optional: true },
+        text: { type: String, optional: true },
+        websitePath: { type: Boolean, optional: true },
+    };
+
     setup() {
-        useInputField({ getValue: () => this.props.value || "" });
+        useInputField({ getValue: () => this.props.record.data[this.props.name] || "" });
     }
 
     get formattedHref() {
         let value = "";
-        if (typeof this.props.value === "string") {
+        if (typeof this.props.record.data[this.props.name] === "string") {
             const shouldaddPrefix = !(
                 this.props.websitePath ||
-                this.props.value.includes("://") ||
-                /^\//.test(this.props.value)
+                this.props.record.data[this.props.name].includes("://") ||
+                /^\//.test(this.props.record.data[this.props.name])
             );
-            value = shouldaddPrefix ? `http://${this.props.value}` : this.props.value;
+            value = shouldaddPrefix
+                ? `http://${this.props.record.data[this.props.name]}`
+                : this.props.record.data[this.props.name];
         }
         return value;
     }
 }
 
-UrlField.template = "web.UrlField";
-UrlField.props = {
-    ...standardFieldProps,
-    placeholder: { type: String, optional: true },
-    text: { type: String, optional: true },
-    websitePath: { type: Boolean, optional: true },
-};
-
-UrlField.displayName = _lt("URL");
-UrlField.supportedTypes = ["char"];
-
-UrlField.extractProps = ({ attrs }) => {
-    return {
+export const urlField = {
+    component: UrlField,
+    displayName: _lt("URL"),
+    supportedTypes: ["char"],
+    extractProps: ({ attrs, options }) => ({
         text: attrs.text,
-        websitePath: attrs.options.website_path,
+        websitePath: options.website_path,
         placeholder: attrs.placeholder,
-    };
+    }),
 };
 
+<<<<<<< HEAD
 class FormUrlField extends UrlField {}
 FormUrlField.template = "web.FormUrlField";
 
 registry.category("fields").add("url", UrlField);
 registry.category("fields").add("form.url", FormUrlField);
+=======
+registry.category("fields").add("url", urlField);
+
+class FormUrlField extends UrlField {
+    static template = "web.FormUrlField";
+}
+
+export const formUrlField = {
+    ...urlField,
+    component: FormUrlField,
+};
+
+registry.category("fields").add("form.url", formUrlField);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

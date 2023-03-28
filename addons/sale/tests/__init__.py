@@ -16,4 +16,8 @@ from . import test_sale_product_attribute_value_config
 from . import test_sale_refund
 from . import test_sale_tax_totals
 from . import test_sale_to_invoice
+<<<<<<< HEAD
+=======
+from . import test_sale_order_down_payment
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 from . import test_sale_report

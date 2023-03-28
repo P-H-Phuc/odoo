@@ -26,7 +26,11 @@ export class AccountFileUploader extends Component {
         this.extraContext = rec ? {
             default_journal_id: rec.id,
             default_move_type: (rec.type === 'sale' && 'out_invoice') || (rec.type === 'purchase' && 'in_invoice') || 'entry',
+<<<<<<< HEAD
         } : this.props.extraContext || {}; //TODO remove this.props.extraContext
+=======
+        } : {};
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 
     async onFileUploaded(file) {
@@ -35,7 +39,11 @@ export class AccountFileUploader extends Component {
             mimetype: file.type,
             datas: file.data,
         };
+<<<<<<< HEAD
         const att_id = await this.orm.create("ir.attachment", [att_data], {
+=======
+        const [att_id] = await this.orm.create("ir.attachment", [att_data], {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             context: { ...this.extraContext, ...this.env.searchModel.context },
         });
         this.attachmentIdsToProcess.push(att_id);
@@ -65,11 +73,14 @@ AccountFileUploader.components = {
     FileUploader,
 };
 AccountFileUploader.template = "account.AccountFileUploader";
+<<<<<<< HEAD
 AccountFileUploader.extractProps = ({ attrs }) => ({
     togglerTemplate: attrs.template || "account.JournalUploadLink",
     btnClass: attrs.btnClass || "",
     linkText: attrs.linkText || _lt("Upload"),
 });
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 AccountFileUploader.props = {
     ...standardWidgetProps,
     record: { type: Object, optional: true},
@@ -77,6 +88,7 @@ AccountFileUploader.props = {
     btnClass: { type: String, optional: true },
     linkText: { type: String, optional: true },
     slots: { type: Object, optional: true },
+<<<<<<< HEAD
     extraContext: { type: Object, optional: true }, //this prop is only for stable databases with the old journal dashboard view, it should be deleted in master as it is not used
 }
 //when file uploader is used on account.journal (with a record)
@@ -86,6 +98,25 @@ AccountFileUploader.fieldDependencies = {
 };
 
 registry.category("view_widgets").add("account_file_uploader", AccountFileUploader);
+=======
+};
+//when file uploader is used on account.journal (with a record)
+
+export const accountFileUploader = {
+    component: AccountFileUploader,
+    extractProps: ({ attrs }) => ({
+        togglerTemplate: attrs.template || "account.JournalUploadLink",
+        btnClass: attrs.btnClass || "",
+        linkText: attrs.linkText || _lt("Upload"),
+    }),
+    fieldDependencies: [
+        { name: "id", type: "integer" },
+        { name: "type", type: "selection" },
+    ],
+};
+
+registry.category("view_widgets").add("account_file_uploader", accountFileUploader);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 export class AccountDropZone extends Component {
     setup() {

@@ -14,7 +14,7 @@ from odoo.osv import expression
 from odoo.tools import format_date
 from odoo.tools.translate import _
 from odoo.tools.float_utils import float_round
-from odoo.addons.resource.models.resource import Intervals
+from odoo.addons.resource.models.utils import Intervals
 
 _logger = logging.getLogger(__name__)
 
@@ -34,24 +34,6 @@ class HolidaysType(models.Model):
     sequence = fields.Integer(default=100,
                               help='The type with the smallest sequence is the default value in time off request')
     create_calendar_meeting = fields.Boolean(string="Display Time Off in Calendar", default=True)
-    color_name = fields.Selection([
-        ('red', 'Red'),
-        ('blue', 'Blue'),
-        ('lightgreen', 'Light Green'),
-        ('lightblue', 'Light Blue'),
-        ('lightyellow', 'Light Yellow'),
-        ('magenta', 'Magenta'),
-        ('lightcyan', 'Light Cyan'),
-        ('black', 'Black'),
-        ('lightpink', 'Light Pink'),
-        ('brown', 'Brown'),
-        ('violet', 'Violet'),
-        ('lightcoral', 'Light Coral'),
-        ('lightsalmon', 'Light Salmon'),
-        ('lavender', 'Lavender'),
-        ('wheat', 'Wheat'),
-        ('ivory', 'Ivory')], string='Color in Report', required=True, default='red',
-         help='This color will be used in the time off summary located in Reporting > Time off by Department.')
     color = fields.Integer(string='Color', help="The color selected here will be used in every screen with the time off type.")
     icon_id = fields.Many2one('ir.attachment', string='Cover Image', domain="[('res_model', '=', 'hr.leave.type'), ('res_field', '=', 'icon_id')]")
     active = fields.Boolean('Active', default=True,
@@ -76,15 +58,18 @@ class HolidaysType(models.Model):
     group_days_leave = fields.Float(
         compute='_compute_group_days_leave', string='Group Time Off')
     company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company)
-    responsible_id = fields.Many2one(
-        'res.users', 'Responsible Time Off Officer',
-        domain=lambda self: [('groups_id', 'in', self.env.ref('hr_holidays.group_hr_holidays_user').id)],
+    responsible_ids = fields.Many2many(
+        'res.users', 'hr_leave_type_res_users_rel', 'hr_leave_type_id', 'res_users_id', string='Responsible Time Off Officer',
+        domain=lambda self: [('groups_id', 'in', self.env.ref('hr_holidays.group_hr_holidays_user').id),
+                             ('share', '=', False),
+                             ('company_ids', 'in', self.env.company.id)],
+                             auto_join=True,
         help="Choose the Time Off Officer who will be notified to approve allocation or Time Off request")
     leave_validation_type = fields.Selection([
         ('no_validation', 'No Validation'),
         ('hr', 'By Time Off Officer'),
         ('manager', "By Employee's Approver"),
-        ('both', "By Employee's Approver and Time Off Officer")], default='hr', string='Leave Validation')
+        ('both', "By Employee's Approver and Time Off Officer")], default='hr', string='Time Off Validation')
     requires_allocation = fields.Selection([
         ('yes', 'Yes'),
         ('no', 'No Limit')], default="yes", required=True, string='Requires allocation',
@@ -142,7 +127,7 @@ class HolidaysType(models.Model):
             alloc.employee_id = %s AND
             alloc.active = True AND alloc.state = 'validate' AND
             (alloc.date_to >= %s OR alloc.date_to IS NULL) AND
-            alloc.date_from <= %s 
+            alloc.date_from <= %s
         '''
 
         self._cr.execute(query, (employee_id or None, date_to, date_from))
@@ -568,7 +553,7 @@ class HolidaysType(models.Model):
         return res
 
     @api.model
-    def _search(self, args, offset=0, limit=None, order=None, count=False, access_rights_uid=None):
+    def _search(self, domain, offset=0, limit=None, order=None, access_rights_uid=None):
         """ Override _search to order the results, according to some employee.
         The order is the following
 
@@ -581,12 +566,13 @@ class HolidaysType(models.Model):
         to the method.
         """
         employee_id = self._get_contextual_employee_id()
-        post_sort = (not count and not order and employee_id)
-        leave_ids = super(HolidaysType, self)._search(args, offset=offset, limit=(None if post_sort else limit), order=order, count=count, access_rights_uid=access_rights_uid)
-        leaves = self.browse(leave_ids)
-        if post_sort:
-            return leaves.sorted(key=self._model_sorting_key, reverse=True).ids[:limit or None]
-        return leave_ids
+        if order == self._order and employee_id:
+            # retrieve all leaves, sort them, then apply offset and limit
+            leaves = self.browse(super()._search(domain, access_rights_uid=access_rights_uid))
+            leaves = leaves.sorted(key=self._model_sorting_key, reverse=True)
+            leaves = leaves[offset:(offset + limit) if limit else None]
+            return leaves._as_query()
+        return super()._search(domain, offset, limit, order, access_rights_uid)
 
     def action_see_days_allocated(self):
         self.ensure_one()
@@ -612,8 +598,6 @@ class HolidaysType(models.Model):
         ]
         action['context'] = {
             'default_holiday_status_id': self.ids[0],
-            'search_default_need_approval_approved': 1,
-            'search_default_this_year': 1,
         }
         return action
 

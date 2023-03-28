@@ -1,10 +1,17 @@
 /** @odoo-module **/
 
+<<<<<<< HEAD
 import { useForwardRefToParent, useService } from "@web/core/utils/hooks";
 import { useDebounced } from "@web/core/utils/timing";
 import { getActiveHotkey } from "@web/core/hotkeys/hotkey_service";
 import { usePosition } from "@web/core/position_hook";
 
+=======
+import { useAutofocus, useForwardRefToParent, useService } from "@web/core/utils/hooks";
+import { useDebounced } from "@web/core/utils/timing";
+import { getActiveHotkey } from "@web/core/hotkeys/hotkey_service";
+import { usePosition } from "@web/core/position_hook";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { Component, useExternalListener, useRef, useState } from "@odoo/owl";
 
 export class AutoComplete extends Component {
@@ -22,6 +29,12 @@ export class AutoComplete extends Component {
         });
 
         this.inputRef = useForwardRefToParent("input");
+<<<<<<< HEAD
+=======
+        if (this.props.autofocus) {
+            useAutofocus({ refName: "input" });
+        }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.root = useRef("root");
         this.debouncedOnInput = useDebounced(this.onInput, this.constructor.timeout);
         useExternalListener(window, "scroll", this.onWindowScroll, true);
@@ -230,6 +243,11 @@ export class AutoComplete extends Component {
         this.open(true);
     }
 
+    onInputFocus(ev) {
+        this.inputRef.el.setSelectionRange(0, this.inputRef.el.value.length);
+        this.props.onFocus(ev);
+    }
+
     onInputKeydown(ev) {
         const hotkey = getActiveHotkey(ev);
         switch (hotkey) {
@@ -317,7 +335,14 @@ Object.assign(AutoComplete, {
         onInput: { type: Function, optional: true },
         onChange: { type: Function, optional: true },
         onBlur: { type: Function, optional: true },
+<<<<<<< HEAD
         input: { type: Function, optional: true },
+=======
+        onFocus: { type: Function, optional: true },
+        input: { type: Function, optional: true },
+        autofocus: { type: Boolean, optional: true },
+        class: { type: String, optional: true },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
     defaultProps: {
         placeholder: "",
@@ -325,6 +350,7 @@ Object.assign(AutoComplete, {
         onInput: () => {},
         onChange: () => {},
         onBlur: () => {},
+        onFocus: () => {},
     },
     timeout: 250,
 });

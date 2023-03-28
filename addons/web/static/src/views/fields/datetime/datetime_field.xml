@@ -8,7 +8,11 @@
         <t t-else="">
             <DateTimePicker
                 t-props="props.pickerOptions"
+<<<<<<< HEAD
                 date="props.value"
+=======
+                date="props.record.data[props.name]"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 inputId="props.id"
                 placeholder="props.placeholder"
                 onDateTimeChanged="(datetime) => this.onDateTimeChanged(datetime)"

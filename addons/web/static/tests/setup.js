@@ -19,6 +19,10 @@ transitionConfig.disabled = true;
 
 import { patch } from "@web/core/utils/patch";
 import { App, whenReady } from "@odoo/owl";
+<<<<<<< HEAD
+=======
+import { currencies } from "@web/core/currency";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 const { prepareRegistriesWithCleanup } = utils;
 
@@ -160,7 +164,10 @@ function patchBrowserWithCleanup() {
                 return interval;
             },
             navigator: {
+                mediaDevices: browser.navigator.mediaDevices,
+                permissions: browser.navigator.permissions,
                 userAgent: browser.navigator.userAgent.replace(/\([^)]*\)/, "(X11; Linux x86_64)"),
+                sendBeacon: () => {},
             },
             // in tests, we never want to interact with the real url or reload the page
             location: mockLocation,
@@ -244,10 +251,6 @@ function patchSessionInfo() {
             load_menus: "161803",
             translations: "314159",
         },
-        currencies: {
-            1: { name: "USD", digits: [69, 2], position: "before", symbol: "$" },
-            2: { name: "EUR", digits: [69, 2], position: "after", symbol: "€" },
-        },
         user_context: {
             lang: "en",
             uid: 7,
@@ -268,7 +271,11 @@ function patchSessionInfo() {
         },
         db: "test",
         server_version: "1.0",
-        server_version_info: ["1.0"],
+        server_version_info: [1, 0, 0, "final", 0, ""],
+    });
+    patchWithCleanup(currencies, {
+        1: { name: "USD", digits: [69, 2], position: "before", symbol: "$" },
+        2: { name: "EUR", digits: [69, 2], position: "after", symbol: "€" },
     });
 }
 

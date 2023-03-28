@@ -387,8 +387,7 @@ QUnit.module("spreadsheet > Global filters model", {}, () => {
         assert.equal(listDomain.length, 7, "it should have updated the list domain");
 
         const newModel = new Model(model.exportData(), {
-            evalContext: model.config.evalContext,
-            dataSources: model.config.dataSources,
+            custom: model.config.custom,
         });
 
         assert.equal(newModel.getters.getGlobalFilters().length, 2);
@@ -648,8 +647,10 @@ QUnit.module("spreadsheet > Global filters model", {}, () => {
         const model = new Model(
             {},
             {
-                dataSources: new DataSources({ ...orm, silent: orm }),
-                evalContext: { env: { services: { orm } } },
+                custom: {
+                    dataSources: new DataSources({ ...orm, silent: orm }),
+                    env: { services: { orm } },
+                },
             }
         );
         setupDataSourceEvaluation(model);

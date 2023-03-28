@@ -16,9 +16,12 @@
         'web.assets_frontend': [
             'google_recaptcha/static/src/scss/recaptcha.scss',
             'google_recaptcha/static/src/js/recaptcha.js',
+<<<<<<< HEAD
             # TODO remove next line in master, it was kept here as part of a
             # stable fix in stable but is unused in the current codebase.
             'google_recaptcha/static/src/xml/recaptcha.xml',
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         ],
         'web.assets_backend': [
             # TODO we may want to consider moving that file in website instead

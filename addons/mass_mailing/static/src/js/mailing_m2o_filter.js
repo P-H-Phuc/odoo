@@ -3,7 +3,11 @@
 import { registry } from '@web/core/registry';
 import { Dropdown } from "@web/core/dropdown/dropdown";
 import { useService } from "@web/core/utils/hooks";
+<<<<<<< HEAD
 import { Many2OneField } from '@web/views/fields/many2one/many2one_field';
+=======
+import { Many2OneField, many2OneField } from '@web/views/fields/many2one/many2one_field';
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import Domain from 'web.Domain';
 
 const { useState, useEffect } = owl;
@@ -125,7 +129,11 @@ export class FieldMany2OneMailingFilter extends Many2OneField {
             ev.stopPropagation();
             filterInput.focus();
         } else {
+<<<<<<< HEAD
             const newFilterId = await this.env.model.orm.create("mailing.filter", [{
+=======
+            const [newFilterId] = await this.env.model.orm.create("mailing.filter", [{
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 name: filterName,
                 mailing_domain: this.props.record.data[this.props.domain_field],
                 mailing_model_id: this.props.record.data[this.props.model_field][0],
@@ -149,6 +157,7 @@ FieldMany2OneMailingFilter.defaultProps = {
     domain_field: "mailing_domain",
     model_field: "mailing_model_id",
 };
+<<<<<<< HEAD
 FieldMany2OneMailingFilter.extractProps = ({ field, attrs }) => {
     return {
         ...Many2OneField.extractProps({ field, attrs }),
@@ -158,3 +167,18 @@ FieldMany2OneMailingFilter.extractProps = ({ field, attrs }) => {
 };
 
 registry.category('fields').add('mailing_filter', FieldMany2OneMailingFilter);
+=======
+
+export const fieldMany2OneMailingFilter = {
+    ...many2OneField,
+    component: FieldMany2OneMailingFilter,
+    extractProps({ options }) {
+        const props = many2OneField.extractProps(...arguments);
+        props.domain_field = options.domain_field;
+        props.model_field = options.model_field;
+        return props;
+    },
+};
+
+registry.category("fields").add("mailing_filter", fieldMany2OneMailingFilter);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

@@ -1,6 +1,6 @@
-odoo.define('point_of_sale.HeaderButton', function(require) {
-    'use strict';
+/** @odoo-module */
 
+<<<<<<< HEAD
     const PosComponent = require('point_of_sale.PosComponent');
     const Registries = require('point_of_sale.Registries');
     const { ConnectionLostError, ConnectionAbortedError } = require('@web/core/network/rpc_service')
@@ -27,10 +27,24 @@ odoo.define('point_of_sale.HeaderButton', function(require) {
                 }
             }
         }
+=======
+import { useService } from "@web/core/utils/hooks";
+import { ClosePosPopup } from "@point_of_sale/js/Popups/ClosePosPopup";
+import { Component } from "@odoo/owl";
+
+// Previously HeaderButtonWidget
+// This is the close session button
+export class HeaderButton extends Component {
+    static template = "HeaderButton";
+
+    setup() {
+        super.setup(...arguments);
+        this.popup = useService("popup");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
-    HeaderButton.template = 'HeaderButton';
 
-    Registries.Component.add(HeaderButton);
-
-    return HeaderButton;
-});
+    async onClick() {
+        const info = await this.env.pos.getClosePosInfo();
+        this.popup.add(ClosePosPopup, { info: info, keepBehind: true });
+    }
+}

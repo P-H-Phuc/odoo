@@ -1,6 +1,10 @@
 from odoo import api, Command, fields, models, _
 from odoo.exceptions import UserError, ValidationError
+<<<<<<< HEAD
 from odoo.tools import html2plaintext
+=======
+from odoo.osv.expression import get_unaccent_wrapper
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 from odoo.addons.base.models.res_bank import sanitize_account_number
 
@@ -423,30 +427,6 @@ class AccountBankStatementLine(models.Model):
             })
         return bank_account
 
-    def _get_amounts_with_currencies(self):
-        """
-        Returns the line amount in company, journal and foreign currencies
-        """
-        self.ensure_one()
-
-        company_currency = self.journal_id.company_id.currency_id
-        journal_currency = self.journal_id.currency_id or company_currency
-        foreign_currency = self.foreign_currency_id or journal_currency or company_currency
-
-        journal_amount = self.amount
-        if foreign_currency == journal_currency:
-            transaction_amount = journal_amount
-        else:
-            transaction_amount = self.amount_currency
-        if journal_currency == company_currency:
-            company_amount = journal_amount
-        elif foreign_currency == company_currency:
-            company_amount = transaction_amount
-        else:
-            company_amount = journal_currency._convert(journal_amount, company_currency,
-                                                       self.journal_id.company_id, self.date)
-        return company_amount, company_currency, journal_amount, journal_currency, transaction_amount, foreign_currency
-
     def _get_default_amls_matching_domain(self):
         return [
             # Base domain.
@@ -472,13 +452,36 @@ class AccountBankStatementLine(models.Model):
                 ('company_id', '=', self.env.company.id)
             ], limit=1)
 
+<<<<<<< HEAD
     def _get_st_line_strings_for_matching(self, allowed_fields=None):
         """ Collect the strings that could be used on the statement line to perform some matching.
+=======
+    @api.model
+    def _get_default_statement(self, journal_id=None, date=None):
+        statement = self.search(
+            domain=[
+                ('journal_id', '=', journal_id or self._get_default_journal().id),
+                ('date', '<=', date or fields.Date.today()),
+            ],
+            limit=1
+        ).statement_id
+        if not statement.is_complete:
+            return statement
 
-        :param allowed_fields: A explicit list of fields to consider.
-        :return: A list of strings.
+    def _get_accounting_amounts_and_currencies(self):
+        """ Retrieve the transaction amount, journal amount and the company amount with their corresponding currencies
+        from the journal entry linked to the statement line.
+        All returned amounts will be positive for an inbound transaction, negative for an outbound one.
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
+
+        :return: (
+            transaction_amount, transaction_currency,
+            journal_amount, journal_currency,
+            company_amount, company_currency,
+        )
         """
         self.ensure_one()
+<<<<<<< HEAD
 
         st_line_text_values = []
         if not allowed_fields or 'payment_ref' in allowed_fields:
@@ -492,6 +495,24 @@ class AccountBankStatementLine(models.Model):
             if self.ref:
                 st_line_text_values.append(self.ref)
         return st_line_text_values
+=======
+        liquidity_line, suspense_line, other_lines = self._seek_for_lines()
+        if suspense_line and not other_lines:
+            transaction_amount = -suspense_line.amount_currency
+            transaction_currency = suspense_line.currency_id
+        else:
+            # In case of to_check or partial reconciliation, we can't trust the suspense line.
+            transaction_amount = self.amount_currency if self.foreign_currency_id else self.amount
+            transaction_currency = self.foreign_currency_id or liquidity_line.currency_id
+        return (
+            transaction_amount,
+            transaction_currency,
+            sum(liquidity_line.mapped('amount_currency')),
+            liquidity_line.currency_id,
+            sum(liquidity_line.mapped('balance')),
+            liquidity_line.company_currency_id,
+        )
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     def _get_accounting_amounts_and_currencies(self):
         """ Retrieve the transaction amount, journal amount and the company amount with their corresponding currencies
@@ -586,8 +607,22 @@ class AccountBankStatementLine(models.Model):
                 self.journal_id.display_name,
             ))
 
-        company_amount, _company_currency, journal_amount, journal_currency, transaction_amount, foreign_currency \
-            = self._get_amounts_with_currencies()
+        company_currency = self.journal_id.company_id.currency_id
+        journal_currency = self.journal_id.currency_id or company_currency
+        foreign_currency = self.foreign_currency_id or journal_currency or company_currency
+
+        journal_amount = self.amount
+        if foreign_currency == journal_currency:
+            transaction_amount = journal_amount
+        else:
+            transaction_amount = self.amount_currency
+        if journal_currency == company_currency:
+            company_amount = journal_amount
+        elif foreign_currency == company_currency:
+            company_amount = transaction_amount
+        else:
+            company_amount = journal_currency\
+                ._convert(journal_amount, company_currency, self.journal_id.company_id, self.date)
 
         liquidity_line_vals = {
             'name': self.payment_ref,
@@ -613,6 +648,7 @@ class AccountBankStatementLine(models.Model):
         }
         return [liquidity_line_vals, counterpart_line_vals]
 
+<<<<<<< HEAD
     def _retrieve_partner(self):
         self.ensure_one()
 
@@ -659,6 +695,8 @@ class AccountBankStatementLine(models.Model):
 
         return self.env['res.partner']
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def _seek_for_lines(self):
         """ Helper used to dispatch the journal items between:
         - The lines using the liquidity account.

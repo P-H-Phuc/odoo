@@ -1,11 +1,18 @@
+/** @odoo-module */
 /* global timapi */
-odoo.define('pos_six.payment', function (require) {
-"use strict";
 
+<<<<<<< HEAD
 const { Gui } = require('point_of_sale.Gui');
 var core = require('web.core');
 var PaymentInterface = require('point_of_sale.PaymentInterface');
 const { escape } = require("@web/core/utils/strings");
+=======
+import core from "web.core";
+import { PaymentInterface } from "@point_of_sale/js/payment";
+import { ErrorPopup } from "@point_of_sale/js/Popups/ErrorPopup";
+import { escape } from "@web/core/utils/strings";
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 var _t = core._t;
 
 window.onTimApiReady = function () {};
@@ -16,8 +23,7 @@ window.onTimApiPublishLogRecord = function (record) {
     }
 };
 
-var PaymentSix = PaymentInterface.extend({
-
+export const PaymentSix = PaymentInterface.extend({
     //--------------------------------------------------------------------------
     // Public
     //--------------------------------------------------------------------------
@@ -30,11 +36,13 @@ var PaymentSix = PaymentInterface.extend({
         this.enable_reversals();
 
         var terminal_ip = this.payment_method.six_terminal_ip;
-        var instanced_payment_method = _.find(this.pos.payment_methods, function(payment_method) {
-            return payment_method.use_payment_terminal === "six"
-                && payment_method.six_terminal_ip === terminal_ip
-                && payment_method.payment_terminal
-        })
+        var instanced_payment_method = _.find(this.pos.payment_methods, function (payment_method) {
+            return (
+                payment_method.use_payment_terminal === "six" &&
+                payment_method.six_terminal_ip === terminal_ip &&
+                payment_method.payment_terminal
+            );
+        });
         if (instanced_payment_method !== undefined) {
             var payment_terminal = instanced_payment_method.payment_terminal;
             this.terminal = payment_terminal.terminal;
@@ -58,14 +66,20 @@ var PaymentSix = PaymentInterface.extend({
         this.terminalListener.balanceCompleted = this._onBalanceComplete.bind(this);
         this.terminal.addListener(this.terminalListener);
 
-        var recipients = [timapi.constants.Recipient.merchant, timapi.constants.Recipient.cardholder];
+        var recipients = [
+            timapi.constants.Recipient.merchant,
+            timapi.constants.Recipient.cardholder,
+        ];
         var options = [];
         _.forEach(recipients, (recipient) => {
             var option = new timapi.PrintOption(
                 recipient,
                 timapi.constants.PrintFormat.normal,
                 45,
-                [timapi.constants.PrintFlag.suppressHeader, timapi.constants.PrintFlag.suppressEcrInfo]
+                [
+                    timapi.constants.PrintFlag.suppressHeader,
+                    timapi.constants.PrintFlag.suppressEcrInfo,
+                ]
             );
             options.push(option);
         });
@@ -86,7 +100,7 @@ var PaymentSix = PaymentInterface.extend({
      */
     send_payment_request: function () {
         this._super.apply(this, arguments);
-        this.pos.get_order().selected_paymentline.set_payment_status('waitingCard');
+        this.pos.get_order().selected_paymentline.set_payment_status("waitingCard");
         return this._sendTransaction(timapi.constants.TransactionType.purchase);
     },
 
@@ -95,7 +109,7 @@ var PaymentSix = PaymentInterface.extend({
      */
     send_payment_reversal: function () {
         this._super.apply(this, arguments);
-        this.pos.get_order().selected_paymentline.set_payment_status('reversing');
+        this.pos.get_order().selected_paymentline.set_payment_status("reversing");
         return this._sendTransaction(timapi.constants.TransactionType.reversal);
     },
 
@@ -112,16 +126,16 @@ var PaymentSix = PaymentInterface.extend({
 
         if (event.exception) {
             if (event.exception.resultCode !== timapi.constants.ResultCode.apiCancelEcr) {
-                Gui.showPopup('ErrorPopup', {
-                    title: _t('Transaction was not processed correctly'),
+                this.pos.env.services.popup.add(ErrorPopup, {
+                    title: _t("Transaction was not processed correctly"),
                     body: event.exception.errorText,
                 });
             }
 
             this.transactionResolve();
         } else {
-            if (data.printData){
-                this._printReceipts(data.printData.receipts)
+            if (data.printData) {
+                this._printReceipts(data.printData.receipts);
             }
 
             // Store Transaction Data
@@ -135,9 +149,9 @@ var PaymentSix = PaymentInterface.extend({
 
     _onBalanceComplete: function (event, data) {
         if (event.exception) {
-            Gui.showPopup('ErrorPopup',{
-                'title': _t('Balance Failed'),
-                'body':  _t('The balance operation failed.'),
+            this.pos.env.services.popup.add(ErrorPopup, {
+                title: _t("Balance Failed"),
+                body: _t("The balance operation failed."),
             });
         } else {
             this._printReceipts(data.printData.receipts);
@@ -146,11 +160,22 @@ var PaymentSix = PaymentInterface.extend({
 
     _printReceipts: function (receipts) {
         _.forEach(receipts, (receipt) => {
+<<<<<<< HEAD
             if (receipt.recipient === timapi.constants.Recipient.merchant && this.pos.env.proxy.printer) {
                 this.pos.env.proxy.printer.print_receipt(
                     "<div class='pos-receipt'><div class='pos-payment-terminal-receipt'>" +
                         escape(receipt.value).replace(/\n/g, "<br />") +
                     "</div></div>"
+=======
+            if (
+                receipt.recipient === timapi.constants.Recipient.merchant &&
+                this.pos.env.proxy.printer
+            ) {
+                this.pos.env.proxy.printer.print_receipt(
+                    "<div class='pos-receipt'><div class='pos-payment-terminal-receipt'>" +
+                        escape(receipt.value).replace(/\n/g, "<br />") +
+                        "</div></div>"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 );
             } else if (receipt.recipient === timapi.constants.Recipient.cardholder) {
                 this.pos.get_order().selected_paymentline.set_receipt_info(receipt.value);
@@ -160,7 +185,9 @@ var PaymentSix = PaymentInterface.extend({
 
     _sendTransaction: function (transactionType) {
         var amount = new timapi.Amount(
-            Math.round(this.pos.get_order().selected_paymentline.amount / this.pos.currency.rounding),
+            Math.round(
+                this.pos.get_order().selected_paymentline.amount / this.pos.currency.rounding
+            ),
             timapi.constants.Currency[this.pos.currency.name],
             this.pos.currency.decimal_places
         );
@@ -170,8 +197,4 @@ var PaymentSix = PaymentInterface.extend({
             this.terminal.transactionAsync(transactionType, amount);
         });
     },
-});
-
-return PaymentSix;
-
 });

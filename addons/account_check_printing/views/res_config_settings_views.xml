@@ -5,7 +5,11 @@
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="account.res_config_settings_view_form"/>
         <field name="arch" type="xml">
+<<<<<<< HEAD
             <div id="print_bills_payment" position="after">
+=======
+            <setting id="print_checks" position="inside">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 <div class="content-group" attrs="{'invisible': [('module_account_check_printing', '=', False)]}">
                     <div class="row mt16">
                         <label for="account_check_printing_layout" class="col-lg-4 o_light_label"/>
@@ -32,7 +36,7 @@
                       <field name="account_check_printing_date_label"/>
                     </div>
                 </div>
-            </div>
+            </setting>
         </field>
     </record>
 </odoo>

@@ -37,7 +37,25 @@ export class SettingsFormController extends formView.Controller {
             }
         });
 
-        this.initialApp = "module" in this.props.context && this.props.context.module;
+        this.initialApp = "module" in this.props.context ? this.props.context.module : "";
+    }
+
+    /**
+     * @override
+     */
+    async beforeExecuteActionButton(clickParams) {
+        if (clickParams.name === "cancel") {
+            return true;
+        }
+        if (
+            this.model.root.isDirty &&
+            !["execute"].includes(clickParams.name) &&
+            !clickParams.noSaveDialog
+        ) {
+            return this._confirmSave();
+        } else {
+            return this.model.root.save({ stayInEdition: true });
+        }
     }
 
     /**

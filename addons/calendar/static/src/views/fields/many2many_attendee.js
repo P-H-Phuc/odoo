@@ -1,7 +1,10 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
-import { Many2ManyTagsAvatarField } from "@web/views/fields/many2many_tags_avatar/many2many_tags_avatar_field";
+import {
+    Many2ManyTagsAvatarField,
+    many2ManyTagsAvatarField,
+} from "@web/views/fields/many2many_tags_avatar/many2many_tags_avatar_field";
 
 export class Many2ManyAttendee extends Many2ManyTagsAvatarField {
     get tags() {
@@ -29,6 +32,7 @@ export class Many2ManyAttendee extends Many2ManyTagsAvatarField {
 Many2ManyAttendee.additionalClasses = ["o_field_many2many_tags_avatar"];
 Many2ManyAttendee.legacySpecialData = "_fetchSpecialAttendeeStatus";
 
+<<<<<<< HEAD
 registry.category("fields").add("many2manyattendee", Many2ManyAttendee);
 
 export function preloadMany2ManyAttendee(orm, record, fieldName) {
@@ -40,6 +44,25 @@ export function preloadMany2ManyAttendee(orm, record, fieldName) {
         {
             context,
         },
+=======
+export const many2ManyAttendee = {
+    ...many2ManyTagsAvatarField,
+    component: Many2ManyAttendee,
+    additionalClasses: ["o_field_many2many_tags_avatar"],
+    legacySpecialData: "_fetchSpecialAttendeeStatus",
+};
+
+registry.category("fields").add("many2manyattendee", many2ManyAttendee);
+
+export function preloadMany2ManyAttendee(orm, record, fieldName, { context }) {
+    return orm.call(
+        "res.partner",
+        "get_attendee_detail",
+        [record.data[fieldName].records.map((rec) => rec.resId), [record.resId || false]],
+        {
+            context,
+        }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     );
 }
 

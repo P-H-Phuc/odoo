@@ -5,7 +5,7 @@ import base64
 import io
 import logging
 import os
-import re
+import warnings
 
 from odoo import api, fields, models, tools, _, Command
 from odoo.exceptions import ValidationError, UserError
@@ -62,9 +62,9 @@ class Company(models.Model):
     parent_id = fields.Many2one('res.company', string='Parent Company', index=True)
     child_ids = fields.One2many('res.company', 'parent_id', string='Child Companies')
     partner_id = fields.Many2one('res.partner', string='Partner', required=True)
-    report_header = fields.Html(string='Company Tagline', help="Appears by default on the top right corner of your printed documents (report header).")
+    report_header = fields.Html(string='Company Tagline', translate=True, help="Appears by default on the top right corner of your printed documents (report header).")
     report_footer = fields.Html(string='Report Footer', translate=True, help="Footer text displayed at the bottom of all reports.")
-    company_details = fields.Html(string='Company Details', help="Header text displayed at the top of all reports.")
+    company_details = fields.Html(string='Company Details', translate=True, help="Header text displayed at the top of all reports.")
     logo = fields.Binary(related='partner_id.image_1920', default=_get_logo, string="Company Logo", readonly=False)
     # logo_web: do not store in attachments, since the image is retrieved in SQL for
     # performance reasons (see addons/web/controllers/main.py, Binary.company_logo)
@@ -98,7 +98,7 @@ class Company(models.Model):
     layout_background = fields.Selection([('Blank', 'Blank'), ('Geometric', 'Geometric'), ('Custom', 'Custom')], default="Blank", required=True)
     layout_background_image = fields.Binary("Background Image")
     _sql_constraints = [
-        ('name_uniq', 'unique (name)', 'The company name must be unique !')
+        ('name_uniq', 'unique (name)', 'The company name must be unique!')
     ]
 
     def init(self):
@@ -169,7 +169,7 @@ class Company(models.Model):
             self.currency_id = self.country_id.currency_id
 
     @api.model
-    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
+    def _name_search(self, name, domain=None, operator='ilike', limit=None, order=None, name_get_uid=None):
         context = dict(self.env.context)
         newself = self
         if context.pop('user_preference', None):
@@ -178,9 +178,10 @@ class Company(models.Model):
             # which are probably to allow to see the child companies) even if
             # she belongs to some other companies.
             companies = self.env.user.company_ids
-            args = (args or []) + [('id', 'in', companies.ids)]
+            domain = (domain or []) + [('id', 'in', companies.ids)]
             newself = newself.sudo()
-        return super(Company, newself.with_context(context))._name_search(name=name, args=args, operator=operator, limit=limit, name_get_uid=name_get_uid)
+        self = newself.with_context(context)
+        return super()._name_search(name, domain, operator, limit, order, name_get_uid)
 
     @api.model
     @api.returns('self', lambda value: value.id)
@@ -191,8 +192,8 @@ class Company(models.Model):
         _logger.warning("The method '_company_default_get' on res.company is deprecated and shouldn't be used anymore")
         return self.env.company
 
-    # deprecated, use clear_caches() instead
     def cache_restart(self):
+        warnings.warn("Since 17.0, deprecated method, use `clear_caches` instead", DeprecationWarning, 2)
         self.clear_caches()
 
     @api.model_create_multi
@@ -281,10 +282,12 @@ class Company(models.Model):
             raise ValidationError(_('You cannot create recursive companies.'))
 
     def open_company_edit_report(self):
+        warnings.warn("Since 17.0.", DeprecationWarning, 2)
         self.ensure_one()
         return self.env['res.config.settings'].open_company()
 
     def write_company_and_print_report(self):
+        warnings.warn("Since 17.0.", DeprecationWarning, 2)
         context = self.env.context
         report_name = context.get('default_report_name')
         active_ids = context.get('active_ids')

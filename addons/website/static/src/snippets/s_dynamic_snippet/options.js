@@ -49,6 +49,7 @@ const dynamicSnippetOptions = options.Class.extend({
      * @override
      */
     async onBuilt() {
+<<<<<<< HEAD
         // TODO Remove in master.
         this.$target[0].dataset['snippet'] = 's_dynamic_snippet';
         // Default values depend on the templates and filters available.
@@ -61,6 +62,11 @@ const dynamicSnippetOptions = options.Class.extend({
             // the visible on mobile option.
             this.$target[0].classList.remove('d-none');
         }
+=======
+        // Default values depend on the templates and filters available.
+        // Therefore, they cannot be computed prior the start of the option.
+        await this._setOptionsDefaultValues();
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         // The target needs to be restarted when the correct
         // template values are applied (numberOfElements, rowPerSlide, etc.)
         return this._refreshPublicWidgets();
@@ -84,10 +90,13 @@ const dynamicSnippetOptions = options.Class.extend({
         if (params.attributeName === 'templateKey' && previewMode === false) {
             this._templateUpdated(widgetValue, params.activeValue);
         }
+<<<<<<< HEAD
         // TODO adapt in master
         if (params.attributeName === 'numberOfRecords' && previewMode === false) {
             this.$target.get(0).dataset.forceMinimumMaxLimitTo16 = '1';
         }
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
 
     //--------------------------------------------------------------------------

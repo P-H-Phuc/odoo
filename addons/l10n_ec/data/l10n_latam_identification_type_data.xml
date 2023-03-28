@@ -2,22 +2,32 @@
 <odoo>
     <data>
         <record id='ec_ruc' model='l10n_latam.identification.type'>
+<<<<<<< HEAD
             <field name='name'>RUC</field>
             <field name='description'>Registro Unico de Contribuyente</field>
+=======
+            <field name='name'>STP</field>
+            <field name='description'>Single Taxpayer Registration</field>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             <field name='country_id' ref='base.ec'/>
             <field name='is_vat' eval='True'/>
             <field name='sequence'>10</field>
         </record>
         <record id='ec_dni' model='l10n_latam.identification.type'>
-            <field name='name'>Cédula</field>
-            <field name='description'>Cédula de Ciudadanía o Cédula de Identidad</field>
+            <field name='name'>Citizenship</field>
+            <field name='description'>Citizenship card or Identity Card</field>
             <field name='country_id' ref='base.ec'/>
             <field name='sequence'>20</field>
         </record>
         <!-- TODO: Remove in master -->
         <record id='ec_passport' model='l10n_latam.identification.type'>
+<<<<<<< HEAD
             <field name='name'>Pasaporte</field>
             <field name='description'>Pasaporte para extranjeros con domicilio en el país (Deprecado)</field>
+=======
+            <field name='name'>Passport</field>
+            <field name='description'>Passport for foreigners with domicile in the country</field>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             <field name='country_id' ref='base.ec'/>
             <field name='active' eval="False"/>
             <field name='sequence'>20</field>
@@ -25,7 +35,11 @@
         <!-- TODO: Remove in master -->
         <record id='ec_unknown' model='l10n_latam.identification.type'>
             <field name='name'>Unknown</field>
+<<<<<<< HEAD
             <field name='description'>Por identificar, util para registro rápido de ventas (Deprecado)</field>
+=======
+            <field name='description'>To identify, useful for quick sales registration</field>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             <field name='country_id' ref='base.ec'/>
             <field name='active' eval="False"/>
             <field name='sequence'>110</field>

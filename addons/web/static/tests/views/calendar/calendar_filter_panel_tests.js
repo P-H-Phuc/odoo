@@ -1,7 +1,11 @@
 /** @odoo-module **/
 
 import { CalendarFilterPanel } from "@web/views/calendar/filter_panel/calendar_filter_panel";
+<<<<<<< HEAD
 import { click, getFixture, triggerEvent } from "../../helpers/utils";
+=======
+import { click, getFixture } from "../../helpers/utils";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { makeEnv, makeFakeModel, mountComponent } from "./helpers";
 
 let target;
@@ -178,6 +182,7 @@ QUnit.module("CalendarView - FilterPanel", ({ beforeEach }) => {
             "partner_ids all false",
         ]);
     });
+<<<<<<< HEAD
 
     QUnit.test("hover filter opens tooltip", async (assert) => {
         await start({
@@ -210,4 +215,6 @@ QUnit.module("CalendarView - FilterPanel", ({ beforeEach }) => {
         await triggerEvent(filters[3], null, "mouseleave");
         assert.verifySteps([]);
     });
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 });

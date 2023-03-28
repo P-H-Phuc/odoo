@@ -33,6 +33,10 @@ export class UserMenu extends Component {
 }
 UserMenu.template = "web.UserMenu";
 UserMenu.components = { Dropdown, DropdownItem, CheckBox };
+<<<<<<< HEAD
+=======
+UserMenu.props = {};
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 export const systrayItem = {
     Component: UserMenu,

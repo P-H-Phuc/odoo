@@ -21,7 +21,11 @@
             <form string="Analytic Distribution Model">
                 <sheet>
                     <group>
+<<<<<<< HEAD
                         <group string="Simultaneous conditions to meet" colspan="2">
+=======
+                        <group string="Conditions to meet" colspan="2">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                             <group>
                                 <field name="partner_id"/>
                                 <field name="partner_category_id"/>
@@ -30,9 +34,16 @@
                                 <field name="company_id" groups="base.group_multi_company"/>
                             </group>
                         </group>
+<<<<<<< HEAD
                         <group string="Analytic distribution to apply" colspan="2">
                             <field name="analytic_distribution" widget="analytic_distribution"
                                    options="{'force_applicability': 'optional', 'disable_save': true}"/>
+=======
+                        <group string="Distribution to apply" colspan="2">
+                            <field name="analytic_distribution" widget="analytic_distribution"
+                                   options="{'force_applicability': 'optional', 'disable_save': true}"
+                                   class="w-50"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         </group>
                     </group>
                 </sheet>

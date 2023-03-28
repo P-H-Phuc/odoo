@@ -9,7 +9,11 @@ class AnalyticMixin(models.AbstractModel):
     _description = 'Analytic Mixin'
 
     analytic_distribution = fields.Json(
+<<<<<<< HEAD
         'Analytic',
+=======
+        'Analytic Distribution',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         compute="_compute_analytic_distribution", store=True, copy=True, readonly=False,
         precompute=True
     )

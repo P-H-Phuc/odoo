@@ -1,15 +1,30 @@
 /** @odoo-module **/
 
+<<<<<<< HEAD
 import Dialog from 'web.Dialog';
 import { qweb } from "web.core";
 import { patch } from "@web/core/utils/patch";
 import { SaleOrderLineProductField } from '@sale/js/sale_product_field';
 import { formatMonetary } from "@web/views/fields/formatters";
 const { markup } = owl;
+=======
+import { patch } from "@web/core/utils/patch";
+import { SaleOrderLineProductField } from '@sale/js/sale_product_field';
+import { ProductMatrixDialog } from "@product_matrix/js/product_matrix_dialog";
+import { useService } from "@web/core/utils/hooks";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 
 patch(SaleOrderLineProductField.prototype, 'sale_product_matrix', {
 
+<<<<<<< HEAD
+=======
+    setup() {
+        this._super(...arguments);
+        this.dialog = useService("dialog");
+    },
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     async _openGridConfigurator(mode) {
         const saleOrderRecord = this.props.record.model.root;
 
@@ -60,6 +75,7 @@ patch(SaleOrderLineProductField.prototype, 'sale_product_matrix', {
      *
      * @private
     */
+<<<<<<< HEAD
      _openMatrixConfigurator: function (jsonInfo, productTemplateId, editedCellAttributes) {
         const infos = JSON.parse(jsonInfo);
         const saleOrderRecord = this.props.record.model.root;
@@ -117,6 +133,16 @@ patch(SaleOrderLineProductField.prototype, 'sale_product_matrix', {
             } else {
                 MatrixDialog.$content.find('.o_matrix_input:first()').focus();
             }
+=======
+    _openMatrixConfigurator: function (jsonInfo, productTemplateId, editedCellAttributes) {
+        const infos = JSON.parse(jsonInfo);
+        this.dialog.add(ProductMatrixDialog, {
+            header: infos.header,
+            rows: infos.matrix,
+            editedCellAttributes: editedCellAttributes.toString(),
+            product_template_id: productTemplateId,
+            record: this.props.record.model.root,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         });
     },
 });

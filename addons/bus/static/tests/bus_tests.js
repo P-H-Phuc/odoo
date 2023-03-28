@@ -3,6 +3,7 @@ odoo.define('web.bus_tests', function (require) {
 
 var { busService } = require('@bus/services/bus_service');
 const { presenceService } = require('@bus/services/presence_service');
+const { busParametersService } = require('@bus/bus_parameters_service');
 const { multiTabService } = require('@bus/multi_tab_service');
 const { WEBSOCKET_CLOSE_CODES } = require("@bus/workers/websocket_worker");
 const { startServer } = require('@bus/../tests/helpers/mock_python_environment');
@@ -13,7 +14,10 @@ const { registry } = require("@web/core/registry");
 const { session } = require('@web/session');
 const { makeDeferred, nextTick, patchWithCleanup } = require("@web/../tests/helpers/utils");
 const { makeTestEnv } = require('@web/../tests/helpers/mock_env');
+<<<<<<< HEAD
 const legacySession = require('web.session');
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 QUnit.module('Bus', {
     beforeEach: function () {
@@ -26,6 +30,7 @@ QUnit.module('Bus', {
                 return originalMultiTabService;
             },
         };
+        registry.category('services').add('bus.parameters', busParametersService);
         registry.category('services').add('bus_service', busService);
         registry.category('services').add('presence', presenceService);
         registry.category('services').add('multi_tab', customMultiTabService);
@@ -433,11 +438,24 @@ QUnit.module('Bus', {
         ]);
     });
 
+<<<<<<< HEAD
     QUnit.test("WebSocket connects with URL corresponding to session prefix", async function (assert) {
         patchWebsocketWorkerWithCleanup();
         const origin = "http://random-website.com";
         patchWithCleanup(legacySession, {
             prefix: origin,
+=======
+    QUnit.test("WebSocket connects with URL corresponding to given serverURL", async function (assert) {
+        patchWebsocketWorkerWithCleanup();
+        const serverURL = "http://random-website.com";
+        patchWithCleanup(busParametersService, {
+            start() {
+                return {
+                    ...this._super(...arguments),
+                    serverURL,
+                };
+            },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         });
         const websocketCreatedDeferred = makeDeferred();
         patchWithCleanup(window, {
@@ -450,7 +468,11 @@ QUnit.module('Bus', {
         const env = await makeTestEnv();
         env.services["bus_service"].start();
         await websocketCreatedDeferred;
+<<<<<<< HEAD
         assert.verifySteps([`${origin.replace("http", "ws")}/websocket`]);
+=======
+        assert.verifySteps([`${serverURL.replace("http", "ws")}/websocket`]);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     });
 
     QUnit.test("Disconnect on offline, re-connect on online", async function (assert) {

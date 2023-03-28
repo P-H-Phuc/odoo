@@ -28,7 +28,6 @@
 
         <record id="action_slide_tag" model="ir.actions.act_window">
             <field name="name">Content Tags</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">slide.tag</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
@@ -209,7 +208,6 @@
             <field name="inherit_id" ref="view_slide_slide_form"/>
             <field name="priority" eval="50"/>
             <field name="mode">primary</field>
-            <field name="type">form</field>
             <field name="arch" type="xml">
                 <field name="channel_id" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -333,9 +331,13 @@
             <field name="arch" type="xml">
                 <search string="Search Contents">
                     <field name="name"/>
+                    <field name="channel_id"/>
+                    <field name="user_id"/>
+                    <field name="tag_ids"/>
+                    <filter name="filter_user_id_uid" string="My Content" domain="[('user_id', '=', uid)]"/>
+                    <separator/>
                     <filter name="published" string="Published" domain="[('is_published', '=', True)]"/>
                     <filter name="not_published" string="Waiting for validation" domain="[('is_published', '=', False)]"/>
-                    <filter name="filter_user_id_uid" string="My Content" domain="[('user_id', '=', uid)]"/>
                     <separator/>
                     <filter string="Archived" name="inactive" domain="[('active','=',False)]"/>
                     <group expand="0" string="Group By">
@@ -394,7 +396,6 @@
 
         <record id="slide_slide_action_report" model="ir.actions.act_window">
             <field name="name">Contents</field>
-            <field name="type">ir.actions.act_window</field>
             <field name="res_model">slide.slide</field>
             <field name="view_mode">graph,tree,form,pivot</field>
             <field name="context">{"search_default_published": 1}</field>

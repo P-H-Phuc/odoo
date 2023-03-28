@@ -85,12 +85,12 @@ class KanbanGroup extends Group {
             },
         });
 
-        this.model.addEventListener("record-updated", ({ detail }) => {
+        this.model.bus.addEventListener("record-updated", ({ detail }) => {
             const { record, relatedRecords } = detail;
             const localIds = this.records.map((r) => r.id);
             const updatedIds = [record, ...relatedRecords].map((r) => r.id);
             if (localIds.some((id) => updatedIds.includes(id))) {
-                this.model.trigger("group-updated", {
+                this.model.bus.trigger("group-updated", {
                     group: this,
                     withProgressBars: true,
                 });
@@ -114,7 +114,7 @@ class KanbanGroup extends Group {
      */
     async deleteRecords() {
         const records = await super.deleteRecords(...arguments);
-        this.model.trigger("group-updated", {
+        this.model.bus.trigger("group-updated", {
             group: this,
             withProgressBars: true,
         });
@@ -207,7 +207,11 @@ class KanbanGroup extends Group {
 
         // Do not update progress bars data when filtering on them.
         await Promise.all([this.list.load()]);
+<<<<<<< HEAD
         this.model.trigger("group-updated", { group: this, withProgressBars: false });
+=======
+        this.model.bus.trigger("group-updated", { group: this, withProgressBars: false });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     }
 
     /**
@@ -306,7 +310,11 @@ class KanbanGroup extends Group {
                 await this.model.reloadRecords(record);
                 record.switchMode("readonly");
                 this.addRecord(record, 0);
+<<<<<<< HEAD
                 this.model.trigger("group-updated", {
+=======
+                this.model.bus.trigger("group-updated", {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     group: this,
                     withProgressBars: true,
                 });
@@ -353,7 +361,7 @@ export class KanbanDynamicGroupList extends DynamicGroupList {
 
         this.groupBy = this.groupBy.slice(0, 1);
 
-        this.model.addEventListener("group-updated", async ({ detail }) => {
+        this.model.bus.addEventListener("group-updated", async ({ detail }) => {
             if (this.groups.some((g) => g.id === detail.group.id)) {
                 await this.updateGroupProgressData([detail.group], detail.withProgressBars);
                 this.model.notify();

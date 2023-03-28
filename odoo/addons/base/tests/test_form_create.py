@@ -64,7 +64,11 @@ class TestFormCreate(TransactionCase):
     def test_create_res_country(self):
         country_form = Form(self.env['res.country'])
         country_form.name = 'a country'
+<<<<<<< HEAD
         country_form.code = 'AA'
+=======
+        country_form.code = 'ZX'
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         country_form.save()
 
     def test_create_res_lang(self):

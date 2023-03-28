@@ -10,8 +10,6 @@ access_report_pos_order,report.pos.order,model_report_pos_order,group_pos_user,1
 access_account_journal_pos_user,account.journal pos_user,account.model_account_journal,group_pos_user,1,0,0,0
 access_account_payment_method_pos_user,account.payment.method pos_user,account.model_account_payment_method,group_pos_manager,1,0,0,0
 access_account_payment_method_line_pos_user,account.payment.method.line pos_user,account.model_account_payment_method_line,group_pos_manager,1,0,0,0
-access_account_bank_statement,account.bank.statement,account.model_account_bank_statement,group_pos_user,1,1,1,0
-access_account_bank_statement_manager,account.bank.statement manager,account.model_account_bank_statement,group_pos_manager,1,1,1,1
 access_account_bank_statement_line,account.bank.statement.line,account.model_account_bank_statement_line,group_pos_user,1,1,1,0
 access_product_product,product.product,product.model_product_product,group_pos_user,1,0,0,0
 access_product_template_pos_user,product.template pos user,product.model_product_template,group_pos_user,1,0,0,0
@@ -53,3 +51,4 @@ access_pos_close_session_wizard,access.pos.close.session.wizard,model_pos_close_
 access_account_cash_rounding_pos_user,account.cash.rounding pos_user,account.model_account_cash_rounding,group_pos_user,1,0,0,0
 access_pos_bill,pos.bill pos_user,model_pos_bill,group_pos_user,1,1,1,1
 access_pos_session_check_product_wizard,access.pos.session.check.product.wizard,model_pos_session_check_product_wizard,group_pos_user,1,1,1,0
+access_pos_daily_sales_reports_wizard,access.pos.daily.sales.reports.wizard,model_pos_daily_sales_reports_wizard,group_pos_manager,1,1,1,0

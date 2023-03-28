@@ -16,6 +16,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.tax,description:l10n_hu.1_FKKT
 #: model:account.tax,description:l10n_hu.1_VKKT
 #: model:account.tax,description:l10n_hu.2_FKKT
@@ -187,10 +188,17 @@ msgstr "12% Kompenzációs felár"
 #: model:account.tax.template,description:l10n_hu.V18
 #: model:account.tax.template,name:l10n_hu.F18
 #: model:account.tax.template,name:l10n_hu.V18
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_fiz_afa_18
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_viss_18
+#: model:account.tax.report.line,name:l10n_hu.tax_report_fizetndo_18
+#: model:account.tax.report.line,name:l10n_hu.tax_report_fizetndo_viss_18
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "18% VAT"
 msgstr "18% ÁFA"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_hu.1_VEU27T
 #: model:account.tax,name:l10n_hu.2_VEU27T
 #: model:account.tax.template,name:l10n_hu.VEU27T
@@ -272,10 +280,17 @@ msgstr "27% Szolgáltatások Közösségen belüli beszerzés"
 #: model:account.tax.template,description:l10n_hu.V27
 #: model:account.tax.template,name:l10n_hu.F27
 #: model:account.tax.template,name:l10n_hu.V27
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_fiz_afa_27
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_viss_27
+#: model:account.tax.report.line,name:l10n_hu.tax_report_fizetndo_27
+#: model:account.tax.report.line,name:l10n_hu.tax_report_fizetndo_viss_27
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "27% VAT"
 msgstr "27% ÁFA"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.tax,description:l10n_hu.1_F5
 #: model:account.tax,description:l10n_hu.1_V5
 #: model:account.tax,description:l10n_hu.2_F5
@@ -291,10 +306,17 @@ msgstr "27% ÁFA"
 #: model:account.tax.template,description:l10n_hu.V5
 #: model:account.tax.template,name:l10n_hu.F5
 #: model:account.tax.template,name:l10n_hu.V5
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_fiz_afa_5
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_viss_5
+#: model:account.tax.report.line,name:l10n_hu.tax_report_fizetndo_5
+#: model:account.tax.report.line,name:l10n_hu.tax_report_fizetndo_viss_5
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "5% VAT"
 msgstr "5% ÁFA"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.tax,name:l10n_hu.1_VKOMP7
 #: model:account.tax,name:l10n_hu.2_VKOMP7
 #: model:account.tax.template,name:l10n_hu.VKOMP7
@@ -718,10 +740,15 @@ msgstr "Kártérítés"
 #. module: l10n_hu
 #: model:account.report.line,name:l10n_hu.tax_report_alap_komp
 #: model:account.report.line,name:l10n_hu.tax_report_fizetndo_viss_komp
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_komp
+#: model:account.tax.report.line,name:l10n_hu.tax_report_fizetndo_viss_komp
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Compensation Surcharge"
 msgstr "Kompenzációs Felár"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.tax.group,name:l10n_hu.tax_group_afa_komp
 msgid "Compensation surcharge"
 msgstr "Kompenzációs felár"
@@ -1246,6 +1273,10 @@ msgstr "Segédanyagok"
 #. module: l10n_hu
 #: model:account.report.line,name:l10n_hu.tax_report_alap_fiz_koron_kivuli
 #: model:account.report.line,name:l10n_hu.tax_report_alap_viss_koron_kivuli
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_fiz_koron_kivuli
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_viss_koron_kivuli
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Exempt"
 msgstr "Mentes"
 
@@ -1266,6 +1297,7 @@ msgid "Exempt from tax"
 msgstr "Adómentes"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.fiscal.position,name:l10n_hu.1_fiscal_position_hu_exempt
 #: model:account.fiscal.position,name:l10n_hu.2_fiscal_position_hu_exempt
 #: model:account.fiscal.position.template,name:l10n_hu.fiscal_position_hu_exempt
@@ -1348,319 +1380,11 @@ msgstr "Export árbevétel"
 
 #. module: l10n_hu
 #: model:account.report.line,name:l10n_hu.tax_report_alap_fiz_export
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_fiz_export
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Exports"
 msgstr "Export"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_4172
-#: model:account.account,name:l10n_hu.2_l10n_hu_4172
-#: model:account.account.template,name:l10n_hu.l10n_hu_4172
-msgid "Fair value measurement reserve"
-msgstr "Valós érték mérési tartalék"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_242
-#: model:account.account,name:l10n_hu.2_l10n_hu_242
-#: model:account.account.template,name:l10n_hu.l10n_hu_242
-msgid "Fattening animals"
-msgstr "Hízó állatok"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_5596
-#: model:account.account,name:l10n_hu.2_l10n_hu_5596
-#: model:account.account.template,name:l10n_hu.l10n_hu_5596
-msgid ""
-"Fees for royalties, author's and other copyrighted works and related "
-"contributions"
-msgstr ""
-"Jogdíjak, szerzői és egyéb szerzői jog által védett művek és kapcsolódó "
-"hozzájárulások díjai"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_468
-#: model:account.account,name:l10n_hu.2_l10n_hu_468
-#: model:account.account.template,name:l10n_hu.l10n_hu_468
-msgid "Financial accounting for value added tax"
-msgstr "Az általános forgalmi adó pénzügyi elszámolása"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_532
-#: model:account.account,name:l10n_hu.2_l10n_hu_532
-#: model:account.account.template,name:l10n_hu.l10n_hu_532
-msgid "Financial and investment service fees"
-msgstr "Pénzügyi és befektetési szolgáltatási díjak"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_8684
-#: model:account.account,name:l10n_hu.2_l10n_hu_8684
-#: model:account.account.template,name:l10n_hu.l10n_hu_8684
-msgid "Financially supported aid transferred without obligation to repay"
-msgstr ""
-"Visszafizetési kötelezettség nélkül átutalt pénzügyileg támogatott támogatás"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_9632
-#: model:account.account,name:l10n_hu.2_l10n_hu_9632
-#: model:account.account.template,name:l10n_hu.l10n_hu_9632
-msgid "Fines, fines, penalties, default interest, damages received"
-msgstr "Bírság, bírság, kötbér, késedelmi kamatok, kapott kártérítés"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_8632
-#: model:account.account,name:l10n_hu.2_l10n_hu_8632
-#: model:account.account.template,name:l10n_hu.l10n_hu_8632
-msgid "Fines, penalties, late fees, default interest, damages"
-msgstr "Bírság, kötbér, késedelmi pótlék, késedelmi kamat, kártérítés"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_251
-#: model:account.account,name:l10n_hu.2_l10n_hu_251
-#: model:account.account.template,name:l10n_hu.l10n_hu_251
-#: model:account.group,name:l10n_hu.1_l10n_hu_group_25
-#: model:account.group,name:l10n_hu.2_l10n_hu_group_25
-#: model:account.group.template,name:l10n_hu.l10n_hu_group_25
-msgid "Finished products"
-msgstr "Elkészült termékek"
-
-#. module: l10n_hu
-#: model:account.group,name:l10n_hu.1_l10n_hu_group_1
-#: model:account.group,name:l10n_hu.2_l10n_hu_group_1
-#: model:account.group.template,name:l10n_hu.l10n_hu_group_1
-msgid "Fixed assets"
-msgstr "Befektetett eszközök"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_317
-#: model:account.account,name:l10n_hu.2_l10n_hu_317
-#: model:account.account.template,name:l10n_hu.l10n_hu_317
-msgid "Foreign claims (in foreign currency)"
-msgstr "Külföldi követelések (devizában)"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_386
-#: model:account.account,name:l10n_hu.2_l10n_hu_386
-#: model:account.account.template,name:l10n_hu.l10n_hu_386
-msgid "Foreign currency deposit account"
-msgstr "Devizabetétszámla"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_975
-#: model:account.account,name:l10n_hu.2_l10n_hu_975
-#: model:account.account.template,name:l10n_hu.l10n_hu_975
-msgid "Foreign exchange gain on investment, sale and redemption of securities"
-msgstr ""
-"Devizaárfolyam-nyereség befektetésen, értékpapírok eladásán és "
-"visszaváltásán"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_9762
-#: model:account.account,name:l10n_hu.2_l10n_hu_9762
-#: model:account.account.template,name:l10n_hu.l10n_hu_9762
-msgid ""
-"Foreign exchange gains and losses on assets and liabilities denominated in "
-"foreign currencies"
-msgstr ""
-"Devizában denominált eszközök és kötelezettségek árfolyamnyeresége és -"
-"vesztesége"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_9721
-#: model:account.account,name:l10n_hu.2_l10n_hu_9721
-#: model:account.account.template,name:l10n_hu.l10n_hu_9721
-msgid "Foreign exchange gains on interests sold to associates"
-msgstr "A társult vállalkozásoknak eladott részesedések árfolyamnyeresége"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_972
-#: model:account.account,name:l10n_hu.2_l10n_hu_972
-#: model:account.account.template,name:l10n_hu.l10n_hu_972
-msgid "Foreign exchange gains on the sale of shares"
-msgstr "Részvények eladásából származó árfolyamnyereség"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_9761
-#: model:account.account,name:l10n_hu.2_l10n_hu_9761
-#: model:account.account.template,name:l10n_hu.l10n_hu_9761
-msgid ""
-"Foreign exchange gains on the translation of foreign exchange and currency "
-"inventories into huf"
-msgstr ""
-"Deviza- és devizakészletek forintra történő átváltásából származó "
-"árfolyamnyereség"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_875
-#: model:account.account,name:l10n_hu.2_l10n_hu_875
-#: model:account.account.template,name:l10n_hu.l10n_hu_875
-msgid ""
-"Foreign exchange loss on investment, sale and redemption of investment in "
-"current assets"
-msgstr ""
-"A forgóeszközökbe történő befektetés, értékesítés és visszaváltás "
-"árfolyamvesztesége"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_8762
-#: model:account.account,name:l10n_hu.2_l10n_hu_8762
-#: model:account.account.template,name:l10n_hu.l10n_hu_8762
-msgid ""
-"Foreign exchange losses on assets and liabilities denominated in foreign "
-"currencies"
-msgstr "Devizában denominált eszközök és kötelezettségek árfolyamvesztesége"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_346
-#: model:account.account,name:l10n_hu.2_l10n_hu_346
-#: model:account.account.template,name:l10n_hu.l10n_hu_346
-msgid "Foreign exchange receivables"
-msgstr "Devizakövetelések"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_282
-#: model:account.account,name:l10n_hu.2_l10n_hu_282
-#: model:account.account.template,name:l10n_hu.l10n_hu_282
-msgid "Foreign packaging"
-msgstr "Külföldi csomagolás"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_316
-#: model:account.account,name:l10n_hu.2_l10n_hu_316
-#: model:account.account.template,name:l10n_hu.l10n_hu_316
-msgid "Foreign receivables (in huf)"
-msgstr "Külföldi követelések (forintban)"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_5113
-#: model:account.account,name:l10n_hu.1_l10n_hu_5117
-#: model:account.account,name:l10n_hu.2_l10n_hu_5113
-#: model:account.account,name:l10n_hu.2_l10n_hu_5117
-#: model:account.account.template,name:l10n_hu.l10n_hu_5113
-#: model:account.account.template,name:l10n_hu.l10n_hu_5117
-msgid "Fuel costs"
-msgstr "Üzemanyag költségek"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_222
-#: model:account.account,name:l10n_hu.2_l10n_hu_222
-#: model:account.account.template,name:l10n_hu.l10n_hu_222
-msgid "Fuels and fuels"
-msgstr "Üzemanyagok és üzemanyagok"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_363
-#: model:account.account,name:l10n_hu.2_l10n_hu_363
-#: model:account.account.template,name:l10n_hu.l10n_hu_363
-msgid "Fulfillment of budget allocation needs"
-msgstr "Költségvetési előirányzati igények teljesítése"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_464
-#: model:account.account,name:l10n_hu.2_l10n_hu_464
-#: model:account.account.template,name:l10n_hu.l10n_hu_464
-msgid "Fulfillment of budget payment obligations"
-msgstr "Költségvetési fizetési kötelezettségek teljesítése"
-
-#. module: l10n_hu
-#: model:account.group,name:l10n_hu.1_l10n_hu_group_38
-#: model:account.group,name:l10n_hu.2_l10n_hu_group_38
-#: model:account.group.template,name:l10n_hu.l10n_hu_group_38
-msgid "Funds"
-msgstr "Alapok"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_9684
-#: model:account.account,name:l10n_hu.2_l10n_hu_9684
-#: model:account.account.template,name:l10n_hu.l10n_hu_9684
-msgid "Funds received and received without obligation to repay"
-msgstr "Visszafizetési kötelezettség nélkül kapott és átvett pénzeszközök"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_9685
-#: model:account.account,name:l10n_hu.2_l10n_hu_9685
-#: model:account.account.template,name:l10n_hu.l10n_hu_9685
-msgid ""
-"Funds received definitively for development purposes without a repayment "
-"obligation"
-msgstr ""
-"Visszafizetési kötelezettség nélkül véglegesen fejlesztési célra átvett "
-"források"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_261
-#: model:account.account,name:l10n_hu.2_l10n_hu_261
-#: model:account.account.template,name:l10n_hu.l10n_hu_261
-msgid "Goods at purchase price"
-msgstr "Áruk vételáron"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_264
-#: model:account.account,name:l10n_hu.2_l10n_hu_264
-#: model:account.account.template,name:l10n_hu.l10n_hu_264
-msgid "Goods at selling price"
-msgstr "Áruk eladási áron"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_262
-#: model:account.account,name:l10n_hu.2_l10n_hu_262
-#: model:account.account.template,name:l10n_hu.l10n_hu_262
-msgid "Goods at settlement prices"
-msgstr "Áruk elszámoló áron"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_265
-#: model:account.account,name:l10n_hu.2_l10n_hu_265
-#: model:account.account.template,name:l10n_hu.l10n_hu_265
-msgid "Goods margin"
-msgstr "Áruk árrés"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_267
-#: model:account.account,name:l10n_hu.2_l10n_hu_267
-#: model:account.account.template,name:l10n_hu.l10n_hu_267
-msgid "Goods reclassified from property, plant and equipment"
-msgstr "Az ingatlanok, gépek és berendezések közül átsorolt áruk"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_266
-#: model:account.account,name:l10n_hu.2_l10n_hu_266
-#: model:account.account.template,name:l10n_hu.l10n_hu_266
-msgid "Goods stored abroad and handed over to a commission"
-msgstr "Külföldön tárolt és bizományosnak átadott áru"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_181
-#: model:account.account,name:l10n_hu.2_l10n_hu_181
-#: model:account.account.template,name:l10n_hu.l10n_hu_181
-msgid "Government bonds"
-msgstr "Államkötvények"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_235
-#: model:account.account,name:l10n_hu.2_l10n_hu_235
-#: model:account.account.template,name:l10n_hu.l10n_hu_235
-msgid "Half-done products"
-msgstr "Félkész termékek"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_246
-#: model:account.account,name:l10n_hu.2_l10n_hu_246
-#: model:account.account.template,name:l10n_hu.l10n_hu_246
-msgid "Hired animals"
-msgstr "Bérelt állatok"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_5516
-#: model:account.account,name:l10n_hu.2_l10n_hu_5516
-#: model:account.account.template,name:l10n_hu.l10n_hu_5516
-msgid "Holiday allowance"
-msgstr "Üdülési támogatás"
-
-#. module: l10n_hu
-#: model:account.account,name:l10n_hu.1_l10n_hu_5517
-#: model:account.account,name:l10n_hu.2_l10n_hu_5517
-#: model:account.account.template,name:l10n_hu.l10n_hu_5517
-msgid "Housing subsidy, rent contribution"
-msgstr "Lakhatási támogatás, lakbér hozzájárulás"
 
 #. module: l10n_hu
 #: model:ir.ui.menu,name:l10n_hu.hu_reports_menu
@@ -1668,6 +1392,7 @@ msgid "Hungary"
 msgstr "Magyarország"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.chart.template,name:l10n_hu.hungarian_chart_template
 msgid "Hungary - National Chart of Accounts"
 msgstr "Magyarország - Nemzeti Számlatábla"
@@ -1870,10 +1595,14 @@ msgstr "Értékvesztés, nem tervezett értékcsökkenés"
 
 #. module: l10n_hu
 #: model:account.report.line,name:l10n_hu.tax_report_alap_import
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_import
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Import"
 msgstr "Importálás"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.group,name:l10n_hu.1_l10n_hu_group_85
 #: model:account.group,name:l10n_hu.2_l10n_hu_group_85
 #: model:account.group.template,name:l10n_hu.l10n_hu_group_85
@@ -1977,10 +1706,15 @@ msgstr "Belső költöztetés"
 #. module: l10n_hu
 #: model:account.report.line,name:l10n_hu.tax_report_alap_fiz_eu
 #: model:account.report.line,name:l10n_hu.tax_report_alap_viss
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_fiz_eu
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_viss
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Intra-community"
 msgstr "Közösségen belüli"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.account,name:l10n_hu.1_l10n_hu_5595
 #: model:account.account,name:l10n_hu.2_l10n_hu_5595
 #: model:account.account.template,name:l10n_hu.l10n_hu_5595
@@ -2640,10 +2374,15 @@ msgstr "EU-n kívüli partner"
 #. module: l10n_hu
 #: model:account.report.line,name:l10n_hu.tax_report_base_pay
 #: model:account.report.line,name:l10n_hu.tax_report_vat_pay
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_base_pay
+#: model:account.tax.report.line,name:l10n_hu.tax_report_vat_pay
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Payable"
 msgstr "Kifizetendő"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.account,name:l10n_hu.1_l10n_hu_474
 #: model:account.account,name:l10n_hu.2_l10n_hu_474
 #: model:account.account.template,name:l10n_hu.l10n_hu_474
@@ -2949,10 +2688,15 @@ msgstr "Eladott, engedményezett (engedményezett) követelések elismert érté
 #. module: l10n_hu
 #: model:account.report.line,name:l10n_hu.tax_report_base_rec
 #: model:account.report.line,name:l10n_hu.tax_report_vat_rec
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_base_rec
+#: model:account.tax.report.line,name:l10n_hu.tax_report_vat_rec
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Recoverable"
 msgstr "Helyrehozható"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.account,name:l10n_hu.1_l10n_hu_411
 #: model:account.account,name:l10n_hu.2_l10n_hu_411
 #: model:account.account.template,name:l10n_hu.l10n_hu_411
@@ -3076,10 +2820,14 @@ msgstr "Értékvesztés visszaírása, nem tervezett értékcsökkenés"
 
 #. module: l10n_hu
 #: model:account.report.line,name:l10n_hu.tax_report_alap_forditott
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap_forditott
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Reverse"
 msgstr "Fordított"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.account,name:l10n_hu.1_l10n_hu_851
 #: model:account.account,name:l10n_hu.2_l10n_hu_851
 #: model:account.account.template,name:l10n_hu.l10n_hu_851
@@ -3342,10 +3090,14 @@ msgstr "Szállítók"
 
 #. module: l10n_hu
 #: model:account.report.line,name:l10n_hu.tax_report_alap
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_alap
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "Tax base"
 msgstr "Adó alap"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.group,name:l10n_hu.1_l10n_hu_group_89
 #: model:account.group,name:l10n_hu.2_l10n_hu_group_89
 #: model:account.group.template,name:l10n_hu.l10n_hu_group_89
@@ -3492,10 +3244,14 @@ msgstr "Céltartalék felhasználása (csökkentés, megszüntetés)"
 
 #. module: l10n_hu
 #: model:account.report.line,name:l10n_hu.tax_report_fizetndo
+=======
+#: model:account.tax.report.line,name:l10n_hu.tax_report_fizetndo
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "VAT payable/recoverable"
 msgstr "Fizetendő/visszaigényelhető ÁFA"
 
 #. module: l10n_hu
+<<<<<<< HEAD
 #: model:account.account,name:l10n_hu.1_l10n_hu_318
 #: model:account.account,name:l10n_hu.2_l10n_hu_318
 #: model:account.account.template,name:l10n_hu.l10n_hu_318
@@ -3723,6 +3479,9 @@ msgstr "Befejezetlen termelés és félkész termékek"
 
 #. module: l10n_hu
 #: model:account.report.line,tag_name:l10n_hu.tax_report_alap_fiz_afa_18
+=======
+#: model:account.tax.report.line,tag_name:l10n_hu.tax_report_alap_fiz_afa_18
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 msgid "base_pay_18"
 msgstr ""
 

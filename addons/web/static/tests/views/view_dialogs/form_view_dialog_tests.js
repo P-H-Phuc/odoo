@@ -7,14 +7,14 @@ import {
     patchWithCleanup,
     triggerHotkey,
 } from "@web/../tests/helpers/utils";
+<<<<<<< HEAD
 import { makeView } from "@web/../tests/views/helpers";
+=======
+import { makeViewInDialog } from "@web/../tests/views/helpers";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 import { createWebClient } from "@web/../tests/webclient/helpers";
-import { dialogService } from "@web/core/dialog/dialog_service";
-import { registry } from "@web/core/registry";
 import { FormViewDialog } from "@web/views/view_dialogs/form_view_dialog";
 import { setupControlPanelServiceRegistry } from "@web/../tests/search/helpers";
-
-const serviceRegistry = registry.category("services");
 
 QUnit.module("ViewDialogs", (hooks) => {
     let serverData;
@@ -70,7 +70,6 @@ QUnit.module("ViewDialogs", (hooks) => {
         };
         target = getFixture();
         setupControlPanelServiceRegistry();
-        serviceRegistry.add("dialog", dialogService);
     });
 
     QUnit.module("FormViewDialog");
@@ -208,15 +207,21 @@ QUnit.module("ViewDialogs", (hooks) => {
                         </tree>`,
         };
 
-        await makeView({
+        await makeViewInDialog({
             type: "form",
             resModel: "partner",
             resId: 1,
             serverData,
-            arch: `<form>
+            arch: `
+                <form>
                     <field name="name"/>
+<<<<<<< HEAD
                     <field name="instrument" context="{'tree_view_ref': 'some_tree_view'}" open_target="new"/>
                    </form>`,
+=======
+                    <field name="instrument" context="{'tree_view_ref': 'some_tree_view'}"/>
+                </form>`,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             mockRPC: function (route, args) {
                 if (args.method === "get_formview_id") {
                     return Promise.resolve(false);

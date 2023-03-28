@@ -28,11 +28,21 @@
                             attrs="{'invisible':[('has_multiple_providers', '=', False)]}"/>
                     </group>
                 </group>
+<<<<<<< HEAD
                 <group>
                     <field name="link" readonly="1" widget="CopyClipboardChar"/>
                 </group>
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 <footer>
-                    <button string="Close" class="btn-primary" special="cancel" data-hotkey="z"/>
+                    <field name="link"
+                           string="Generate and Copy Payment Link"
+                           readonly="1"
+                           widget="CopyClipboardButton"/>
+                    <button string="Close"
+                            class="btn btn-secondary rounded-2"
+                            special="cancel"
+                            data-hotkey="z"/>
                 </footer>
             </form>
         </field>

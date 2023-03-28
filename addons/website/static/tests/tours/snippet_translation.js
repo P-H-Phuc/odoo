@@ -41,6 +41,13 @@ wTourUtils.registerWebsitePreviewTour('snippet_translation_changing_lang', {
     },
     ...wTourUtils.clickOnSave(),
     {
+<<<<<<< HEAD
+=======
+        trigger: '.o_website_preview:not(.editor_enable.editor_has_snippets)',
+        run() {},
+    },
+    {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         content: "Click on edit in master",
         trigger: '.o_edit_website_container a',
     },

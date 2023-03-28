@@ -4,10 +4,17 @@
 #
 msgid ""
 msgstr ""
+<<<<<<< HEAD
 "Project-Id-Version: Odoo Server 16.0beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-10 10:24+0000\n"
 "PO-Revision-Date: 2022-10-10 10:24+0000\n"
+=======
+"Project-Id-Version: Odoo Server saas~16.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-01-17 10:55+0000\n"
+"PO-Revision-Date: 2023-01-17 10:55+0000\n"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,7 +23,7 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: website_event_exhibitor
-#. openerp-web
+#. odoo-javascript
 #: code:addons/website_event_exhibitor/static/src/xml/event_exhibitor_connect.xml:0
 #: model_terms:ir.ui.view,arch_db:website_event_exhibitor.exhibitor_main
 #, python-format
@@ -197,7 +204,7 @@ msgid "Chat Room"
 msgstr ""
 
 #. module: website_event_exhibitor
-#. openerp-web
+#. odoo-javascript
 #: code:addons/website_event_exhibitor/static/src/xml/event_exhibitor_connect.xml:0
 #, python-format
 msgid "Come back between"
@@ -335,7 +342,7 @@ msgid "End hour"
 msgstr ""
 
 #. module: website_event_exhibitor
-#. openerp-web
+#. odoo-javascript
 #: code:addons/website_event_exhibitor/static/src/xml/event_exhibitor_connect.xml:0
 #: code:addons/website_event_exhibitor/static/src/xml/event_exhibitor_connect.xml:0
 #: model:ir.model,name:website_event_exhibitor.model_event_event
@@ -385,6 +392,7 @@ msgid "Exhibitor"
 msgstr ""
 
 #. module: website_event_exhibitor
+#. odoo-python
 #: code:addons/website_event_exhibitor/models/event_event.py:0
 #: model_terms:ir.ui.view,arch_db:website_event_exhibitor.event_sponsor_view_search
 #, python-format
@@ -542,7 +550,7 @@ msgid "Jitsi Name"
 msgstr ""
 
 #. module: website_event_exhibitor
-#. openerp-web
+#. odoo-javascript
 #: code:addons/website_event_exhibitor/static/src/xml/event_exhibitor_connect.xml:0
 #: model_terms:ir.ui.view,arch_db:website_event_exhibitor.exhibitor_main
 #, python-format
@@ -557,12 +565,6 @@ msgstr ""
 #. module: website_event_exhibitor
 #: model:ir.model.fields,field_description:website_event_exhibitor.field_event_sponsor__room_lang_id
 msgid "Language"
-msgstr ""
-
-#. module: website_event_exhibitor
-#: model:ir.model.fields,field_description:website_event_exhibitor.field_event_sponsor____last_update
-#: model:ir.model.fields,field_description:website_event_exhibitor.field_event_sponsor_type____last_update
-msgid "Last Modified on"
 msgstr ""
 
 #. module: website_event_exhibitor
@@ -857,6 +859,7 @@ msgid "Slogan"
 msgstr ""
 
 #. module: website_event_exhibitor
+#. odoo-python
 #: code:addons/website_event_exhibitor/models/event_sponsor.py:0
 #, python-format
 msgid "Sponsor"
@@ -949,6 +952,7 @@ msgid ""
 msgstr ""
 
 #. module: website_event_exhibitor
+<<<<<<< HEAD
 #: model_terms:event.sponsor,website_description:website_event_exhibitor.event_7_sponsor_1
 #: model_terms:event.sponsor,website_description:website_event_exhibitor.event_7_sponsor_3
 #: model_terms:event.sponsor,website_description:website_event_exhibitor.event_sponsor_0
@@ -957,6 +961,9 @@ msgid "Talent Management"
 msgstr ""
 
 #. module: website_event_exhibitor
+=======
+#. odoo-python
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/website_event_exhibitor/controllers/website_event_main.py:0
 #, python-format
 msgid ""
@@ -1036,7 +1043,7 @@ msgid "Within opening hours"
 msgstr ""
 
 #. module: website_event_exhibitor
-#. openerp-web
+#. odoo-javascript
 #: code:addons/website_event_exhibitor/static/src/xml/event_exhibitor_connect.xml:0
 #: model_terms:ir.ui.view,arch_db:website_event_exhibitor.exhibitor_main
 #, python-format
@@ -1070,7 +1077,7 @@ msgid "e.g. Your best choice for your home"
 msgstr ""
 
 #. module: website_event_exhibitor
-#. openerp-web
+#. odoo-javascript
 #: code:addons/website_event_exhibitor/static/src/xml/event_exhibitor_connect.xml:0
 #: code:addons/website_event_exhibitor/static/src/xml/event_exhibitor_connect.xml:0
 #, python-format
@@ -1078,7 +1085,7 @@ msgid "is not available right now."
 msgstr ""
 
 #. module: website_event_exhibitor
-#. openerp-web
+#. odoo-javascript
 #: code:addons/website_event_exhibitor/static/src/xml/event_exhibitor_connect.xml:0
 #, python-format
 msgid "is over."
@@ -1097,7 +1104,7 @@ msgid "search."
 msgstr ""
 
 #. module: website_event_exhibitor
-#. openerp-web
+#. odoo-javascript
 #: code:addons/website_event_exhibitor/static/src/xml/event_exhibitor_connect.xml:0
 #: model_terms:ir.ui.view,arch_db:website_event_exhibitor.exhibitor_main
 #, python-format
@@ -1105,7 +1112,7 @@ msgid "starts in"
 msgstr ""
 
 #. module: website_event_exhibitor
-#. openerp-web
+#. odoo-javascript
 #: code:addons/website_event_exhibitor/static/src/xml/event_exhibitor_connect.xml:0
 #: model_terms:ir.ui.view,arch_db:website_event_exhibitor.exhibitor_main
 #, python-format

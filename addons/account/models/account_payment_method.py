@@ -109,7 +109,10 @@ class AccountPaymentMethodLine(models.Model):
         ondelete='restrict',
         domain="[('deprecated', '=', False), "
                 "('company_id', '=', company_id), "
+<<<<<<< HEAD
                 "('account_type', 'not in', ('asset_receivable', 'liability_payable')), "
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 "'|', ('account_type', 'in', ('asset_current', 'liability_current')), ('id', '=', parent.default_account_id)]"
     )
     journal_id = fields.Many2one(comodel_name='account.journal', ondelete="cascade")
@@ -119,6 +122,11 @@ class AccountPaymentMethodLine(models.Model):
     payment_type = fields.Selection(related='payment_method_id.payment_type')
     company_id = fields.Many2one(related='journal_id.company_id')
     available_payment_method_ids = fields.Many2many(related='journal_id.available_payment_method_ids')
+
+    def name_get(self):
+        if self.env.context.get('show_payment_journal_id'):
+            return [(method.id, "%s (%s)" % (method.name, method.journal_id.name)) for method in self]
+        return super().name_get()
 
     @api.depends('payment_method_id.name')
     def _compute_name(self):

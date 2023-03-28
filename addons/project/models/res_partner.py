@@ -8,15 +8,18 @@ from odoo.tools import email_normalize
 class ResPartner(models.Model):
     """ Inherits partner and adds Tasks information in the partner form """
     _inherit = 'res.partner'
+    _check_company_auto = True
 
+    project_ids = fields.One2many('project.project', 'partner_id', string='Projects', check_company=True)
     task_ids = fields.One2many('project.task', 'partner_id', string='Tasks')
     task_count = fields.Integer(compute='_compute_task_count', string='# Tasks')
 
     def _compute_task_count(self):
         # retrieve all children partners and prefetch 'parent_id' on them
-        all_partners = self.with_context(active_test=False).search([('id', 'child_of', self.ids)])
-        all_partners.read(['parent_id'])
-
+        all_partners = self.with_context(active_test=False).search_fetch(
+            [('id', 'child_of', self.ids)],
+            ['parent_id'],
+        )
         task_data = self.env['project.task']._read_group(
             domain=[('partner_id', 'in', all_partners.ids)],
             fields=['partner_id'], groupby=['partner_id']

@@ -415,10 +415,14 @@ class TestTraceability(TestMrpCommon):
         mo_form.product_qty = 15
         mo = mo_form.save()
         mo.action_confirm()
+<<<<<<< HEAD
 
         action = mo.button_mark_done()
         wizard = Form(self.env[action['res_model']].with_context(action['context'])).save()
         wizard.process()
+=======
+        mo.button_mark_done()
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         # Produce 15 x productB
         mo_form = Form(self.env['mrp.production'])

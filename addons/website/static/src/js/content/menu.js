@@ -26,6 +26,10 @@ const BaseAnimatedHeader = animations.Animation.extend({
         this.hasScrolled = false;
         this.closeOpenedMenus = false;
         this.scrollHeightTooShort = false;
+<<<<<<< HEAD
+=======
+        this.scrollableEl = $().getScrollingElement()[0];
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
     /**
      * @override
@@ -136,6 +140,18 @@ const BaseAnimatedHeader = animations.Animation.extend({
         }
     },
     /**
+     * Scrolls to correctly display the section specified in the URL
+     *
+     * @private
+     */
+    _adjustUrlAutoScroll() {
+        // When the url contains #aRandomSection, prevent the navbar to overlap
+        // on the section, for this, we scroll as many px as the navbar height.
+        if (!this.editableMode) {
+            this.scrollableEl.scrollBy(0, -this.el.offsetHeight);
+        }
+    },
+    /**
      * @private
      */
     _computeTopGap() {
@@ -186,7 +202,11 @@ const BaseAnimatedHeader = animations.Animation.extend({
      * @returns {boolean}
      */
     _scrollHeightTooShort() {
+<<<<<<< HEAD
         const scrollEl = $().getScrollingElement()[0];
+=======
+        const scrollEl = this.scrollableEl;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         const remainingScroll = (scrollEl.scrollHeight - scrollEl.clientHeight) - this.scrolledPoint;
         const clonedHeader = this.el.cloneNode(true);
         scrollEl.append(clonedHeader);
@@ -213,6 +233,7 @@ const BaseAnimatedHeader = animations.Animation.extend({
             this.hasScrolled = true;
             if (scroll > 0) {
                 this.$el.addClass('o_header_no_transition');
+                this._adjustUrlAutoScroll();
             }
         } else {
             this.$el.removeClass('o_header_no_transition');
@@ -442,6 +463,10 @@ publicWidget.registry.DisappearingHeader = BaseDisappearingHeader.extend({
     /**
      * @override
      */
+    _adjustUrlAutoScroll() {},
+    /**
+     * @override
+     */
     _hideHeader: function () {
         this._super(...arguments);
         this.$el.css('transform', 'translate(0, -100%)');
@@ -465,6 +490,10 @@ publicWidget.registry.FadeOutHeader = BaseDisappearingHeader.extend({
     /**
      * @override
      */
+    _adjustUrlAutoScroll() {},
+    /**
+     * @override
+     */
     _hideHeader: function () {
         this._super(...arguments);
         this.$el.stop(false, true).fadeOut();
@@ -479,6 +508,7 @@ publicWidget.registry.FadeOutHeader = BaseDisappearingHeader.extend({
     },
 });
 
+<<<<<<< HEAD
 /**
  * Note: this works well with the affixMenu... by chance (menuDirection is
  * called after alphabetically).
@@ -564,6 +594,8 @@ publicWidget.registry.menuDirection = publicWidget.Widget.extend({
     },
 });
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 publicWidget.registry.hoverableDropdown = animations.Animation.extend({
     selector: 'header.o_hoverable_dropdown',
     disabledInEditableMode: false,
@@ -614,9 +646,15 @@ publicWidget.registry.hoverableDropdown = animations.Animation.extend({
      */
     _onMouseEnter: function (ev) {
         // The user must click on the dropdown if he is on mobile (no way to
+<<<<<<< HEAD
         // hover) or if the dropdown is the extra menu ('+').
         if (config.device.size_class <= config.device.SIZES.SM ||
             ev.currentTarget.classList.contains('o_extra_menu_items')) {
+=======
+        // hover) or if the dropdown is the (or in the) extra menu ('+').
+        if (config.device.size_class <= config.device.SIZES.SM ||
+            ev.currentTarget.closest('.o_extra_menu_items')) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             return;
         }
         Dropdown.getOrCreateInstance(ev.currentTarget.querySelector('.dropdown-toggle')).show();
@@ -627,7 +665,11 @@ publicWidget.registry.hoverableDropdown = animations.Animation.extend({
      */
     _onMouseLeave: function (ev) {
         if (config.device.size_class <= config.device.SIZES.SM ||
+<<<<<<< HEAD
             ev.currentTarget.classList.contains('o_extra_menu_items')) {
+=======
+            ev.currentTarget.closest('.o_extra_menu_items')) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             return;
         }
         Dropdown.getOrCreateInstance(ev.currentTarget.querySelector('.dropdown-toggle')).hide();

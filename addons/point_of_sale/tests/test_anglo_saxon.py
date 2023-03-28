@@ -31,7 +31,13 @@ class TestAngloSaxonCommon(common.TransactionCase):
         self.category.property_stock_valuation_account_id = account_valuation
         self.category.property_stock_journal = self.env['account.journal'].create({'name': 'Stock journal', 'type': 'sale', 'code': 'STK00'})
         self.pos_config = self.env.ref('point_of_sale.pos_config_main')
-        self.pos_config = self.pos_config.copy({'name': 'New POS config'})
+        self.cash_journal = self.env['account.journal'].create(
+            {'name': 'CASH journal', 'type': 'cash', 'code': 'CSH02'})
+        self.cash_payment_method = self.env['pos.payment.method'].create({
+            'name': 'Cash Test',
+            'journal_id': self.cash_journal.id,
+        })
+        self.pos_config = self.pos_config.copy({'name': 'New POS config', 'payment_method_ids': self.cash_payment_method})
         self.product = self.env['product.product'].create({
             'name': 'New product',
             'standard_price': 100,
@@ -234,7 +240,11 @@ class TestAngloSaxonFlow(TestAngloSaxonCommon):
             'pricelist_id': self.company.partner_id.property_product_pricelist.id,
             'session_id': self.pos_config.current_session_id.id,
             'to_invoice': False,
+<<<<<<< HEAD
             'to_ship': True,
+=======
+            'shipping_date': '2023-01-01',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'lines': [(0, 0, {
                 'name': "OL/0001",
                 'product_id': self.product.id,

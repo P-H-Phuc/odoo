@@ -35,12 +35,17 @@ class PaymentTransaction(models.Model):
             return res
 
         base_url = self.provider_id.get_base_url()
+        cancel_url = urls.url_join(base_url, PaypalController._cancel_url)
+        cancel_url_params = {
+            'tx_ref': self.reference,
+            'access_token': payment_utils.generate_access_token(self.reference),
+        }
         partner_first_name, partner_last_name = payment_utils.split_partner_name(self.partner_name)
-        webhook_url = urls.url_join(base_url, PaypalController._webhook_url)
         return {
             'address1': self.partner_address,
             'amount': self.amount,
             'business': self.provider_id.paypal_email_account,
+            'cancel_url': f'{cancel_url}?{urls.url_encode(cancel_url_params)}',
             'city': self.partner_city,
             'country': self.partner_country_id.code,
             'currency_code': self.currency_id.name,
@@ -51,7 +56,7 @@ class PaymentTransaction(models.Model):
             'item_number': self.reference,
             'last_name': partner_last_name,
             'lc': self.partner_lang,
-            'notify_url': webhook_url if self.provider_id.paypal_use_ipn else None,
+            'notify_url': urls.url_join(base_url, PaypalController._webhook_url),
             'return_url': urls.url_join(base_url, PaypalController._return_url),
             'state': self.partner_state_id.name,
             'zip_code': self.partner_zip,
@@ -90,6 +95,10 @@ class PaymentTransaction(models.Model):
         """
         super()._process_notification_data(notification_data)
         if self.provider_code != 'paypal':
+            return
+
+        if not notification_data:
+            self._set_canceled(_("The customer left the payment page."))
             return
 
         txn_id = notification_data.get('txn_id')

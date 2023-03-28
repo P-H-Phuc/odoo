@@ -121,6 +121,9 @@ class PurchaseOrder(models.Model):
         # Avoid access error on fiscal position, when reading a purchase order with company != user.company_ids
         compute_sudo=True,
         help="Technical field to filter the available taxes depending on the fiscal country and fiscal position.")
+    tax_calculation_rounding_method = fields.Selection(
+        related='company_id.tax_calculation_rounding_method',
+        string='Tax calculation rounding method', readonly=True)
     payment_term_id = fields.Many2one('account.payment.term', 'Payment Terms', domain="['|', ('company_id', '=', False), ('company_id', '=', company_id)]")
     incoterm_id = fields.Many2one('account.incoterms', 'Incoterm', states={'done': [('readonly', True)]}, help="International Commercial Terms are a series of predefined commercial terms used in international transactions.")
 
@@ -189,7 +192,7 @@ class PurchaseOrder(models.Model):
         return result
 
     @api.depends('order_line.taxes_id', 'order_line.price_subtotal', 'amount_total', 'amount_untaxed')
-    def  _compute_tax_totals(self):
+    def _compute_tax_totals(self):
         for order in self:
             order_lines = order.order_line.filtered(lambda x: not x.display_type)
             order.tax_totals = self.env['account.tax']._prepare_tax_totals(
@@ -334,12 +337,17 @@ class PurchaseOrder(models.Model):
     def message_post(self, **kwargs):
         if self.env.context.get('mark_rfq_as_sent'):
             self.filtered(lambda o: o.state == 'draft').write({'state': 'sent'})
-        return super(PurchaseOrder, self.with_context(mail_post_autofollow=self.env.context.get('mail_post_autofollow', True))).message_post(**kwargs)
+        po_ctx = {'mail_post_autofollow': self.env.context.get('mail_post_autofollow', True)}
+        if self.env.context.get('mark_rfq_as_sent') and 'notify_author' not in kwargs:
+            kwargs['notify_author'] = self.env.user.partner_id.id in (kwargs.get('partner_ids') or [])
+        return super(PurchaseOrder, self.with_context(**po_ctx)).message_post(**kwargs)
 
-    def _notify_get_recipients_groups(self, msg_vals=None):
+    def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
         """ Tweak 'view document' button for portal customers, calling directly
         routes for confirm specific to PO model. """
-        groups = super(PurchaseOrder, self)._notify_get_recipients_groups(msg_vals=msg_vals)
+        groups = super()._notify_get_recipients_groups(
+            message, model_description, msg_vals=msg_vals
+        )
         if not self:
             return groups
 
@@ -420,10 +428,7 @@ class PurchaseOrder(models.Model):
         ctx = dict(self.env.context or {})
         ctx.update({
             'default_model': 'purchase.order',
-            'active_model': 'purchase.order',
-            'active_id': self.ids[0],
-            'default_res_id': self.ids[0],
-            'default_use_template': bool(template_id),
+            'default_res_ids': self.ids,
             'default_template_id': template_id,
             'default_composition_mode': 'comment',
             'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
@@ -613,7 +618,7 @@ class PurchaseOrder(models.Model):
         # 4) Some moves might actually be refunds: convert them if the total amount is negative
         # We do this after the moves have been created since we need taxes, etc. to know if the total
         # is actually negative or not
-        moves.filtered(lambda m: m.currency_id.round(m.amount_total) < 0).action_switch_invoice_into_refund_credit_note()
+        moves.filtered(lambda m: m.currency_id.round(m.amount_total) < 0).action_switch_move_type()
 
         return self.action_view_invoice(moves)
 
@@ -653,7 +658,7 @@ class PurchaseOrder(models.Model):
             # invoices related to the purchase order, we read them in sudo to fill the
             # cache.
             self.invalidate_model(['invoice_ids'])
-            self.sudo()._read(['invoice_ids'])
+            self.sudo().fetch(['invoice_ids'])
             invoices = self.invoice_ids
 
         result = self.env['ir.actions.act_window']._for_xml_id('account.action_move_in_invoice_type')
@@ -751,7 +756,11 @@ class PurchaseOrder(models.Model):
                     if send_single:
                         return order._send_reminder_open_composer(template.id)
                     else:
-                        order.with_context(is_reminder=True).message_post_with_template(template.id, email_layout_xmlid="mail.mail_notification_layout_with_responsible_signature", composition_mode='comment')
+                        order.with_context(is_reminder=True).message_post_with_source(
+                            template,
+                            email_layout_xmlid="mail.mail_notification_layout_with_responsible_signature",
+                            subtype_xmlid='mail.mt_comment',
+                        )
 
     def send_reminder_preview(self):
         self.ensure_one()
@@ -778,10 +787,7 @@ class PurchaseOrder(models.Model):
         ctx = dict(self.env.context or {})
         ctx.update({
             'default_model': 'purchase.order',
-            'active_model': 'purchase.order',
-            'active_id': self.ids[0],
-            'default_res_id': self.ids[0],
-            'default_use_template': bool(template_id),
+            'default_res_ids': self.ids,
             'default_template_id': template_id,
             'default_composition_mode': 'comment',
             'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
@@ -951,7 +957,7 @@ class PurchaseOrderLine(models.Model):
     qty_invoiced = fields.Float(compute='_compute_qty_invoiced', string="Billed Qty", digits='Product Unit of Measure', store=True)
 
     qty_received_method = fields.Selection([('manual', 'Manual')], string="Received Qty Method", compute='_compute_qty_received_method', store=True,
-        help="According to product configuration, the received quantity can be automatically computed by mechanism :\n"
+        help="According to product configuration, the received quantity can be automatically computed by mechanism:\n"
              "  - Manual: the quantity is set manually on the line\n"
              "  - Stock Moves: the quantity comes from confirmed pickings\n")
     qty_received = fields.Float("Received Qty", compute='_compute_qty_received', inverse='_inverse_qty_received', compute_sudo=True, store=True, digits='Product Unit of Measure')
@@ -966,7 +972,9 @@ class PurchaseOrderLine(models.Model):
     product_packaging_id = fields.Many2one('product.packaging', string='Packaging', domain="[('purchase', '=', True), ('product_id', '=', product_id)]", check_company=True,
                                            compute="_compute_product_packaging_id", store=True, readonly=False)
     product_packaging_qty = fields.Float('Packaging Quantity', compute="_compute_product_packaging_qty", store=True, readonly=False)
-
+    tax_calculation_rounding_method = fields.Selection(
+        related='company_id.tax_calculation_rounding_method',
+        string='Tax calculation rounding method', readonly=True)
     display_type = fields.Selection([
         ('line_section', "Section"),
         ('line_note', "Note")], default=False, help="Technical field for UX purpose.")
@@ -1105,9 +1113,17 @@ class PurchaseOrderLine(models.Model):
                     line.order_id.state == "purchase"
                     and float_compare(line.product_qty, values["product_qty"], precision_digits=precision) != 0
                 ):
+<<<<<<< HEAD
                     line.order_id.message_post_with_view('purchase.track_po_line_template',
                                                          values={'line': line, 'product_qty': values['product_qty']},
                                                          subtype_id=self.env.ref('mail.mt_note').id)
+=======
+                    line.order_id.message_post_with_source(
+                        'purchase.track_po_line_template',
+                        render_values={'line': line, 'product_qty': values['product_qty']},
+                        subtype_xmlid='mail.mt_note',
+                    )
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         if 'qty_received' in values:
             for line in self:
@@ -1432,10 +1448,10 @@ class PurchaseOrderLine(models.Model):
     def _track_qty_received(self, new_qty):
         self.ensure_one()
         if new_qty != self.qty_received and self.order_id.state == 'purchase':
-            self.order_id.message_post_with_view(
+            self.order_id.message_post_with_source(
                 'purchase.track_po_line_qty_received_template',
-                values={'line': self, 'qty_received': new_qty},
-                subtype_id=self.env.ref('mail.mt_note').id
+                render_values={'line': self, 'qty_received': new_qty},
+                subtype_xmlid='mail.mt_note',
             )
 
     def _validate_analytic_distribution(self):

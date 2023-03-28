@@ -2,17 +2,16 @@
 
 import ast
 import collections
-import datetime
 import functools
 import inspect
 import json
 import logging
-import math
 import pprint
 import re
-import time
 import uuid
 import warnings
+
+from itertools import chain
 
 from lxml import etree
 from lxml.etree import LxmlError
@@ -34,6 +33,12 @@ from odoo.osv.expression import expression
 _logger = logging.getLogger(__name__)
 
 MOVABLE_BRANDING = ['data-oe-model', 'data-oe-id', 'data-oe-field', 'data-oe-xpath', 'data-oe-source-id']
+
+# Some views have a js compiler that generates an owl template from the arch. In that template,
+# `__comp__` is a reserved keyword giving access to the component instance (e.g. the form renderer
+# or the kanban record). However, we don't want to see implementation details leaking in archs, so
+# we use the following regex to detect the use of `__comp__` in dynamic attributes, to forbid it.
+COMP_REGEX = r'(^|[^\w])\s*__comp__\s*([^\w]|$)'
 
 ref_re = re.compile(r"""
 # first match 'form_view_ref' key, backrefs are used to handle single or
@@ -255,7 +260,6 @@ class View(models.Model):
                                                                          Useful to (soft) reset a broken view.""")
     inherit_id = fields.Many2one('ir.ui.view', string='Inherited View', ondelete='restrict', index=True)
     inherit_children_ids = fields.One2many('ir.ui.view', 'inherit_id', string='Views which inherit from this one')
-    field_parent = fields.Char(string='Child Field')
     model_data_id = fields.Many2one('ir.model.data', string="Model Data",
                                     compute='_compute_model_data_id', search='_search_model_data_id')
     xml_id = fields.Char(string="External ID", compute='_compute_xml_id',
@@ -286,6 +290,7 @@ actual arch.
 * if True, the view always extends its parent
 * if False, the view currently does not extend its parent but can be enabled
          """)
+    model_id = fields.Many2one("ir.model", string="Model of the view", compute='_compute_model_id', inverse='_inverse_compute_model_id')
 
     @api.depends('arch_db', 'arch_fs', 'arch_updated')
     @api.depends_context('read_arch_from_file', 'lang')
@@ -378,6 +383,15 @@ actual arch.
         domain = [('model', '=', 'ir.ui.view'), (name, operator, value)]
         data = self.env['ir.model.data'].sudo().search(domain)
         return [('id', 'in', data.mapped('res_id'))]
+
+    @api.depends('model')
+    def _compute_model_id(self):
+        for record in self:
+            record.model_id = self.env['ir.model']._get(record.model)
+
+    def _inverse_compute_model_id(self):
+        for record in self:
+            record.model = record.model_id.model
 
     def _compute_xml_id(self):
         xml_ids = collections.defaultdict(list)
@@ -638,7 +652,7 @@ actual arch.
         from_clause, where_clause, where_params = e.query.get_sql()
         assert from_clause == '"ir_ui_view"', f"Unexpected from clause: {from_clause}"
 
-        self._flush_search(domain, fields=['inherit_id', 'priority', 'model', 'mode'], order='id')
+        self._flush_search(domain, fields=['inherit_id', 'priority', 'model', 'mode'])
         query = f"""
             WITH RECURSIVE ir_ui_view_inherits AS (
                 SELECT id, inherit_id, priority, mode, model
@@ -1386,7 +1400,7 @@ actual arch.
     # view validation
     #-------------------------------------------------------------------
 
-    def _validate_view(self, node, model_name, editable=True, full=False):
+    def _validate_view(self, node, model_name, view_type=None, editable=True, full=False):
         """ Validate the given architecture node, and return its corresponding
         NameManager.
 
@@ -1399,6 +1413,13 @@ actual arch.
         """
         self.ensure_one()
 
+        view_type = view_type or self.type
+        if node.tag != view_type:
+            self._raise_view_error(_(
+                'The root node of a %(view_type)s view should be a <%(view_type)s>, not a <%(tag)s>',
+                view_type=view_type, tag=node.tag,
+            ), node)
+
         if model_name not in self.env:
             self._raise_view_error(_('Model not found: %(model)s', model=model_name), node)
 
@@ -1406,6 +1427,7 @@ actual arch.
         model = self.env[model_name].with_context(lang=None)
         name_manager = NameManager(model)
 
+        view_type = node.tag
         # use a stack to recursively traverse the tree
         stack = [(node, editable, full)]
         while stack:
@@ -1417,6 +1439,7 @@ actual arch.
             node_info = {
                 'editable': editable and self._editable_node(node, name_manager),
                 'validate': validate,
+                'view_type': view_type,
             }
 
             # tag-specific validation
@@ -1482,7 +1505,7 @@ actual arch.
             if len(searchpanels) > 1:
                 self._raise_view_error(_('Search tag can only contain one search panel'), node)
             node.remove(searchpanels[0])
-            self._validate_view(searchpanels[0], name_manager.model._name,
+            self._validate_view(searchpanels[0], name_manager.model._name, view_type="searchpanel",
                                 editable=False, full=node_info['validate'])
 
     def _validate_tag_field(self, node, name_manager, node_info):
@@ -1521,7 +1544,7 @@ actual arch.
                     continue
                 node.remove(child)
                 sub_manager = self._validate_view(
-                    child, field.comodel_name, editable=node_info['editable'], full=validate,
+                    child, field.comodel_name, view_type=child.tag, editable=node_info['editable'], full=validate,
                 )
                 for fname, groups_uses in sub_manager.mandatory_parent_fields.items():
                     for groups, use in groups_uses.items():
@@ -1600,28 +1623,7 @@ actual arch.
                     msg = "%s on %s has parameters and cannot be called from a button"
                     self._log_view_warning(msg % (name, name_manager.model._name), node)
             elif type_ == 'action':
-                # logic mimics /web/action/load behaviour
-                action = False
-                try:
-                    action_id = int(name)
-                except ValueError:
-                    model, action_id = self.env['ir.model.data']._xmlid_to_res_model_res_id(name, raise_if_not_found=False)
-                    if not action_id:
-                        msg = _("Invalid xmlid %(xmlid)s for button of type action.", xmlid=name)
-                        self._raise_view_error(msg, node)
-                    if not issubclass(self.pool[model], self.pool['ir.actions.actions']):
-                        msg = _(
-                            "%(xmlid)s is of type %(xmlid_model)s, expected a subclass of ir.actions.actions",
-                            xmlid=name, xmlid_model=model,
-                        )
-                        self._raise_view_error(msg, node)
-                action = self.env['ir.actions.actions'].browse(action_id).exists()
-                if not action:
-                    msg = _(
-                        "Action %(action_reference)s (id: %(action_id)s) does not exist for button of type action.",
-                        action_reference=name, action_id=action_id,
-                    )
-                    self._raise_view_error(msg, node)
+                name_manager.must_exist_action(name, node)
 
             name_manager.has_action(name)
 
@@ -1656,7 +1658,7 @@ actual arch.
             groupby_node = E.groupby(*node)
             # validate the node as a nested view
             sub_manager = self._validate_view(
-                groupby_node, field.comodel_name, editable=False, full=node_info['validate'],
+                groupby_node, field.comodel_name, view_type="groupby", editable=False, full=node_info['validate'],
             )
             name_manager.has_field(node, name)
             for fname, groups_uses in sub_manager.mandatory_parent_fields.items():
@@ -1743,6 +1745,9 @@ actual arch.
                 msg = 'o_progressbar class must have aria-valuemaxattribute'
                 self._log_view_warning(msg, node)
 
+    def _is_qweb_based_view(self, view_type):
+        return view_type in ("kanban", "gantt")
+
     def _validate_attrs(self, node, name_manager, node_info):
         """ Generic validation of node attrs. """
         for attr, expr in node.items():
@@ -1785,11 +1790,7 @@ actual arch.
 
             elif attr == 'groups':
                 for group in expr.replace('!', '').split(','):
-                    # further improvement: add all groups to name_manager in
-                    # order to batch check them at the end
-                    if not self.env['ir.model.data']._xmlid_to_res_id(group.strip(), raise_if_not_found=False):
-                        msg = "The group %r defined in view does not exist!"
-                        self._log_view_warning(msg % group, node)
+                    name_manager.must_exist_group(group.strip(), node)
 
             elif attr in ('col', 'colspan'):
                 # col check is mainly there for the tag 'group', but previous
@@ -1826,6 +1827,14 @@ actual arch.
             elif attr == 'group':
                 msg = "attribute 'group' is not valid.  Did you mean 'groups'?"
                 self._log_view_warning(msg, node)
+
+            elif (re.match(r'^(t\-att\-|t\-attf\-)?data-tooltip(-template|-info)?$', attr)):
+                self._raise_view_error(_("Forbidden attribute used in arch (%s).", attr), node)
+
+            elif (attr.startswith("t-")):
+                self._validate_qweb_directive(node, attr, node_info["view_type"])
+                if (re.search(COMP_REGEX, expr)):
+                    self._raise_view_error(_("Forbidden use of `__comp__` in arch."), node)
 
     def _validate_classes(self, node, expr):
         """ Validate the classes present on node. """
@@ -1937,6 +1946,33 @@ actual arch.
 
         msg = '%s must have title in its tag, parents, descendants or have text'
         self._log_view_warning(msg % description, node)
+
+    def _validate_qweb_directive(self, node, directive, view_type):
+        """Some views (e.g. kanban, form) generate owl templates from the archs.
+        However, we don't want to see owl directives directly written in archs.
+        There are exceptions though, since the kanban and gantt archs define qweb templates.
+        We thus here validate that the given directive is allowed, according to the view_type.
+        """
+        allowed_directives = ["t-translation"]
+        if self._is_qweb_based_view(view_type):
+            allowed_directives.extend([
+                "t-name",
+                "t-esc",
+                "t-out",
+                "t-set",
+                "t-value",
+                "t-if",
+                "t-else",
+                "t-elif",
+                "t-foreach",
+                "t-as",
+                "t-key",
+                "t-att.*",
+                "t-call",
+                "t-debug",
+            ])
+        if (not next(filter(lambda regex: re.match(regex, directive), allowed_directives), None)):
+            self._raise_view_error(_("Forbidden owl directive used in arch (%s).", directive), node)
 
     def _get_domain_identifiers(self, node, domain, use, expr=None):
         try:
@@ -2577,7 +2613,11 @@ class Model(models.AbstractModel):
             try:
                 arch = getattr(self, '_get_default_%s_view' % view_type)()
             except AttributeError:
+<<<<<<< HEAD
                 raise UserError(_("No default view of type '%s' could be found !", view_type))
+=======
+                raise UserError(_("No default view of type '%s' could be found!", view_type))
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return arch, view
 
     @api.model
@@ -2685,8 +2725,15 @@ class Model(models.AbstractModel):
         :rtype: list
         """
         if view_type in ('kanban', 'tree', 'form'):
+<<<<<<< HEAD
             for model_fields in models.values():
                 model_fields.update({'id', self.CONCURRENCY_CHECK_FIELD})
+=======
+            for model, model_fields in models.items():
+                model_fields.add('id')
+                if 'write_date' in self.env[model]._fields:
+                    model_fields.add('write_date')
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         elif view_type == 'search':
             models[self._name] = list(self._fields.keys())
         elif view_type == 'graph':
@@ -2706,11 +2753,16 @@ class Model(models.AbstractModel):
         :rtype: list
         """
         return [
+<<<<<<< HEAD
             'change_default', 'context', 'currency_field', 'definition_record', 'digits', 'domain', 'group_operator', 'groups',
+=======
+            'change_default', 'context', 'currency_field', 'definition_record', 'definition_record_field', 'digits', 'domain', 'group_operator', 'groups',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'help', 'name', 'readonly', 'related', 'relation', 'relation_field', 'required', 'searchable', 'selection', 'size',
             'sortable', 'store', 'string', 'translate', 'trim', 'type',
         ]
 
+<<<<<<< HEAD
     @api.model
     def load_views(self, views, options=None):
         warnings.warn(
@@ -2771,6 +2823,8 @@ class Model(models.AbstractModel):
             result['field_parent'] = False
         return result
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def get_formview_id(self, access_uid=None):
         """ Return a view id to open the document ``self`` with. This method is
             meant to be overridden in addons that want to give specific view ids
@@ -2792,8 +2846,11 @@ class Model(models.AbstractModel):
         return {
             'type': 'ir.actions.act_window',
             'res_model': self._name,
+<<<<<<< HEAD
             'view_type': 'form',
             'view_mode': 'form',
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'views': [(view_id, 'form')],
             'target': 'current',
             'res_id': self.id,
@@ -2838,6 +2895,8 @@ class NameManager:
         self.mandatory_fields = collections.defaultdict(dict)  # {field_name: {'groups': 'use}}
         self.mandatory_parent_fields = collections.defaultdict(dict)  # {field_name: {'groups': use}}
         self.mandatory_names = dict()           # {name: use}
+        self.must_exist_actions = {}
+        self.must_exist_groups = {}
         self.parent = parent
         self.children = []
         if self.parent:
@@ -2880,8 +2939,14 @@ class NameManager:
     def must_have_name(self, name, use):
         self.mandatory_names[name] = use
 
+    def must_exist_action(self, action_id, node):
+        self.must_exist_actions[action_id] = node
+
+    def must_exist_group(self, name, node):
+        self.must_exist_groups[name] = node
+
     def _get_node_groups(self, node):
-        return tuple(tuple(n.get('groups').split(',')) for n in node.xpath('ancestor-or-self::*[@groups]'))
+        return tuple(tuple(n.get('groups').split(',')) for n in chain([node], node.iterancestors()) if n.get('groups'))
 
     def check(self, view):
         # context for translations below
@@ -2899,6 +2964,35 @@ class NameManager:
             if name not in self.model._fields and name not in self.field_info:
                 message = _("Field `%(name)s` does not exist", name=name)
                 view._raise_view_error(message)
+
+        for name, node in self.must_exist_actions.items():
+            # logic mimics /web/action/load behaviour
+            action = False
+            try:
+                action_id = int(name)
+            except ValueError:
+                model, action_id = view.env['ir.model.data']._xmlid_to_res_model_res_id(name, raise_if_not_found=False)
+                if not action_id:
+                    msg = _("Invalid xmlid %(xmlid)s for button of type action.", xmlid=name)
+                    view._raise_view_error(msg, node)
+                if not issubclass(view.pool[model], view.pool['ir.actions.actions']):
+                    msg = _(
+                        "%(xmlid)s is of type %(xmlid_model)s, expected a subclass of ir.actions.actions",
+                        xmlid=name, xmlid_model=model,
+                    )
+                    view._raise_view_error(msg, node)
+            action = view.env['ir.actions.actions'].browse(action_id).exists()
+            if not action:
+                msg = _(
+                    "Action %(action_reference)s (id: %(action_id)s) does not exist for button of type action.",
+                    action_reference=name, action_id=action_id,
+                )
+                view._raise_view_error(msg, node)
+
+        for name, node in self.must_exist_groups.items():
+            if not view.env['ir.model.data']._xmlid_to_res_id(name, raise_if_not_found=False):
+                msg = _("The group %(name)r defined in view does not exist!", name=name)
+                view._log_view_warning(msg, node)
 
         for name, groups_uses in self.mandatory_fields.items():
             use = next(iter(groups_uses.values()))

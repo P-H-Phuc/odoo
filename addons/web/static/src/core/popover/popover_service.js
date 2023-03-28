@@ -4,6 +4,20 @@ import { registry } from "../registry";
 import { PopoverContainer } from "./popover_container";
 
 import { EventBus } from "@odoo/owl";
+<<<<<<< HEAD
+=======
+
+/**
+ * @typedef {{
+ *   closeOnClickAway?: boolean;
+ *   onClose?: () => void;
+ *   popoverClass?: string;
+ *   position?: import("@web/core/position_hook").Direction;
+ *   onPositioned?: import("@web/core/position_hook").PositionEventHandler;
+ *   preventClose?: () => void;
+ * }} PopoverServiceAddOptions
+ */
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 export const popoverService = {
     start() {
@@ -18,6 +32,7 @@ export const popoverService = {
         /**
          * Signals the manager to add a popover.
          *
+<<<<<<< HEAD
          * @param {string | HTMLElement}    target
          * @param {any}                     Component
          * @param {Object}                  props
@@ -28,6 +43,13 @@ export const popoverService = {
          * @param {string}                  [options.position]
          * @param {function}                [options.onPositioned]
          * @returns {function(): void}
+=======
+         * @param {string | HTMLElement} target
+         * @param {typeof import("@odoo/owl").Component} Component
+         * @param {object} props
+         * @param {PopoverServiceAddOptions} [options]
+         * @returns {() => void}
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
          */
         function add(target, Component, props, options = {}) {
             const id = ++nextId;

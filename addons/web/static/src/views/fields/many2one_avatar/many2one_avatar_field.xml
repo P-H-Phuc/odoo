@@ -2,13 +2,37 @@
 <templates xml:space="preserve">
 
     <t t-name="web.Many2OneAvatarField" owl="1">
+<<<<<<< HEAD
         <div class="d-flex" t-att-data-tooltip="props.value[1]">
+=======
+        <div class="d-flex" t-att-data-tooltip="props.record.data[props.name][1]">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             <span class="o_m2o_avatar">
-                <span t-if="props.value === false and !props.readonly" class="o_m2o_avatar_empty"></span>
-                <img t-if="props.value !== false" t-attf-src="/web/image/{{props.relation}}/{{props.value[0]}}/avatar_128" />
+                <span t-if="props.record.data[props.name] === false and !props.readonly" class="o_m2o_avatar_empty"></span>
+                <img t-if="props.record.data[props.name] !== false" t-attf-src="/web/image/{{relation}}/{{props.record.data[props.name][0]}}/avatar_128" />
             </span>
+<<<<<<< HEAD
             <Many2OneField t-props="props" canOpen="!props.readonly"/>
+=======
+            <Many2OneField t-props="many2OneProps" canOpen="!props.readonly"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         </div>
+    </t>
+
+    <t t-name="web.KanbanMany2OneAvatarField" t-inherit="web.Many2OneAvatarField" t-inherit-mode="primary" owl="1">
+        <xpath expr="//span[hasclass('o_m2o_avatar')]" position="attributes">
+            <attribute name="class" separator=" " add="d-flex"/>
+            <attribute name="t-att-class">{'o_allow_delete_hover': canDisplayDelete}</attribute>
+        </xpath>
+        <xpath expr="//span[hasclass('o_m2o_avatar')]//img" position="after">
+            <a tabIndex="-1" href="#" title="Remove" aria-label="Remove" t-on-click.stop.prevent="remove" class="fa
+               fa-times-circle fs-6 text-danger bg-white align-self-start z-index-1 pt-0 rounded-circle o_delete" />
+        </xpath>
+        <xpath expr="//span[hasclass('o_m2o_avatar_empty')]" position="replace">
+            <img t-if="props.record.data[props.name] === false" title="Quick assign" alt="Quick assign"
+                 src="/web/static/img/user_menu_avatar.png" t-on-click.stop.prevent="openPopover"
+                 class="rounded-circle align-self-center "/>
+        </xpath>
     </t>
 
 </templates>

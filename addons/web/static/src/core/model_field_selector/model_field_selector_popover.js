@@ -22,7 +22,11 @@ export class ModelFieldSelectorPopover extends Component {
         this.fullFieldName = this.fieldNameChain.join(".");
         if (!this.env.isSmall) {
             useAutofocus();
+<<<<<<< HEAD
             useAutofocus({ refName: 'autofocusDefaultValue', selectAll: true });
+=======
+            useAutofocus({ refName: "autofocusDefaultValue", selectAll: true });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
 
         onWillStart(async () => {
@@ -48,9 +52,15 @@ export class ModelFieldSelectorPopover extends Component {
 
     async loadFields() {
         this.unfilteredFields = await this.modelField.loadModelFields(this.currentNode.resModel);
+<<<<<<< HEAD
         this.fields = {...this.unfilteredFields};
         this.fieldKeys = this.sortedKeys(this.fields);
         for (let key of this.fieldKeys) {
+=======
+        this.fields = { ...this.unfilteredFields };
+        this.fieldKeys = this.sortedKeys(this.fields);
+        for (const key of this.fieldKeys) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             const field = this.fields[key];
             if (!field.searchable || !this.props.filter(field)) {
                 delete this.fields[key];
@@ -62,12 +72,16 @@ export class ModelFieldSelectorPopover extends Component {
         const keys = Object.keys(obj);
         return sortBy(keys, (key) => obj[key].string);
     }
-    async update() {
-        const fieldNameChain = this.fieldNameChain;
-        this.fullFieldName = fieldNameChain.join(".");
-        await this.props.update(fieldNameChain);
+    async update(isSelected) {
+        const fieldNameChain = this.fieldNameChain.join(".");
+        this.fullFieldName = fieldNameChain;
         await this.loadFields();
-        this.render();
+        await this.props.update(fieldNameChain, isSelected);
+        if (isSelected) {
+            this.props.close();
+        } else {
+            this.render();
+        }
     }
 
     async onInputKeydown(ev) {
@@ -75,7 +89,11 @@ export class ModelFieldSelectorPopover extends Component {
             case "ArrowUp":
                 ev.preventDefault();
                 ev.stopPropagation();
+<<<<<<< HEAD
                 if (this.currentActiveFieldId> 0) {
+=======
+                if (this.currentActiveFieldId > 0) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     this.currentActiveFieldId--;
                     await this.render();
                 }
@@ -83,7 +101,11 @@ export class ModelFieldSelectorPopover extends Component {
             case "ArrowDown":
                 ev.preventDefault();
                 ev.stopPropagation();
+<<<<<<< HEAD
                 if (this.currentActiveFieldId < this.fieldKeys.length-1) {
+=======
+                if (this.currentActiveFieldId < this.fieldKeys.length - 1) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     this.currentActiveFieldId++;
                     await this.render();
                 }
@@ -105,7 +127,14 @@ export class ModelFieldSelectorPopover extends Component {
                 if (this.isDefaultValueVisible) {
                     this.selectDefaultValue(true);
                 } else {
+<<<<<<< HEAD
                     const field = { ...this.fields[this.currentActiveField], name: this.currentActiveField }
+=======
+                    const field = {
+                        ...this.fields[this.currentActiveField],
+                        name: this.currentActiveField,
+                    };
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     this.onFieldSelected(field);
                 }
                 break;
@@ -142,6 +171,7 @@ export class ModelFieldSelectorPopover extends Component {
                 field: null,
             });
             this.update();
+<<<<<<< HEAD
         } else if(this.props.needDefaultValue) {
             this.isDefaultValueVisible = true;
             this.render();
@@ -158,6 +188,21 @@ export class ModelFieldSelectorPopover extends Component {
         }
         this.props.close();
         this.update();
+=======
+        } else if (this.props.needDefaultValue) {
+            this.isDefaultValueVisible = true;
+            this.update();
+        } else {
+            this.update(true);
+            this.props.validate(this.fieldNameChain, this.defaultValue);
+        }
+    }
+    selectDefaultValue(acceptDefaultValue) {
+        if (!acceptDefaultValue) {
+            this.defaultValue = "";
+        }
+        this.update(true);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         this.props.validate(this.fieldNameChain, this.defaultValue);
     }
     async onFieldNameChange(ev) {
@@ -166,10 +211,14 @@ export class ModelFieldSelectorPopover extends Component {
         try {
             this.chain = await this.props.loadChain(resModel, this.fullFieldName);
             this.update();
-        } catch (_error) {
+        } catch {
             // WOWL TODO: rethrow error when not the expected type
             this.chain = [{ resModel, field: null }];
+<<<<<<< HEAD
             await this.props.update([]);
+=======
+            await this.props.update("");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             this.render();
         }
     }
@@ -186,13 +235,25 @@ ModelFieldSelectorPopover.props = {
     chain: Array,
     update: Function,
     showSearchInput: Boolean,
+<<<<<<< HEAD
     isDebugMode: { type: Boolean, optional: true},
+=======
+    isDebugMode: { type: Boolean, optional: true },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     loadChain: Function,
     filter: Function,
     close: Function,
     followRelations: { type: Boolean, optional: true },
+<<<<<<< HEAD
     needDefaultValue: { type: Boolean, optional: true},
     validate: { type: Function, optional: true},
 };
 
 ModelFieldSelectorPopover.template =  "web.ModelFieldSelectorPopover";
+=======
+    needDefaultValue: { type: Boolean, optional: true },
+    validate: { type: Function, optional: true },
+};
+
+ModelFieldSelectorPopover.template = "web.ModelFieldSelectorPopover";
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

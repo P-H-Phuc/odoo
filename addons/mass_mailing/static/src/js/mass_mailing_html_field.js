@@ -9,7 +9,7 @@ import { loadBundle, loadJS } from "@web/core/assets";
 import { qweb } from 'web.core';
 import { useService } from "@web/core/utils/hooks";
 import { buildQuery } from "web.rpc";
-import { HtmlField } from "@web_editor/js/backend/html_field";
+import { HtmlField, htmlField } from "@web_editor/js/backend/html_field";
 import { getWysiwygClass } from 'web_editor.loader';
 import { device } from 'web.config';
 import { MassMailingMobilePreviewDialog } from "./mass_mailing_mobile_preview";
@@ -46,11 +46,16 @@ export class MassMailingHtmlField extends HtmlField {
         return {
             ...super.wysiwygOptions,
             onIframeUpdated: () => this.onIframeUpdated(),
+            foldSnippets: device.isMobile,
             snippets: 'mass_mailing.email_designer_snippets',
             resizable: false,
             defaultDataForLinkTools: { isNewWindow: true },
+<<<<<<< HEAD
             toolbarTemplate: 'mass_mailing.web_editor_toolbar',
             onWysiwygBlur: () => this.wysiwyg.odooEditor.toolbarHide(),
+=======
+            toolbarTemplate: device.isMobile ? 'web_editor.toolbar' : 'mass_mailing.web_editor_toolbar',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             ...this.props.wysiwygOptions,
         };
     }
@@ -98,7 +103,11 @@ export class MassMailingHtmlField extends HtmlField {
             const $editable = this.wysiwyg.getEditable();
             this.wysiwyg.odooEditor.historyPauseSteps();
             await this.wysiwyg.cleanForSave();
+<<<<<<< HEAD
             await this.wysiwyg.saveModifiedImages(this.$content);
+=======
+            await this.wysiwyg.savePendingImages(this.$content);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
             await super.commitChanges();
 
@@ -337,7 +346,11 @@ export class MassMailingHtmlField extends HtmlField {
 
         if (editableAreaIsEmpty) {
             // unfold to prevent toolbar from going over the menu
+<<<<<<< HEAD
             this.wysiwyg.setSnippetsMenuFolded(false);
+=======
+            this.wysiwyg.snippetsMenu.setFolded(false);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             $themeSelectorNew.appendTo(this.wysiwyg.$iframeBody);
         }
 
@@ -353,6 +366,9 @@ export class MassMailingHtmlField extends HtmlField {
             this.wysiwyg.$iframeBody.closest('body').removeClass("o_force_mail_theme_choice");
 
             $themeSelectorNew.remove();
+            if (device.isMobile) {
+                this.wysiwyg.snippetsMenu.setFolded(true);
+            }
 
             this.wysiwyg.setSnippetsMenuFolded(device.isMobile || themeName === 'basic');
 
@@ -608,6 +624,7 @@ MassMailingHtmlField.props = {
     iframeHtmlClass: { type: String, optional: true },
 };
 
+<<<<<<< HEAD
 MassMailingHtmlField.displayName = _lt("Email");
 MassMailingHtmlField.extractProps = (...args) => {
     const [{ attrs }] = args;
@@ -618,6 +635,19 @@ MassMailingHtmlField.extractProps = (...args) => {
         inlineField: attrs.options['inline-field'],
         iframeHtmlClass: attrs['iframeHtmlClass'],
     };
+=======
+export const massMailingHtmlField = {
+    ...htmlField,
+    component: MassMailingHtmlField,
+    displayName: _lt("Email"),
+    extractProps({ attrs, options }) {
+        const props = htmlField.extractProps(...arguments);
+        props.filterTemplates = options.filterTemplates;
+        props.inlineField = options['inline-field'];
+        props.iframeHtmlClass = attrs.iframeHtmlClass;
+        return props;
+    },
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 };
 
-registry.category("fields").add("mass_mailing_html", MassMailingHtmlField);
+registry.category("fields").add("mass_mailing_html", massMailingHtmlField);

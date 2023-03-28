@@ -16,7 +16,7 @@ const patchWysiwygAdapter = () => patch(WysiwygAdapterComponent.prototype, 'snip
 
 const unpatchWysiwygAdapter = () => unpatch(WysiwygAdapterComponent.prototype, 'snippets_all_drag_and_drop.wysiwyg_adapter');
 
-const tour = require("web_tour.tour");
+const { registry } = require("@web/core/registry");
 
 let snippetsNames = (new URL(document.location.href)).searchParams.get('snippets_names') || '';
 // When this test is loaded in the backend, the search params aren't as easy to
@@ -30,13 +30,14 @@ let steps = [];
 let n = 0;
 for (const snippet of snippetsNames) {
     n++;
+    const isModal = ['s_popup', 's_newsletter_subscribe_popup'].includes(snippet)
     const snippetSteps = [{
         content: `Drop ${snippet} snippet [${n}/${snippetsNames.length}]`,
         trigger: `#oe_snippets .oe_snippet:has( > [data-snippet='${snippet}']) .oe_snippet_thumbnail`,
         run: "drag_and_drop iframe #wrap",
     }, {
         content: `Edit ${snippet} snippet`,
-        trigger: `iframe #wrap.o_editable [data-snippet='${snippet}']`,
+        trigger: `iframe #wrap.o_editable [data-snippet='${snippet}']${isModal ? ' .modal.show' : ''}`,
     }, {
         content: `check ${snippet} setting are loaded, wait panel is visible`,
         trigger: ".o_we_customize_panel",
@@ -63,7 +64,7 @@ for (const snippet of snippetsNames) {
         snippetSteps[2]['in_modal'] = false;
         snippetSteps.splice(3, 2, {
             content: `Hide the ${snippet} popup`,
-            trigger: "iframe .s_popup_close",
+            trigger: `iframe [data-snippet='${snippet}'] .s_popup_close`,
         }, {
             content: `Make sure ${snippet} is hidden`,
             trigger: "iframe body:not(.modal-open)",
@@ -72,12 +73,12 @@ for (const snippet of snippetsNames) {
     steps = steps.concat(snippetSteps);
 }
 
-tour.register("snippets_all_drag_and_drop", {
+registry.category("web_tour.tours").add("snippets_all_drag_and_drop", {
     test: true,
     // To run the tour locally, you need to insert the URL sent by the python
     // tour here. There is currently an issue with tours which don't have an URL
     // url: '/?enable_editor=1&snippets_names=s_showcase,s_numbers,s_...',
-}, [
+    steps: [
     websiteTourUtils.clickOnEdit(),
     {
         content: "Ensure snippets are actually passed at the test.",
@@ -119,5 +120,5 @@ tour.register("snippets_all_drag_and_drop", {
         run: () => unpatchWysiwygAdapter(),
     }
 ]),
-);
+});
 });

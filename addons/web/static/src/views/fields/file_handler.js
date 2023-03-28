@@ -63,15 +63,32 @@ export class FileUploader extends Component {
             });
             this.state.isUploading = false;
         }
+        this.fileInputRef.el.value = null;
         if (this.props.multiUpload && this.props.onUploadComplete) {
             this.props.onUploadComplete({});
         }
     }
 
-    onSelectFileButtonClick() {
+    async onSelectFileButtonClick(ev) {
+        if (this.props.onClick) {
+            const ok = await this.props.onClick(ev);
+            if (ok !== undefined && !ok) {
+                return;
+            }
+        }
         this.fileInputRef.el.click();
     }
 }
 
 FileUploader.template = "web.FileUploader";
 FileUploader.nextId = 0;
+FileUploader.props = {
+    onClick: { type: Function, optional: true },
+    onUploaded: Function,
+    onUploadComplete: { type: Function, optional: true },
+    multiUpload: { type: Boolean, optional: true },
+    inputName: { type: String, optional: true },
+    fileUploadClass: { type: String, optional: true },
+    acceptedFileExtensions: { type: String, optional: true },
+    slots: { type: Object, optional: true },
+};

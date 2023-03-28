@@ -2,6 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import time
+import re
 import logging
 
 from psycopg2 import sql, DatabaseError
@@ -20,7 +21,7 @@ class AccountFiscalPosition(models.Model):
     _order = 'sequence'
 
     sequence = fields.Integer()
-    name = fields.Char(string='Fiscal Position', required=True)
+    name = fields.Char(string='Fiscal Position', required=True, translate=True)
     active = fields.Boolean(default=True,
         help="By unchecking the active field, you may hide a fiscal position without deleting it.")
     company_id = fields.Many2one(
@@ -30,9 +31,10 @@ class AccountFiscalPosition(models.Model):
     account_ids = fields.One2many('account.fiscal.position.account', 'position_id', string='Account Mapping', copy=True)
     tax_ids = fields.One2many('account.fiscal.position.tax', 'position_id', string='Tax Mapping', copy=True)
     note = fields.Html('Notes', translate=True, help="Legal mentions that have to be printed on the invoices.")
-    auto_apply = fields.Boolean(string='Detect Automatically', help="Apply automatically this fiscal position.")
+    auto_apply = fields.Boolean(string='Detect Automatically', help="Apply tax & account mappings on invoices automatically if the matching criterias (VAT/Country) are met.")
     vat_required = fields.Boolean(string='VAT required', help="Apply only if partner has a VAT number.")
     company_country_id = fields.Many2one(string="Company Country", related='company_id.account_fiscal_country_id')
+    fiscal_country_codes = fields.Char(string="Company Fiscal Country Code", related='company_country_id.code')
     country_id = fields.Many2one('res.country', string='Country',
         help="Apply only if delivery country matches.")
     country_group_id = fields.Many2one('res.country.group', string='Country Group',
@@ -63,7 +65,7 @@ class AccountFiscalPosition(models.Model):
 
             if self.env['account.tax'].search([('country_id', '=', record.country_id.id)], limit=1):
                 record.foreign_vat_header_mode = None
-            elif self.env['account.tax.template'].search([('chart_template_id.country_id', '=', record.country_id.id)], limit=1):
+            elif self.env['account.chart.template']._guess_chart_template(record.country_id) != 'generic_coa':
                 record.foreign_vat_header_mode = 'templates_found'
             else:
                 record.foreign_vat_header_mode = 'no_template'
@@ -292,6 +294,15 @@ class AccountFiscalPositionAccount(models.Model):
 class ResPartner(models.Model):
     _name = 'res.partner'
     _inherit = 'res.partner'
+
+    fiscal_country_codes = fields.Char(compute='_compute_fiscal_country_codes')
+
+    @api.depends('company_id')
+    @api.depends_context('allowed_company_ids')
+    def _compute_fiscal_country_codes(self):
+        for record in self:
+            allowed_companies = record.company_id or self.env.companies
+            record.fiscal_country_codes = ",".join(allowed_companies.mapped('account_fiscal_country_id.code'))
 
     @property
     def _order(self):
@@ -667,3 +678,110 @@ class ResPartner(models.Model):
         :return: an array of ir.model.fields for which the user should provide values.
         """
         return []
+
+    # -------------------------------------------------------------------------
+    # EDI
+    # -------------------------------------------------------------------------
+
+    @api.model
+    def _retrieve_partner_with_vat(self, vat, extra_domain):
+        if not vat:
+            return None
+
+        # Sometimes, the vat is specified with some whitespaces.
+        normalized_vat = vat.replace(' ', '')
+        country_prefix = re.match('^[a-zA-Z]{2}|^', vat).group()
+
+        partner = self.env['res.partner'].search(extra_domain + [('vat', 'in', (normalized_vat, vat))], limit=1)
+
+        # Try to remove the country code prefix from the vat.
+        if not partner and country_prefix:
+            partner = self.env['res.partner'].search(extra_domain + [
+                ('vat', 'in', (normalized_vat[2:], vat[2:])),
+                ('country_id.code', '=', country_prefix.upper()),
+            ], limit=1)
+
+            # The country could be not specified on the partner.
+            if not partner:
+                partner = self.env['res.partner'].search(extra_domain + [
+                    ('vat', 'in', (normalized_vat[2:], vat[2:])),
+                    ('country_id', '=', False),
+                ], limit=1)
+
+        # The vat could be a string of alphanumeric values without country code but with missing zeros at the
+        # beginning.
+        if not partner:
+            try:
+                vat_only_numeric = str(int(re.sub(r'^\D{2}', '', normalized_vat) or 0))
+            except ValueError:
+                vat_only_numeric = None
+
+            if vat_only_numeric:
+                if country_prefix:
+                    vat_prefix_regex = f'({country_prefix})?'
+                else:
+                    vat_prefix_regex = '([A-z]{2})?'
+                query = self.env['res.partner']._search(extra_domain + [('active', '=', True)], limit=1)
+                query.add_where("res_partner.vat ~ %s", ['^%s0*%s$' % (vat_prefix_regex, vat_only_numeric)])
+                query_str, params = query.select()
+                self._cr.execute(query_str, params)
+                partner_row = self._cr.fetchone()
+                if partner_row:
+                    partner = self.env['res.partner'].browse(partner_row[0])
+
+        return partner
+
+    @api.model
+    def _retrieve_partner_with_phone_mail(self, phone, mail, extra_domain):
+        domains = []
+        if phone:
+            domains.append([('phone', '=', phone)])
+            domains.append([('mobile', '=', phone)])
+        if mail:
+            domains.append([('email', '=', mail)])
+
+        if not domains:
+            return None
+
+        domain = expression.OR(domains)
+        if extra_domain:
+            domain = expression.AND([domain, extra_domain])
+        return self.env['res.partner'].search(domain, limit=1)
+
+    @api.model
+    def _retrieve_partner_with_name(self, name, extra_domain):
+        if not name:
+            return None
+        return self.env['res.partner'].search([('name', 'ilike', name)] + extra_domain, limit=1)
+
+    def _retrieve_partner(self, name=None, phone=None, mail=None, vat=None, domain=None, company=None):
+        '''Search all partners and find one that matches one of the parameters.
+        :param name:    The name of the partner.
+        :param phone:   The phone or mobile of the partner.
+        :param mail:    The mail of the partner.
+        :param vat:     The vat number of the partner.
+        :param domain:  An extra domain to apply.
+        :param company: The company of the partner.
+        :returns:       A partner or an empty recordset if not found.
+        '''
+
+        def search_with_vat(extra_domain):
+            return self._retrieve_partner_with_vat(vat, extra_domain)
+
+        def search_with_phone_mail(extra_domain):
+            return self._retrieve_partner_with_phone_mail(phone, mail, extra_domain)
+
+        def search_with_name(extra_domain):
+            return self._retrieve_partner_with_name(name, extra_domain)
+
+        def search_with_domain(extra_domain):
+            if not domain:
+                return None
+            return self.env['res.partner'].search(domain + extra_domain, limit=1)
+
+        for search_method in (search_with_vat, search_with_domain, search_with_phone_mail, search_with_name):
+            for extra_domain in ([('company_id', '=', (company or self.env.company).id)], []):
+                partner = search_method(extra_domain)
+                if partner:
+                    return partner
+        return self.env['res.partner']

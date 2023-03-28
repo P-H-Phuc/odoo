@@ -2,7 +2,13 @@
 
 import { browser } from "@web/core/browser/browser";
 import { registry } from "@web/core/registry";
-import { click, getFixture, nextTick, patchWithCleanup } from "@web/../tests/helpers/utils";
+import {
+    click,
+    getFixture,
+    editInput,
+    nextTick,
+    patchWithCleanup,
+} from "@web/../tests/helpers/utils";
 import { makeView, setupViewRegistries } from "@web/../tests/views/helpers";
 
 const serviceRegistry = registry.category("services");
@@ -73,8 +79,9 @@ QUnit.module("Fields", (hooks) => {
         );
     });
 
-    QUnit.test("CopyClipboardField on unset field", async function (assert) {
+    QUnit.test("CopyClipboardField: show copy button even on empty field", async function (assert) {
         serverData.models.partner.records[0].char_field = false;
+        serverData.models.partner.records[0].text_field = false;
 
         await makeView({
             serverData,
@@ -85,16 +92,20 @@ QUnit.module("Fields", (hooks) => {
                     <sheet>
                         <group>
                             <field name="char_field" widget="CopyClipboardChar" />
+                            <field name="text_field" widget="CopyClipboardText" />
                         </group>
                     </sheet>
                 </form>`,
             resId: 1,
         });
 
-        assert.containsNone(
+        assert.containsOnce(
             target,
-            '.o_field_copy[name="char_field"] .o_clipboard_button',
-            "char_field (unset) should not contain a button"
+            '.o_field_CopyClipboardChar[name="char_field"] .o_clipboard_button'
+        );
+        assert.containsOnce(
+            target,
+            '.o_field_CopyClipboardText[name="text_field"] .o_clipboard_button'
         );
         assert.containsOnce(
             target.querySelector(".o_field_widget[name=char_field]"),
@@ -104,7 +115,7 @@ QUnit.module("Fields", (hooks) => {
     });
 
     QUnit.test(
-        "CopyClipboardField on readonly unset fields in create mode",
+        "CopyClipboardField: show copy button even on readonly empty field",
         async function (assert) {
             serverData.models.partner.fields.display_name.readonly = true;
 
@@ -122,10 +133,9 @@ QUnit.module("Fields", (hooks) => {
                     </form>`,
             });
 
-            assert.containsNone(
+            assert.containsOnce(
                 target,
-                '.o_field_copy[name="display_name"] .o_clipboard_button',
-                "the readonly unset field should not contain a button"
+                '.o_field_CopyClipboardChar[name="display_name"] .o_clipboard_button'
             );
         }
     );
@@ -223,9 +233,15 @@ QUnit.module("Fields", (hooks) => {
         );
     });
 
+<<<<<<< HEAD
     QUnit.module("CopyToClipboardButtonField");
 
     QUnit.test("CopyToClipboardButtonField in form view", async function (assert) {
+=======
+    QUnit.module("CopyClipboardButtonField");
+
+    QUnit.test("CopyClipboardButtonField in form view", async function (assert) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         patchWithCleanup(browser, {
             navigator: {
                 clipboard: {
@@ -267,4 +283,55 @@ Ho-ho-hoooo Merry Christmas`,
             "yop",
         ]);
     });
+<<<<<<< HEAD
+=======
+
+    QUnit.test("CopyClipboardButtonField can be disabled", async function (assert) {
+        patchWithCleanup(browser, {
+            navigator: {
+                clipboard: {
+                    writeText: (text) => {
+                        assert.step(text);
+                        return Promise.resolve();
+                    },
+                },
+            },
+        });
+
+        await makeView({
+            serverData,
+            type: "form",
+            resModel: "partner",
+            arch: `
+                <form>
+                    <sheet>
+                        <div>
+                            <field name="text_field" disabled="1" widget="CopyClipboardButton"/>
+                            <field name="char_field" disabled="[('char_field', '=', 'yop')]" widget="CopyClipboardButton"/>
+                            <field name="char_field" widget="char"/>
+                        </div>
+                    </sheet>
+                </form>`,
+            resId: 1,
+        });
+
+        assert.containsOnce(
+            target,
+            ".o_clipboard_button.o_btn_text_copy[disabled]",
+            "The inner button should be disabled."
+        );
+        assert.containsOnce(
+            target,
+            ".o_clipboard_button.o_btn_char_copy[disabled]",
+            "The inner button should be disabled."
+        );
+
+        await editInput(target, ".o_input", "yip");
+        assert.containsNone(
+            target,
+            ".o_clipboard_button.o_btn_char_copy[disabled]",
+            "The inner button should not be disabled."
+        );
+    });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 });

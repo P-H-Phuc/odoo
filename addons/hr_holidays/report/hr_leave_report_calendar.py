@@ -33,6 +33,8 @@ class LeaveReportCalendar(models.Model):
     is_hatched = fields.Boolean('Hatched', readonly=True)
     is_striked = fields.Boolean('Striked', readonly=True)
 
+    is_absent = fields.Boolean(related='employee_id.is_absent')
+
     def init(self):
         tools.drop_view_if_exists(self._cr, 'hr_leave_report_calendar')
         self._cr.execute("""CREATE OR REPLACE VIEW hr_leave_report_calendar AS
@@ -71,13 +73,14 @@ class LeaveReportCalendar(models.Model):
         );
         """)
 
-    def _read(self, fields):
-        res = super()._read(fields)
+    def _fetch_query(self, query, fields):
+        records = super()._fetch_query(query, fields)
         if self.env.context.get('hide_employee_name') and 'employee_id' in self.env.context.get('group_by', []):
-            name_field = self._fields['name']
-            for record in self.with_user(SUPERUSER_ID):
-                self.env.cache.set(record, name_field, record.name.split(':')[-1].strip())
-        return res
+            self.env.cache.update(records, self._fields['name'], [
+                record.name.split(':')[-1].strip()
+                for record in records.with_user(SUPERUSER_ID)
+            ])
+        return records
 
     @api.model
     def get_unusual_days(self, date_from, date_to=None):

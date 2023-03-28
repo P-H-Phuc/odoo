@@ -164,7 +164,11 @@ export class SpreadsheetPivotModel extends PivotModel {
         try {
             const { field } = this.parseGroupField(fieldName);
             return this._isCol(field);
+<<<<<<< HEAD
         } catch (_) {
+=======
+        } catch {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             return false;
         }
     }
@@ -178,7 +182,7 @@ export class SpreadsheetPivotModel extends PivotModel {
         try {
             const { field } = this.parseGroupField(fieldName);
             return this._isRow(field);
-        } catch (_) {
+        } catch {
             return false;
         }
     }
@@ -381,7 +385,10 @@ export class SpreadsheetPivotModel extends PivotModel {
         const rows = this._getSpreadsheetRows(this.data.rowGroupTree);
         rows.push(rows.shift()); //Put the Total row at the end.
         const measures = this.metaData.activeMeasures;
-        return new SpreadsheetPivotTable(cols, rows, measures);
+        const rowTitle = this.metaData.rowGroupBys[0]
+            ? this.getFormattedGroupBy(this.metaData.rowGroupBys[0])
+            : "";
+        return new SpreadsheetPivotTable(cols, rows, measures, rowTitle);
     }
 
     //--------------------------------------------------------------------------

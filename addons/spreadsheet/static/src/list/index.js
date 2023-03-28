@@ -32,12 +32,21 @@ cellMenuRegistry.add("list_see_record", {
     name: _lt("See record"),
     sequence: 200,
     action: async (env) => {
+<<<<<<< HEAD
         const cell = env.model.getters.getActiveCell();
         await SEE_RECORD_LIST(cell, env);
     },
     isVisible: (env) => {
         const cell = env.model.getters.getActiveCell();
         return SEE_RECORD_LIST_VISIBLE(cell);
+=======
+        const position = env.model.getters.getActivePosition();
+        await SEE_RECORD_LIST(position, env);
+    },
+    isVisible: (env) => {
+        const position = env.model.getters.getActivePosition();
+        return SEE_RECORD_LIST_VISIBLE(position, env);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
 });
 

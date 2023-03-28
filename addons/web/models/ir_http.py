@@ -58,6 +58,11 @@ class Http(models.AbstractModel):
         super()._pre_dispatch(rule, args)
         cls._handle_debug()
 
+    @classmethod
+    def _post_logout(cls):
+        super()._post_logout()
+        request.future_response.set_cookie('cids', max_age=0)
+
     def webclient_rendering_context(self):
         return {
             'menu_data': request.env['ir.ui.menu'].load_menus(request.session.debug),
@@ -175,5 +180,13 @@ class Http(models.AbstractModel):
 
     def get_currencies(self):
         Currency = self.env['res.currency']
+<<<<<<< HEAD
         currencies = Currency.search([]).read(['symbol', 'position', 'decimal_places'])
         return {c['id']: {'symbol': c['symbol'], 'position': c['position'], 'digits': [69,c['decimal_places']]} for c in currencies}
+=======
+        currencies = Currency.search_fetch([], ['symbol', 'position', 'decimal_places'])
+        return {
+            c.id: {'symbol': c.symbol, 'position': c.position, 'digits': [69, c.decimal_places]}
+            for c in currencies
+        }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6

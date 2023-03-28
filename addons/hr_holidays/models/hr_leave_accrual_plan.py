@@ -10,17 +10,22 @@ class AccrualPlan(models.Model):
 
     name = fields.Char('Name', required=True)
     time_off_type_id = fields.Many2one('hr.leave.type', string="Time Off Type",
+        check_company=True,
         help="""Specify if this accrual plan can only be used with this Time Off Type.
                 Leave empty if this accrual plan can be used with any Time Off Type.""")
     employees_count = fields.Integer("Employees", compute='_compute_employee_count')
     level_ids = fields.One2many('hr.leave.accrual.level', 'accrual_plan_id', copy=True)
     allocation_ids = fields.One2many('hr.leave.allocation', 'accrual_plan_id')
+    company_id = fields.Many2one('res.company', string='Company',
+        compute="_compute_company_id", store="True", readonly=False)
     transition_mode = fields.Selection([
         ('immediately', 'Immediately'),
         ('end_of_accrual', "After this accrual's period")],
         string="Level Transition", default="immediately", required=True,
-        help="""Immediately: When the date corresponds to the new level, your accrual is automatically computed, granted and you switch to new level
-                After this accrual's period: When the accrual is complete (a week, a month), and granted, you switch to next level if allocation date corresponds""")
+        help="""Specify what occurs if a level transition takes place in the middle of a pay period.\n
+                'Immediately' will switch the employee to the new accrual level on the exact date during the ongoing pay period.\n
+                'After this accrual's period' will keep the employee on the same accrual level until the ongoing pay period is complete.
+                After it is complete, the new level will take effect when the next pay period begins.""")
     show_transition_mode = fields.Boolean(compute='_compute_show_transition_mode')
 
     @api.depends('level_ids')
@@ -51,6 +56,14 @@ class AccrualPlan(models.Model):
         allocations_dict = {res['accrual_plan_id'][0]: res['employee_count'] for res in allocations_read_group}
         for plan in self:
             plan.employees_count = allocations_dict.get(plan.id, 0)
+
+    @api.depends('time_off_type_id.company_id')
+    def _compute_company_id(self):
+        for accrual_plan in self:
+            if accrual_plan.time_off_type_id:
+                accrual_plan.company_id = accrual_plan.time_off_type_id.company_id
+            else:
+                accrual_plan.company_id = self.env.company
 
     def action_open_accrual_plan_employees(self):
         self.ensure_one()

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+<<<<<<< HEAD
     <record id="stock_replenishment_product_template_action" model="ir.actions.client">
         <field name="name">Forecasted Report</field>
         <field name="tag">replenish_report</field>
@@ -12,4 +13,18 @@
         <field name="res_model" ref="product.model_product_product"/>
     </record>
 
+=======
+    <record id="stock_forecasted_product_product_action" model="ir.actions.client">
+        <field name="name">Forecasted Report</field>
+        <field name="tag">stock_forecasted</field>
+        <field name="res_model" ref="product.model_product_product"/>
+    </record>
+
+    <record id="stock_forecasted_product_template_action" model="ir.actions.client">
+        <field name="name">Forecasted Report</field>
+        <field name="tag">stock_forecasted</field>
+        <field name="res_model" ref="product.model_product_template"/>
+    </record>
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 </odoo>

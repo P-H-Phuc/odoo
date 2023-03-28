@@ -115,6 +115,14 @@ export class CalendarCommonRenderer extends Component {
         return record.start.toFormat(timeFormat);
     }
 
+<<<<<<< HEAD
+=======
+    getEndTime(record) {
+        const timeFormat = is24HourFormat() ? "HH:mm" : "hh:mm a";
+        return record.end.toFormat(timeFormat);
+    }
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     computeEventSelector(event) {
         return `[data-event-id="${event.id}"]`;
     }
@@ -132,15 +140,27 @@ export class CalendarCommonRenderer extends Component {
         return Object.values(this.props.model.records).map((r) => this.convertRecordToEvent(r));
     }
     convertRecordToEvent(record) {
+<<<<<<< HEAD
+=======
+        const allDay = record.isAllDay || record.end.diff(record.start, "hours").hours >= 24;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         return {
             id: record.id,
             title: record.title,
             start: record.start.toISO(),
             end:
+<<<<<<< HEAD
                 ["week", "month"].includes(this.props.model.scale) && record.isAllDay
                     ? record.end.plus({ days: 1 }).toISO()
                     : record.end.toISO(),
             allDay: record.isAllDay,
+=======
+                ["week", "month"].includes(this.props.model.scale) && (record.isAllDay || allDay &&
+                record.end.toMillis() !== record.end.startOf('day').toMillis())
+                    ? record.end.plus({ days: 1 }).toISO()
+                    : record.end.toISO(),
+            allDay: allDay ,
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         };
     }
     getPopoverProps(record) {
@@ -202,6 +222,10 @@ export class CalendarCommonRenderer extends Component {
             const injectedContentStr = renderToString(this.constructor.eventTemplate, {
                 ...record,
                 startTime: this.getStartTime(record),
+<<<<<<< HEAD
+=======
+                endTime: this.getEndTime(record),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             });
             const domParser = new DOMParser();
             const { children } = domParser.parseFromString(injectedContentStr, "text/html").body;
@@ -222,6 +246,12 @@ export class CalendarCommonRenderer extends Component {
             if (record.isStriked) {
                 el.classList.add("o_event_striked");
             }
+<<<<<<< HEAD
+=======
+            if (record.duration <= 0.25 ) {
+                el.classList.add("o_event_oneliner");
+            }
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
 
         if (!el.querySelector(".fc-bg")) {

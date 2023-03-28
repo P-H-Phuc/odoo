@@ -7,7 +7,7 @@ from odoo.tools.misc import format_date, formatLang
 class AccountPayment(models.Model):
     _name = "account.payment"
     _inherits = {'account.move': 'move_id'}
-    _inherit = ['mail.thread', 'mail.activity.mixin']
+    _inherit = ['mail.thread.main.attachment', 'mail.activity.mixin']
     _description = "Payments"
     _order = "date desc, name desc"
     _check_company_auto = True
@@ -30,7 +30,9 @@ class AccountPayment(models.Model):
         readonly=False, store=True, tracking=True,
         compute='_compute_partner_bank_id',
         domain="[('id', 'in', available_partner_bank_ids)]",
-        check_company=True)
+        check_company=True,
+        ondelete='restrict',
+    )
     is_internal_transfer = fields.Boolean(string="Internal Transfer",
         readonly=False, store=True,
         tracking=True,
@@ -528,6 +530,7 @@ class AccountPayment(models.Model):
         for pay in self:
             if pay.state in ('draft', 'posted') \
                 and pay.partner_bank_id \
+                and pay.partner_bank_id.allow_out_payment \
                 and pay.payment_method_line_id.code == 'manual' \
                 and pay.payment_type == 'outbound' \
                 and pay.currency_id:
@@ -670,8 +673,14 @@ class AccountPayment(models.Model):
     # -------------------------------------------------------------------------
 
     def new(self, values=None, origin=None, ref=None):
+<<<<<<< HEAD
         payment = super(AccountPayment, self.with_context(is_payment=True)).new(values, origin, ref)
         if not payment.journal_id and not payment.default_get(['journal_id']):  # might not be computed because declared by inheritance
+=======
+        payment = super().new(values, origin, ref)
+        if not payment.journal_id and not payment.default_get(['journal_id']):  # might not be computed because declared by inheritance
+            payment.move_id.payment_id = payment
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             payment.move_id._compute_journal_id()
         return payment
 
@@ -688,9 +697,11 @@ class AccountPayment(models.Model):
             # Force the move_type to avoid inconsistency with residual 'default_move_type' inside the context.
             vals['move_type'] = 'entry'
 
-        payments = super(AccountPayment, self.with_context(is_payment=True))\
-            .create(vals_list)\
-            .with_context(is_payment=False)
+        payments = super().create([{
+            'name': False,
+            'journal_id': self.move_id.with_context(is_payment=True)._search_default_journal().id,
+            **vals,
+        } for vals in vals_list])
 
         for i, pay in enumerate(payments):
             write_off_line_vals = write_off_line_vals_list[i]
@@ -918,6 +929,11 @@ class AccountPayment(models.Model):
 
     def action_post(self):
         ''' draft -> posted '''
+        # Do not allow to post if the account is required but not trusted
+        for payment in self:
+            if payment.require_partner_bank_account and not payment.partner_bank_id.allow_out_payment:
+                raise UserError(_('To record payments with %s, the recipient bank account must be manually validated. You should go on the partner bank account in order to validate it.', self.payment_method_line_id.name))
+
         self.move_id._post(soft=False)
 
         self.filtered(

@@ -1,14 +1,14 @@
 odoo.define("website_mass_mailing.tour.newsletter_popup_edition", function (require) {
 "use strict";
 
-const tour = require('web_tour.tour');
+const { registry } = require("@web/core/registry");
 const wTourUtils = require('website.tour_utils');
 const newsletterPopupUseTour = require('website_mass_mailing.tour.newsletter_popup_use');
 
-tour.register('newsletter_popup_edition', {
+registry.category("web_tour.tours").add('newsletter_popup_edition', {
     test: true,
     url: '/?enable_editor=1',
-}, [
+    steps: [
     wTourUtils.dragNDrop({
         id: 's_newsletter_subscribe_popup',
         name: 'Newsletter Popup',
@@ -26,13 +26,17 @@ tour.register('newsletter_popup_edition', {
         extra_trigger: 'iframe body:not(.editor_enable)',
         run: newsletterPopupUseTour.ensurePopupNotVisible,
     }
+<<<<<<< HEAD
 ]);
+=======
+]});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 });
 
 odoo.define("website_mass_mailing.tour.newsletter_popup_use", function (require) {
 "use strict";
 
-const tour = require('web_tour.tour');
+const { registry } = require("@web/core/registry");
 
 function ensurePopupNotVisible() {
     const $modal = this.$anchor.find('.o_newsletter_popup .modal');
@@ -49,10 +53,14 @@ function ensurePopupNotVisible() {
     }
 }
 
+<<<<<<< HEAD
 tour.register('newsletter_popup_use', {
+=======
+registry.category("web_tour.tours").add('newsletter_popup_use', {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     test: true,
     url: '/',
-}, [
+    steps: [
     {
         content: "Check the modal is not yet opened and force it opened",
         trigger: 'body:has(.o_newsletter_popup)',
@@ -70,10 +78,17 @@ tour.register('newsletter_popup_use', {
     },
     {
         content: "Check the modal is now closed",
+<<<<<<< HEAD
         trigger: 'body:has(.o_newsletter_popup)',
         run: ensurePopupNotVisible,
     }
 ]);
+=======
+        trigger: 'body:not(.modal-open)',
+        run: ensurePopupNotVisible,
+    }
+]});
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 return {
     ensurePopupNotVisible: ensurePopupNotVisible,

@@ -538,7 +538,11 @@
             > .tab-pane {
                 padding: $o-horizontal-padding 0;
 
+<<<<<<< HEAD
                 > .o_field_html > .note-editable {
+=======
+                > .o_field_html .note-editable {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     min-height: 180px;
                     &:hover, &:focus {
                         border-color: transparent;
@@ -957,7 +961,11 @@
     @include media-breakpoint-down(md) {
         .o_cp_buttons {
             width: 100%;
+<<<<<<< HEAD
             div, .o-kanban-button-new {
+=======
+            > button {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 width: 100%;
             }
         }
@@ -1198,6 +1206,7 @@
     }
 }
 
+<<<<<<< HEAD
 @include media-breakpoint-down(md) {
     // change the dropdown ui for mobile website
     .ui-autocomplete.ui-front.ui-menu.ui-widget.ui-widget-content {
@@ -1209,6 +1218,8 @@
     }
 }
 
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 .o_field_section_and_note_one2many ~ .row.o_group {
     clear: both;
     justify-content: space-between;

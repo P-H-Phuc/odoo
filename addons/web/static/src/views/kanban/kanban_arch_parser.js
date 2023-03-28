@@ -1,14 +1,15 @@
 /** @odoo-module **/
 
+import { extractAttributes, XMLParser } from "@web/core/utils/xml";
+import { Field } from "@web/views/fields/field";
+import { Widget } from "@web/views/widgets/widget";
 import {
     addFieldDependencies,
     archParseBoolean,
     getActiveActions,
+    processButton,
     stringToOrderBy,
 } from "@web/views/utils";
-import { extractAttributes, XMLParser } from "@web/core/utils/xml";
-import { Field } from "@web/views/fields/field";
-import { Widget } from "@web/views/widgets/widget";
 
 /**
  * NOTE ON 't-name="kanban-box"':
@@ -25,6 +26,7 @@ import { Widget } from "@web/views/widgets/widget";
  */
 
 export const KANBAN_BOX_ATTRIBUTE = "kanban-box";
+export const KANBAN_MENU_ATTRIBUTE = "kanban-menu";
 export const KANBAN_TOOLTIP_ATTRIBUTE = "kanban-tooltip";
 
 export class KanbanArchParser extends XMLParser {
@@ -51,17 +53,49 @@ export class KanbanArchParser extends XMLParser {
         const tooltipInfo = {};
         let handleField = null;
         const fieldNodes = {};
+        const widgetNodes = {};
+        let widgetNextId = 0;
         const jsClass = xmlDoc.getAttribute("js_class");
         const action = xmlDoc.getAttribute("action");
         const type = xmlDoc.getAttribute("type");
         const openAction = action && type ? { action, type } : null;
         const templateDocs = {};
         const activeFields = {};
+        let headerButtons = [];
+        const creates = [];
+        let buttonId = 0;
         // Root level of the template
         this.visitXML(xmlDoc, (node) => {
             if (node.hasAttribute("t-name")) {
                 templateDocs[node.getAttribute("t-name")] = node;
                 return;
+            }
+            if (node.tagName === "header") {
+                headerButtons = [...node.children]
+                    .filter((node) => node.tagName === "button")
+                    .map((node) => ({
+                        ...processButton(node),
+                        type: "button",
+                        id: buttonId++,
+                    }))
+                    .filter((button) => button.modifiers.invisible !== true);
+                return false;
+            } else if (node.tagName === "control") {
+                for (const childNode of node.children) {
+                    if (childNode.tagName === "button") {
+                        creates.push({
+                            type: "button",
+                            ...processButton(childNode),
+                        });
+                    } else if (childNode.tagName === "create") {
+                        creates.push({
+                            type: "create",
+                            context: childNode.getAttribute("context"),
+                            string: childNode.getAttribute("string"),
+                        });
+                    }
+                }
+                return false;
             }
             // Case: field node
             if (node.tagName === "field") {
@@ -88,23 +122,26 @@ export class KanbanArchParser extends XMLParser {
                 addFieldDependencies(
                     activeFields,
                     models[modelName],
-                    fieldInfo.FieldComponent.fieldDependencies
+                    fieldInfo.field.fieldDependencies
                 );
             }
             if (node.tagName === "widget") {
-                const { WidgetComponent } = Widget.parseWidgetNode(node);
+                const widgetInfo = Widget.parseWidgetNode(node);
+                const widgetId = `widget_${++widgetNextId}`;
+                widgetNodes[widgetId] = widgetInfo;
+                node.setAttribute("widget_id", widgetId);
                 addFieldDependencies(
                     activeFields,
                     models[modelName],
-                    WidgetComponent.fieldDependencies
+                    widgetInfo.widget.fieldDependencies
                 );
             }
 
             // Keep track of last update so images can be reloaded when they may have changed.
             if (node.tagName === "img") {
                 const attSrc = node.getAttribute("t-att-src");
-                if (attSrc && /\bkanban_image\b/.test(attSrc) && !fieldNodes.__last_update) {
-                    fieldNodes.__last_update = { type: "datetime" };
+                if (attSrc && /\bkanban_image\b/.test(attSrc) && !fieldNodes.write_date) {
+                    fieldNodes.write_date = { type: "datetime" };
                 }
             }
         });
@@ -142,9 +179,12 @@ export class KanbanArchParser extends XMLParser {
             activeActions,
             activeFields,
             className,
+            creates,
             defaultGroupBy,
             fieldNodes,
+            widgetNodes,
             handleField,
+            headerButtons,
             colorField,
             defaultOrder,
             onCreate,

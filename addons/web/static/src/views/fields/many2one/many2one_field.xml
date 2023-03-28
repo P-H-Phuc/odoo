@@ -26,9 +26,15 @@
             </t>
             <t t-else="">
                 <a
+<<<<<<< HEAD
                     t-if="props.value"
                     t-attf-class="o_form_uri #{classFromDecoration}"
                     t-att-href="props.value ? `#id=${props.value[0]}&amp;model=${relation}` : '#'"
+=======
+                    t-if="value"
+                    class="o_form_uri"
+                    t-att-href="value ? `#id=${value[0]}&amp;model=${relation}` : '#'"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     t-on-click.prevent="onClick"
                 >
                     <span t-esc="displayName" />
@@ -46,7 +52,11 @@
                     <button
                         type="button"
                         class="btn btn-secondary fa o_external_button"
+<<<<<<< HEAD
                         t-att-class="(props.openTarget === 'current' and !env.inDialog )? 'fa-arrow-right' : 'fa-external-link'"
+=======
+                        t-att-class="env.inDialog ? 'fa-external-link' : 'fa-arrow-right'"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                         tabindex="-1"
                         draggable="false"
                         aria-label="Internal link"

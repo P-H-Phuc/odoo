@@ -135,12 +135,20 @@ def filter_fields(data):
                 fields_by_model[model].add(matching["field"])
     else:
         for pivot in data["pivots"].values():
+<<<<<<< HEAD
             model = pivot.model
+=======
+            model = pivot["model"]
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             field = pivot.get("fieldMatching", {}).get("chain")
             if field:
                 fields_by_model[model].add(field)
         for _list in data["lists"].values():
+<<<<<<< HEAD
             model = _list.model
+=======
+            model = _list["model"]
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             field = _list.get("fieldMatching", {}).get("chain")
             if field:
                 fields_by_model[model].add(field)

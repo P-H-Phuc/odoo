@@ -3,7 +3,10 @@
 
     <!-- Call this template instead of "web.assets_tests" to have the proper conditional check -->
     <template id="conditional_assets_tests" name="Tests Assets Bundle">
-        <t t-call-assets="web.assets_tests" t-if="'tests' in debug or test_mode_enabled" defer_load="True" />
+        <t t-if="'tests' in debug or test_mode_enabled">
+            <!-- To allow all tests assets and tours to be in the same bundle, the assets_tests bundle ignores missing dependencies -->
+            <t t-call-assets="web.__assets_tests_call__" defer_load="True" />
+        </t>
     </template>
 
     <template id="web.layout" name="Web layout">&lt;!DOCTYPE html&gt;
@@ -244,54 +247,11 @@
         </t>
     </template>
 
-    <template id="web.benchmark_suite">
-        <t t-call="web.layout">
-            <t t-set="html_data" t-value="{'style': 'height: 100%;'}"/>
-            <t t-set="title">Web Benchmarks</t>
-            <t t-set="head">
-                <script type="text/javascript" src="/web/static/lib/benchmarkjs/lodash.js"></script>
-                <script type="text/javascript" src="/web/static/lib/benchmarkjs/benchmark.js"></script>
-
-                <t t-call-assets="web.assets_common" t-js="false"/>
-                <t t-call-assets="web.assets_backend" t-js="false"/>
-                <t t-call-assets="web.assets_common" t-css="false"/>
-                <t t-call-assets="web.assets_backend" t-css="false"/>
-
-                <t t-call="web.test_helpers"/>
-
-                <script type="text/javascript">
-                    QUnit.config.hidepassed = false;
-                </script>
-
-                <style>
-                    body:not(.debug) .modal-backdrop, body:not(.debug) .modal, body:not(.debug) .ui-autocomplete {
-                        opacity: 0 !important;
-                    }
-                    #qunit-testrunner-toolbar label {
-                        font-weight: inherit;
-                        margin-bottom: inherit;
-                    }
-                    #qunit-testrunner-toolbar input[type=text] {
-                        width: inherit;
-                        display: inherit;
-                    }
-                </style>
-
-                <script type="text/javascript" src="/web/static/tests/views/list_benchmarks.js"></script>
-                <script type="text/javascript" src="/web/static/tests/views/kanban_benchmarks.js"></script>
-                <script type="text/javascript" src="/web/static/tests/views/form_benchmarks.js"></script>
-
-            </t>
-
-            <div id="qunit"/>
-            <div id="qunit-fixture"/>
-        </t>
-    </template>
-
     <template id="web.webclient_bootstrap">
         <t t-call="web.layout">
             <t t-set="head_web">
                 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+<<<<<<< HEAD
                 <!-- Chrome, Firefox OS and Opera -->
                 <meta name="theme-color" content="#875A7B"/>
                 <link rel="icon" sizes="192x192" href="/web/static/img/mobile-icons/android-192x192.png"/>
@@ -306,6 +266,9 @@
                 <meta name="msapplication-TileColor" content="#875A7B"/>
                 <meta name="msapplication-TileImage" content="/web/static/img/mobile-icons/windows-144x144.png"/>
 
+=======
+                <meta name="theme-color" content="#71639e"/>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                 <script type="text/javascript">
                     odoo.__session_info__ = <t t-out="json.dumps(session_info)"/>;
                     odoo.reloadMenus = () => fetch(`/web/webclient/load_menus/${odoo.__session_info__.cache_hashes.load_menus}`).then(res => res.json());

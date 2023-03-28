@@ -1,7 +1,7 @@
 /** @odoo-module */
 
 import { setCellContent } from "@spreadsheet/../tests/utils/commands";
-import { getCell, getCellValue } from "@spreadsheet/../tests/utils/getters";
+import { getCellValue, getEvaluatedCell } from "@spreadsheet/../tests/utils/getters";
 import { createSpreadsheetWithPivot } from "@spreadsheet/../tests/utils/pivot";
 import {
     createModelWithDataSource,
@@ -102,7 +102,7 @@ QUnit.module("spreadsheet > positional pivot formula", {}, () => {
         setCellContent(model, "A10", `=ODOO.PIVOT.HEADER(1,"#bar","this is not a number")`);
         assert.strictEqual(getCellValue(model, "A10"), "#ERROR");
         assert.strictEqual(
-            getCell(model, "A10").evaluated.error.message,
+            getEvaluatedCell(model, "A10").error.message,
             "The function ODOO.PIVOT.HEADER expects a number value, but 'this is not a number' is a string, and cannot be coerced to a number."
         );
     });
@@ -338,6 +338,10 @@ QUnit.module("spreadsheet > positional pivot formula", {}, () => {
                 </pivot>`,
         });
         setCellContent(model, "A1", `=ODOO.PIVOT.HEADER(1,"#date:day",1)`);
+<<<<<<< HEAD
         assert.strictEqual(getCell(model, "A1").formattedValue, "04/14/2016");
+=======
+        assert.strictEqual(getEvaluatedCell(model, "A1").formattedValue, "04/14/2016");
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     });
 });

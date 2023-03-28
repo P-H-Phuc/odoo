@@ -74,8 +74,13 @@
                                     <t t-set="currencyPayment" t-value="payment.currency_id"/>
                                     <t t-set="currencyInvoice" t-value="inv.currency_id"/>
                                     <!-- Fill the column "Amount In Currency" only if necessary -->
+<<<<<<< HEAD
                                     <td t-if="otherCurrency" class="text-end"><span t-if="currencyPayment != currencyInvoice" t-esc="amountPayment" t-options="{'widget': 'monetary', 'display_currency': currencyPayment}"/></td>
                                     <td class="text-end"><span t-esc="amountInvoice" t-options="{'widget': 'monetary', 'display_currency': currencyInvoice}"/></td>
+=======
+                                    <td t-if="otherCurrency" class="text-end"><span t-if="currencyPayment != currencyInvoice" t-out="amountPayment" t-options="{'widget': 'monetary', 'display_currency': currencyPayment}"/></td>
+                                    <td class="text-end"><span t-out="amountInvoice" t-options="{'widget': 'monetary', 'display_currency': currencyInvoice}"/></td>
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                                 </tr>
                                 <!-- BALANCE -->
                                 <tr>

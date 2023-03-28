@@ -5,8 +5,13 @@ const wTourUtils = require("website.tour_utils");
 
 const TARGET_FONT_SIZE = 30;
 
+<<<<<<< HEAD
 const checkFontSize = function (actions) {
     const style = actions.tip_widget.el.ownerDocument.defaultView.getComputedStyle(this.$anchor[0]);
+=======
+const checkFontSize = function () {
+    const style = document.defaultView.getComputedStyle(this.$anchor[0]);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     if (style.fontSize !== `${TARGET_FONT_SIZE}px`) {
         console.error(`Expected the font-size to be equal to ${TARGET_FONT_SIZE}px but found ${style.fontSize} instead`);
     }

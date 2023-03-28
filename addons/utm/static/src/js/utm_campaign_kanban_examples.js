@@ -1,11 +1,7 @@
-odoo.define('utm.campaing_kanban_examples', function (require) {
-'use strict';
+/** @odoo-module */
 
-var core = require('web.core');
-var kanbanExamplesRegistry = require('web.kanban_examples_registry');
-const { registry } = require("@web/core/registry");
-
-var _lt = core._lt;
+import { _lt } from "@web/core/l10n/translation";
+import { registry } from "@web/core/registry";
 
 const exampleData = {
     ghostColumns: [_lt('Ideas'), _lt('Design'), _lt('Review'), _lt('Send'), _lt('Done')],
@@ -17,7 +13,7 @@ const exampleData = {
     }, {
         name: _lt('Event-driven Flow'),
         columns: [_lt('Later'), _lt('This Month'), _lt('This Week'), _lt('Running'), _lt('Sent')],
-        description: _lt("Track incoming events (e.g. : Christmas, Black Friday, ...) and publish timely content."),
+        description: _lt("Track incoming events (e.g. Christmas, Black Friday, ...) and publish timely content."),
     }, {
         name: _lt('Soft-Launch Flow'),
         columns: [_lt('Pre-Launch'), _lt('Soft-Launch'), _lt('Deploy'), _lt('Report'), _lt('Done')],
@@ -33,6 +29,4 @@ const exampleData = {
     }],
 };
 
-kanbanExamplesRegistry.add('utm_campaign', exampleData);
 registry.category("kanban_examples").add("utm_campaign", exampleData);
-});

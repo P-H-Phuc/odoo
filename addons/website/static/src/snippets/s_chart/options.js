@@ -17,7 +17,7 @@ options.registry.InnerChart = options.Class.extend({
         'click we-button.add_row': '_onAddRowClick',
         'click we-button.o_we_matrix_remove_col': '_onRemoveColumnClick',
         'click we-button.o_we_matrix_remove_row': '_onRemoveRowClick',
-        'blur we-matrix input': '_onMatrixInputFocusOut',
+        'input we-matrix input': '_onMatrixInputInput',
         'focus we-matrix input': '_onMatrixInputFocus',
     }),
 
@@ -302,6 +302,9 @@ options.registry.InnerChart = options.Class.extend({
         const newEl = document.createElement(tag);
         const contentEl = document.createElement('input');
         contentEl.type = 'text';
+        if (tag === 'td') {
+            contentEl.type = 'number';
+        }
         contentEl.value = value || '';
         if (backgroundColor) {
             contentEl.dataset.backgroundColor = backgroundColor;
@@ -473,9 +476,8 @@ options.registry.InnerChart = options.Class.extend({
     },
     /**
      * @private
-     * @param {Event} ev
      */
-    _onMatrixInputFocusOut: function (ev) {
+    _onMatrixInputInput() {
         this._reloadGraph();
     },
     /**

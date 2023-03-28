@@ -2,6 +2,10 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
+<<<<<<< HEAD
+=======
+from odoo.tools import email_normalize
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 
 class MailTestSimple(models.Model):
@@ -13,6 +17,27 @@ class MailTestSimple(models.Model):
 
     name = fields.Char()
     email_from = fields.Char()
+
+    def _message_compute_subject(self):
+        """ To ease mocks """
+        _a = super()._message_compute_subject()
+        return _a
+
+    def _notify_by_email_get_final_mail_values(self, *args, **kwargs):
+        """ To ease mocks """
+        _a = super()._notify_by_email_get_final_mail_values(*args, **kwargs)
+        return _a
+
+    def _notify_by_email_get_headers(self):
+        headers = super()._notify_by_email_get_headers()
+        headers['X-Custom'] = 'Done'
+        return headers
+
+
+class MailTestSimpleWithMainAttachment(models.Model):
+    _description = 'Simple Chatter Model With Main Attachment Management'
+    _name = 'mail.test.simple.main.attachment'
+    _inherit = ['mail.test.simple', 'mail.thread.main.attachment']
 
 
 class MailTestGateway(models.Model):
@@ -112,6 +137,8 @@ class MailTestTicket(models.Model):
 
     name = fields.Char()
     email_from = fields.Char(tracking=True)
+    mobile_number = fields.Char()
+    phone_number = fields.Char()
     count = fields.Integer(default=1)
     datetime = fields.Datetime(default=fields.Datetime.now)
     mail_template = fields.Many2one('mail.template', 'Template')
@@ -122,6 +149,13 @@ class MailTestTicket(models.Model):
     def _mail_get_partner_fields(self):
         return ['customer_id']
 
+<<<<<<< HEAD
+=======
+    def _message_compute_subject(self):
+        self.ensure_one()
+        return f"Ticket for {self.name} on {self.datetime.strftime('%m/%d/%Y, %H:%M:%S')}"
+
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     def _message_get_default_recipients(self):
         return dict(
             (record.id, {
@@ -132,11 +166,17 @@ class MailTestTicket(models.Model):
             for record in self
         )
 
-    def _notify_get_recipients_groups(self, msg_vals=None):
+    def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
         """ Activate more groups to test query counters notably (and be backward
         compatible for tests). """
         local_msg_vals = dict(msg_vals or {})
+<<<<<<< HEAD
         groups = super()._notify_get_recipients_groups(msg_vals=msg_vals)
+=======
+        groups = super()._notify_get_recipients_groups(
+            message, model_description, msg_vals=msg_vals
+        )
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         for group_name, _group_method, group_data in groups:
             if group_name == 'portal':
                 group_data['active'] = True
@@ -158,9 +198,21 @@ class MailTestTicket(models.Model):
         res = super(MailTestTicket, self)._track_template(changes)
         record = self[0]
         if 'customer_id' in changes and record.mail_template:
-            res['customer_id'] = (record.mail_template, {'composition_mode': 'mass_mail'})
+            res['customer_id'] = (
+                record.mail_template,
+                {
+                    'composition_mode': 'mass_mail',
+                    'subtype_id': self.env['ir.model.data']._xmlid_to_res_id('mail.mt_note'),
+                }
+            )
         elif 'datetime' in changes:
-            res['datetime'] = ('test_mail.mail_test_ticket_tracking_view', {'composition_mode': 'mass_mail'})
+            res['datetime'] = (
+                'test_mail.mail_test_ticket_tracking_view',
+                {
+                    'composition_mode': 'mass_mail',
+                    'subtype_id': self.env['ir.model.data']._xmlid_to_res_id('mail.mt_note'),
+                }
+            )
         return res
 
     def _creation_subtype(self):
@@ -173,6 +225,61 @@ class MailTestTicket(models.Model):
         if 'container_id' in init_values and self.container_id:
             return self.env.ref('test_mail.st_mail_test_ticket_container_upd')
         return super(MailTestTicket, self)._track_subtype(init_values)
+
+    def _get_customer_information(self):
+        email_normalized_to_values = super()._get_customer_information()
+
+        for record in self.filtered('email_from'):
+            email_from_normalized = email_normalize(record.email_from)
+            if not email_from_normalized:  # do not fill Falsy with random data
+                continue
+            values = email_normalized_to_values.setdefault(email_from_normalized, {})
+            if not values.get('mobile'):
+                values['mobile'] = record.mobile_number
+            if not values.get('phone'):
+                values['phone'] = record.phone_number
+        return email_normalized_to_values
+
+    def _message_get_suggested_recipients(self):
+        recipients = super()._message_get_suggested_recipients()
+        for ticket in self:
+            if ticket.customer_id:
+                ticket.customer_id._message_add_suggested_recipient(
+                    recipients,
+                    partner=ticket.customer_id,
+                    lang=None,
+                    reason=_('Customer'),
+                )
+            elif ticket.email_from:
+                ticket._message_add_suggested_recipient(
+                    recipients,
+                    partner=None,
+                    email=self.email_from,
+                    lang=None,
+                    reason=_('Customer Email'),
+                )
+        return recipients
+
+class MailTestTicketEL(models.Model):
+    """ Just mail.test.ticket, but exclusion-list enabled. Kept as different
+    model to avoid messing with existing tests, notably performance, and ease
+    backward comparison. """
+    _description = 'Ticket-like model with exclusion list'
+    _name = 'mail.test.ticket.el'
+    _inherit = [
+        'mail.test.ticket',
+        'mail.thread.blacklist',
+    ]
+    _primary_email = 'email_from'
+
+    email_from = fields.Char(
+        'Email',
+        compute='_compute_email_from', readonly=False, store=True)
+
+    @api.depends('customer_id')
+    def _compute_email_from(self):
+        for ticket in self.filtered(lambda r: r.customer_id and not r.email_from):
+            ticket.email_from = ticket.customer_id.email_formatted
 
 
 
@@ -239,10 +346,12 @@ class MailTestContainer(models.Model):
             for record in self
         )
 
-    def _notify_get_recipients_groups(self, msg_vals=None):
+    def _notify_get_recipients_groups(self, message, model_description, msg_vals=None):
         """ Activate more groups to test query counters notably (and be backward
         compatible for tests). """
-        groups = super(MailTestContainer, self)._notify_get_recipients_groups(msg_vals=msg_vals)
+        groups = super()._notify_get_recipients_groups(
+            message, model_description, msg_vals=msg_vals
+        )
         for group_name, _group_method, group_data in groups:
             if group_name == 'portal':
                 group_data['active'] = True
@@ -289,7 +398,11 @@ class MailTestComposerMixin(models.Model):
 
 class MailTestComposerSource(models.Model):
     """ A simple model on which invites are sent. """
+<<<<<<< HEAD
     _description = 'Invite-like Wizard'
+=======
+    _description = 'Invite-like Source'
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     _name = 'mail.test.composer.source'
     _inherit = ['mail.thread.blacklist']
     _primary_email = 'email_from'

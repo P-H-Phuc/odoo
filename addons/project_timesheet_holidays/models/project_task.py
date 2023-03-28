@@ -6,7 +6,7 @@ from odoo import fields, models, _
 class Task(models.Model):
     _inherit = 'project.task'
 
-    leave_types_count = fields.Integer(compute='_compute_leave_types_count')
+    leave_types_count = fields.Integer(compute='_compute_leave_types_count', string="Time Off Types Count")
     is_timeoff_task = fields.Boolean("Is Time off Task", compute="_compute_is_timeoff_task", search="_search_is_timeoff_task")
 
     def _compute_leave_types_count(self):
@@ -30,9 +30,13 @@ class Task(models.Model):
         leave_type_read_group = self.env['hr.leave.type']._read_group(
             [('timesheet_task_id', '!=', False)],
             ['timesheet_task_ids:array_agg(timesheet_task_id)'],
-            [],
+            [], limit=1
         )
+<<<<<<< HEAD
         timeoff_task_ids = leave_type_read_group[0]['timesheet_task_ids'] if leave_type_read_group[0]['timesheet_task_ids'] else []
+=======
+        timeoff_task_ids = leave_type_read_group[0]['timesheet_task_ids'] or []
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         if self.env.company.leave_timesheet_task_id:
             timeoff_task_ids.append(self.env.company.leave_timesheet_task_id.id)
         if operator == '!=':

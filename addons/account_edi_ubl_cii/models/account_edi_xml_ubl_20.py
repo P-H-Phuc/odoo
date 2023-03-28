@@ -462,7 +462,7 @@ class AccountEdiXmlUBL20(models.AbstractModel):
     # IMPORT
     # -------------------------------------------------------------------------
 
-    def _import_fill_invoice_form(self, journal, tree, invoice, qty_factor):
+    def _import_fill_invoice_form(self, invoice, tree, qty_factor):
         logs = []
 
         if qty_factor == -1:
@@ -470,6 +470,7 @@ class AccountEdiXmlUBL20(models.AbstractModel):
 
         # ==== partner_id ====
 
+<<<<<<< HEAD
         partner = self._import_retrieve_info_from_map(
             tree,
             self._import_retrieve_partner_map(self.env.company, journal.type),
@@ -478,6 +479,13 @@ class AccountEdiXmlUBL20(models.AbstractModel):
             invoice.partner_id = partner
         else:
             logs.append(_("Could not retrieve the %s.", _("customer") if invoice.move_type in ('out_invoice', 'out_refund') else _("vendor")))
+=======
+        partner = self._import_retrieve_partner(tree, invoice)
+        if partner:
+            invoice.partner_id = partner
+        else:
+            logs.append(_("Could not retrieve the %s.", _("customer") if invoice.is_sale_document() else _("vendor")))
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
         # ==== currency_id ====
 
@@ -492,7 +500,21 @@ class AccountEdiXmlUBL20(models.AbstractModel):
                 invoice.currency_id = currency
             else:
                 logs.append(_("Could not retrieve currency: %s. Did you enable the multicurrency option "
-                              "and activate the currency ?", currency_code_node.text))
+                              "and activate the currency?", currency_code_node.text))
+
+        # ==== invoice_date ====
+
+        invoice_date_node = tree.find('./{*}IssueDate')
+        if invoice_date_node is not None and invoice_date_node.text:
+            invoice.invoice_date = invoice_date_node.text
+
+        # ==== invoice_date_due ====
+
+        for xpath in ('./{*}DueDate', './/{*}PaymentDueDate'):
+            invoice_date_due_node = tree.find(xpath)
+            if invoice_date_due_node is not None and invoice_date_due_node.text:
+                invoice.invoice_date_due = invoice_date_due_node.text
+                break
 
         # ==== invoice_date ====
 
@@ -552,7 +574,7 @@ class AccountEdiXmlUBL20(models.AbstractModel):
 
         # ==== invoice_line_ids: AllowanceCharge (document level) ====
 
-        logs += self._import_fill_invoice_allowance_charge(tree, invoice, journal, qty_factor)
+        logs += self._import_fill_invoice_allowance_charge(tree, invoice, qty_factor)
 
         # ==== Down Payment (prepaid amount) ====
 
@@ -564,18 +586,18 @@ class AccountEdiXmlUBL20(models.AbstractModel):
         invoice_line_tag = 'InvoiceLine' if invoice.move_type in ('in_invoice', 'out_invoice') or qty_factor == -1 else 'CreditNoteLine'
         for i, invl_el in enumerate(tree.findall('./{*}' + invoice_line_tag)):
             invoice_line = invoice.invoice_line_ids.create({'move_id': invoice.id})
-            invl_logs = self._import_fill_invoice_line_form(journal, invl_el, invoice, invoice_line, qty_factor)
+            invl_logs = self._import_fill_invoice_line_form(invl_el, invoice_line, qty_factor)
             logs += invl_logs
 
         return logs
 
-    def _import_fill_invoice_line_form(self, journal, tree, invoice, invoice_line, qty_factor):
+    def _import_fill_invoice_line_form(self, tree, invoice_line, qty_factor):
         logs = []
 
         # Product
         product = self._import_retrieve_info_from_map(
             tree,
-            self._import_retrieve_product_map(journal),
+            self._import_retrieve_product_map(invoice_line.move_id.journal_id),
         )
         if product is not None:
             invoice_line.product_id = product
@@ -595,7 +617,11 @@ class AccountEdiXmlUBL20(models.AbstractModel):
             'gross_price_unit': './{*}Price/{*}AllowanceCharge/{*}BaseAmount',
             'rebate': './{*}Price/{*}AllowanceCharge/{*}Amount',
             'net_price_unit': './{*}Price/{*}PriceAmount',
+<<<<<<< HEAD
             'billed_qty':  './{*}InvoicedQuantity' if invoice.move_type in ('in_invoice', 'out_invoice') or qty_factor == -1 else './{*}CreditedQuantity',
+=======
+            'billed_qty':  './{*}InvoicedQuantity' if invoice_line.move_id.move_type in ('in_invoice', 'out_invoice') or qty_factor == -1 else './{*}CreditedQuantity',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             'allowance_charge': './/{*}AllowanceCharge',
             'allowance_charge_indicator': './{*}ChargeIndicator',  # below allowance_charge node
             'allowance_charge_amount': './{*}Amount',  # below allowance_charge node
@@ -610,7 +636,11 @@ class AccountEdiXmlUBL20(models.AbstractModel):
         if not tax_nodes:
             for elem in tree.findall('.//{*}TaxTotal'):
                 tax_nodes += elem.findall('.//{*}TaxSubtotal/{*}Percent')
+<<<<<<< HEAD
         return self._import_fill_invoice_line_taxes(journal, tax_nodes, invoice_line, inv_line_vals, logs)
+=======
+        return self._import_fill_invoice_line_taxes(tax_nodes, invoice_line, inv_line_vals, logs)
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     def _correct_invoice_tax_amount(self, tree, invoice):
         """ The tax total may have been modified for rounding purpose, if so we should use the imported tax and not
@@ -638,7 +668,7 @@ class AccountEdiXmlUBL20(models.AbstractModel):
     # IMPORT : helpers
     # -------------------------------------------------------------------------
 
-    def _get_import_document_amount_sign(self, filename, tree):
+    def _get_import_document_amount_sign(self, tree):
         """
         In UBL, an invoice has tag 'Invoice' and a credit note has tag 'CreditNote'. However, a credit note can be
         expressed as an invoice with negative amounts. For this case, we need a factor to take the opposite
@@ -647,6 +677,7 @@ class AccountEdiXmlUBL20(models.AbstractModel):
         if tree.tag == '{urn:oasis:names:specification:ubl:schema:xsd:Invoice-2}Invoice':
             amount_node = tree.find('.//{*}LegalMonetaryTotal/{*}TaxExclusiveAmount')
             if amount_node is not None and float(amount_node.text) < 0:
+<<<<<<< HEAD
                 return ('in_refund', 'out_refund'), -1
             return ('in_invoice', 'out_invoice'), 1
         if tree.tag == '{urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2}CreditNote':
@@ -682,6 +713,31 @@ class AccountEdiXmlUBL20(models.AbstractModel):
             50: lambda tree: with_name(tree, [('company_id', '=', company.id)]),
             60: lambda tree: with_name(tree, []),
         }
+=======
+                return 'refund', -1
+            return 'invoice', 1
+        if tree.tag == '{urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2}CreditNote':
+            return 'refund', 1
+        return None, None
+
+    def _import_retrieve_partner(self, tree, invoice):
+        role = "Customer" if invoice.journal_id.type == 'sale' else "Supplier"
+        vat_node = tree.find(f'.//{{*}}Accounting{role}Party/{{*}}Party//{{*}}CompanyID')
+        vat = None if vat_node is None else vat_node.text
+        phone_node = tree.find(f'.//{{*}}Accounting{role}Party/{{*}}Party//{{*}}Telephone')
+        phone = None if phone_node is None else phone_node.text
+        mail_node = tree.find(f'.//{{*}}Accounting{role}Party/{{*}}Party//{{*}}ElectronicMail')
+        mail = None if mail_node is None else mail_node.text
+        name_node = tree.find(f'.//{{*}}Accounting{role}Party/{{*}}Party//{{*}}Name')
+        name = None if name_node is None else name_node.text
+        return self.env['res.partner']._retrieve_partner(
+            name=name,
+            phone=phone,
+            mail=mail,
+            vat=vat,
+            company=invoice.company_id,
+        )
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
     def _import_retrieve_product_map(self, company):
 

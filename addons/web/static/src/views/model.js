@@ -11,15 +11,15 @@ import { EventBus, onWillStart, onWillUpdateProps, useComponent } from "@odoo/ow
  * @typedef {import("@web/search/search_model").SearchParams} SearchParams
  */
 
-export class Model extends EventBus {
+export class Model {
     /**
      * @param {Object} env
      * @param {Object} services
      */
     constructor(env, params, services) {
-        super();
         this.env = env;
         this.orm = services.orm;
+        this.bus = new EventBus();
         this.useSampleModel = false; // will be set to true by the "useModel" hook if necessary
         this.setup(params, services);
     }
@@ -59,7 +59,7 @@ export class Model extends EventBus {
     }
 
     notify() {
-        this.trigger("update");
+        this.bus.trigger("update");
     }
 }
 Model.services = [];
@@ -77,12 +77,13 @@ function getSearchParams(props) {
 }
 
 /**
- * @template {Model} T
- * @param {new (env: Object, params: Object, services: Object) => T} ModelClass
+ * @template {typeof Model} T
+ * @param {T} ModelClass
  * @param {Object} params
  * @param {Object} [options]
  * @param {Function} [options.onUpdate]
- * @returns {T}
+ * @param {boolean} [options.ignoreUseSampleModel]
+ * @returns {InstanceType<T>}
  */
 export function useModel(ModelClass, params, options = {}) {
     const component = useComponent();
@@ -97,7 +98,7 @@ export function useModel(ModelClass, params, options = {}) {
 
     const model = new ModelClass(component.env, params, services);
     useBus(
-        model,
+        model.bus,
         "update",
         options.onUpdate ||
             (() => {

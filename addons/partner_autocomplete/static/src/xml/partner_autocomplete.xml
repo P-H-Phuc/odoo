@@ -4,7 +4,11 @@
         <xpath expr="//t[@t-else='']" position="before">
             <t t-elif="props.record.resModel !== 'res.partner' || props.record.data.company_type === 'company'">
                 <AutoComplete
+<<<<<<< HEAD
                     value="props.value || ''"
+=======
+                    value="props.record.data[props.name] || ''"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     sources="sources"
                     onSelect.bind="onSelect"
                     input="inputRef"

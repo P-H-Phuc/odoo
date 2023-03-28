@@ -267,6 +267,14 @@ msgid "Setup E-invoice"
 msgstr ""
 
 #. module: l10n_in_edi
+<<<<<<< HEAD
+=======
+#: model_terms:ir.ui.view,arch_db:l10n_in_edi.res_config_settings_view_form_inherit_l10n_in_edi
+msgid "Check the documentation to get credentials"
+msgstr ""
+
+#. module: l10n_in_edi
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 #: code:addons/l10n_in_edi/models/account_edi_format.py:0
 #, python-format
 msgid ""

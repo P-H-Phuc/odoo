@@ -1,6 +1,12 @@
 /** @odoo-module **/
 
 import { makeDraggableHook } from "@web/core/utils/draggable_hook_builder";
+<<<<<<< HEAD
+=======
+import { pick } from "@web/core/utils/objects";
+
+/** @typedef {import("@web/core/utils/draggable_hook_builder").DraggableHandlerParams} DraggableHandlerParams */
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 /**
  * @typedef DraggableParams
@@ -22,6 +28,7 @@ import { makeDraggableHook } from "@web/core/utils/draggable_hook_builder";
  *
  * HANDLERS (also optional)
  *
+<<<<<<< HEAD
  * @property {(DraggableHandlerParams) => any} [onDragStart]
  *  called when a dragging sequence is initiated.
  * @property {(DraggableHandlerParams) => any} [onDrag]
@@ -29,10 +36,20 @@ import { makeDraggableHook } from "@web/core/utils/draggable_hook_builder";
  * @property {(DraggableHandlerParams) => any} [onDragEnd]
  *  called when the dragging sequence ends, regardless of the reason.
  * @property {(DraggableHandlerParams) => any} [onDrop] called when the dragging sequence
+=======
+ * @property {(params: DraggableHandlerParams) => any} [onDragStart]
+ *  called when a dragging sequence is initiated.
+ * @property {(params: DraggableHandlerParams) => any} [onDrag]
+ *  called on each "mousemove" during the drag sequence.
+ * @property {(params: DraggableHandlerParams) => any} [onDragEnd]
+ *  called when the dragging sequence ends, regardless of the reason.
+ * @property {(params: DraggableHandlerParams) => any} [onDrop] called when the dragging sequence
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
  *  ends on a mouseup action.
  */
 
 /**
+<<<<<<< HEAD
  * @typedef DraggableHandlerParams
  * @property {number} x current mouse position on the X axis
  * @property {number} y current mouse position on the Y axis
@@ -40,6 +57,8 @@ import { makeDraggableHook } from "@web/core/utils/draggable_hook_builder";
  */
 
 /**
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
  * @typedef DraggableState
  * @property {boolean} dragging
  */
@@ -47,6 +66,7 @@ import { makeDraggableHook } from "@web/core/utils/draggable_hook_builder";
 /** @type {(params: DraggableParams) => DraggableState} */
 export const useDraggable = makeDraggableHook({
     name: "useDraggable",
+<<<<<<< HEAD
     onDragStart({ ctx, helpers }) {
         helpers.execHandler("onDragStart", { element: ctx.currentElement });
     },
@@ -59,4 +79,10 @@ export const useDraggable = makeDraggableHook({
     onDrop({ ctx, helpers }) {
         helpers.execHandler("onDrop", { element: ctx.currentElement });
     },
+=======
+    onDragStart: ({ ctx }) => pick(ctx.current, "element"),
+    onDrag: ({ ctx }) => pick(ctx.current, "element"),
+    onDragEnd: ({ ctx }) => pick(ctx.current, "element"),
+    onDrop: ({ ctx }) => pick(ctx.current, "element"),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 });

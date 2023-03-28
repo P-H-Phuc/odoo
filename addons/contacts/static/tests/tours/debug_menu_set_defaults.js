@@ -1,6 +1,7 @@
 odoo.define('debug_menu_set_defaults.tour', function (require) {
     "use strict";
 
+<<<<<<< HEAD
     var tour = require('web_tour.tour');
 
     tour.register('debug_menu_set_defaults', {
@@ -9,6 +10,16 @@ odoo.define('debug_menu_set_defaults.tour', function (require) {
     },
         [
             ...tour.stepUtils.goToAppSteps('contacts.menu_contacts', "Open the contacts menu"),
+=======
+    const { registry } = require("@web/core/registry");
+    const { stepUtils } = require('@web_tour/tour_service/tour_utils');
+
+    registry.category("web_tour.tours").add('debug_menu_set_defaults', {
+        test: true,
+        url: '/web?debug=1',
+        steps: [
+            ...stepUtils.goToAppSteps('contacts.menu_contacts', "Open the contacts menu"),
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             {
                 content: "Create a new contact",
                 trigger: '.o-kanban-button-new',
@@ -52,7 +63,11 @@ odoo.define('debug_menu_set_defaults.tour', function (require) {
                 trigger: 'button.o_form_button_cancel',
             },
             {
+<<<<<<< HEAD
                 trigger: '.o-kanban-button-new',
+=======
+                trigger: '.o_action_manager .o_kanban_view .o-kanban-button-new',
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             },
             {
                 content: "Check that Individual is checked instead of Company",
@@ -69,6 +84,10 @@ odoo.define('debug_menu_set_defaults.tour', function (require) {
                 run() {},
             },
         ]
+<<<<<<< HEAD
     );
+=======
+    });
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
 });

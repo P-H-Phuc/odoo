@@ -127,9 +127,7 @@ class TestAngloSaxonValuation(ValuationReconciliationTestCommon):
 
         # Deliver one.
         sale_order.picking_ids.move_ids.quantity_done = 1
-        wiz = sale_order.picking_ids.button_validate()
-        wiz = Form(self.env[wiz['res_model']].with_context(wiz['context'])).save()
-        wiz.process()
+        sale_order.picking_ids.button_validate()
 
         # Invoice 1
         invoice = sale_order._create_invoices()
@@ -266,9 +264,7 @@ class TestAngloSaxonValuation(ValuationReconciliationTestCommon):
 
         # Deliver one.
         sale_order.picking_ids.move_ids.quantity_done = 1
-        wiz = sale_order.picking_ids.button_validate()
-        wiz = Form(self.env[wiz['res_model']].with_context(wiz['context'])).save()
-        wiz.process()
+        sale_order.picking_ids.button_validate()
 
         # Invoice 1
         invoice = sale_order._create_invoices()
@@ -727,9 +723,9 @@ class TestAngloSaxonValuation(ValuationReconciliationTestCommon):
         self.assertEqual(len(amls), 4)
         stock_out_aml = amls.filtered(lambda aml: aml.account_id == self.company_data['default_account_stock_out'])
         self.assertEqual(stock_out_aml.debit, 0)
-        self.assertAlmostEqual(stock_out_aml.credit, 16)
+        self.assertAlmostEqual(stock_out_aml.credit, 18)
         cogs_aml = amls.filtered(lambda aml: aml.account_id == self.company_data['default_account_expense'])
-        self.assertAlmostEqual(cogs_aml.debit, 16)
+        self.assertAlmostEqual(cogs_aml.debit, 18)
         self.assertEqual(cogs_aml.credit, 0)
         receivable_aml = amls.filtered(lambda aml: aml.account_id == self.company_data['default_account_receivable'])
         self.assertEqual(receivable_aml.debit, 24)

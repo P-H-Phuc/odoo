@@ -431,14 +431,21 @@ class CurrencyRate(models.Model):
                         'title': _("Warning for %s", self.currency_id.name),
                         'message': _(
                             "The new rate is quite far from the previous rate.\n"
-                            "Incorrect currency rates may cause critical problems, make sure the rate is correct !"
+                            "Incorrect currency rates may cause critical problems, make sure the rate is correct!"
                         )
                     }
                 }
 
     @api.model
-    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
-        return super()._name_search(parse_date(self.env, name), args, operator, limit, name_get_uid)
+    def _name_search(self, name, domain=None, operator='ilike', limit=None, order=None, name_get_uid=None):
+        return super()._name_search(parse_date(self.env, name), domain, operator, limit, order, name_get_uid)
+
+    @api.model
+    def _get_view_cache_key(self, view_id=None, view_type='form', **options):
+        """The override of _get_view changing the rate field labels according to the company currency
+        makes the view cache dependent on the company currency"""
+        key = super()._get_view_cache_key(view_id, view_type, **options)
+        return key + ((self.env['res.company'].browse(self._context.get('company_id')) or self.env.company).currency_id.name,)
 
     @api.model
     def _get_view_cache_key(self, view_id=None, view_type='form', **options):

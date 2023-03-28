@@ -3,20 +3,28 @@
 
     <t t-name="web.TextField" owl="1">
         <t t-if="props.readonly">
-            <span t-esc="props.value or ''" />
+            <span t-esc="props.record.data[props.name] or ''" />
         </t>
         <t t-else="">
             <div t-ref="div">
                 <textarea
                     class="o_input"
+<<<<<<< HEAD
                     t-att-class="{'o_field_translate': props.isTranslatable}"
+=======
+                    t-att-class="{'o_field_translate': isTranslatable}"
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     t-att-id="props.id"
                     t-att-placeholder="props.placeholder"
                     t-att-rows="rowCount"
                     t-on-input="onInput"
                     t-ref="textarea"
                 />
+<<<<<<< HEAD
                 <t t-if="props.isTranslatable">
+=======
+                <t t-if="isTranslatable">
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
                     <TranslationButton
                         fieldName="props.name"
                         record="props.record"

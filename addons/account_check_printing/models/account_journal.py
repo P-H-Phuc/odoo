@@ -67,7 +67,7 @@ class AccountJournal(models.Model):
         """ Create a check sequence for the journal """
         for journal in self:
             journal.check_sequence_id = self.env['ir.sequence'].sudo().create({
-                'name': journal.name + _(" : Check Number Sequence"),
+                'name': journal.name + _(": Check Number Sequence"),
                 'implementation': 'no_gap',
                 'padding': 5,
                 'number_increment': 1,
@@ -102,3 +102,10 @@ class AccountJournal(models.Model):
                 default_payment_method_line_id=payment_method_line.id,
             ),
         }
+
+    @api.model
+    def _get_reusable_payment_methods(self):
+        """ We are able to have multiple times Checks payment method in a journal """
+        res = super()._get_reusable_payment_methods()
+        res.add("check_printing")
+        return res

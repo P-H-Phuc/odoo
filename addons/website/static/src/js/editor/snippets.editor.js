@@ -62,6 +62,7 @@ const wSnippetMenu = weSnippetEditor.SnippetsMenu.extend({
         this.$body[0].classList.remove('o_animated_text_highlighted');
         clearTimeout(this._hideBackendNavbarTimeout);
         this.el.ownerDocument.body.classList.remove('editor_has_snippets_hide_backend_navbar');
+<<<<<<< HEAD
     },
 
     //--------------------------------------------------------------------------
@@ -80,6 +81,8 @@ const wSnippetMenu = weSnippetEditor.SnippetsMenu.extend({
             $target[0].classList.add('o_no_link_popover');
         }
         return this._super(...arguments);
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
     },
 
     //--------------------------------------------------------------------------
@@ -125,11 +128,20 @@ const wSnippetMenu = weSnippetEditor.SnippetsMenu.extend({
      * if not already defined.
      *
      * @private
+<<<<<<< HEAD
      * @param {boolean} [reconfigure=false] // TODO name is confusing "alwaysReconfigure" is better
      * @param {boolean} [onlyIfUndefined=false] // TODO name is confusing "configureIfNecessary" is better
      */
     async _configureGMapAPI({reconfigure, onlyIfUndefined}) {
         if (!reconfigure && !onlyIfUndefined) {
+=======
+     * @param {boolean} [alwaysReconfigure=false]
+     * @param {boolean} [configureIfNecessary=false]
+     */
+    async _configureGMapAPI({alwaysReconfigure, configureIfNecessary}) {
+        if (!alwaysReconfigure && !configureIfNecessary) {
+            // TODO should review, parameters are weird... only one necessary?
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             return false;
         }
 
@@ -142,7 +154,11 @@ const wSnippetMenu = weSnippetEditor.SnippetsMenu.extend({
             isValid: false,
             message: undefined,
         };
+<<<<<<< HEAD
         if (!reconfigure && onlyIfUndefined && apiKey && apiKeyValidation.isValid) {
+=======
+        if (!alwaysReconfigure && configureIfNecessary && apiKey && apiKeyValidation.isValid) {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             return false;
         }
 
@@ -216,7 +232,11 @@ const wSnippetMenu = weSnippetEditor.SnippetsMenu.extend({
                 message: !isValid &&
                     _t("Invalid API Key. The following error was returned by Google:") + " " + (await response.text()),
             };
+<<<<<<< HEAD
         } catch (_err) {
+=======
+        } catch {
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             return {
                 isValid: false,
                 message: _t("Check your connection and try again"),
@@ -246,8 +266,8 @@ const wSnippetMenu = weSnippetEditor.SnippetsMenu.extend({
     async _handleGMapRequest(ev, gmapRequestEventName) {
         ev.stopPropagation();
         const reconfigured = await this._configureGMapAPI({
-            reconfigure: ev.data.reconfigure,
-            onlyIfUndefined: ev.data.configureIfNecessary,
+            alwaysReconfigure: ev.data.reconfigure,
+            configureIfNecessary: ev.data.configureIfNecessary,
         });
         this.getParent().trigger_up(gmapRequestEventName, {
             refetch: reconfigured,
@@ -455,7 +475,7 @@ const wSnippetMenu = weSnippetEditor.SnippetsMenu.extend({
             try {
                 range.surroundContents(animatedTextEl);
                 $snippet = $(animatedTextEl);
-            } catch (_e) {
+            } catch {
                 // This try catch is needed because 'surroundContents' may
                 // fail when the range has partially selected a non-Text node.
                 if (range.commonAncestorContainer.textContent === range.toString()) {

@@ -73,12 +73,22 @@ export function mapActiveFieldsToFieldsInfo(activeFields, fields, viewType, env)
     fieldsInfo[viewType] = {};
     for (const [fieldName, fieldDescr] of Object.entries(activeFields)) {
         const views = mapViews(fieldDescr.views, env);
+<<<<<<< HEAD
         const field = fields[fieldName];
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         let Widget;
         if (fieldDescr.widget) {
             Widget = fieldRegistry.getAny([`${viewType}.${fieldDescr.widget}`, fieldDescr.widget]);
         } else {
+<<<<<<< HEAD
             Widget = fieldRegistry.getAny([`${viewType}.${field.type}`, field.type]);
+=======
+            Widget = fieldRegistry.getAny([
+                `${viewType}.${fields[fieldName].type}`,
+                fields[fieldName].type,
+            ]);
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
         Widget = Widget || fieldRegistry.get("abstract");
         let domain;
@@ -89,6 +99,7 @@ export function mapActiveFieldsToFieldsInfo(activeFields, fields, viewType, env)
         if (mode && mode.split(",").length !== 1) {
             mode = env.isSmall ? "kanban" : "list";
         }
+<<<<<<< HEAD
         const FieldComponent = fieldDescr.FieldComponent;
         const fieldInfo = {
             Widget, // remove this when we no longer support legacy fields inside wowl views
@@ -96,6 +107,14 @@ export function mapActiveFieldsToFieldsInfo(activeFields, fields, viewType, env)
             domain,
             context: fieldDescr.context,
             fieldDependencies: {}, // ??
+=======
+        const fieldInfo = {
+            Widget, // remove this when we no longer support legacy fields inside wowl views
+            specialData: fieldDescr.field && fieldDescr.field.legacySpecialData,
+            domain,
+            context: fieldDescr.context,
+            fieldDependencies: [], // ??
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
             force_save: fieldDescr.forceSave,
             mode,
             modifiers: fieldDescr.modifiers,
@@ -106,14 +125,20 @@ export function mapActiveFieldsToFieldsInfo(activeFields, fields, viewType, env)
             __WOWL_FIELD_DESCR__: fieldDescr,
         };
 
+<<<<<<< HEAD
         if (FieldComponent && FieldComponent.limit) {
             fieldInfo.limit = FieldComponent.limit;
+=======
+        if (fieldDescr.field && fieldDescr.field.limit) {
+            fieldInfo.limit = fieldDescr.field.limit;
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
 
         if (fieldDescr.modifiers && fieldDescr.modifiers.invisible === true) {
             fieldInfo.__no_fetch = true;
         }
 
+<<<<<<< HEAD
         if (!fieldInfo.__no_fetch && FieldComponent && FieldComponent.fieldsToFetch) {
             fieldInfo.relatedFields = { ...FieldComponent.fieldsToFetch };
             fieldInfo.viewType = "default";
@@ -135,6 +160,25 @@ export function mapActiveFieldsToFieldsInfo(activeFields, fields, viewType, env)
                         fieldDescr.fieldsToFetch[colorField];
                 }
             }
+=======
+        if (!fieldInfo.__no_fetch && fieldDescr.field && fieldDescr.field.relatedFields) {
+            let relatedFields = fieldDescr.field.relatedFields;
+            if (relatedFields instanceof Function) {
+                relatedFields = relatedFields(fieldInfo.__WOWL_FIELD_DESCR__);
+            }
+            relatedFields = Object.fromEntries(relatedFields.map((f) => [f.name, f]));
+            fieldInfo.relatedFields = { ...relatedFields };
+            fieldInfo.viewType = "default";
+            const defaultView = {};
+            for (const fieldName of Object.keys(relatedFields)) {
+                defaultView[fieldName] = {};
+                if (fieldDescr.relatedFields[fieldName]) {
+                    defaultView[fieldName].__WOWL_FIELD_DESCR__ =
+                        fieldDescr.relatedFields[fieldName];
+                }
+            }
+            fieldInfo.fieldsInfo = { default: defaultView };
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
         }
         if (fieldDescr.views && fieldDescr.views[fieldDescr.viewMode]) {
             fieldInfo.limit = fieldDescr.views[fieldDescr.viewMode].limit || 40;

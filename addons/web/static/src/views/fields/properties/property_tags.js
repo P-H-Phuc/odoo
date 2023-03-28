@@ -1,12 +1,13 @@
 /** @odoo-module **/
 
-import { _lt } from "@web/core/l10n/translation";
-import { useService } from "@web/core/utils/hooks";
-import { TagsList } from "@web/views/fields/many2many_tags/tags_list";
-import { ColorList } from "@web/core/colorlist/colorlist";
-import { usePopover } from "@web/core/popover/popover_hook";
 import { AutoComplete } from "@web/core/autocomplete/autocomplete";
+import { ColorList } from "@web/core/colorlist/colorlist";
+import { _lt } from "@web/core/l10n/translation";
+import { usePopover } from "@web/core/popover/popover_hook";
+import { registry } from "@web/core/registry";
+import { useService } from "@web/core/utils/hooks";
 import { sprintf } from "@web/core/utils/strings";
+import { TagsList } from "@web/views/fields/many2many_tags/tags_list";
 
 import { Component } from "@odoo/owl";
 
@@ -17,7 +18,11 @@ PropertyTagsColorListPopover.components = {
 };
 
 // property tags does not really need timeout because it does not make RPC calls
+<<<<<<< HEAD
 export class PropertyTagAutoComplete extends AutoComplete { };
+=======
+export class PropertyTagAutoComplete extends AutoComplete {}
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 Object.assign(PropertyTagAutoComplete, { timeout: 0 });
 
 export class PropertyTags extends Component {
@@ -52,13 +57,23 @@ export class PropertyTags extends Component {
         // Retrieve the tags label and color
         // ['a', 'b'] =>  [['a', 'A', 5], ['b', 'B', 6]]
         let value = this.props.tags.filter((tag) => this.props.selectedTags.indexOf(tag[0]) >= 0);
+<<<<<<< HEAD
 
         if (!this.displayBadge) {
             // in kanban view e.g. to not show tag without color
             value = value.filter(tag => tag[2]);
         }
+=======
+>>>>>>> 94d7b2a773f2c4666c263d1d26cdbe278887f8f6
 
-        const canDeleteTag = !this.props.readonly && this.props.canChangeTags;
+        if (!this.displayBadge) {
+            // in kanban view e.g. to not show tag without color
+            value = value.filter((tag) => tag[2]);
+        }
+
+        const canDeleteTag =
+            !this.props.readonly &&
+            (this.props.canChangeTags || this.props.deleteAction === "value");
 
         return value.map((tag) => {
             const [tagId, tagLabel, tagColorIndex] = tag;
@@ -302,3 +317,27 @@ PropertyTags.props = {
     // argument to update the current selected value)
     onTagsChange: { type: Function, optional: true },
 };
+
+export class PropertyTagsField extends Component {
+    static template = "web.PropertyTagsField";
+    static components = { PropertyTags };
+
+    get propertyTagsProps() {
+        return {
+            selectedTags: this.props.record.data[this.props.name] || [],
+            tags: this.props.record.fields[this.props.name].tags || [],
+            deleteAction: "value",
+            readonly: this.props.readonly,
+            canChangeTags: false,
+            onValueChange: (value) => {
+                this.props.record.update({ [this.props.name]: value });
+            },
+        };
+    }
+}
+
+export const propertyTagsField = {
+    component: PropertyTagsField,
+};
+
+registry.category("fields").add("property_tags", propertyTagsField);

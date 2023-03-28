@@ -29,7 +29,7 @@ class IrRule(models.Model):
     _sql_constraints = [
         ('no_access_rights',
          'CHECK (perm_read!=False or perm_write!=False or perm_create!=False or perm_unlink!=False)',
-         'Rule must have at least one checked access right !'),
+         'Rule must have at least one checked access right!'),
     ]
 
     @api.model
@@ -203,6 +203,7 @@ class IrRule(models.Model):
         resolution_info = _("Contact your administrator to request access if necessary.")
 
         if not self.env.user.has_group('base.group_no_one') or not self.env.user.has_group('base.group_user'):
+            records.invalidate_recordset()
             return AccessError(f"{operation_error}\n\n{resolution_info}")
 
         # This extended AccessError is only displayed in debug mode.

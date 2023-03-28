@@ -15,13 +15,14 @@ try {
     // Safari crashes in Private Browsing
     localStorage.setItem("__localStorage__", "true");
     localStorage.removeItem("__localStorage__");
-} catch (_e) {
+} catch {
     localStorage = makeRAMLocalStorage();
     sessionStorage = makeRAMLocalStorage();
 }
 
 export const browser = {
     addEventListener: window.addEventListener.bind(window),
+    Audio: window.Audio,
     removeEventListener: window.removeEventListener.bind(window),
     setTimeout: window.setTimeout.bind(window),
     clearTimeout: window.clearTimeout.bind(window),
